@@ -3,9 +3,9 @@ import { withStyles } from '@material-ui/core/styles';
 
 import Card from "@material-ui/core/Card";
 import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
 import Button from '@material-ui/core/Button';
 import ButtonGroup from "@material-ui/core/ButtonGroup";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import Fade from "@material-ui/core/Fade";
 
 import api from "../utils/api";
@@ -62,7 +62,26 @@ const styles = theme => ({
         }
     },
     contrast: theme.palette.secondary.contrast,
-
+    overlay: {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        width: "100%",
+        height: "100%",
+        transform: "translate(-50%, -50%)",
+        backgroundColor: "rgba(0, 0, 0, .0)",
+        zIndex: 1,
+        pointerEvents: "none",
+        color: theme.palette.primary.light
+    },
+    circularProgressContainer: {
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        width: "100%",
+        transform: "translate(-50%, -50%)",
+        textAlign: "center",
+    }
 });
 
 
@@ -352,6 +371,11 @@ class CoinChartsChart extends React.Component {
 
         return (
             <div className={classes.fullHeight}>
+                <div className={classes.overlay} style={_is_coin_chart_data_loading ? {}: {display: "none"}}>
+                    <div className={classes.circularProgressContainer}>
+                        <CircularProgress color="inherit" />
+                    </div>
+                </div>
                 {chart}
             </div>
         );

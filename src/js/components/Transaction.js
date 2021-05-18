@@ -72,10 +72,12 @@ class Transaction extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
+        const force_update_full_transaction = new_props.transaction.id !== new_props.transaction.id;
+
         this.setState(new_props, () => {
             this._get_coin_data();
             this._get_address_by_seed()
-            this._maybe_update_full_transaction();
+            this._maybe_update_full_transaction(force_update_full_transaction);
         });
     }
 
@@ -105,11 +107,11 @@ class Transaction extends React.Component {
         }
     };
 
-    _maybe_update_full_transaction = () => {
+    _maybe_update_full_transaction = (force_update_full_transaction = false) => {
 
-        const { transaction, logged_account } = this.state;
+        const { transaction, logged_account, _full_transaction } = this.state;
 
-        if(typeof transaction.amount_crypto === "undefined") {
+        if((typeof transaction.amount_crypto === "undefined" && _full_transaction === null) || force_update_full_transaction) {
 
             api.get_transactions_by_id(transaction.crypto_id, transaction.id, logged_account.seed, this._handle_set_full_transaction)
         }else {

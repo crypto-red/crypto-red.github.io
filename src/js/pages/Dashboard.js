@@ -300,9 +300,11 @@ class Dashboard extends React.Component {
 
 
         let performed_average_percentage_total = 0;
+        let number_of_coins_performed_with_value = 0;
 
         performed_average_percentage_array.forEach(function(value, index, array){
             performed_average_percentage_total += value;
+            if(value){number_of_coins_performed_with_value++}
         });
 
         let performed_average_percentage_weighted = parseFloat(total_balance_currency / total_balance_currency_before) - 1;
@@ -321,7 +323,8 @@ class Dashboard extends React.Component {
             performed_average_percentage_weighted_on_btc,
             performed_average_percentage_weighted,
             total_balance_currency,
-            number_of_coins_performed
+            number_of_coins_performed,
+            number_of_coins_performed_with_value
         };
 
         this.setState({_portfolio: portfolio})
@@ -380,7 +383,7 @@ class Dashboard extends React.Component {
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
-                                        text_content={portfolio !== null ? portfolio.number_of_coins_performed + `/${_coins_markets.length}`: null}
+                                        text_content={portfolio !== null ? portfolio.number_of_coins_performed_with_value + " / " + portfolio.number_of_coins_performed: null}
                                         label_content={"Cryptocurrency numbers"}
                                     />
                                 </Grid>

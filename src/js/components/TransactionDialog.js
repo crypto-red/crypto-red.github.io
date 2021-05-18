@@ -1,6 +1,8 @@
 import React from "react";
 import { withStyles } from '@material-ui/core/styles'
 
+import { HISTORY } from '../utils/constants';
+
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -20,6 +22,9 @@ const styles = theme => ({
     },
     breakWord: {
         wordBreak: "break-all"
+    },
+    underline: {
+        textDecoration: "underline"
     }
 });
 
@@ -35,6 +40,7 @@ class TransactionDialog extends React.Component {
             selected_currency: props.selected_currency,
             open: props.open,
             _coin_data: null,
+            _history: HISTORY
         };
     };
 
@@ -72,6 +78,12 @@ class TransactionDialog extends React.Component {
     _set_coin_data = (error, data) => {
 
         this.setState({_coin_data: data});
+    };
+
+    _open_link = (event, link) => {
+
+        const { _history } = this.state;
+        _history.push(link);
     };
 
 
@@ -130,7 +142,7 @@ class TransactionDialog extends React.Component {
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Crypto id</TableCell>
-                                                    <TableCell align="right">{transaction.crypto_id}</TableCell>
+                                                    <TableCell align="right" className={classes.underline} onClick={(event) => {this._open_link(event, "/coins/" + transaction.crypto_id + "/transactions")}}>{transaction.crypto_id}</TableCell>
                                                 </TableRow>
                                             </TableBody>
                                         </Table>

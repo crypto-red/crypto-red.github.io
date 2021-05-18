@@ -68,7 +68,7 @@ class Index extends React.Component {
         this._update_login();
         dispatcher.register(this._handle_events.bind(this));
 
-        actions.trigger_snackbar("This app isn't ready.", 3500);
+        actions.trigger_snackbar("This app uses testnet network for all crypto excepting VSYS..", 3500);
 
     }
 

@@ -22,8 +22,12 @@
         <meta name="theme-color" content="#060f23" />
 
         <!-- CSS + fonts -->
-        <link href="https://fonts.googleapis.com/css?family=Open+Sans|Source+Sans+Pro|Saira|Cantarell" rel="stylesheet">
-
+        <style>
+            @font-face {  font-family: Cantarell;  src: url("/src/fonts/Cantarell-Regular.ttf");  }
+            @font-face {  font-family: Open Sans;  src: url("/src/fonts/OpenSans-Regular.ttf");  }
+            @font-face {  font-family: Saira;  src: url("/src/fonts/Saira-Regular.ttf");  }
+            @font-face {  font-family: Source Sans Pro;  src: url("/src/fonts/SourceSansPro-Regular.ttf");  }
+        </style>
 
         <!-- Add to homescreen for Chrome on Android. Fallback for manifest.json -->
         <link rel="manifest" href="/manifest.json">
@@ -51,6 +55,6 @@
 
     <body>
         <div id="app"></div>
-        <script src="client.min.js?v=7.8"></script>
+        <script src="client.min.js?v=7.9"></script>
     </body>
 </html>

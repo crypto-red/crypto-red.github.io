@@ -68,7 +68,7 @@ class DashboardQuickCardMobile extends React.Component {
                                         </TableRow>
                                         <TableRow>
                                             <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? "Cryptocurrency numbers:": <Skeleton/>}</TableCell>
-                                            <TableCell align="right">{portfolio !== null ? portfolio.number_of_coins_performed: <Skeleton/>}</TableCell>
+                                            <TableCell align="right">{portfolio !== null ? portfolio.number_of_coins_performed_with_value + " / " + portfolio.number_of_coins_performed: <Skeleton/>}</TableCell>
                                         </TableRow>
                                         <TableRow>
                                             <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? "Performed / BTC:": <Skeleton/>}</TableCell>

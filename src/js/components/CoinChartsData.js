@@ -146,6 +146,7 @@ class CoinChartsData extends React.Component {
                                     <TableCell align="left" className={classes.tableCellBold}>All-Time Low</TableCell>
                                     <TableCell align="right">{this._price_formatter(coin_data.market_data.atl[selected_currency.toLowerCase()])}</TableCell>
                                 </TableRow>
+                                <TableRow><p align="left">Data provided by <a href="https://coingecko.com/" target="_blank">CoinGecko</a></p></TableRow>
                             </TableBody>
                         </Table>
                     </CardContent>

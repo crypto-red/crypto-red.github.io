@@ -5,13 +5,14 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
 import Container from "@material-ui/core/Container";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 import { HISTORY } from "../utils/constants";
 import price_formatter from "../utils/price-formatter";
 import Button from "@material-ui/core/Button";
 
 import api from "../utils/api";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     container: {
@@ -22,10 +23,6 @@ const styles = theme => ({
     },
     center: {
         textAlign: "center"
-    },
-    circularProgressContainer:{
-        textAlign: "center",
-        padding: theme.spacing(2)
     }
 });
 
@@ -66,7 +63,7 @@ class CoinBalance extends React.Component {
             this.setState({_coin_balance: result});
         }else {
 
-            console.log(error);
+            actions.trigger_snackbar("Can not load balance result");
         }
     };
 
@@ -77,14 +74,17 @@ class CoinBalance extends React.Component {
 
         if(logged_account) {
 
-            api.get_balance_by_seed(coin_id, logged_account.seed, this._handle_get_balance_result);
+            this.setState({_coin_balance: null}, () => {
+
+                api.get_balance_by_seed(coin_id, logged_account.seed, this._handle_get_balance_result);
+            });
         }
     }
 
-    _open_accounts_page = () => {
+    _open_link = (event, link) => {
 
         const { _history } = this.state;
-        _history.push("/accounts");
+        _history.push(link);
     };
 
     render() {
@@ -111,14 +111,16 @@ class CoinBalance extends React.Component {
                                         {
                                             _coin_balance === null || coin_data === null ?
                                                 <div>
-                                                    <div className={classes.circularProgressContainer}>
-                                                        <CircularProgress/>
+                                                    <div className={classes.center}>
+                                                        <h2><Skeleton /></h2>
+                                                        <h4><Skeleton /></h4>
                                                     </div>
                                                 </div> :
                                                 <div>
                                                     {_coin_balance === 0 ?
                                                         <div className={classes.center}>
-                                                            <h1>You need to add fund to this account.</h1>
+                                                            <h2>You need to add fund to this account.</h2>
+                                                            <h4>Just do it trough the link in the menu.</h4>
                                                         </div>
                                                         :
                                                         <div className={classes.center}>
@@ -129,10 +131,10 @@ class CoinBalance extends React.Component {
                                                 </div>
 
                                         }
-                                        <Button fullWidth color="primary" variant="contained">Top Up</Button>
+                                        <Button fullWidth color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/about/wiki/topup")}}>Top Up</Button>
                                     </div>:
                                     <div>
-                                        <Button fullWidth color="primary" variant="contained" onClick={this._open_accounts_page}>
+                                        <Button fullWidth color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/accounts")}}>
                                             Open an account
                                         </Button>
                                     </div>
