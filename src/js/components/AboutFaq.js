@@ -61,7 +61,7 @@ const styles = theme => ({
 
 const VIEWS = {
     organization: [
-        {question: "Who is crypto.red?", answer: "Crypto.red is an open-source project not someone."},
+        {question: "Who is crypto.red?", answer: "Crypto.red is an open-source project coded by a single programmer from scratch (which is/was a bit a crazy person) who realised one of his mission was to provide something life-hackers would love. He also make sure to maintain a good networking with dangerous hackers and bring other open-source projects money earned."},
         {question: "Who can contribute to this project?", answer: "Anyone, see https://github.com/crypto-red to get involved."},
         {question: "Who decide what to code?", answer: "Our team which is on GitHub (https://github.com/crypto-red) must agree together, meanwhile, one may duplicate the project for its own need."},
         {question: "Who have funded this project?", answer: "Anonymous."},

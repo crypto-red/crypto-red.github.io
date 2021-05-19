@@ -85,7 +85,7 @@ class DrawerContent extends React.Component {
             classes: props.classes,
             pathname: props.pathname,
             _history: HISTORY,
-            _menu_expanded: "", // coins, trade, about
+            _menu_expanded: "coins", // coins, trade, about
             _current_help_dialog_id: "topup",
             _is_help_dialog_open: false,
             _should_open_help_dialogs: {
@@ -105,7 +105,7 @@ class DrawerContent extends React.Component {
                 },
                 mixer: {
                     id: "mixer",
-                    url: "https://bitcoinmix.org/",
+                    url: "https://blender.io/",
                     image: "banknote-dark.svg",
                     title: "Do you know how and why to use a mixer?",
                     body: "To obfuscate the source of your coin, you can use a mixer, it will make it difficult to link two wallet together.",

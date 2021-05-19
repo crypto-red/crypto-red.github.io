@@ -115,28 +115,40 @@ class AboutWiki extends React.Component {
                 <Card>
                     <CardHeader title="How to top-up"/>
                     <CardContent>
-                        <p>...</p>
+                        <p>Although we receive nothing if you don't use Changelly, it is a simple service and the second recommended after public ATMs for privacy concerns.</p>
+                        <p>You will have to follow the instruction and at the end enter the public address of the coin selected of the account you've chosen and that's it, you can pay by card and do it quickly and simply.</p>
                     </CardContent>
                 </Card>,
             mixer:
                 <Card>
                     <CardHeader title="How to mix cryptocurrency"/>
                     <CardContent>
-                        <p>...</p>
+                        <p>We currently use Blender.io, it will enable you to mix your coin with other coin it will be like if your coins disappeared in the nether and from completely different sources came (other coins nearly with the same amount) to an address (maybe a completely new one if you create a new account for that) hours or even days later!</p>
+                        <p>You just have to create a new account on wallet.crypto.red in order to generate a fresh new and new address and to put that address in the mixer (you can split the amount send to multiples address). Then just send the amount you like from the account you have chosen to use for sending coins.</p>
+                        <p>Be careful! Don't send back the coins you received from the mixer onto the new address you've freshly created, it will enable one to know that this address is linked to the previous one (obvious captain).</p>
                     </CardContent>
                 </Card>,
             convert:
                 <Card>
                     <CardHeader title="How to convert cryptocurrency"/>
                     <CardContent>
-                        <p>...</p>
+                        <p>You have to go to the convert menu item in the drawer at left (burger menu on mobile devices) and use a "swap" services, we currently use SwapSpace.co since it doesn't charge more than the showed swap exchange that it compare for you so you can be sure to pay the less on the market!</p>
+                        <p>You have to choose the amount an the currency you want to send along with the currency you want to receive in exchange. Then click on the "VIEW OFFERS" button.</p>
+                        <p>Then just choose the exchange you want to use for the conversion you're doing, it should show many offers of all-trusted exchange. So when you have clicked on the "EXCHANGE" button just enter the new address of the currency you will receive, you have to copy the right address from the right account of yours of the cryptocurrency you have chosen to receive in exchange of the amount you'll have to send.</p>
+                        <p><b>In other words:</b></p>
+                        <ol>
+                            <li>Enter the amount and choose the swap service.</li>
+                            <li>Enter the recipient address.</li>
+                            <li>Transfer your funds to the exchange service.</li>
+                            <li>Wait for the exchange to proceed.</li>
+                        </ol>
                     </CardContent>
                 </Card>,
             contribute:
                 <Card>
                     <CardHeader title="How to contribute"/>
                     <CardContent>
-                        <p><a href="https://github.com/crypto-red/crypto-red.github.io" target="_blank">https://github.com/crypto-red/crypto-red.github.io</a>.</p>
+                        <p>You can contribute to our repository, this is where our code and application is hosted: <a href="https://github.com/crypto-red/crypto-red.github.io" target="_blank">https://github.com/crypto-red/crypto-red.github.io</a> (everything is transparent on GitHub). You can also donate to us in order to accelerate de development of this project and other projects (since we also fund other projects that we use trough <a href="https://opencollective.com/crypto-red" target="_blank">OpenCollective</a>) trough sending bitcoin in the address shown where our code is hosted.</p>
                     </CardContent>
                 </Card>,
         };

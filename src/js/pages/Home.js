@@ -4,15 +4,11 @@ import { withStyles } from "@material-ui/core/styles";
 import FlashInfo from "../components/FlashInfo";
 import { HISTORY } from "../utils/constants";
 
-
-import Backdrop from '@material-ui/core/Backdrop';
-import SpeedDial from '@material-ui/lab/SpeedDial';
-import SpeedDialIcon from '@material-ui/lab/SpeedDialIcon';
-import SpeedDialAction from '@material-ui/lab/SpeedDialAction';
 import ShareIcon from '@material-ui/icons/Share';
-import FeedbackIcon from "@material-ui/icons/Feedback";
 
 import ShareDialog from "../components/ShareDialog";
+import Fab from "@material-ui/core/Fab";
+import Grow from "@material-ui/core/Grow";
 
 const styles = theme => ({
     root: {
@@ -44,20 +40,17 @@ const styles = theme => ({
         backgroundColor: "rgba(192, 192, 192, .5)",
         borderRadius: 4,
     },
-    backdrop: {
-        zIndex: 1310,
-    },
-    speedDialFab: {
-        zIndex: 1311,
+    fab: {
         position: "fixed",
+        backgroundColor: theme.palette.primary.action,
+        color: theme.palette.primary.contrastText,
+        "&:hover": {
+            backgroundColor: theme.palette.primary.action,
+        },
         bottom: theme.spacing(2),
         right: theme.spacing(2),
-        "& .MuiSpeedDial-fab": {
-            backgroundColor: theme.palette.primary.action,
-            color: theme.palette.primary.contrastText,
-            "&:hover": {
-                backgroundColor: theme.palette.primary.action,
-            },
+        "& svg": {
+            marginRight: 4
         }
     },
 });
@@ -198,35 +191,6 @@ class Home extends React.Component {
 
         return (
             <div className={classes.root}>
-                <ShareDialog
-                    open={_is_share_dialog_open}
-                    onClose={this._handle_share_dialog_close}/>
-                <Backdrop
-                    className={classes.backdrop}
-                    open={_is_speed_dial_open} />
-                <SpeedDial
-                    ariaLabel="Home speed dialogue"
-                    className={classes.speedDialFab}
-                    icon={<SpeedDialIcon />}
-                    onClose={this._handle_speed_dial_close}
-                    onOpen={this._handle_speed_dial_open}
-                    open={_is_speed_dial_open}
-                >
-                    <SpeedDialAction
-                        key="share"
-                        icon={<ShareIcon />}
-                        tooltipTitle="Share"
-                        tooltipOpen
-                        onClick={(event) => {this._handle_speed_dial_action(event, "share")}}
-                    />
-                    <SpeedDialAction
-                        key="feedback"
-                        icon={<FeedbackIcon />}
-                        tooltipTitle="Feedback"
-                        tooltipOpen
-                        onClick={(event) => {this._handle_speed_dial_action(event, "feedback")}}
-                    />
-                </SpeedDial>
                 <div className={classes.flashInfoContainer}>
                     <FlashInfo image="/src/images/wallet.svg" text="Ready to start now? Create a new anonymous wallet!" button="ACCOUNTS" onClick={(event) => this._go_to_url(event, "/accounts")}/>
                 </div>
@@ -235,6 +199,14 @@ class Home extends React.Component {
                         {quote}
                     </div>
                 </div>
+                <Grow in>
+                    <Fab className={classes.fab} variant="extended" onClick={this._handle_share_dialog_open}>
+                        <ShareIcon /> Share
+                    </Fab>
+                </Grow>
+                <ShareDialog
+                    open={_is_share_dialog_open}
+                    onClose={this._handle_share_dialog_close}/>
             </div>
         );
     }
