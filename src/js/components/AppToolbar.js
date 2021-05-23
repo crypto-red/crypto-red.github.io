@@ -1,30 +1,29 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles';
-import Fade from '@material-ui/core/Fade';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
+import { withStyles } from "@material-ui/core/styles";
+import Fade from "@material-ui/core/Fade";
+import AppBar from "@material-ui/core/AppBar";
+import Toolbar from "@material-ui/core/Toolbar";
 import Divider from "@material-ui/core/Divider";
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import SettingsIcon from '@material-ui/icons/Settings';
-import SecurityIcon from '@material-ui/icons/Security';
-import FeedbackIcon from '@material-ui/icons/Feedback';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-
-import api  from "../utils/api";
-import actions from "../actions/utils";
-import InnerToolbar from "../components/InnerToolbar";
-import DrawerContent from "../components/DrawerContent";
-
-import { HISTORY } from "../utils/constants";
-import Jdenticon from "react-jdenticon";
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import IconButton from "@material-ui/core/IconButton";
+import MenuItem from "@material-ui/core/MenuItem";
+import Menu from "@material-ui/core/Menu";
 import Avatar from "@material-ui/core/Avatar";
 import Tooltip from "@material-ui/core/Tooltip";
+
+import MenuIcon from "@material-ui/icons/Menu";
+import AccountCircleIcon from "@material-ui/icons/AccountCircle";
+import SettingsIcon from "@material-ui/icons/Settings";
+import SecurityIcon from "@material-ui/icons/Security";
+
+import Jdenticon from "react-jdenticon";
+import api  from "../utils/api";
+import actions from "../actions/utils";
+import { HISTORY } from "../utils/constants";
+import InnerToolbar from "../components/InnerToolbar";
+import DrawerContent from "../components/DrawerContent";
 
 const styles = theme => ({
     appBar: {
@@ -33,7 +32,7 @@ const styles = theme => ({
     swipeableDrawer: {
         width: 256,
         flexShrink: 0,
-        [theme.breakpoints.up('md')]: {
+        [theme.breakpoints.up("md")]: {
             display: "none"
         }
     },
@@ -44,7 +43,7 @@ const styles = theme => ({
     },
     drawerButton: {
         marginRight: theme.spacing(1),
-        [theme.breakpoints.up('md')]: {
+        [theme.breakpoints.up("md")]: {
             display: "none"
         }
     },
@@ -59,7 +58,7 @@ const styles = theme => ({
         minWidth: 256 - theme.spacing(2+2),
         height: 64,
         lineHeight: "64px",
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             display: "none"
         },
         marginRight: theme.spacing(1),
@@ -173,11 +172,6 @@ class AppToolbar extends React.Component {
         });
     };
 
-    _show_double_click_snackbar = () => {
-
-        actions.trigger_snackbar("You must double click to reset everything!");
-    };
-
     render() {
 
         const { classes, pathname, know_if_logged, _swipeable_app_drawer_open, _account_menu_anchor_element, logged_account, panic_mode } = this.state;
@@ -229,9 +223,9 @@ class AppToolbar extends React.Component {
                             }
                         </Fade>
                         <Menu anchorEl={_account_menu_anchor_element}
-                            anchorOrigin={{ vertical: 'top', horizontal: 'right'}}
+                            anchorOrigin={{ vertical: "top", horizontal: "right"}}
                             keepMounted
-                            transformOrigin={{ vertical: 'top', horizontal: 'right',}}
+                            transformOrigin={{ vertical: "top", horizontal: "right",}}
                             open={Boolean(_account_menu_anchor_element)}
                             onClose={this._close_account_menu} >
                             <MenuItem onClick={this._open_accounts}>

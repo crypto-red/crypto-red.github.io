@@ -1,35 +1,36 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import { HISTORY } from "../utils/constants";
 import Grid from "@material-ui/core/Grid";
-
-import { COINS } from "../utils/constants";
-import api from "../utils/api";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import Grow from "@material-ui/core/Grow";
+import Fab from "@material-ui/core/Fab";
 
 import DashboardPieChart from "../components/DashboardPieChart";
 import DashboardBarChart from "../components/DashboardBarChart";
-import FlashInfo from "../components/FlashInfo";
-import Fab from "@material-ui/core/Fab";
-import LockOpenIcon from '@material-ui/icons/LockOpen';
-import Grow from "@material-ui/core/Grow";
-import price_formatter from "../utils/price-formatter";
-import actions from "../actions/utils";
-import {LinearProgress} from "@material-ui/core";
 import DashboardQuickCardMobile from "../components/DashboardQuickCardMobile";
 import DashboardQuickCard from "../components/DashboardQuickCard";
 import DashboardTransactions from "../components/DashboardTransactions";
 import DashboardAddress from "../components/DashboardAddress";
+import FlashInfo from "../components/FlashInfo";
+
+import LockOpenIcon from "@material-ui/icons/LockOpen";
+
+import { HISTORY } from "../utils/constants";
+import price_formatter from "../utils/price-formatter";
+import actions from "../actions/utils";
+import { COINS } from "../utils/constants";
+import api from "../utils/api";
 
 const styles = theme => ({
     root: {
         flexGrow: 1,
         padding: theme.spacing(1),
-        [theme.breakpoints.between("xs", 'sm')]: {
+        [theme.breakpoints.between("xs", "sm")]: {
             padding: theme.spacing(1, 0),
             width: "100vw !important"
         },
-        [theme.breakpoints.between("sm", 'md')]: {
+        [theme.breakpoints.between("sm", "md")]: {
             width: "calc(100vw - 256px)"
         },
     },
@@ -62,16 +63,16 @@ const styles = theme => ({
             "& .MuiLinearProgress-barColorPrimary": {
             backgroundColor: "#000244"
         },
-        animation: '$hide 1.5s',
+        animation: "$hide 1.5s",
         "@global": {
-            '@keyframes hide': {
-                '0%': {
+            "@keyframes hide": {
+                "0%": {
                     opacity: 1,
                 },
                 "85%": {
                     opacity: 1,
                 },
-                '100%': {
+                "100%": {
                     opacity: 0,
                 },
             }
@@ -92,26 +93,26 @@ const styles = theme => ({
     },
     flashInfoContainer: {
         padding: theme.spacing(2, 2, 0, 2),
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(0)
         },
     },
     gridItem: {
         padding: theme.spacing(1),
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
             padding: theme.spacing(1, 0)
         }
     },
     quickDataCardGrid: {
         padding: theme.spacing(1),
         display: "inherit",
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
             display: "none"
         }
     },
     quickDataCardGridMobile: {
         display: "none",
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
             display: "inherit"
         }
     },
@@ -309,11 +310,6 @@ class Dashboard extends React.Component {
 
         let performed_average_percentage_weighted = parseFloat(total_balance_currency / total_balance_currency_before) - 1;
 
-        total_balance_currency_before_list.forEach(function(value, index, array){
-            // one weight now = (portion before / total before) * changes now
-
-        });
-
         const number_of_coins_performed = performed_average_percentage_array.length;
         const performed_average_percentage = performed_average_percentage_total / number_of_coins_performed;
 
@@ -328,7 +324,6 @@ class Dashboard extends React.Component {
         };
 
         this.setState({_portfolio: portfolio})
-        console.log(portfolio);
     };
 
     _price_formatter = (value, compact) => {

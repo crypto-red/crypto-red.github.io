@@ -3,15 +3,6 @@ import { withStyles } from "@material-ui/core/styles";
 import { HISTORY } from "../utils/constants";
 import api from "../utils/api";
 
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-
-import DashboardIcon from "@material-ui/icons/Dashboard";
-import BarChartIcon from "@material-ui/icons/BarChart";
-import CallMadeIcon from "@material-ui/icons/CallMade";
-import CallReceivedIcon from "@material-ui/icons/CallReceived";
-
 import CoinBalance from "../components/CoinBalance";
 import CoinTransactions from "../components/CoinTransactions";
 import CoinCharts from "../components/CoinCharts";
@@ -25,7 +16,7 @@ const styles = theme => ({
     viewSpace: {
         height: 48,
         width: "100%",
-        [theme.breakpoints.up('md')]: {
+        [theme.breakpoints.up("md")]: {
             height: 64
         }
     }

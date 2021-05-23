@@ -1,20 +1,16 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from "@material-ui/core/styles"
 
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from "@material-ui/core/Dialog";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import InputLabel from "@material-ui/core/InputLabel";
 import Input from "@material-ui/core/Input";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import IconButton from "@material-ui/core/IconButton";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import FormControl from "@material-ui/core/FormControl";
-import clipboard from "clipboard-polyfill";
-import actions from "../actions/utils";
 import Tooltip from "@material-ui/core/Tooltip";
 
 import EmailIcon from "@material-ui/icons/Email"
@@ -27,13 +23,16 @@ import BloggerIcon from "../icons/Blogger";
 import TwitterIcon from "../icons/Twitter";
 import RedditIcon from "../icons/Reddit";
 
+import clipboard from "clipboard-polyfill";
+import actions from "../actions/utils";
+
 const styles = theme => ({
     shareIconButtonContainer: {
         maxWidth: 300,
         margin: theme.spacing(2, 0),
     },
     closeButton: {
-        position: 'absolute',
+        position: "absolute",
         right: theme.spacing(1),
         top: theme.spacing(1),
         color: theme.palette.grey[500],

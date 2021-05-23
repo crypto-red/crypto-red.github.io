@@ -4,15 +4,13 @@ import { withStyles } from "@material-ui/core/styles";
 import FlashInfo from "../components/FlashInfo";
 import { HISTORY } from "../utils/constants";
 
-import ShareIcon from '@material-ui/icons/Share';
+import ShareIcon from "@material-ui/icons/Share";
 
 import ShareDialog from "../components/ShareDialog";
 import Fab from "@material-ui/core/Fab";
 import Grow from "@material-ui/core/Grow";
 
 const styles = theme => ({
-    root: {
-    },
     backgroundImage: {
         minHeight: "calc(100vh - 160px)",
         backgroundImage: "url(/src/images/wallet-dark-2.svg)",
@@ -25,7 +23,7 @@ const styles = theme => ({
     },
     flashInfoContainer: {
         padding: theme.spacing(2, 2, 0, 2),
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(0)
         },
     },
@@ -190,7 +188,7 @@ class Home extends React.Component {
         }
 
         return (
-            <div className={classes.root}>
+            <div>
                 <div className={classes.flashInfoContainer}>
                     <FlashInfo image="/src/images/wallet.svg" text="Ready to start now? Create a new anonymous wallet!" button="ACCOUNTS" onClick={(event) => this._go_to_url(event, "/accounts")}/>
                 </div>

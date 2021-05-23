@@ -1,16 +1,14 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from "@material-ui/core/styles"
 
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from "@material-ui/core/Button";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 
-import TimeAgo from 'react-timeago'
-import frenchStrings from 'react-timeago/lib/language-strings/fr'
-import buildFormatter from 'react-timeago/lib/formatters/buildFormatter'
+import TimeAgo from "react-timeago"
 
 const styles = theme => ({
 
@@ -41,14 +39,14 @@ class AccountDialogClose extends React.Component {
             <Dialog
                 open={open}
                 onClose={(event) => {this.props.cancel(event, account)}}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+                aria-labelledby="close-account-dialog-title"
+                aria-describedby="close-account-dialog-description"
             >
                 {Boolean(account) ?
                     <div>
-                        <DialogTitle id="alert-dialog-title">Close {account.name}?</DialogTitle>
+                        <DialogTitle id="close-account-dialog-title">Close {account.name}?</DialogTitle>
                         <DialogContent>
-                            <DialogContentText id="alert-dialog-description">
+                            <DialogContentText id="close-account-dialog-description">
                                 This account was opened <TimeAgo date={account.timestamp} />
                             </DialogContentText>
                         </DialogContent>

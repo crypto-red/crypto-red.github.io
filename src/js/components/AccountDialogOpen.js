@@ -1,22 +1,21 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from "@material-ui/core/styles"
 
-import Button from '@material-ui/core/Button';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Button from "@material-ui/core/Button";
+import Backdrop from "@material-ui/core/Backdrop";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
-
-import TextField from '@material-ui/core/TextField';
+import TextField from "@material-ui/core/TextField";
 
 const styles = theme => ({
     backdrop: {
-        color: '#fff',
+        color: "#fff",
         zIndex: "1400"
     },
 });
@@ -62,7 +61,7 @@ class AccountDialogOpen extends React.Component {
 
     _handle_key_down_input = (event) => {
 
-        if(event.keyCode == 13){
+        if(event.keyCode === 13){
 
             this._on_complete(event);
         }
@@ -85,14 +84,14 @@ class AccountDialogOpen extends React.Component {
                 <Dialog
                     open={open}
                     onClose={(event) => {this.props.cancel(event, account)}}
-                    aria-labelledby="alert-dialog-title"
-                    aria-describedby="alert-dialog-description"
+                    aria-labelledby="open-account-dialog-title"
+                    aria-describedby="open-account-dialog-description"
                 >
                     {Boolean(account) ?
                         <div>
-                            <DialogTitle id="alert-dialog-title">Open {account.name}?</DialogTitle>
+                            <DialogTitle id="open-account-dialog-title">Open {account.name}?</DialogTitle>
                             <DialogContent>
-                                <DialogContentText id="alert-dialog-description">
+                                <DialogContentText id="open-account-dialog-description">
                                     Open <b>{account.name}</b> account, wallets, and notes temporarily.
                                     <br />
                                     Please Type in the password of the account to log in.

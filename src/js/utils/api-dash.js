@@ -253,7 +253,7 @@ function get_dash_account_transactions_by_seed(parameters, callback_function) {
 
         Object.entries(formatted_transactions_object).forEach(entry => {
             const [key, value] = entry;
-            if(!value.query){
+            if(value.query === false){
                 all_a_response = false;
             }else {
                 all_current_transactions = all_current_transactions.concat(value.transactions);

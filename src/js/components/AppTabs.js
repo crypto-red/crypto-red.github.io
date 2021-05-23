@@ -1,9 +1,9 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
+import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
 import ViewListIcon from "@material-ui/icons/ViewList";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import CallMadeIcon from "@material-ui/icons/CallMade";
@@ -15,7 +15,7 @@ const styles = theme => ({
     AppBar: {
         position: "relative",
         zIndex: 1202,
-        [theme.breakpoints.up('md')]: {
+        [theme.breakpoints.up("md")]: {
             borderRadius: 4
         }
     },
@@ -23,7 +23,7 @@ const styles = theme => ({
         position: "fixed",
         width: "100%",
         zIndex: "1300",
-        [theme.breakpoints.up('md')]: {
+        [theme.breakpoints.up("md")]: {
             margin: theme.spacing(2),
             width: "calc(100% - 288px)"
 
@@ -62,10 +62,10 @@ class AppTabs extends React.Component {
 
     }
 
-    componentWillReceiveProps(new_state) {
+    componentWillReceiveProps(new_props) {
 
         const { pathname, _view_names } = this.state;
-        const new_pathname = new_state.pathname;
+        const new_pathname = new_props.pathname;
         const view_name = new_pathname.split("/")[3] || "";
 
         if(pathname !== new_pathname) {
@@ -79,7 +79,7 @@ class AppTabs extends React.Component {
 
         return {
             id: `coin-tab-${index}`,
-            'aria-controls': `coin-tabpanel-${index}`,
+            "aria-controls": `coin-tabpanel-${index}`,
         }
     };
 

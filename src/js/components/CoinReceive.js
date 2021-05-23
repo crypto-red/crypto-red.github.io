@@ -1,29 +1,29 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from "@material-ui/core/styles"
 import Container from "@material-ui/core/Container";
 import Fade from "@material-ui/core/Fade";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
-import InputAdornment from '@material-ui/core/InputAdornment';
-import IconButton from '@material-ui/core/IconButton';
-import FileCopyIcon from "@material-ui/icons/FileCopy"
-
-import api from "../utils/api";
-import actions from "../actions/utils";
-import { HISTORY } from "../utils/constants";
-import clipboard from "clipboard-polyfill";
-
-import QRCode from "qrcode.react";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import IconButton from "@material-ui/core/IconButton";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import Button from "@material-ui/core/Button";
 
+import FileCopyIcon from "@material-ui/icons/FileCopy";
+
+import api from "../utils/api";
+import actions from "../actions/utils";
+import { HISTORY } from "../utils/constants";
+import clipboard from "clipboard-polyfill";
+import QRCode from "qrcode.react";
+
 const styles = theme => ({
     container: {
         padding: theme.spacing(2),
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(2, 0)
         }
     },
@@ -67,8 +67,6 @@ class CoinReceive extends React.Component {
     }
 
     componentWillReceiveProps(new_props) {
-
-        const { coin_id, logged_account } = this.state;
 
         if (new_props.logged_account) {
 

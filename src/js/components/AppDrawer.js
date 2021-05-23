@@ -1,9 +1,8 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Drawer from '@material-ui/core/Drawer';
-import Hidden from '@material-ui/core/Hidden';
-import Box from '@material-ui/core/Box';
+import { withStyles } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import Drawer from "@material-ui/core/Drawer";
+import Box from "@material-ui/core/Box";
 
 import DrawerContent from "../components/DrawerContent";
 
@@ -15,7 +14,7 @@ const styles = theme => ({
     drawer: {
         width: 256,
         flexShrink: 0,
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             display: "none"
         }
     },
@@ -26,7 +25,7 @@ const styles = theme => ({
         boxShadow: "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)"
     },
     drawerContainer: {
-        overflow: 'auto'
+        overflow: "auto"
     }
 });
 
@@ -41,8 +40,8 @@ class AppDrawer extends React.Component {
         };
     };
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState(nextProps);
+    componentWillReceiveProps(new_props) {
+        this.setState(new_props);
     }
 
     render() {

@@ -1,27 +1,26 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
 
 import Card from "@material-ui/core/Card";
-import CardContent from '@material-ui/core/CardContent';
-import Button from '@material-ui/core/Button';
+import CardContent from "@material-ui/core/CardContent";
+import Button from "@material-ui/core/Button";
 import ButtonGroup from "@material-ui/core/ButtonGroup";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Fade from "@material-ui/core/Fade";
-
-import api from "../utils/api";
-import price_formatter from "../utils/price-formatter";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 import { scaleTime } from "d3-scale";
 import {utcHour, utcDay, utcMonth, utcMonday} from "d3-time";
-
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
-import Skeleton from "@material-ui/lab/Skeleton";
+
+import price_formatter from "../utils/price-formatter";
+import api from "../utils/api";
 
 const styles = theme => ({
     root: {
         flexGrow: 1,
         padding: theme.spacing(1),
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(1, 0),
             width: "100vw"
         }
@@ -29,7 +28,7 @@ const styles = theme => ({
     chart: {
         width: "100%",
         height: 500,
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             height: 250,
         }
     },
@@ -46,7 +45,7 @@ const styles = theme => ({
         position: "relative"
     },
     chartCardContent: {
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(2, 0)
         }
     },
@@ -124,7 +123,9 @@ class CoinChartsChart extends React.Component {
     _get_coin_chart_data() {
 
         const { coin_id, selected_currency, _coin_chart_data_time } = this.state;
+
         this.setState({_is_coin_chart_data_loading: true},
+
             api.get_coin_chart_data(coin_id, selected_currency.toLowerCase(), _coin_chart_data_time, this._set_coin_chart_data)
         );
     }
@@ -199,15 +200,6 @@ class CoinChartsChart extends React.Component {
         this.setState({
             _coin_chart_data_type: type
         }, this._get_coin_chart_data);
-    };
-
-    _price_formatter = (price, compact = false, display_currency = true) => {
-
-        const { selected_locales_code, selected_currency } = this.state;
-
-        return display_currency ?
-            price_formatter(price, selected_currency, selected_locales_code, compact):
-            price_formatter(price, null, selected_locales_code, compact);
     };
 
     _get_coin_chart_data_ticks = (graph_data, coin_chart_data_time) => {
@@ -313,62 +305,6 @@ class CoinChartsChart extends React.Component {
 
         const { classes, selected_locales_code, _regular_complete_sorted_data, _ticks_array, _coin_chart_data_time, _coin_chart_data_type, _is_coin_chart_data_loading } = this.state;
 
-
-
-        const chart =
-            <Fade in>
-                <Card className={classes.fullHeight}>
-                    <CardContent className={classes.flowRoot}>
-                        <ButtonGroup size="small" aria-label="Price and market cap buttons" className={classes.floatLeft}>
-                            <Button className={_coin_chart_data_type === "prices" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_type("prices")}>price</Button>
-                            <Button className={_coin_chart_data_type === "market_caps" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_type("market_caps")}>cap.</Button>
-                        </ButtonGroup>
-                        <ButtonGroup size="small" aria-label="Chart time range button" className={classes.floatRight}>
-                            <Button className={_coin_chart_data_time === "1" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("1")}>1d</Button>
-                            <Button className={_coin_chart_data_time === "7" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("7")}>7d</Button>
-                            <Button className={_coin_chart_data_time === "30" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("30")}>30d</Button>
-                            <Button className={_coin_chart_data_time === "180" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("180")}>180d</Button>
-                            <Button className={_coin_chart_data_time === "360" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("360")}>1y</Button>
-                            <Button className={_coin_chart_data_time === "max" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("max")}>max</Button>
-                        </ButtonGroup>
-                    </CardContent>
-                    <CardContent className={classes.chartCardContent}>
-                        <Fade in timeout={300}>
-                            <div className={classes.chart}>
-                                {
-                                    Boolean(_regular_complete_sorted_data) ?
-                                        <ResponsiveContainer>
-                                            <AreaChart
-                                                data={_regular_complete_sorted_data}
-                                            >
-                                                <defs>
-                                                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                                        <stop offset="5%" stop-color="#131162" stop-opacity="0.66"></stop>
-                                                        <stop offset="95%" stop-color="#ffffff" stop-opacity="1"></stop>
-                                                    </linearGradient>
-                                                </defs>
-                                                <CartesianGrid strokeDasharray="3 3" />
-                                                <XAxis dataKey="date"
-                                                       angle={60} height={75} dy={10} textAnchor="start"
-                                                       tickFormatter={value => this._date_formatter(value, _coin_chart_data_time, selected_locales_code)}
-                                                       ticks={_ticks_array}
-                                                       tickCount={_ticks_array.length}/>
-                                                <YAxis dataKey="value"
-                                                       type={"number"}
-                                                       tickFormatter={value => this._price_formatter(value, true, false)}/>
-                                                <Tooltip formatter={value => this._price_formatter(value)}
-                                                         labelFormatter={value => this._date_formatter(value, _coin_chart_data_time, selected_locales_code, true)}/>
-                                                <Area type="monotone" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3}/>
-                                            </AreaChart>
-                                        </ResponsiveContainer>:
-                                        <Skeleton className={classes.chart} />
-                                }
-                            </div>
-                        </Fade>
-                    </CardContent>
-                </Card>
-            </Fade>;
-
         return (
             <div className={classes.fullHeight}>
                 <div className={classes.overlay} style={_is_coin_chart_data_loading ? {}: {display: "none"}}>
@@ -376,7 +312,58 @@ class CoinChartsChart extends React.Component {
                         <CircularProgress color="inherit" />
                     </div>
                 </div>
-                {chart}
+                <Fade in>
+                    <Card className={classes.fullHeight}>
+                        <CardContent className={classes.flowRoot}>
+                            <ButtonGroup size="small" aria-label="Price and market cap buttons" className={classes.floatLeft}>
+                                <Button className={_coin_chart_data_type === "prices" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_type("prices")}>price</Button>
+                                <Button className={_coin_chart_data_type === "market_caps" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_type("market_caps")}>cap.</Button>
+                            </ButtonGroup>
+                            <ButtonGroup size="small" aria-label="Chart time range button" className={classes.floatRight}>
+                                <Button className={_coin_chart_data_time === "1" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("1")}>1d</Button>
+                                <Button className={_coin_chart_data_time === "7" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("7")}>7d</Button>
+                                <Button className={_coin_chart_data_time === "30" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("30")}>30d</Button>
+                                <Button className={_coin_chart_data_time === "180" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("180")}>180d</Button>
+                                <Button className={_coin_chart_data_time === "360" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("360")}>1y</Button>
+                                <Button className={_coin_chart_data_time === "max" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("max")}>max</Button>
+                            </ButtonGroup>
+                        </CardContent>
+                        <CardContent className={classes.chartCardContent}>
+                            <Fade in timeout={300}>
+                                <div className={classes.chart}>
+                                    {
+                                        Boolean(_regular_complete_sorted_data) ?
+                                            <ResponsiveContainer>
+                                                <AreaChart
+                                                    data={_regular_complete_sorted_data}
+                                                >
+                                                    <defs>
+                                                        <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                                                            <stop offset="5%" stop-color="#131162" stop-opacity="0.66"></stop>
+                                                            <stop offset="95%" stop-color="#ffffff" stop-opacity="1"></stop>
+                                                        </linearGradient>
+                                                    </defs>
+                                                    <CartesianGrid strokeDasharray="3 3" />
+                                                    <XAxis dataKey="date"
+                                                           angle={60} height={75} dy={10} textAnchor="start"
+                                                           tickFormatter={value => this._date_formatter(value, _coin_chart_data_time, selected_locales_code)}
+                                                           ticks={_ticks_array}
+                                                           tickCount={_ticks_array.length}/>
+                                                    <YAxis dataKey="value"
+                                                           type={"number"}
+                                                           tickFormatter={value => this._price_formatter(value, true, false)}/>
+                                                    <Tooltip formatter={value => this._price_formatter(value)}
+                                                             labelFormatter={value => this._date_formatter(value, _coin_chart_data_time, selected_locales_code, true)}/>
+                                                    <Area type="monotone" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3}/>
+                                                </AreaChart>
+                                            </ResponsiveContainer>:
+                                            <Skeleton className={classes.chart} />
+                                    }
+                                </div>
+                            </Fade>
+                        </CardContent>
+                    </Card>
+                </Fade>
             </div>
         );
     }

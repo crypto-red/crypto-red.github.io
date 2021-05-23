@@ -1,25 +1,26 @@
 import React from "react";
-import fuzzy from "fuzzy";
-
 import { withStyles } from "@material-ui/core/styles";
+
 import Container from "@material-ui/core/Container";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import Fade from "@material-ui/core/Fade";
-import { LOCALES, CURRENCY_COUNTRIES } from "../utils/constants";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 
+import { LOCALES, CURRENCY_COUNTRIES } from "../utils/constants";
 import api from "../utils/api";
 import actions from "../actions/utils";
 import CardHeader from "@material-ui/core/CardHeader";
 
+import fuzzy from "fuzzy";
+
 const styles = theme => ({
     container: {
         padding: theme.spacing(2),
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(2, 0)
         }
     },
@@ -102,8 +103,8 @@ class Settings extends React.Component {
     _fuzzy_filter_locales = (list, input_value) => {
 
         const options = {
-            pre: '<b style="color: #000244;">'
-            , post: '</b>'
+            pre: "<b style=\"color: #000244;\">"
+            , post: "</b>"
             , extract: function(element) { return element.name; }
         };
 
@@ -113,8 +114,8 @@ class Settings extends React.Component {
     _fuzzy_filter_currency = (list, input_value) => {
 
         const options = {
-            pre: '<b style="color: #000244;">'
-            , post: '</b>'
+            pre: "<b style=\"color: #000244;\">"
+            , post: "</b>"
             , extract: function(element) { return element; }
         };
 

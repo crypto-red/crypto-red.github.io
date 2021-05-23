@@ -1,18 +1,16 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
 
 import Card from "@material-ui/core/Card";
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import TooltipMUI from '@material-ui/core/Tooltip';
-import TextField from '@material-ui/core/TextField';
-import Fade from '@material-ui/core/Fade';
-import Button from '@material-ui/core/Button'
+import CardContent from "@material-ui/core/CardContent";
+import CardHeader from "@material-ui/core/CardHeader";
+import TextField from "@material-ui/core/TextField";
+import Fade from "@material-ui/core/Fade";
+import Button from "@material-ui/core/Button"
 
 import { get_date_format } from "../utils/time";
-import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
-
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 import api from "../utils/api";
 
 const styles = theme => ({
@@ -152,7 +150,7 @@ class CoinChartsConvert extends React.Component {
                                 value={_selected_date}
                                 onChange={this._handle_selected_date_change}
                                 KeyboardButtonProps={{
-                                    'aria-label': 'change date',
+                                    "aria-label": "change date",
                                 }}
                             />
                         </MuiPickersUtilsProvider>

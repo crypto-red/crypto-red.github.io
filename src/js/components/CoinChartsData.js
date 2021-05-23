@@ -1,22 +1,20 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
 
 import Avatar from "@material-ui/core/Avatar";
 import Card from "@material-ui/core/Card";
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-
-import Fade from '@material-ui/core/Fade';
+import CardContent from "@material-ui/core/CardContent";
+import CardHeader from "@material-ui/core/CardHeader";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableRow from "@material-ui/core/TableRow";
+import Fade from "@material-ui/core/Fade";
 
 import price_formatter from "../utils/price-formatter";
 
-import green from '@material-ui/core/colors/green';
-import red from '@material-ui/core/colors/red';
+import green from "@material-ui/core/colors/green";
+import red from "@material-ui/core/colors/red";
 
 const styles = theme => ({
     coinImage: {
@@ -57,7 +55,7 @@ class CoinChartsData extends React.Component {
     };
     componentWillReceiveProps(new_props) {
 
-        this.setState({...new_props});
+        this.setState(new_props);
     }
 
     _price_formatter = (price, compact = false, display_currency = true) => {
@@ -71,7 +69,7 @@ class CoinChartsData extends React.Component {
 
     render() {
 
-        const { classes, selected_currency, selected_locales_code, coin_data } = this.state;
+        const { classes, selected_currency, coin_data } = this.state;
 
         const data = Boolean(coin_data) ?
             <Fade in>

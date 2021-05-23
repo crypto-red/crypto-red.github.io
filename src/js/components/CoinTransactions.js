@@ -1,25 +1,26 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from "@material-ui/core/styles";
+
 import Fade from "@material-ui/core/Fade";
 import Card from "@material-ui/core/Card";
 import Button from "@material-ui/core/Button";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
 import Container from "@material-ui/core/Container";
-import List from '@material-ui/core/List';
+import List from "@material-ui/core/List";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 import Transaction from "../components/Transaction";
 import TransactionDialog from "../components/TransactionDialog";
-import {HISTORY} from "../utils/constants";
-import CircularProgress from "@material-ui/core/CircularProgress";
 
+import { HISTORY } from "../utils/constants";
 import actions from "../actions/utils";
 import api from "../utils/api";
 
 const styles = theme => ({
     container: {
         padding: theme.spacing(2),
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(2, 0)
         }
     },
@@ -57,7 +58,7 @@ class CoinTransactions extends React.Component {
 
         if(this.state.coin_id !== new_props.coin_id) {
 
-            this.setState({_transactions: []}, () => {
+            this.setState({_loading: true, _transactions: []}, () => {
 
                 this._load_more_transactions();
             });

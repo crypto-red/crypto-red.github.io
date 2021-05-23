@@ -12,6 +12,7 @@ import { get_btc_address_by_seed, get_btc_account_balance_by_seed, get_btc_accou
 import { get_ltc_address_by_seed, get_ltc_account_balance_by_seed, get_ltc_account_transactions_by_seed, get_ltc_transaction_by_id, send_ltc_transaction, get_ltc_send_transaction_info  } from "./api-ltc";
 import { get_doge_address_by_seed, get_doge_account_balance_by_seed, get_doge_account_transactions_by_seed, get_doge_transaction_by_id, send_doge_transaction, get_doge_send_transaction_info  } from "./api-doge";
 import { get_dash_address_by_seed, get_dash_account_balance_by_seed, get_dash_account_transactions_by_seed, get_dash_transaction_by_id, send_dash_transaction, get_dash_send_transaction_info  } from "./api-dash";
+import { get_zec_address_by_seed, get_zec_account_balance_by_seed, get_zec_account_transactions_by_seed, get_zec_transaction_by_id, send_zec_transaction, get_zec_send_transaction_info  } from "./api-zec";
 
 const query_db = new PouchDB("query_db", {revs_limit: 1, auto_compaction: true});
 const settings_db = new PouchDB("settings_db", {revs_limit: 1, auto_compaction: true});
@@ -653,6 +654,8 @@ function get_address_by_seed(coin_id, seed) {
             return get_doge_address_by_seed(seed);
         case "dash":
             return get_dash_address_by_seed(seed);
+        case "zcash":
+            return get_zec_address_by_seed(seed);
         default:
             return "Hello crypto";
     }
@@ -672,6 +675,8 @@ function get_send_transaction_info(coin_id) {
             return get_doge_send_transaction_info();
         case "dash":
             return get_dash_send_transaction_info();
+        case "zcash":
+            return get_zec_send_transaction_info();
         default:
             return {
                 max_message_length: 0,
@@ -740,6 +745,16 @@ function get_balance_by_seed(coin_id, seed, callback_function){
                 callback_function
             );
             break;
+        case "zcash":
+
+            _cache_data(
+                16 * 1000,
+                "zcash-get-balance",
+                get_zec_account_balance_by_seed,
+                {seed: seed},
+                callback_function
+            );
+            break;
         default:
             callback_function(null, 0);
             break;
@@ -771,6 +786,10 @@ function send_transaction(coin_id, seed, address, amount, memo, callback_functio
 
             send_dash_transaction(seed, address, amount, memo, callback_function);
             break;
+        case "zcash":
+
+            send_zec_transaction(seed, address, amount, memo, callback_function);
+            break;
         default:
             callback_function(null, true);
             break;
@@ -801,6 +820,10 @@ function estimate_transaction_fee(coin_id, seed, address, amount, memo, callback
         case "dash":
 
             send_dash_transaction(seed, address, amount, memo, callback_function, return_fee_instead_of_send);
+            break;
+        case "zcash":
+
+            send_zec_transaction(seed, address, amount, memo, callback_function, return_fee_instead_of_send);
             break;
         default:
             callback_function(null, 0);
@@ -864,6 +887,16 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
                 callback_function
             );
             break;
+        case "zcash":
+
+            _cache_data(
+                1 * 1000,
+                "zcash-get-transaction_from-" + after_transaction_id,
+                get_zec_account_transactions_by_seed,
+                {seed, after_transaction_id},
+                callback_function
+            );
+            break;
         default:
             callback_function(null, []);
             break;
@@ -878,7 +911,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "bitcoin":
 
             _cache_data(
-                12 * 1000,
+                60 * 1000,
                 "bitcoin-get-transaction_from-id-"+id,
                 get_btc_transaction_by_id,
                 {id, seed},
@@ -889,7 +922,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "litecoin":
 
             _cache_data(
-                12 * 1000,
+                60 * 1000,
                 "litecoin-get-transaction_from-id-"+id,
                 get_ltc_transaction_by_id,
                 {id, seed},
@@ -899,7 +932,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "dogecoin":
 
             _cache_data(
-                12 * 1000,
+                60 * 1000,
                 "dogecoin-get-transaction_from-id-"+id,
                 get_doge_transaction_by_id,
                 {id, seed},
@@ -909,9 +942,18 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "dash":
 
             _cache_data(
-                12 * 1000,
+                60 * 1000,
                 "dash-get-transaction_from-id-"+id,
                 get_dash_transaction_by_id,
+                {id, seed},
+                callback_function
+            );
+        case "zcash":
+
+            _cache_data(
+                60 * 1000,
+                "zcash-get-transaction_from-id-"+id,
+                get_zec_transaction_by_id,
                 {id, seed},
                 callback_function
             );

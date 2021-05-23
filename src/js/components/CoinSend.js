@@ -1,5 +1,6 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from "@material-ui/core/styles";
+
 import Container from "@material-ui/core/Container";
 import Fade from "@material-ui/core/Fade";
 import Card from "@material-ui/core/Card";
@@ -7,29 +8,31 @@ import CardContent from "@material-ui/core/CardContent";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import CardHeader from "@material-ui/core/CardHeader";
-import {HISTORY} from "../utils/constants";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Fab from "@material-ui/core/Fab";
 import Grow from "@material-ui/core/Grow";
-import QrCodeScanIcon from "../icons/QrCodeScan";
 import Dialog from "@material-ui/core/Dialog";
-import QrReader from 'react-qr-reader'
-import actions from "../actions/utils";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
-import CoinSendDialog from "./CoinSendDialog";
-import api from "../utils/api";
 import Backdrop from "@material-ui/core/Backdrop";
+
+import QrCodeScanIcon from "../icons/QrCodeScan";
+
+import QrReader from "react-qr-reader"
+import CoinSendDialog from "./CoinSendDialog";
+import { HISTORY } from "../utils/constants";
+import actions from "../actions/utils";
+import api from "../utils/api";
 
 const styles = theme => ({
     container: {
         padding: theme.spacing(2),
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(2, 0)
         }
     },
     backdrop: {
-        color: '#fff',
+        color: "#fff",
         zIndex: "1400"
     },
     textField: {
@@ -53,7 +56,7 @@ const styles = theme => ({
         "& .MuiDialog-container .MuiDialog-paper": {
             width: 600,
         },
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             "& .MuiDialog-container .MuiDialog-paper": {
                 margin: "24px 0px",
                 borderRadius: 0,
@@ -325,7 +328,7 @@ class CoinSend extends React.Component {
                             delay={300}
                             onError={this._handle_on_scanner_error}
                             onScan={this._handle_on_scanner_scan}
-                            style={{ width: '100%' }}
+                            style={{ width: "100%" }}
                         />
                     </DialogContent>
                 </Dialog>

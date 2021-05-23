@@ -1,25 +1,25 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
 
-import { green, red } from '@material-ui/core/colors';
-import Button from '@material-ui/core/Button';
-import Fab from '@material-ui/core/Fab';
+import { green, red } from "@material-ui/core/colors";
+import Button from "@material-ui/core/Button";
+import Fab from "@material-ui/core/Fab";
 
 import Grow from "@material-ui/core/Grow";
 import Fade from "@material-ui/core/Fade";
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import ChipInput from 'material-ui-chip-input'
+import Stepper from "@material-ui/core/Stepper";
+import Step from "@material-ui/core/Step";
+import StepLabel from "@material-ui/core/StepLabel";
+import ChipInput from "material-ui-chip-input"
 
 import * as bip39 from "bip39"
 import zxcvbn from "zxcvbn";
@@ -33,7 +33,7 @@ import {Collapse} from "@material-ui/core";
 
 const styles = theme => ({
     dialog: {
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             "& .MuiDialog-container .MuiDialog-paper": {
                 margin: "24px 0px",
                 borderRadius: 0
@@ -46,7 +46,7 @@ const styles = theme => ({
     generationFabSuccess: {
         boxShadow: "none",
         backgroundColor: green[500],
-        '&:hover': {
+        "&:hover": {
             backgroundColor: green[700],
         },
         color: "#FFFFFF"
@@ -54,7 +54,7 @@ const styles = theme => ({
     generationFabError: {
         boxShadow: "none",
         backgroundColor: red[500],
-        '&:hover': {
+        "&:hover": {
             backgroundColor: red[700],
         },
         color: "#FFFFFF"
@@ -150,6 +150,7 @@ class AccountDialogCreate extends React.Component {
     };
 
     _handle_account_name_input_change = (event) => {
+
         this.setState({_account_name_input: event.target.value, _is_account_name_error: false});
     };
 
@@ -159,10 +160,11 @@ class AccountDialogCreate extends React.Component {
         const _account_password_input = event.target.value;
         const _password_evaluation = _zxcvbn(_account_password_input);
 
-        this.setState({_account_password_input: event.target.value, _password_evaluation, _is_account_confirmation_error: false, _is_account_password_error: false});
+        this.setState({_account_password_input, _password_evaluation, _is_account_confirmation_error: false, _is_account_password_error: false});
     };
 
     _handle_account_confirmation_input_change = (event) => {
+
         this.setState({_account_confirmation_input: event.target.value, _is_account_confirmation_error: false, _is_account_password_error: false});
     };
 
@@ -210,11 +212,6 @@ class AccountDialogCreate extends React.Component {
 
             callback_function(!_is_account_mnemonic_input_error);
         })
-
-    };
-
-    _validate_step_3 = () => {
-
 
     };
     

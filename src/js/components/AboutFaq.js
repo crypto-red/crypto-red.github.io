@@ -2,17 +2,16 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
 import { HISTORY } from "../utils/constants";
+
 import Fade from "@material-ui/core/Fade";
 import Container from "@material-ui/core/Container";
-
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
-
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
-
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 
 const styles = theme => ({
     root: {
@@ -20,13 +19,13 @@ const styles = theme => ({
     containerElement: {
         padding: theme.spacing(2),
         display: "flex",
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
             padding: theme.spacing(2, 0),
             display: "inherit"
         }
     },
     horizontalTabsContainer: {
-        [theme.breakpoints.up('lg')]: {
+        [theme.breakpoints.up("lg")]: {
             display: "none"
         },
         [theme.breakpoints.between('md', "lg")]: {
@@ -42,7 +41,7 @@ const styles = theme => ({
         }
     },
     verticalTabs: {
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
             display: "none"
         },
         marginLeft: theme.spacing(2),
@@ -124,7 +123,6 @@ class AboutFaq extends React.Component {
 
         const { _history, _view_names } = this.state;
 
-        const pathname = _history.location.pathname;
         const _view_name = _view_names[view_name_index] || "organization";
         const _view_name_index = !~_view_names.indexOf(_view_name) ? 0: _view_names.indexOf(_view_name);
 
@@ -149,7 +147,7 @@ class AboutFaq extends React.Component {
     _get_tab_props = (index, direction) => {
         return {
             id: `${direction}-tab-${index}`,
-            'aria-controls': `${direction}-tabpanel-${index}`,
+            "aria-controls": `${direction}-tabpanel-${index}`,
         };
     }
 
@@ -206,7 +204,6 @@ class AboutFaq extends React.Component {
                         orientation="vertical"
                         value={_view_name_index}
                         onChange={this._handle_view_name_change}
-                        aria-label="Vertical tabs example"
                         className={classes.verticalTabs}
                     >
                         {_view_names.map((value, index, array) => {

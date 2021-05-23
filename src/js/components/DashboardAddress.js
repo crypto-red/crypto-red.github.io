@@ -1,6 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
+
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -54,7 +54,7 @@ class DashboardAddress extends React.Component {
                         <CardHeader title="Address" />
                         <CardContent className={classes.addressCardContent}>
                             {
-                                _coins_id.map((coin_id, index, array) => {
+                                _coins_id.map((coin_id) => {
 
                                     return (
                                         <AddressListItem

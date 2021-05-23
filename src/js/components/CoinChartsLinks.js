@@ -1,23 +1,25 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles } from "@material-ui/core/styles";
 
+import Fade from "@material-ui/core/Fade";
 import Card from "@material-ui/core/Card";
-import CardContent from '@material-ui/core/CardContent';
-import CardHeader from '@material-ui/core/CardHeader';
-import Fade from '@material-ui/core/Fade';
-
+import CardContent from "@material-ui/core/CardContent";
+import CardHeader from "@material-ui/core/CardHeader";
 import IconButton from "@material-ui/core/IconButton";
+import Dialog from "@material-ui/core/Dialog";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import Tooltip from "@material-ui/core/Tooltip";
+
 import HomeIcon from "@material-ui/icons/Home";
 import ExploreIcon from "@material-ui/icons/Explore";
 import ForumIcon from "@material-ui/icons/Forum";
 import ChatIcon from "@material-ui/icons/Chat";
 import GitHubIcon from "@material-ui/icons/GitHub";
-import Dialog from "@material-ui/core/Dialog";
-import DialogTitle from "@material-ui/core/DialogTitle";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import { List, ListItem, ListItemText } from "@material-ui/core";
-import Tooltip from "@material-ui/core/Tooltip";
 
 const styles = theme => ({
     hidden: {
@@ -54,7 +56,7 @@ class CoinChartsLinks extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        this.setState({...new_props});
+        this.setState(new_props);
     }
 
 
@@ -179,12 +181,12 @@ class CoinChartsLinks extends React.Component {
                 <Dialog
                     open={_link_dialog_open}
                     onClose={(event) => {this._on_link_dialog_close(event)}}
-                    aria-labelledby="Show links title"
-                    aria-describedby="Show links description"
+                    aria-labelledby="show-links-dialog-title"
+                    aria-describedby="show-links-dialog-description"
                 >
-                    <DialogTitle id="Show links title">{_link_dialog_name}</DialogTitle>
+                    <DialogTitle id="show-links-dialog-title">{_link_dialog_name}</DialogTitle>
                     <DialogContent>
-                        <DialogContentText id="Show links description">
+                        <DialogContentText id="show-links-dialog-description">
                             <List>
                                 {_link_dialog_data.map((link, index, array) => {
 

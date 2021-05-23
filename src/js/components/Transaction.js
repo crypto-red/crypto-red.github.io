@@ -1,18 +1,17 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import ListItem from '@material-ui/core/ListItem';
-import Skeleton from '@material-ui/lab/Skeleton';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import Avatar from "@material-ui/core/Avatar";
 import TooltipMui from "@material-ui/core/Tooltip";
+import green from "@material-ui/core/colors/green";
+import red from "@material-ui/core/colors/red";
+import Skeleton from "@material-ui/lab/Skeleton";
 
-import green from '@material-ui/core/colors/green';
-import red from '@material-ui/core/colors/red';
-
+import Jdenticon from "react-jdenticon";
 import price_formatter from "../utils/price-formatter";
-import Jdenticon from 'react-jdenticon';
 import TimeAgo from "react-timeago";
 import api from "../utils/api";
 
@@ -34,19 +33,19 @@ const styles = theme => ({
     timeAgo: {
 
     },
-    currencyCryptoamountPositive: {
+    currencyCryptoAmountPositive: {
         color: green[700],
         "&::before": {
             content: "\"+\""
         }
     },
-    currencyCryptoamountNegative: {
+    currencyCryptoAmountNegative: {
         color: red[700],
         "&::before": {
             content: "\"-\""
         }
     },
-    currencyFiatamount: {
+    currencyFiatAmount: {
 
     }
 });
@@ -60,7 +59,6 @@ class Transaction extends React.Component {
             classes: props.classes,
             logged_account: props.logged_account,
             show_crypto_image: props.show_crypto_image,
-            coin_data: props.coin_data,
             selected_currency: props.selected_currency,
             selected_locales_code: props.selected_locales_code,
             transaction: props.transaction,
@@ -72,12 +70,16 @@ class Transaction extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        const force_update_full_transaction = new_props.transaction.id !== new_props.transaction.id;
+        const force_update_full_transaction = this.state.transaction.id !== new_props.transaction.id;
 
         this.setState(new_props, () => {
-            this._get_coin_data();
-            this._get_address_by_seed()
-            this._maybe_update_full_transaction(force_update_full_transaction);
+
+            if(force_update_full_transaction) {
+
+                this._get_coin_data();
+                this._get_address_by_seed()
+                this._maybe_update_full_transaction(force_update_full_transaction);
+            }
         });
     }
 
@@ -136,7 +138,7 @@ class Transaction extends React.Component {
 
     render() {
 
-        const { classes, show_crypto_image, _address, _coin_data, selected_currency, selected_locales_code, _full_transaction } = this.state;
+        const { classes, show_crypto_image, _address, _coin_data, selected_currency, selected_locales_code, transaction, _full_transaction } = this.state;
 
         let component =
             <ListItem>
@@ -163,7 +165,7 @@ class Transaction extends React.Component {
             const important_address_text = received ? "Send from " + important_address: "Send to " + _full_transaction.send_to;
 
             component =
-                <ListItem onClick={(event) => {this.props.open(event, _full_transaction)}} className={classes.listItem}>
+                <ListItem onClick={(event) => {this.props.open(event, _full_transaction)}} className={classes.listItem} button>
                     <ListItemAvatar>
                         <TooltipMui title={important_address_text} aria-label={important_address_text}>
                             <Avatar className={classes.avatar}>
@@ -180,26 +182,26 @@ class Transaction extends React.Component {
                         primary={
                             <div className={classes.spaceBetween}>
                                 <span className={classes.currencyCrypto}>{_coin_data.name}</span>
-                                <span className={feedback ? null: received ? classes.currencyCryptoamountPositive: classes.currencyCryptoamountNegative}>
-                                {price_formatter(parseFloat(_full_transaction.amount_crypto), _coin_data.symbol, selected_locales_code)}
-                            </span>
+                                <span className={feedback ? null: received ? classes.currencyCryptoAmountPositive: classes.currencyCryptoAmountNegative}>
+                            {price_formatter(parseFloat(_full_transaction.amount_crypto), _coin_data.symbol, selected_locales_code)}
+                        </span>
                             </div>
                         }
                         secondary={
                             <div className={classes.spaceBetween}>
-                            <span className={classes.timeAgo}>
-                                <TimeAgo date={_full_transaction.timestamp} />
-                                {
-                                    typeof _full_transaction.confirmations !== "undefined"?
-                                        _full_transaction.confirmations <= 6 ?
-                                            " (Unconfirmed)"
-                                            : null
+                        <span className={classes.timeAgo}>
+                            <TimeAgo date={_full_transaction.timestamp} />
+                            {
+                                typeof _full_transaction.confirmations !== "undefined"?
+                                    _full_transaction.confirmations <= 6 ?
+                                        " (Unconfirmed)"
                                         : null
-                                }
-                            </span>
-                                <span className={classes.currencyFiatamount}>
-                                ({price_formatter(amount_fiat, selected_currency, selected_locales_code)})
-                            </span>
+                                    : null
+                            }
+                        </span>
+                                <span className={classes.currencyFiatAmount}>
+                            ({price_formatter(amount_fiat, selected_currency, selected_locales_code)})
+                        </span>
                             </div>
                         } />
                 </ListItem>;

@@ -1,13 +1,13 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles'
+import { withStyles } from "@material-ui/core/styles"
 
-import Button from '@material-ui/core/Button';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import {red} from "@material-ui/core/colors";
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
+import Button from "@material-ui/core/Button";
+import { red } from "@material-ui/core/colors";
 
 const styles = theme => ({
     red: {
@@ -61,14 +61,14 @@ class AccountDialogBackup extends React.Component {
             <Dialog
                 open={open}
                 onClose={(event) => {this._on_close(event, account)}}
-                aria-labelledby="Backup account dialog title"
-                aria-describedby="Backup account dialog description"
+                aria-labelledby="backup-account-dialog-title"
+                aria-describedby="backup-account-dialog-description"
             >
                 {Boolean(account) ?
                     <div>
-                        <DialogTitle id="Backup account dialog title">Seed of {account.name}</DialogTitle>
+                        <DialogTitle id="backup-account-dialog-title">Seed of {account.name}</DialogTitle>
                         <DialogContent>
-                            <DialogContentText id="Backup account dialog description">
+                            <DialogContentText id="backup-account-dialog-description">
                                 <p className={classes.red}>STORE IT ON PAPER, NEVER SHARE THIS SEED TO ANYONE!!!</p>
                                 {
                                     _shown ?

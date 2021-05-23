@@ -1,25 +1,15 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { withStyles } from '@material-ui/core/styles';
-import Fade from '@material-ui/core/Fade';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
-import CodeIcon from "@material-ui/icons/Code";
-import SwapVertIcon from "@material-ui/icons/SwapVert";
-import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
-import RefreshIcon from '@material-ui/icons/Refresh';
-import HelpIcon from '@material-ui/icons/Help';
-import ChromeReaderModeIcon from '@material-ui/icons/ChromeReaderMode';
-import InfoIcon from '@material-ui/icons/Info';
-import Collapse from '@material-ui/core/Collapse';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import Avatar from '@material-ui/core/Avatar';
+import { withStyles } from "@material-ui/core/styles";
 
-import { HISTORY, COINS } from "../utils/constants";
+import Fade from "@material-ui/core/Fade";
+import Collapse from "@material-ui/core/Collapse";
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import ListItemText from "@material-ui/core/ListItemText";
+import ListItemAvatar from "@material-ui/core/ListItemAvatar";
+import Avatar from "@material-ui/core/Avatar";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
@@ -28,6 +18,18 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
+import CodeIcon from "@material-ui/icons/Code";
+import SwapVertIcon from "@material-ui/icons/SwapVert";
+import SwapHorizIcon from "@material-ui/icons/SwapHoriz";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import HelpIcon from "@material-ui/icons/Help";
+import ChromeReaderModeIcon from "@material-ui/icons/ChromeReaderMode";
+import InfoIcon from "@material-ui/icons/Info";
+
+import { HISTORY, COINS } from "../utils/constants";
 import api from "../utils/api";
 import actions from "../actions/utils";
 
@@ -60,7 +62,7 @@ const styles = theme => ({
         backgroundSize: "300% auto",
         width: 320,
         transition: "background-size 300ms ease-in-out 0ms",
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             display: "none"
         }
     },
@@ -114,7 +116,7 @@ class DrawerContent extends React.Component {
                 },
                 convert: {
                     id: "convert",
-                    url: "https://swapspace.co/",
+                    url: "https://swapspace.co?ref=6264baf9e63aa11df52cd6d3",
                     image: "currency-dark.svg",
                     title: "Do you know how to trade your assets?",
                     body: "To exchange one currency to another, you have to pass trough an swap platform.",

@@ -5,21 +5,21 @@ const overrides = {
         }
     },
     MuiCssBaseline: {
-        '@global': {
+        "@global": {
             html: {
-                overflow: 'overlay',
+                overflow: "overlay",
             },
             body: {
                 backgroundColor: "#F4F6F8"
             },
-            '*::-webkit-scrollbar': {
+            "*::-webkit-scrollbar": {
                 width: "8px"
             },
-            '*::-webkit-scrollbar-track': {
+            "*::-webkit-scrollbar-track": {
                 backgroundColor: "transparent"
             },
-            '*::-webkit-scrollbar-thumb': {
-                backgroundColor: 'rgba(124,124,124,.3)',
+            "*::-webkit-scrollbar-thumb": {
+                backgroundColor: "rgba(124,124,124,.3)",
                     borderRadius: 8
             },
             ".MuiTableSortLabel-root.MuiTableSortLabel-root.MuiTableSortLabel-active": {

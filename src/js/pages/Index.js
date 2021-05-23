@@ -1,15 +1,14 @@
 import React from "react";
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { withStyles } from '@material-ui/core/styles';
+import CssBaseline from "@material-ui/core/CssBaseline";
+import { withStyles } from "@material-ui/core/styles";
+
+import Snackbar from "@material-ui/core/Snackbar";
+import Toolbar from "@material-ui/core/Toolbar";
+
 import AppToolbar from "../components/AppToolbar";
 import AppDrawer from "../components/AppDrawer";
 import AppTabs from "../components/AppTabs";
-import Toolbar from '@material-ui/core/Toolbar';
 
-import api from "../utils/api";
-
-import { update_meta_title } from "../utils/meta-tags";
-import { PAGE_ROUTES, HISTORY } from "../utils/constants";
 import dispatcher from "../dispatcher";
 import actions from "../actions/utils";
 import Home from "./Home";
@@ -20,11 +19,14 @@ import Accounts from "./Accounts";
 import Coins from "./Coins";
 import Coin from "./Coin";
 import Unknown from "./Unknown";
-import Snackbar from "@material-ui/core/Snackbar";
+
+import api from "../utils/api";
+import { update_meta_title } from "../utils/meta-tags";
+import { PAGE_ROUTES, HISTORY } from "../utils/constants";
 
 const styles = theme => ({
     root: {
-        display: 'flex'
+        display: "flex"
     },
     content: {
         flexGrow: 1
@@ -68,13 +70,11 @@ class Index extends React.Component {
         this._update_login();
         dispatcher.register(this._handle_events.bind(this));
 
-        actions.trigger_snackbar("This app uses testnet network for all crypto excepting VSYS..", 3500);
+        actions.trigger_snackbar("This app uses testnet network for all crypto excepting VSYS.", 3500);
 
     }
 
     _handle_events(event) {
-
-        const { _history } = this.state;
 
         // Make different actions send from a dispatcher binded to this function
         switch(event.type) {

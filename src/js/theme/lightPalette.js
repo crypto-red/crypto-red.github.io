@@ -4,8 +4,8 @@ const palette = {
         light: "#060e23",
         main: "#060e23",
         dark: "#060e23",
-        action: "#a99a31",
-        actionLighter: "#b5a748",
+        action: "#000844",
+        actionLighter: "#010648",
         contrastText: "#ffffff"
     },
     secondary: {

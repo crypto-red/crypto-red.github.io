@@ -74,7 +74,13 @@ const COINS = [
         name: "Vsystems",
         short_name: "VSYS",
         image_url: "https://assets.coingecko.com/coins/images/7492/small/VSYS_Coin_200.png"
-    }
+    },/*
+    {
+        id: "zcash",
+        name: "Zcash",
+        short_name: "ZEC",
+        image_url: "https://assets.coingecko.com/coins/images/486/small/circle-zcash-color.png"
+    }*/
 ];
 
 const LOCALES = [

@@ -1,14 +1,15 @@
 import React from "react";
 import { withStyles } from '@material-ui/core/styles'
 
-import api from "../utils/api";
-import actions from "../actions/utils";
-import { HISTORY } from "../utils/constants";
-import clipboard from "clipboard-polyfill";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import FileCopyIcon from "@material-ui/icons/FileCopy"
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItem from "@material-ui/core/ListItem";
+
+import api from "../utils/api";
+import actions from "../actions/utils";
+import { HISTORY } from "../utils/constants";
+import clipboard from "clipboard-polyfill";
 
 const styles = theme => ({
     listItem: {
@@ -75,7 +76,7 @@ class AddressListItem extends React.Component {
             clipboard.writeText(address).then(
                 function () {
 
-                    actions.trigger_snackbar("Address succesfully copied");
+                    actions.trigger_snackbar("Address successfully copied");
                 },
                 function () {
 
@@ -93,7 +94,7 @@ class AddressListItem extends React.Component {
         const { classes, _address, coin_id } = this.state;
 
         return (
-            <ListItem className={classes.listItem} button>
+            <ListItem className={classes.listItem}>
                 <ListItemText primary={<span className={classes.textOverflowEllipsis}>{_address}</span>} secondary={coin_id} />
                 <ListItemIcon onClick={(event) => this._copy_address(event, _address)}><FileCopyIcon /></ListItemIcon>
             </ListItem>

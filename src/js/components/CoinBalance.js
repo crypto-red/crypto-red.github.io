@@ -5,12 +5,11 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
 import Container from "@material-ui/core/Container";
+import Button from "@material-ui/core/Button";
 import Skeleton from "@material-ui/lab/Skeleton";
 
 import { HISTORY } from "../utils/constants";
 import price_formatter from "../utils/price-formatter";
-import Button from "@material-ui/core/Button";
-
 import api from "../utils/api";
 import actions from "../actions/utils";
 
@@ -50,7 +49,7 @@ class CoinBalance extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        this.setState({...new_props}, () => {
+        this.setState(new_props, () => {
 
             this._get_coin_balance();
         });

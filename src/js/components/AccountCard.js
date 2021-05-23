@@ -1,35 +1,35 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import Fade from '@material-ui/core/Fade';
-import Card from '@material-ui/core/Card';
+import Fade from "@material-ui/core/Fade";
+import Card from "@material-ui/core/Card";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import Badge from '@material-ui/core/Badge';
-import IconButton from '@material-ui/core/IconButton';
+import CardHeader from "@material-ui/core/CardHeader";
+import CardContent from "@material-ui/core/CardContent";
+import CardActions from "@material-ui/core/CardActions";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import Badge from "@material-ui/core/Badge";
+import IconButton from "@material-ui/core/IconButton";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import DeleteIcon from "@material-ui/icons/Delete";
-import BackupIcon from '@material-ui/icons/Backup';
-import LockIcon from '@material-ui/icons/Lock';
-import LockOpenIcon from '@material-ui/icons/LockOpen';
-import RefreshIcon from '@material-ui/icons/Refresh';
+import BackupIcon from "@material-ui/icons/Backup";
+import LockIcon from "@material-ui/icons/Lock";
+import LockOpenIcon from "@material-ui/icons/LockOpen";
+import RefreshIcon from "@material-ui/icons/Refresh";
 import ListItemText from "@material-ui/core/ListItemText";
-import { grey, green } from '@material-ui/core/colors';
-import CardActionArea from '@material-ui/core/CardActionArea';
+import { grey } from "@material-ui/core/colors";
+import CardActionArea from "@material-ui/core/CardActionArea";
 
 import { HISTORY } from "../utils/constants";
 import api from "../utils/api";
 import actions from "../actions/utils";
 
 import price_formatter from "../utils/price-formatter";
-import Jdenticon from 'react-jdenticon';
+import Jdenticon from "react-jdenticon";
 
 const styles = theme => ({
     accountCard: {
@@ -45,16 +45,16 @@ const styles = theme => ({
             backgroundColor: "#44b700"
         },
         opacity: 0,
-        animation: '$hide 1.5s',
+        animation: "$hide 1.5s",
         "@global": {
-            '@keyframes hide': {
-                '0%': {
+            "@keyframes hide": {
+                "0%": {
                     opacity: 1,
                 },
                 "85%": {
                     opacity: 1,
                 },
-                '100%': {
+                "100%": {
                     opacity: 0,
                 },
             }
@@ -82,29 +82,29 @@ const styles = theme => ({
     },
     styledBadgeConnected: {
         "& .MuiBadge-badge": {
-            backgroundColor: '#44b700',
-            color: '#44b700',
+            backgroundColor: "#44b700",
+            color: "#44b700",
             boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-            '&::after': {
-                position: 'absolute',
+            "&::after": {
+                position: "absolute",
                 top: 0,
                 left: 0,
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-                animation: '$ripple 1.2s infinite ease-in-out',
-                border: '1px solid currentColor',
-                content: '""',
+                width: "100%",
+                height: "100%",
+                borderRadius: "50%",
+                animation: "$ripple 1.2s infinite ease-in-out",
+                border: "1px solid currentColor",
+                content: "\"\"",
             },
         },
         "@global": {
-            '@keyframes ripple': {
-                '0%': {
-                    transform: 'scale(.8)',
+            "@keyframes ripple": {
+                "0%": {
+                    transform: "scale(.8)",
                     opacity: 1,
                 },
-                '100%': {
-                    transform: 'scale(2.4)',
+                "100%": {
+                    transform: "scale(2.4)",
                     opacity: 0,
                 },
             }
@@ -112,18 +112,18 @@ const styles = theme => ({
     },
     styledBadgeDisconnected: {
         "& .MuiBadge-badge": {
-            backgroundColor: 'red',
-            color: 'red',
+            backgroundColor: "red",
+            color: "red",
             boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-            '&::after': {
-                position: 'absolute',
+            "&::after": {
+                position: "absolute",
                 top: 0,
                 left: 0,
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-                border: '1px solid currentColor',
-                content: '""',
+                width: "100%",
+                height: "100%",
+                borderRadius: "50%",
+                border: "1px solid currentColor",
+                content: "\"\"",
             },
         }
     }
@@ -263,8 +263,8 @@ class AccountCard extends React.Component {
                                 overlap="circle"
                                 badgeContent=" "
                                 anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
+                                    vertical: "top",
+                                    horizontal: "right",
                                 }}
                                 variant="dot">
                                 <Avatar aria-label="Acronyme" className={classes.avatar}>
@@ -282,9 +282,9 @@ class AccountCard extends React.Component {
                                     <MoreVertIcon />
                                 </IconButton>
                                 <Menu anchorEl={_account_menu_anchor_element}
-                                      anchorOrigin={{ vertical: 'top', horizontal: 'right'}}
+                                      anchorOrigin={{ vertical: "top", horizontal: "right"}}
                                       keepMounted
-                                      transformOrigin={{ vertical: 'top', horizontal: 'right',}}
+                                      transformOrigin={{ vertical: "top", horizontal: "right",}}
                                       open={Boolean(_account_menu_anchor_element)}
                                       onClose={this._close_account_menu} >
                                     <MenuItem onClick={(event) => {this.props.delete(event, account)}}>

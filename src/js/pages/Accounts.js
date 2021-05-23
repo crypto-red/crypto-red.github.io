@@ -1,8 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
-import Grid from "@material-ui/core/Grid";import Card from '@material-ui/core/Card';
+import Grid from "@material-ui/core/Grid";
 import Fab from "@material-ui/core/Fab";
 import Fade from "@material-ui/core/Fade";
 import Grow from "@material-ui/core/Grow";
@@ -29,7 +28,7 @@ const styles = theme => ({
     },
     accountCards: {
         padding: theme.spacing(1),
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(1, 0)
         }
     },
@@ -48,7 +47,7 @@ const styles = theme => ({
     },
     gridItem: {
         padding: theme.spacing(1),
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(1, 0)
         }
     }
@@ -162,7 +161,7 @@ class Accounts extends React.Component {
 
             this.setState({_is_account_dialog_open_open: false, _login_error: false, _logged_account: result});
             actions.trigger_login_update();
-            actions.trigger_snackbar("Your're logged to a new acocunt");
+            actions.trigger_snackbar("You're logged to a new account");
         }else {
 
             this.setState({_login_error: true});

@@ -2,12 +2,13 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
 import { HISTORY } from "../utils/constants";
+
 import Fade from "@material-ui/core/Fade";
+
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Container from "@material-ui/core/Container";
-
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 
@@ -88,7 +89,6 @@ class AboutInfo extends React.Component {
 
         const { _history, _view_names } = this.state;
 
-        const pathname = _history.location.pathname;
         const _view_name = _view_names[view_name_index] || "intellectual";
         const _view_name_index = !~_view_names.indexOf(_view_name) ? 0: _view_names.indexOf(_view_name);
 
@@ -106,7 +106,7 @@ class AboutInfo extends React.Component {
 
     render() {
 
-        const { classes, pathname, _view_name, _view_name_index } = this.state;
+        const { classes, _view_name, _view_name_index } = this.state;
 
         const views = {
             intellectual:

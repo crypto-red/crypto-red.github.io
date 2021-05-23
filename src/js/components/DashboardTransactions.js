@@ -1,19 +1,18 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import { HISTORY } from "../utils/constants";
-import Grid from "@material-ui/core/Grid";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Fade from "@material-ui/core/Fade";
+import Skeleton from "@material-ui/lab/Skeleton";
 
-import { COINS } from "../utils/constants";
+import { COINS, HISTORY } from "../utils/constants";
 import api from "../utils/api";
 
-import Transaction from "../components/Transaction";
 import TransactionDialog from "../components/TransactionDialog";
-import LinearProgress from "@material-ui/core/LinearProgress";
+import Transaction from "./Transaction";
 
 const styles = theme => ({
     linearProgressVisible: {
@@ -27,16 +26,16 @@ const styles = theme => ({
             backgroundColor: "#44b700"
         },
         opacity: 0,
-        animation: '$hide 1.5s',
+        animation: "$hide 1.5s",
         "@global": {
-            '@keyframes hide': {
-                '0%': {
+            "@keyframes hide": {
+                "0%": {
                     opacity: 1,
                 },
                 "85%": {
                     opacity: 1,
                 },
-                '100%': {
+                "100%": {
                     opacity: 0,
                 },
             }
@@ -48,7 +47,7 @@ const styles = theme => ({
     },
     gridItem: {
         padding: theme.spacing(1),
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
             padding: theme.spacing(1, 0)
         }
     },
@@ -118,8 +117,17 @@ class DashboardTransactions extends React.Component {
             // Add and sort transactions
             let { _transactions, _coin_id_loaded } = this.state;
 
-            _transactions = _transactions.concat(response).sort((a, b) => b.timestamp-a.timestamp);
+            _transactions = _transactions.concat(response);
             _coin_id_loaded = _coin_id_loaded.concat([coin_id]);
+
+            // Why we need to remove duplicate ??? TODO: Find out why and correct it
+            function remove_duplicate_object_from_array(array, key) {
+                var check = new Set();
+                return array.filter(obj => !check.has(obj[key]) && check.add(obj[key]));
+            }
+
+            _transactions = remove_duplicate_object_from_array(_transactions, "id");
+
 
             this.setState({_transactions, _coin_id_loaded});
         }else {
@@ -132,7 +140,7 @@ class DashboardTransactions extends React.Component {
 
         const { logged_account, _coins } = this.state;
 
-        this.setState({_coin_id_loaded: []}, () => {
+        this.setState({_coin_id_loaded: [], _transactions: []}, () => {
 
             _coins.map((coin) => {
 
@@ -161,7 +169,7 @@ class DashboardTransactions extends React.Component {
         const { classes, logged_account, _selected_locales_code, _selected_currency } = this.state;
         const { _is_transaction_dialog_open, _selected_transaction } = this.state;
         const { _coins, _coin_id_loaded } = this.state;
-        const _transactions = this.state._transactions.slice(0, 20);
+        const _transactions = this.state._transactions.sort((a, b) => b.timestamp-a.timestamp).slice(0, 20);
 
         const loaded_percent = Math.floor((_coin_id_loaded.length / _coins.length) * 100);
 
@@ -181,28 +189,33 @@ class DashboardTransactions extends React.Component {
                                 <Card className={classes.numberCard}>
                                     <LinearProgress color="primary" variant="determinate" className={loaded_percent === 100 ? classes.linearProgressHidden: classes.linearProgressVisible} value={loaded_percent}/>
                                     <CardHeader title="Transactions" />
-                                    {_transactions.length && loaded_percent === 100 ?
-                                        <CardContent className={classes.transactionsCardContent}>
-                                            {_transactions.map((transaction, array, index) => {
-
-                                                return (
-                                                    <Transaction
-                                                        key={transaction.id}
-                                                        logged_account={logged_account}
-                                                        show_crypto_image={true}
-                                                        selected_currency={_selected_currency}
-                                                        selected_locales_code={_selected_locales_code}
-                                                        transaction={transaction}
-                                                        open={this._open_transaction}
-                                                    />
-                                                );
-                                            })}
-                                        </CardContent>:
-                                        <CardContent>
-                                            <img className={classes.noTransactionImage}
-                                                 src="/src/images/money-transfer-dark.svg"/>
-                                            <p>You've not made any transactions yet, transactions will show up here.</p>
-                                        </CardContent>
+                                    {
+                                        loaded_percent === 100 ?
+                                            <div>
+                                                {_transactions.length ?
+                                                    <CardContent className={classes.transactionsCardContent}>
+                                                        {_transactions.map((transaction, index, array) => {
+                                                            return (
+                                                                <Transaction
+                                                                    key={transaction.id}
+                                                                    logged_account={logged_account}
+                                                                    show_crypto_image={true}
+                                                                    selected_currency={_selected_currency}
+                                                                    selected_locales_code={_selected_locales_code}
+                                                                    transaction={transaction}
+                                                                    open={this._open_transaction}
+                                                                />
+                                                            );
+                                                        })}
+                                                    </CardContent>:
+                                                    <CardContent>
+                                                        <img className={classes.noTransactionImage}
+                                                             src="/src/images/money-transfer-dark.svg"/>
+                                                        <p>You've not made any transactions yet, transactions will show up here.</p>
+                                                    </CardContent>
+                                                }
+                                            </div>
+                                            : <Skeleton height={475} />
                                     }
                                 </Card>
                             </Fade>

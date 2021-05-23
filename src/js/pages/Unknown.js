@@ -2,6 +2,7 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
 import FlashInfo from "../components/FlashInfo";
+
 import { HISTORY } from "../utils/constants";
 
 const styles = theme => ({
@@ -17,7 +18,7 @@ const styles = theme => ({
     },
     flashInfoContainer: {
         padding: theme.spacing(2, 2, 0, 2),
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(0)
         },
     },

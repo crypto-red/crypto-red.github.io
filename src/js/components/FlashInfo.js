@@ -1,8 +1,8 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
+
 import Card from "@material-ui/core/Card";
 import Button from "@material-ui/core/Button";
-import Fade from "@material-ui/core/Fade";
 
 const styles = theme => ({
     flashInfo: {
@@ -11,14 +11,14 @@ const styles = theme => ({
         background: `linear-gradient(45deg, ${theme.palette.secondary.main}, ${theme.palette.secondary.main})`,
         color: theme.palette.primary.contrastText,
         display: "flex",
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             borderRadius: 0,
         },
     },
     flashInfoImage: {
         padding: theme.spacing(1.5, 2),
         height: 64,
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             display: "none"
         }
     },
@@ -61,7 +61,7 @@ class FlashInfo extends React.Component {
 
         return (
             <Card className={classes.flashInfo} elevation={4}>
-                <img src={image}className={classes.flashInfoImage}/>
+                <img src={image} className={classes.flashInfoImage}/>
                 <span className={classes.flashInfoText}>{text}</span>
                 <Button onClick={this.props.onClick} className={classes.flashInfoButton} variant="contained" color="primary">{button}</Button>
             </Card>

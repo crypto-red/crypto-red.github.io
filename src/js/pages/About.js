@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
 import AboutInfo from "../components/AboutInfo";
@@ -7,6 +6,7 @@ import AboutWiki from "../components/AboutWiki";
 import AboutFaq from "../components/AboutFaq";
 
 import { HISTORY } from "../utils/constants";
+
 const styles = theme => ({
     root: {
 

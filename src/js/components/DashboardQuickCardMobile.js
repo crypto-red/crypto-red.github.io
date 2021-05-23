@@ -1,14 +1,15 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
+
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Fade from "@material-ui/core/Fade";
-
-import Skeleton from "@material-ui/lab/Skeleton";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
+import Skeleton from "@material-ui/lab/Skeleton";
+
 import price_formatter from "../utils/price-formatter";
 
 const styles = theme => ({

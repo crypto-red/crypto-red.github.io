@@ -1,4 +1,5 @@
 import React from "react";
+import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
 import Avatar from "@material-ui/core/Avatar";
@@ -6,36 +7,32 @@ import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
-import TableSortLabel from '@material-ui/core/TableSortLabel';
+import TableSortLabel from "@material-ui/core/TableSortLabel";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
 import LinearProgress from "@material-ui/core/LinearProgress";
-import Skeleton from '@material-ui/lab/Skeleton';
-
-import lightGreen from '@material-ui/core/colors/lightGreen';
-import green from '@material-ui/core/colors/green';
-import red from '@material-ui/core/colors/red';
-
+import lightGreen from "@material-ui/core/colors/lightGreen";
+import green from "@material-ui/core/colors/green";
+import red from "@material-ui/core/colors/red";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 import { COINS, HISTORY } from "../utils/constants";
-
 import api from "../utils/api";
 import price_formatter from "../utils/price-formatter";
 
-import { withStyles } from '@material-ui/core/styles'
 
 const styles = theme => ({
     tableContainerContainer: {
-        [theme.breakpoints.up('md')]: {
+        [theme.breakpoints.up("md")]: {
             padding: theme.spacing(2)
         },
         display: "grid",
         overflow: "auto"
     },
     paperTable: {
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             borderRadius: 0
         },
     },
@@ -45,12 +42,12 @@ const styles = theme => ({
     },
     visuallyHidden: {
         border: 0,
-        clip: 'rect(0 0 0 0)',
+        clip: "rect(0 0 0 0)",
         height: 1,
         margin: -1,
-        overflow: 'hidden',
+        overflow: "hidden",
         padding: 0,
-        position: 'absolute',
+        position: "absolute",
         top: 20,
         width: 1
     },
@@ -74,10 +71,10 @@ const styles = theme => ({
         backgroundColor: red[100]
     },
     row: {
-        '&:nth-of-type(odd)': {
+        "&:nth-of-type(odd)": {
             backgroundColor: theme.palette.action.hover,
         },
-        '&:hover': {
+        "&:hover": {
             backgroundColor: theme.palette.action.focus,
         },
     },
@@ -101,7 +98,7 @@ const styles = theme => ({
         minWidth: theme.spacing(3),
         minHeight: theme.spacing(3),
         marginRight: theme.spacing(2),
-        [theme.breakpoints.down('sm')]: {
+        [theme.breakpoints.down("sm")]: {
             display: "none"
         }
     },
@@ -119,7 +116,7 @@ const styles = theme => ({
         color: theme.palette.primary.contrastText,
 
         // if you want to have icons visible permanently
-        // '& $icon': {
+        // "& $icon": {
         //   opacity: 1,
         //   color: primaryMain
         // },
@@ -127,7 +124,7 @@ const styles = theme => ({
         "&:hover": {
             color: theme.palette.primary.contrastText,
 
-            '&& $icon': {
+            "&& $icon": {
                 opacity: 1,
                 color: theme.palette.primary.contrastText
             },
@@ -136,7 +133,7 @@ const styles = theme => ({
             color: theme.palette.primary.contrastText,
 
             // && instead of & is a workaround for https://github.com/cssinjs/jss/issues/1045
-            '&& $icon': {
+            "&& $icon": {
                 opacity: 1,
                 color: theme.palette.primary.contrastText
             },
@@ -146,7 +143,7 @@ const styles = theme => ({
         color: theme.palette.primary.contrastText,
     },
     tableSortLabelIcon: {
-        color: 'inherit !important'
+        color: "inherit !important"
     }
 });
 
@@ -220,7 +217,7 @@ class Coins extends React.Component {
     
     _get_comparator(order, order_by) {
         
-        return order === 'desc'
+        return order === "desc"
             ? (a, b) => this._descending_comparator(a, b, order_by)
     : (a, b) => -this._descending_comparator(a, b, order_by);
     }
@@ -240,8 +237,8 @@ class Coins extends React.Component {
         
         const { _order, _order_by } = this.state;
         
-        const is_asc = _order_by === property && _order === 'asc';
-        const order = is_asc ? 'desc' : 'asc';
+        const is_asc = _order_by === property && _order === "asc";
+        const order = is_asc ? "desc" : "asc";
         
         this.setState({_order: order, _order_by: property});
     };
@@ -265,16 +262,16 @@ class Coins extends React.Component {
 
     render() {
 
-        const { classes, _coins_markets, _coins_id, _coin_id, _order, _order_by } = this.state;
+        const { classes, _coins_markets, _coins_id, _order, _order_by } = this.state;
 
         const head_cells = [
-            { id: 'name', numeric: false, disablePadding: false, label: 'Name', tooltip: "Coin's name" },
-            { id: 'current_price', numeric: true, disablePadding: false, label: 'Price', tooltip: "Current price" },
-            { id: 'price_change_percentage_24h_in_currency', numeric: true, disablePadding: false, label: 'Day', tooltip: "Price change within 24h" },
-            { id: 'price_change_percentage_7d_in_currency', numeric: true, disablePadding: false, label: 'Week', tooltip: "Price change within a 7d"},
-            { id: 'price_change_percentage_30d_in_currency', numeric: true, disablePadding: false, label: 'Month', tooltip: "Price chamge within 30d"},
-            { id: 'price_change_percentage_1y_in_currency', numeric: true, disablePadding: false, label: 'Year', tooltip: "Price chamge within 1y"},
-            { id: 'market_cap', numeric: true, disablePadding: false, label: 'Market cap', tooltip: "Market Capitalization"},
+            { id: "name", numeric: false, disablePadding: false, label: "Name", tooltip: "Coin's name" },
+            { id: "current_price", numeric: true, disablePadding: false, label: "Price", tooltip: "Current price" },
+            { id: "price_change_percentage_24h_in_currency", numeric: true, disablePadding: false, label: "Day", tooltip: "Price change within 24h" },
+            { id: "price_change_percentage_7d_in_currency", numeric: true, disablePadding: false, label: "Week", tooltip: "Price change within a 7d"},
+            { id: "price_change_percentage_30d_in_currency", numeric: true, disablePadding: false, label: "Month", tooltip: "Price chamge within 30d"},
+            { id: "price_change_percentage_1y_in_currency", numeric: true, disablePadding: false, label: "Year", tooltip: "Price chamge within 1y"},
+            { id: "market_cap", numeric: true, disablePadding: false, label: "Market cap", tooltip: "Market Capitalization"},
         ];
         
         return (
@@ -289,21 +286,21 @@ class Coins extends React.Component {
                                         classes={{head: classes.tableHeadCell}}
                                         className={classes.headCell}
                                         key={head_cell.id}
-                                        align={head_cell.numeric ? 'right' : 'left'}
-                                        padding={head_cell.disablePadding ? 'none' : 'default'}
+                                        align={head_cell.numeric ? "right" : "left"}
+                                        padding={head_cell.disablePadding ? "none" : "default"}
                                         sortDirection={_order_by === head_cell.id ? _order : false}
                                     >
                                         <Tooltip title={head_cell.tooltip} aria-label={head_cell.tooltip}>
                                             <TableSortLabel
                                                 classes={{root: classes.tableSortLabelRoot, active: classes.tableSortLabelActive, icon: classes.tableSortLabelIcon}}
                                                 active={_order_by === head_cell.id}
-                                                direction={_order_by === head_cell.id ? _order : 'asc'}
+                                                direction={_order_by === head_cell.id ? _order : "asc"}
                                                 onClick={() => this._create_sort_handler(head_cell.id)}
                                             >
                                                 {head_cell.label}
                                                 {_order_by === head_cell.id ? (
                                                     <span className={classes.visuallyHidden}>
-                                                    {_order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                                                    {_order === "desc" ? "sorted descending" : "sorted ascending"}
                                                 </span>
                                                 ) : null}
                                             </TableSortLabel>

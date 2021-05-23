@@ -1,15 +1,15 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import { ResponsiveContainer } from 'recharts';
-import { PieChart, Pie, Sector, Tooltip } from 'recharts';
+import { ResponsiveContainer, PieChart, Pie, Sector, Tooltip } from "recharts";
 
 import { HISTORY } from "../utils/constants";
-import Skeleton from "@material-ui/lab/Skeleton";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Fade from "@material-ui/core/Fade";
+
+import Skeleton from "@material-ui/lab/Skeleton";
 
 import price_formatter from "../utils/price-formatter";
 
@@ -69,7 +69,7 @@ class DashboardPieChart extends React.Component {
         const my = cy + (outerRadius + 30) * sin;
         const ex = mx + (cos >= 0 ? 1 : -1) * 22;
         const ey = my;
-        const textAnchor = cos <= 0 ? 'start' : 'end';
+        const textAnchor = cos <= 0 ? "start" : "end";
 
         return (
             <g>

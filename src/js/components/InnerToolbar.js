@@ -1,11 +1,12 @@
 import React from "react";
-import { withStyles } from '@material-ui/core/styles';
-import Fade from '@material-ui/core/Fade';
 import { Link } from "react-router-dom";
+import { withStyles } from "@material-ui/core/styles";
+
+import Fade from "@material-ui/core/Fade";
 
 const styles = theme => ({
-    '@keyframes innerToolbarCyberPunkAnimation': {
-        '0%': { left: "0%"},
+    "@keyframes innerToolbarCyberPunkAnimation": {
+        "0%": { left: "0%"},
         "100%": { left: "70%"}
     },
     "@keyframes innerToolbarCrtGlow": {
@@ -13,17 +14,17 @@ const styles = theme => ({
         "100%": { backgroundColor: "#010648"}
     },
     innerToolbar: {
+        cursor: "pointer",
         height: 40,
         lineHeight: "40px",
         borderRadius: 4,
         display: "flex",
         width: "100%",
         overflow: "auto",
-        transition: "background-color ease-out .32s",
+        transition: "background-color ease-in-out .3s",
         /* 71 BPM = .42 || 77 BPM = .384 */
-        animation: "$innerToolbarCrtGlow .384s linear alternate infinite",
+        /*animation: "$innerToolbarCrtGlow .384s linear alternate infinite",*/
         backgroundColor: theme.palette.secondary.light,
-        backgroundImage: "url(/src/images/hatch_strip_square_blue.png)",
         color: theme.palette.secondary.contrastText,
         "&::before": {
             display: "flex",
@@ -77,8 +78,8 @@ class InnerToolbar extends React.Component {
 
     }
 
-    componentWillReceiveProps(nextProps, nextContext) {
-        this.setState(nextProps);
+    componentWillReceiveProps(new_props) {
+        this.setState(new_props);
     }
 
     render() {
@@ -104,7 +105,7 @@ class InnerToolbar extends React.Component {
             <div className={classes.innerToolbar}>
                 <span className={classes.innerToolbarTextWrapper}>
                     <span className={classes.innerToolbarText}>
-                        <Fade in={know_if_logged} timeout={0}><Link className={classes.link} to={logged_account ? "/dashboard": "/"}>{know_if_logged ? logged_account ? logged_account.name: "Anonymous": ""} </Link></Fade>
+                        <Fade in={know_if_logged} timeout={0}><Link className={classes.link} to={logged_account ? "/": "/"}>{know_if_logged ? logged_account ? logged_account.name: "Guest": ""} </Link></Fade>
                         {pathame_items}
                     </span>
                 </span>

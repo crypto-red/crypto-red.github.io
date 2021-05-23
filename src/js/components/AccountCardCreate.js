@@ -1,16 +1,17 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardContent from "@material-ui/core/CardContent";
+import CardActions from "@material-ui/core/CardActions";
+import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
+import { grey } from "@material-ui/core/colors";
+
 import AddIcon from "@material-ui/icons/Add";
 
-import Jdenticon from 'react-jdenticon';
-import {grey} from "@material-ui/core/colors";
+import Jdenticon from "react-jdenticon";
 
 const styles = theme => ({
     accountCard: {

@@ -1,14 +1,13 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import { ResponsiveContainer } from 'recharts';
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Brush, ReferenceLine } from 'recharts';
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from "recharts";
 
-import Skeleton from "@material-ui/lab/Skeleton";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Fade from "@material-ui/core/Fade";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 import price_formatter from "../utils/price-formatter";
 
@@ -38,7 +37,7 @@ class DashboardBarChart extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        this.setState({...new_props})
+        this.setState(new_props)
     }
 
     _percent_formatter = (price, compact = false) => {
