@@ -73,7 +73,7 @@ class DashboardPieChart extends React.Component {
 
         return (
             <g>
-                <text x={cx} y={cy} dy={8} font-weight="bold" textAnchor="middle" fill={fill}>
+                <text x={cx} y={cy} dy={8} fontWeight="bold" textAnchor="middle" fill={fill}>
                     {this._price_formatter(total_balance_currency, true, true)}
                 </text>
                 <Sector

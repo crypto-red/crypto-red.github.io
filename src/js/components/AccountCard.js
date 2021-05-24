@@ -156,7 +156,7 @@ class AccountCard extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        if(this.state.current !== new_props.current && new_props.current) {
+        if(new_props.current && this.state.account.name !== new_props.account.name) {
 
             this.setState(new_props, () => {
 
@@ -189,9 +189,12 @@ class AccountCard extends React.Component {
 
             if(account.seed) {
 
-                ["v-systems", "bitcoin", "litecoin", "dogecoin", "dash"].forEach(coin_id => {
+                this.setState({_balance: {}}, () => {
 
-                    api.get_balance_by_seed(coin_id, account.seed, (error, result) => {this._refresh_balance_result(error, result, coin_id)});
+                    ["v-systems", "bitcoin", "litecoin", "dogecoin", "dash"].forEach(coin_id => {
+
+                        api.get_balance_by_seed(coin_id, account.seed, (error, result) => {this._refresh_balance_result(error, result, coin_id)});
+                    });
                 });
             }
         }
@@ -267,7 +270,7 @@ class AccountCard extends React.Component {
                                     horizontal: "right",
                                 }}
                                 variant="dot">
-                                <Avatar aria-label="Acronyme" className={classes.avatar}>
+                                <Avatar aria-label="Acronyme" className={classes.avatar} variant="square">
                                     <Jdenticon size="48" value={account.name} />
                                 </Avatar>
                             </Badge>
@@ -304,7 +307,7 @@ class AccountCard extends React.Component {
                                     }
                                     {
                                         current ?
-                                            <MenuItem>
+                                            <MenuItem onClick={(event) => {this._refresh_balance()}}>
                                                 <ListItemIcon>
                                                     <RefreshIcon fontSize="small" />
                                                 </ListItemIcon>

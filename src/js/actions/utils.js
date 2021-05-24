@@ -1,5 +1,7 @@
 import dispatcher from "../dispatcher";
 
+// Functions enabling events to be dispatched and received elsewhere in the code with data
+
 function trigger_snackbar(message = "", auto_hide_duration = 2500) {
 
     dispatcher.dispatch({

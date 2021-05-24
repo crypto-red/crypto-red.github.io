@@ -277,7 +277,7 @@ class DrawerContent extends React.Component {
             return (
                 <ListItem button className={classes.nested} key={coin.id} onClick={() => {this._open_coin_id(coin.id)}}>
                     <ListItemAvatar>
-                        <Avatar alt={coin.name} src={coin.image_url} />
+                        <Avatar alt={coin.name} src={coin.image_url} variant="square" />
                         </ListItemAvatar>
                     <ListItemText primary={coin.name} />
                 </ListItem>
@@ -289,17 +289,17 @@ class DrawerContent extends React.Component {
                 <Dialog
                     open={_is_help_dialog_open}
                     onClose={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true)}}
-                    aria-labelledby="Backup account dialog title"
-                    aria-describedby="Backup account dialog description"
+                    aria-labelledby="help-dialog-title"
+                    aria-describedby="help-dialog-description"
                 >
                     {
                         Boolean(_help_dialogs_data[_current_help_dialog_id]) ?
                             <div className={classes.dialogInner}>
                                 <div className={classes.dialogImage} style={{backgroundImage: `url(/src/images/${_help_dialogs_data[_current_help_dialog_id].image})`}}/>
                                 <div className={classes.dialogContent}>
-                                    <DialogTitle id="Backup account dialog title">{_help_dialogs_data[_current_help_dialog_id].title}</DialogTitle>
+                                    <DialogTitle id="help-dialog-title">{_help_dialogs_data[_current_help_dialog_id].title}</DialogTitle>
                                     <DialogContent>
-                                        <DialogContentText id="Backup account dialog description">
+                                        <DialogContentText id="help-dialog-description">
                                             <span>{_help_dialogs_data[_current_help_dialog_id].body} <NavLink onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true)}} to={_help_dialogs_data[_current_help_dialog_id].help_link}>{_help_dialogs_data[_current_help_dialog_id].help_link_content}</NavLink></span>
                                         </DialogContentText>
                                         <FormControlLabel

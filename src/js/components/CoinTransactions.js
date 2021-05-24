@@ -160,10 +160,11 @@ class CoinTransactions extends React.Component {
                                             </CardContent>:
                                             <CardContent>
                                                 <List>
-                                                    {_transactions.map((transaction, array, index) => {
+                                                    {_transactions.map((transaction, index,array) => {
 
                                                         return (
                                                             <Transaction
+                                                            key={transaction.id}
                                                             logged_account={logged_account}
                                                             show_crypto_image={false}
                                                             selected_currency={selected_currency}

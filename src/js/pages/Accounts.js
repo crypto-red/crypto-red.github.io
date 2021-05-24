@@ -287,8 +287,9 @@ class Accounts extends React.Component {
                     }
                     {_accounts.map((account, index, array) => {
                         return (
-                            <Grid item xs={12} lg={3} className={classes.gridItem}>
-                                <AccountCard onToggle={this._toggle_account}
+                            <Grid item xs={12} lg={3} className={classes.gridItem} key={account.name}>
+                                <AccountCard
+                                             onToggle={this._toggle_account}
                                              coins_markets={_coins_markets}
                                              current={(logged_account_name === account.name)}
                                              delete={this._open_delete_account_dialog}

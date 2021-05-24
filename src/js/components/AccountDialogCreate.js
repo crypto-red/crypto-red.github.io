@@ -386,7 +386,17 @@ class AccountDialogCreate extends React.Component {
                         <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
                             Cancel
                         </Button>
-                        <Button onClick={this._switch_to_generation_view} variant="contained"  color="primary" autoFocus>
+                        <Button onClick={(event) => {this._generate_a_new_mnemonic(event)}}
+                                color="primary"
+                                variant={_account_mnemonic_input.length ? null: "contained"}
+                                autoFocus={!_account_mnemonic_input.length}>
+                            Random
+                        </Button>
+                        <Button onClick={this._switch_to_generation_view}
+                                variant="contained"
+                                color="primary"
+                                disabled={!_account_mnemonic_input.length}
+                                autoFocus={_account_mnemonic_input.length}>
                             Next
                         </Button>
                     </DialogActions>

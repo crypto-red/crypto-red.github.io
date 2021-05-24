@@ -20,7 +20,6 @@ import SecurityIcon from "@material-ui/icons/Security";
 
 import Jdenticon from "react-jdenticon";
 import api  from "../utils/api";
-import actions from "../actions/utils";
 import { HISTORY } from "../utils/constants";
 import InnerToolbar from "../components/InnerToolbar";
 import DrawerContent from "../components/DrawerContent";
@@ -207,6 +206,7 @@ class AppToolbar extends React.Component {
                                 logged_account ?
                                     <Tooltip title={logged_account.name} aria-label="Account's name">
                                         <Avatar aria-label="Acronym"
+                                                variant="square"
                                                 className={classes.avatar}
                                                 onClick={this._open_account_menu}>
                                             <Jdenticon size="24" value={logged_account.name}/>

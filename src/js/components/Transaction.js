@@ -138,7 +138,7 @@ class Transaction extends React.Component {
 
     render() {
 
-        const { classes, show_crypto_image, _address, _coin_data, selected_currency, selected_locales_code, transaction, _full_transaction } = this.state;
+        const { classes, show_crypto_image, _address, _coin_data, selected_currency, selected_locales_code, _full_transaction } = this.state;
 
         let component =
             <ListItem>
@@ -168,7 +168,7 @@ class Transaction extends React.Component {
                 <ListItem onClick={(event) => {this.props.open(event, _full_transaction)}} className={classes.listItem} button>
                     <ListItemAvatar>
                         <TooltipMui title={important_address_text} aria-label={important_address_text}>
-                            <Avatar className={classes.avatar}>
+                            <Avatar className={classes.avatar} variant="square">
                                 {
                                     show_crypto_image ?
                                         <Avatar alt={_coin_data.name} src={_coin_data.image.small} />:
@@ -183,25 +183,25 @@ class Transaction extends React.Component {
                             <div className={classes.spaceBetween}>
                                 <span className={classes.currencyCrypto}>{_coin_data.name}</span>
                                 <span className={feedback ? null: received ? classes.currencyCryptoAmountPositive: classes.currencyCryptoAmountNegative}>
-                            {price_formatter(parseFloat(_full_transaction.amount_crypto), _coin_data.symbol, selected_locales_code)}
-                        </span>
+                                    {price_formatter(parseFloat(_full_transaction.amount_crypto), _coin_data.symbol, selected_locales_code)}
+                                </span>
                             </div>
                         }
                         secondary={
                             <div className={classes.spaceBetween}>
-                        <span className={classes.timeAgo}>
-                            <TimeAgo date={_full_transaction.timestamp} />
-                            {
-                                typeof _full_transaction.confirmations !== "undefined"?
-                                    _full_transaction.confirmations <= 6 ?
-                                        " (Unconfirmed)"
-                                        : null
-                                    : null
-                            }
-                        </span>
+                                <span className={classes.timeAgo}>
+                                    <TimeAgo date={_full_transaction.timestamp} />
+                                    {
+                                        typeof _full_transaction.confirmations !== "undefined"?
+                                            _full_transaction.confirmations <= 6 ?
+                                                " (Unconfirmed)"
+                                                : null
+                                            : null
+                                    }
+                                </span>
                                 <span className={classes.currencyFiatAmount}>
-                            ({price_formatter(amount_fiat, selected_currency, selected_locales_code)})
-                        </span>
+                                    ({price_formatter(amount_fiat, selected_currency, selected_locales_code)})
+                                </span>
                             </div>
                         } />
                 </ListItem>;

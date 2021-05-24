@@ -113,6 +113,11 @@ class CoinChartsConvert extends React.Component {
         return get_date_format(selected_locales_code);
     };
 
+    _open_buy = () => {
+
+        window.open("https://changelly.com/");
+    }
+
     render() {
 
         const { classes, selected_currency, _selected_date, coin_data, coin_id } = this.state;
@@ -155,7 +160,9 @@ class CoinChartsConvert extends React.Component {
                             />
                         </MuiPickersUtilsProvider>
                         <Button className={classes.buyButton}
+                                onClick={(event) => {this._open_buy()}}
                                 fullWidth
+                                variant="contained"
                                 color="primary">
                             BUY {coin_data.name.toUpperCase()}
                         </Button>

@@ -335,7 +335,7 @@ class Coins extends React.Component {
                                         </TableRow>
                                     )):
                                     _coins_id.map((row, index) => (
-                                        <TableRow>
+                                        <TableRow key={index}>
                                             <TableCell component="th" scope="row" className={classes.displayFlex}>
                                                 <Skeleton variant="circle" className={classes.avatar}/>
                                                 <Skeleton className={classes.skeletonFullWidth}/>

@@ -61,26 +61,24 @@ class DashboardQuickCardMobile extends React.Component {
                     <Card>
                         <CardContent>
                             <Table>
-                                <Table aria-label="main-info-table">
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? "Total balance:": <Skeleton/>}</TableCell>
-                                            <TableCell align="right">{portfolio !== null ? this._price_formatter(portfolio.total_balance_currency, true, true): <Skeleton/>}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? "Cryptocurrency numbers:": <Skeleton/>}</TableCell>
-                                            <TableCell align="right">{portfolio !== null ? portfolio.number_of_coins_performed_with_value + " / " + portfolio.number_of_coins_performed: <Skeleton/>}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? "Performed / BTC:": <Skeleton/>}</TableCell>
-                                            <TableCell align="right">{portfolio !== null ? portfolio.performed_average_percentage_weighted_on_btc.toFixed(2): <Skeleton/>}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? "Performed:": <Skeleton/>}</TableCell>
-                                            <TableCell align="right">{portfolio !== null ? (portfolio.performed_average_percentage_weighted * 100).toFixed(0) + "%": <Skeleton/>}</TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? "Total balance:": <Skeleton/>}</TableCell>
+                                        <TableCell align="right">{portfolio !== null ? this._price_formatter(portfolio.total_balance_currency, true, true): <Skeleton/>}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? "Cryptocurrency numbers:": <Skeleton/>}</TableCell>
+                                        <TableCell align="right">{portfolio !== null ? portfolio.number_of_coins_performed_with_value + " / " + portfolio.number_of_coins_performed: <Skeleton/>}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? "Performed / BTC:": <Skeleton/>}</TableCell>
+                                        <TableCell align="right">{portfolio !== null ? portfolio.performed_average_percentage_weighted_on_btc.toFixed(2): <Skeleton/>}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? "Performed:": <Skeleton/>}</TableCell>
+                                        <TableCell align="right">{portfolio !== null ? (portfolio.performed_average_percentage_weighted * 100).toFixed(0) + "%": <Skeleton/>}</TableCell>
+                                    </TableRow>
+                                </TableBody>
                             </Table>
                         </CardContent>
                     </Card>
