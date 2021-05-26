@@ -184,8 +184,8 @@ class AccountDialogCreate extends React.Component {
     _handle_private_mnemonic_input_add = (chip) => {
 
         let {  _account_mnemonic_input } = this.state;
-         _account_mnemonic_input.push(chip);
 
+        _account_mnemonic_input = _account_mnemonic_input.concat(chip.split(" "));
         this.setState({ _account_mnemonic_input});
     };
     

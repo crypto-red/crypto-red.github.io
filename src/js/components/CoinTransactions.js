@@ -58,7 +58,7 @@ class CoinTransactions extends React.Component {
 
         const { coin_id, logged_account } = this.state;
 
-        this.setState({_loading: true, _transactions: []}, () => {
+        this.setState({...new_props, _loading: true, _transactions: []}, () => {
 
             if(logged_account !== null) {
 
@@ -109,6 +109,7 @@ class CoinTransactions extends React.Component {
 
         if(logged_account) {
 
+            console.log(coin_id);
             api.get_transactions_by_seed(coin_id, logged_account.seed, _transactions, this._handle_load_more_transactions_result);
         }else {
 

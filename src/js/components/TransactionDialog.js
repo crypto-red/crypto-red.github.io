@@ -98,15 +98,15 @@ class TransactionDialog extends React.Component {
             <Dialog
                 open={open}
                 onClose={(event) => {this._on_close(event, transaction)}}
-                aria-labelledby="Show transaction memo dialog title"
-                aria-describedby="Show transaction memo dialog description"
+                aria-labelledby="show-transaction-memo-dialog-title"
+                aria-describedby="show-transaction-memo-dialog-description"
             >
                 {
                     Boolean(transaction) ?
                         <div>
-                            <DialogTitle id="Show transaction memo dialog title" className={classes.breakWord}>Transaction's ID {transaction.id}</DialogTitle>
+                            <DialogTitle id="show-transaction-memo-dialog-title" className={classes.breakWord}>Transaction's ID {transaction.id}</DialogTitle>
                             <DialogContent>
-                                <DialogContentText id="Show transaction memo dialog description">
+                                <DialogContentText id="show-transaction-memo-dialog-description">
                                     <Table>
                                         <Table aria-label="main-info-table">
                                             <TableBody>
@@ -118,10 +118,24 @@ class TransactionDialog extends React.Component {
                                                     <TableCell align="left" className={classes.tableCellBold}>Send from</TableCell>
                                                     <TableCell align="right">{transaction.send_from}</TableCell>
                                                 </TableRow>
+                                                {
+                                                    typeof transaction.send_from_public_key !== "undefined" ?
+                                                    <TableRow>
+                                                        <TableCell align="left" className={classes.tableCellBold}>Send from Public Key</TableCell>
+                                                        <TableCell align="right">{transaction.send_from_public_key}</TableCell>
+                                                    </TableRow>: null
+                                                }
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Send to</TableCell>
                                                     <TableCell align="right">{transaction.send_to}</TableCell>
                                                 </TableRow>
+                                                {
+                                                    typeof transaction.send_to_public_key !== "undefined" ?
+                                                    <TableRow>
+                                                        <TableCell align="left" className={classes.tableCellBold}>Send to Public Key</TableCell>
+                                                        <TableCell align="right">{transaction.send_to_public_key}</TableCell>
+                                                    </TableRow>: null
+                                                }
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Memo</TableCell>
                                                     <TableCell align="right">{transaction.memo}</TableCell>

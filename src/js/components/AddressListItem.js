@@ -21,6 +21,9 @@ const styles = theme => ({
         textOverflow: "ellipsis",
         overflow: "hidden",
         whiteSpace: "no-wrap"
+    },
+    cursorPointer: {
+        cursor: "pointer"
     }
 });
 
@@ -89,14 +92,19 @@ class AddressListItem extends React.Component {
         }
     }
 
+    _on_click_open = (event, coin_id) => {
+
+        this.props.onClickOpen(event, coin_id);
+    };
+
     render() {
 
         const { classes, _address, coin_id } = this.state;
 
         return (
-            <ListItem className={classes.listItem}>
-                <ListItemText primary={<span className={classes.textOverflowEllipsis}>{_address}</span>} secondary={coin_id} />
-                <ListItemIcon onClick={(event) => this._copy_address(event, _address)}><FileCopyIcon /></ListItemIcon>
+            <ListItem className={classes.listItem} button>
+                <ListItemText onClick={(event) => this._on_click_open(event, coin_id)} primary={<span className={classes.textOverflowEllipsis}>{_address}</span>} secondary={coin_id} />
+                <ListItemIcon className={classes.cursorPointer} onClick={(event) => this._copy_address(event, _address)}><FileCopyIcon /></ListItemIcon>
             </ListItem>
         );
     }

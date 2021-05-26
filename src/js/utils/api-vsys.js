@@ -23,6 +23,12 @@ function get_vsys_public_key_by_seed(seed) {
     return account.getPublicKey();
 }
 
+function get_vsys_private_key_by_seed(seed) {
+
+    let account = _get_vsys_account_by_seed(seed);
+    return account.getPrivateKey();
+}
+
 function _format_vsys_amount(amount) {
 
     const amount_scaled = amount / 100000000;
@@ -45,6 +51,7 @@ function _format_vsys_transaction(transaction) {
         fee: _format_vsys_amount(transaction.feeCharged),
         timestamp: transaction.timestamp / 1000000,
         send_from: transaction.proofs[0].address,
+        send_from_public_key: transaction.proofs[0].publicKey,
         send_to: transaction.recipient,
         amount_crypto: _format_vsys_amount(transaction.amount),
         memo: _format_vsys_attachment(transaction.attachment),
@@ -148,6 +155,7 @@ function get_vsys_send_transaction_info() {
 module.exports = {
     get_vsys_address_by_seed: get_vsys_address_by_seed,
     get_vsys_public_key_by_seed: get_vsys_public_key_by_seed,
+    get_vsys_private_key_by_seed: get_vsys_private_key_by_seed,
     send_vsys_transaction: send_vsys_transaction,
     estimate_vsys_transaction_fee: estimate_vsys_transaction_fee,
     get_vsys_account_transactions_by_seed: get_vsys_account_transactions_by_seed,

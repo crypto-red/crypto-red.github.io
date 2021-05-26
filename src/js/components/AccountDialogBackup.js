@@ -47,7 +47,9 @@ class AccountDialogBackup extends React.Component {
     _on_cancel = () => {
 
         setTimeout(() => {
+
             this.setState({
+
                 _shown: false
             });
         }, 500);

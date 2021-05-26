@@ -343,44 +343,47 @@ class CoinSend extends React.Component {
                                     <CardContent>
                                         {_coin_balance !== null ? <p>Balance: {_coin_balance}</p>: <p>Loading...</p>}
                                         {_send_transaction_info !== null ? <p>The average transaction time is {_send_transaction_info.average_transaction_time}, and the message is limited to {_send_transaction_info.max_message_length} characters ({_send_message_input.length}). Fees will be calculated in the next step.</p>: null}
-                                        <form className={classes.root} noValidate autoComplete="off">
-                                            <TextField
-                                                autoFocus
-                                                className={classes.textField}
-                                                onChange={this._handle_send_address_input_change}
-                                                value={_send_address_input}
-                                                error={_send_address_input_error}
-                                                helperText={_send_address_input_error ? "Incorrect address": ""}
-                                                id="address"
-                                                label="Address"
-                                                type="text"
-                                                fullWidth
-                                            />
-                                            <TextField
-                                                className={classes.textField}
-                                                onChange={this._handle_send_amount_input_change}
-                                                value={_send_amount_input}
-                                                error={_send_amount_input_error}
-                                                helperText={_send_amount_input_error ? "Incorrect amount": ""}
-                                                id="amount"
-                                                label="Amount"
-                                                type="number"
-                                                fullWidth
-                                            />
-                                            <TextField
-                                                className={classes.textField}
-                                                onChange={this._handle_send_message_input_change}
-                                                value={_send_message_input}
-                                                error={_send_message_input_error}
-                                                helperText={_send_message_input_error ? "Incorrect message": ""}
-                                                id="message"
-                                                label="Message"
-                                                type="text"
-                                                multiline
-                                                fullWidth
-                                            />
-                                            <Button fullWidth variant="contained"  color="primary" onClick={this._confirm_and_open_coin_send_dialog}>SEND</Button>
-                                        </form>
+                                        { _send_transaction_info ?
+                                            <form className={classes.root} noValidate autoComplete="off">
+                                                <TextField
+                                                    autoFocus
+                                                    className={classes.textField}
+                                                    onChange={this._handle_send_address_input_change}
+                                                    value={_send_address_input}
+                                                    error={_send_address_input_error}
+                                                    helperText={_send_address_input_error ? "Incorrect address": ""}
+                                                    id="address"
+                                                    label="Address"
+                                                    type="text"
+                                                    fullWidth
+                                                />
+                                                <TextField
+                                                    className={classes.textField}
+                                                    onChange={this._handle_send_amount_input_change}
+                                                    value={_send_amount_input}
+                                                    error={_send_amount_input_error}
+                                                    helperText={_send_amount_input_error ? "Incorrect amount": ""}
+                                                    id="amount"
+                                                    label="Amount"
+                                                    type="number"
+                                                    fullWidth
+                                                />
+                                                <TextField
+                                                    className={classes.textField}
+                                                    onChange={this._handle_send_message_input_change}
+                                                    value={_send_message_input}
+                                                    error={_send_message_input_error}
+                                                    helperText={_send_message_input_error ? "Incorrect message": ""}
+                                                    disabled={_send_transaction_info.max_message_length === 0}
+                                                    id="message"
+                                                    label="Message"
+                                                    type="text"
+                                                    multiline
+                                                    fullWidth
+                                                />
+                                                <Button fullWidth variant="contained"  color="primary" onClick={this._confirm_and_open_coin_send_dialog}>SEND</Button>
+                                            </form>: null
+                                        }
                                     </CardContent>:
                                     <CardContent>
                                         <Button fullWidth color="primary" variant="contained" onClick={this._open_accounts_page}>

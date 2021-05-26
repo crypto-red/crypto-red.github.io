@@ -8,6 +8,7 @@ import Fade from "@material-ui/core/Fade";
 
 import { COINS } from "../utils/constants";
 import AddressListItem from "../components/AddressListItem";
+import AddressDialog from "./AddressDialog";
 
 const styles = theme => ({
     gridItem: {
@@ -34,6 +35,8 @@ class DashboardAddress extends React.Component {
             classes: props.classes,
             logged_account: props.logged_account,
             _coins_id: [],
+            _is_address_and_keys_dialog_open: false,
+            _selected_coin_id: null
         };
     };
 
@@ -42,13 +45,30 @@ class DashboardAddress extends React.Component {
         this.setState({_coins_id: COINS.map(coin => coin.id)});
     }
 
+    _open_address_and_keys_dialog = (event, coin_id) => {
+
+        this.setState({_is_address_and_keys_dialog_open: true, _selected_coin_id: coin_id});
+    };
+
+    _close_address_and_keys_dialog = (event, coiN_id) => {
+
+        this.setState({_is_address_and_keys_dialog_open: false, _selected_coin_id: null});
+    };
+
     render() {
 
         const { classes, logged_account, } = this.state;
-        const { _coins_id } = this.state;
+        const { _coins_id, _is_address_and_keys_dialog_open, _selected_coin_id } = this.state;
 
         return (
             <div className={classes.cardContainer}>
+
+                <AddressDialog
+                    open={_is_address_and_keys_dialog_open}
+                    logged_account={logged_account}
+                    coin_id={_selected_coin_id}
+                    onClose={this._close_address_and_keys_dialog}/>
+
                 <Fade in>
                     <Card className={classes.linksCard}>
                         <CardHeader title="Address" />
@@ -60,7 +80,8 @@ class DashboardAddress extends React.Component {
                                         <AddressListItem
                                             key={coin_id}
                                             coin_id={coin_id}
-                                            logged_account={logged_account}/>
+                                            logged_account={logged_account}
+                                            onClickOpen={this._open_address_and_keys_dialog}/>
                                     );
                                 })
                             }
