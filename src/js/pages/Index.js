@@ -76,7 +76,7 @@ class Index extends React.Component {
 
     _handle_events(event) {
 
-        // Make different actions send from a dispatcher binded to this function
+        // Make different actions send from a dispatcher bounded to this function
         switch(event.type) {
 
             case "SNACKBAR":
@@ -134,8 +134,6 @@ class Index extends React.Component {
         
         const { pathname, _history, _logged_account } = this.state;
 
-        // Just update pathname meta title and play sound
-
         // Set pathname
         this.setState({pathname: new_pathname});
 
@@ -147,7 +145,7 @@ class Index extends React.Component {
     _set_meta_title = (pathname) => {
 
         pathname = pathname.replace("/", "").replace(/\//g, " > ");
-        update_meta_title("C.RED | "+ pathname);
+        update_meta_title("C WALLET | "+ pathname);
     };
 
     _trigger_snackbar = (_snackbar_message, _snackbar_auto_hide_duration) => {
@@ -165,8 +163,9 @@ class Index extends React.Component {
         const { pathname, classes } = this.state;
         const { _snackbar_open, _snackbar_message, _snackbar_auto_hide_duration } = this.state;
         const { _logged_account, _panic_mode, _know_if_logged } = this.state;
-        let page_component = null;
 
+        // This is the custom router
+        let page_component = null;
         let page_name = "";
         let page_tabs = "";
         let page_tabs_component = null;

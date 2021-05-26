@@ -1,3 +1,4 @@
+// This function is required because JSON is weird with some char
 function clean_json_text(json_text) {
 
     json_text = json_text.replace(/\\n/g, "\\n")

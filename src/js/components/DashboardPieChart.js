@@ -12,6 +12,7 @@ import Fade from "@material-ui/core/Fade";
 import Skeleton from "@material-ui/lab/Skeleton";
 
 import price_formatter from "../utils/price-formatter";
+import {useAutocomplete} from "@material-ui/lab";
 
 const styles = theme => ({
     cardContainer: {
@@ -26,6 +27,21 @@ const styles = theme => ({
     },
     fullWidth: {
         width: "100%"
+    },
+    cardContent: {
+        height: "calc(100% - 64px)"
+    },
+    pieChartSkeletonContainer: {
+        width: "100%",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column"
+    },
+    pieChartSkeleton: {
+        width: 200,
+        height: 200,
+        margin: "auto",
+        alignSelf: "flex-start"
     }
 });
 
@@ -73,8 +89,11 @@ class DashboardPieChart extends React.Component {
 
         return (
             <g>
-                <text x={cx} y={cy} dy={8} fontWeight="bold" textAnchor="middle" fill={fill}>
+                <text x={cx} y={cy} dy={-10} fontWeight="bold" textAnchor="middle" fontSize={14} fill={fill}>
                     {this._price_formatter(total_balance_currency, true, true)}
+                </text>
+                <text x={cx} y={cy} dy={20} fontWeight="bold" textAnchor="middle" fontSize={19} fill={"#9e9e9e"}>
+                    100%
                 </text>
                 <Sector
                     cx={cx}
@@ -144,7 +163,7 @@ class DashboardPieChart extends React.Component {
                 <Fade in>
                     <Card className={classes.balanceCard}>
                         <CardHeader title="Portfolio and balance" />
-                        <CardContent>
+                        <CardContent className={classes.cardContent}>
                             {coins_markets.length > 0 && portfolio ?
                                 <Fade in>
                                     <div className={classes.pieChart}>
@@ -157,8 +176,8 @@ class DashboardPieChart extends React.Component {
                                                         data={pie_data}
                                                         cx="50%"
                                                         cy="50%"
-                                                        innerRadius={60}
-                                                        outerRadius={80}
+                                                        innerRadius={75}
+                                                        outerRadius={100}
                                                         fill="#131162"
                                                         dataKey="value"
                                                         onMouseEnter={this._on_pie_enter}
@@ -176,9 +195,9 @@ class DashboardPieChart extends React.Component {
                                     </div>
                                 </Fade>
                                 :
-                                <Fade in timeout={300}>
-                                    <Skeleton height={400} />
-                                </Fade>
+                                <div className={classes.pieChartSkeletonContainer}>
+                                    <Skeleton variant={"circle"} className={classes.pieChartSkeleton}/>
+                                </div>
                             }
                         </CardContent>
                     </Card>

@@ -8,6 +8,7 @@ function price_formatter(price = 0, _selected_currency = "usd", _selected_locale
     } // Cut for example "dash" to "das"
     const currency_props = _selected_currency !== null ? {style: 'currency', currency}: {};
 
+    // Don't show 0.1233 as 0.123338247894 nor 13000.12 as 13000.1233
     let maximum_significant_digits = price.toFixed(0).length + 4;
 
     if(price <= 0.1) {

@@ -1,6 +1,9 @@
 import createHistory from "history/createBrowserHistory";
 const HISTORY = createHistory();
 
+/*
+ * The page routes system is working with regex, tabs system (weird) isn't great but it will change
+ */
 const PAGE_ROUTES = [
     {
         page_regex: /\/*/,
@@ -140,6 +143,7 @@ const LOCALES = [
     {code: "zh-TW", name: "Taiwan, traditional characters"},
 ];
 
+// We use this to know which currency to select when we have the country code known
 const CURRENCY_COUNTRIES = {
     ARS: ["AR"],
     AUD: ["AU", "CC", "CX", "HM", "KI", "NF", "NR", "TV"],

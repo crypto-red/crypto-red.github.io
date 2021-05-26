@@ -285,7 +285,7 @@ class AccountDialogCreate extends React.Component {
         const coin = _coin == null ? COINS[0]: _coin;
 
         const password_feedback = Boolean(_password_evaluation) ?
-                <DialogContentText>
+                <DialogContentText id="create-account-dialog-description">
                     <p>
                         Password strength score is {_password_evaluation.score} it would require ~10^{_password_evaluation.guesses_log10.toString().split(".")[0]} attempts (<b className={_password_evaluation.guesses_log10.toString().split(".")[0] >= 13 ? classes.green: classes.red}>or {_password_evaluation.crack_times_display.offline_slow_hashing_1e4_per_second} for multiples hackers to crack it</b>). {_password_evaluation.feedback.suggestions[0]}.
                         <br /> <b>{_password_evaluation.feedback.warning}.</b>
@@ -296,7 +296,7 @@ class AccountDialogCreate extends React.Component {
             <Fade in>
                 <div>
                     <DialogContent>
-                        <DialogContentText>
+                        <DialogContentText id="create-account-dialog-description">
                             Provide a name and eventually a STRONG PASSWORD in order to create a new account (You can define it later).
                             Everything that you type never be send to any server, it will stay on your device.
                             Once a name and a pasword to encrypt your backup phrase is set, we will enable you to manually create or import a new backup phrase (called a mnemonic).
@@ -355,7 +355,7 @@ class AccountDialogCreate extends React.Component {
             <Fade in>
                 <div>
                     <DialogContent>
-                        <DialogContentText>
+                        <DialogContentText id="create-account-dialog-description">
                             Use an old backup phrase from another wallet or use a <Link onClick={(event) => {this._generate_a_new_mnemonic(event)}}>new random backup phrase</Link>.
                             The backup phrase is a like a seed password that will create a master key, from this key, it will create derived keys pair for each cryptocurrency.
                             The password you typed in the first step will enable you to log in using a password instead of this  backup phrase each and every time.<br />
@@ -458,10 +458,10 @@ class AccountDialogCreate extends React.Component {
                 open={open}
                 scroll={"paper"}
                 onClose={(event) => {this.props.cancel(event, account)}}
-                aria-labelledby="alert-dialog-title"
-                aria-describedby="alert-dialog-description"
+                aria-labelledby="create-account-dialog-title"
+                aria-describedby="create-account-dialog-description"
             >
-                <DialogTitle id="alert-dialog-title" onClose={this.props.cancel}>Create a new account</DialogTitle>
+                <DialogTitle id="create-account-dialog-title" onClose={this.props.cancel}>Create a new account</DialogTitle>
                 <Stepper activeStep={_active_view_index} alternativeLabel>
                     <Step completed={(_active_view_index >= 1)}>
                         <StepLabel>Configuration</StepLabel>

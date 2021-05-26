@@ -76,7 +76,7 @@ class AboutInfo extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        const { pathname, _view_names } = this.state;
+        const { _view_names } = this.state;
         const new_pathname = new_props.pathname;
 
         const _view_name = new_props.pathname.split("/")[3] || "intellectual";

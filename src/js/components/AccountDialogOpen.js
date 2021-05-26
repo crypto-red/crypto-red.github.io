@@ -116,7 +116,7 @@ class AccountDialogOpen extends React.Component {
                                     {
                                         _persistent ?
                                             "WARNING: Your account's password will be stored unencrypted.":
-                                            "GOOD: Your account's password won't be stored unencrypted"
+                                            "GOOD: Your account's password won't be stored unencrypted."
                                     }
                                 </DialogContentText>
                             </DialogContent>

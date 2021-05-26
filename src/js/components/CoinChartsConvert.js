@@ -68,18 +68,21 @@ class CoinChartsConvert extends React.Component {
         const { _selected_date } = this.state;
         let _selected_cryptocurrency_price = 0;
 
-        for (let i = 0; i < results.prices.length; i++) {
+        if(!error && results !== null) {
 
-            const result = results.prices[i];
+            for (let i = 0; i < results.prices.length; i++) {
 
-            if(Math.floor(new Date(result.date) / 86400000 ) == Math.floor(new Date(_selected_date) / 86400000)) {
+                const result = results.prices[i];
 
-                _selected_cryptocurrency_price = result.value;
-                break;
+                if(Math.floor(new Date(result.date) / 86400000 ) == Math.floor(new Date(_selected_date) / 86400000)) {
+
+                    _selected_cryptocurrency_price = result.value;
+                    break;
+                }
             }
-        }
 
-        this.setState({_selected_cryptocurrency_price}, () => {this._handle_cryptocurrency_input_value_change(null)});
+            this.setState({_selected_cryptocurrency_price}, () => {this._handle_cryptocurrency_input_value_change(null)});
+        }
     };
 
     _handle_cryptocurrency_input_value_change = (event) => {

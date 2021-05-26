@@ -49,9 +49,17 @@ class CoinBalance extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
+        const { coin_id, logged_account } = this.state;
+
         this.setState(new_props, () => {
 
-            this._get_coin_balance();
+            if(logged_account !== null) {
+
+                if (coin_id !== new_props.coin_id || logged_account.name !== new_props.logged_account.name) {
+
+                    this._get_coin_balance();
+                }
+            }
         });
     }
 
@@ -62,7 +70,7 @@ class CoinBalance extends React.Component {
             this.setState({_coin_balance: result});
         }else {
 
-            actions.trigger_snackbar("Can not load balance result");
+            actions.trigger_snackbar(error);
         }
     };
 

@@ -22,6 +22,10 @@ const logged_accounts_db = new PouchDB("logged_accounts_db", {revs_limit: 1, aut
 let settings = null;
 let logged_account = null;
 
+/*
+ * The concept of the overall api is to cache every query and store every data into PouchDB, an over-kill DB system, ...
+ */
+
 function _merge_object(obj1, obj2){
 
     let merged_object = obj1 || {};
@@ -214,176 +218,82 @@ function set_settings(settings, callback_function) {
 
 function get_coins_markets(coins_id, vs_currency, callback_function) {
 
-    const coins_id_string = coins_id.join(",");
-    const url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=" + vs_currency + "&ids=" + coins_id_string + "&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h,7d,30d,1y";
-    const query_id = "get_coins_markets__" + coins_id_string + "__" + vs_currency;
+    function get_coins_markets_query(parameters, callback_function_query) {
 
-    const cache_time = 30 * 60 * 1000;
-
-    // Get data and store it
-    function gather_data(rev) {
-
-        loadJSON(url, function (error, response) {
-
-            const coins_markets = response;
-
-            query_db.put({
-                _id: query_id,
-                _rev: rev,
-                timestamp: Date.now(),
-                data: JSON.stringify(coins_markets)
-            }, {force: true});
-
-            callback_function(null, coins_markets);
-        });
+        const { url } = parameters;
+        loadJSON(url, callback_function_query);
     }
 
-    // Look for data into the DB
-    query_db.get(query_id, function(err, doc) {
-        if (!err) {
+    const coins_id_string = coins_id.join(",");
+    const url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=" + vs_currency + "&ids=" + coins_id_string + "&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h,7d,30d,1y";
 
-            // Test if recent
-            if(doc.timestamp + cache_time >= Date.now() || !navigator.onLine) {
+    _cache_data(
+        query_db,
+        1,// 30 * 60 * 1000,
+        "get_coins_markets__" + coins_id_string + "__" + vs_currency,
+        get_coins_markets_query,
+        {url},
+        callback_function
+    );
 
-                const coins_markets = JSON.parse(clean_json_text(doc.data));
-
-                callback_function(null, coins_markets);
-            }else { // if old update
-
-                gather_data(doc._rev);
-            }
-
-        }else {
-
-            // Get data from network
-            gather_data("1-A");
-        }
-    });
 }
 
 function get_coin_data(coin_id, callback_function) {
 
-    const url = "https://api.coingecko.com/api/v3/coins/" + coin_id + "?localization=true&tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true";
-    const query_id = "get_coin_data__" + coin_id;
+    function get_coin_data_query(parameters, callback_function_query) {
 
-    const cache_time = 30 * 60 * 1000;
-
-    // Get data and store it
-    function gather_data(rev) {
-
-        loadJSON(url, function (error, response) {
-
-            if(!error) {
-                const coin_data = response;
-
-                if(typeof coin_data.error === "undefined") {
-
-                    query_db.put({
-                        _id: query_id,
-                        _rev: rev,
-                        timestamp: Date.now(),
-                        data: JSON.stringify(coin_data)
-                    }, {force: true});
-
-                    callback_function(null, coin_data);
-                }else {
-
-                    coin_data(response.error, null);
-                }
-            }else {
-
-                callback_function(error, null)
-            }
-
-        });
+        const { url } = parameters;
+        loadJSON(url, callback_function_query);
     }
 
-    // Look for data into the DB
-    query_db.get(query_id, function(error, doc) {
-        if (!error) {
+    const url = "https://api.coingecko.com/api/v3/coins/" + coin_id + "?localization=true&tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true";
 
-            // Test if recent
-            if(doc.timestamp + cache_time >= Date.now() || !navigator.onLine) {
-
-                const coin_data = JSON.parse(clean_json_text(doc.data));
-
-                callback_function(null, coin_data);
-            }else { // if old update
-
-                gather_data(doc._rev);
-            }
-
-        }else {
-
-            // Get data from network
-            gather_data("1-A");
-        }
-    });
+    _cache_data(
+        query_db,
+        1,// 30 * 60 * 1000,
+        "get_coin_data__" + coin_id,
+        get_coin_data_query,
+        {url},
+        callback_function
+    );
 }
 
 function get_coin_chart_data(coin_id, vs_currency, days, callback_function) {
 
-    const url = "https://api.coingecko.com/api/v3/coins/" + coin_id + "/market_chart?vs_currency=" + vs_currency + "&days=" + days;
-    const query_id = "get_coin_chart_data__" + coin_id + "__" + vs_currency + "__" + days;
+    function get_coin_chart_data_query(parameters, callback_function_query) {
 
-    const cache_time = 30 * 60 * 1000;
-
-    // Get data and store it
-    function gather_data(rev) {
-
-        loadJSON(url, function (error, response) {
-
-            const prices = response.prices.map(function(array_within, index){
-                return {
-                    date: array_within[0],
-                    value: parseFloat(array_within[1])
-                }
-            });
-
-            const market_caps = response.market_caps.map(function(array_within, index){
-                return {
-                    date: array_within[0],
-                    value: parseFloat(array_within[1])
-                }
-            });
-
-            const coin_chart_data = {
-                prices,
-                market_caps
-            };
-
-            query_db.put({
-                _id: query_id,
-                _rev: rev,
-                timestamp: Date.now(),
-                data: JSON.stringify(coin_chart_data)
-            }, {force: true});
-
-            callback_function(null, coin_chart_data);
-        });
+        const { url } = parameters;
+        loadJSON(url, callback_function_query);
     }
 
-    // Look for data into the DB
-    query_db.get(query_id, function(error, doc) {
-        if (!error) {
+    const url = "https://api.coingecko.com/api/v3/coins/" + coin_id + "/market_chart?vs_currency=" + vs_currency + "&days=" + days;
 
-            // Test if recent
-            if(doc.timestamp + cache_time >= Date.now() || !navigator.onLine) {
+    _cache_data(
+        query_db,
+        1,// 30 * 60 * 1000,
+        "get_coin_chart_data__" + coin_id + "__" + vs_currency + "__" + days,
+        get_coin_chart_data_query,
+        {url},
+        callback_function,
+        function(response) {
 
-                const coin_chart_data = JSON.parse(clean_json_text(doc.data));
+            const prices = response.prices.map(function (array_within, index) {
+                return {
+                    date: array_within[0],
+                    value: parseFloat(array_within[1])
+                }
+            });
 
-                callback_function(null, coin_chart_data);
-            }else { // if old update
+            const market_caps = response.market_caps.map(function (array_within, index) {
+                return {
+                    date: array_within[0],
+                    value: parseFloat(array_within[1])
+                }
+            });
 
-                gather_data(doc._rev);
-            }
-
-        }else {
-
-            // Get data from network
-            gather_data("1-A");
+            return {prices, market_caps};
         }
-    });
+    );
 }
 
 function create_account(name, password, seed, callback_function) {
@@ -698,6 +608,7 @@ function get_balance_by_seed(coin_id, seed, callback_function){
         case "v-systems":
 
             _cache_data(
+                query_db,
                 1000,
                 "v-systems-get-balance",
                 get_vsys_account_balance_by_seed,
@@ -708,6 +619,7 @@ function get_balance_by_seed(coin_id, seed, callback_function){
         case "bitcoin":
 
             _cache_data(
+                query_db,
                 16 * 1000,
                 "bitcoin-get-balance",
                 get_btc_account_balance_by_seed,
@@ -718,6 +630,7 @@ function get_balance_by_seed(coin_id, seed, callback_function){
         case "litecoin":
 
             _cache_data(
+                query_db,
                 16 * 1000,
                 "litecoin-get-balance",
                 get_ltc_account_balance_by_seed,
@@ -728,6 +641,7 @@ function get_balance_by_seed(coin_id, seed, callback_function){
         case "dogecoin":
 
             _cache_data(
+                query_db,
                 16 * 1000,
                 "dogecoin-get-balance",
                 get_doge_account_balance_by_seed,
@@ -738,6 +652,7 @@ function get_balance_by_seed(coin_id, seed, callback_function){
         case "dash":
 
             _cache_data(
+                query_db,
                 16 * 1000,
                 "dash-get-balance",
                 get_dash_account_balance_by_seed,
@@ -748,6 +663,7 @@ function get_balance_by_seed(coin_id, seed, callback_function){
         case "zcash":
 
             _cache_data(
+                query_db,
                 16 * 1000,
                 "zcash-get-balance",
                 get_zec_account_balance_by_seed,
@@ -840,6 +756,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "v-systems":
 
             _cache_data(
+                query_db,
                 1 * 1000,
                 "v-systems-get-transaction_from-" + all_transactions.length.toString() + "-" + after_transaction_id,
                 get_vsys_account_transactions_by_seed,
@@ -850,6 +767,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "bitcoin":
 
             _cache_data(
+                query_db,
                 1 * 1000,
                 "bitcoin-get-transaction_from-" + after_transaction_id,
                 get_btc_account_transactions_by_seed,
@@ -860,6 +778,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "litecoin":
 
             _cache_data(
+                query_db,
                 1 * 1000,
                 "bitcoin-get-transaction_from-" + after_transaction_id,
                 get_ltc_account_transactions_by_seed,
@@ -870,6 +789,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "dogecoin":
 
             _cache_data(
+                query_db,
                 1 * 1000,
                 "dogecoin-get-transaction_from-" + after_transaction_id,
                 get_doge_account_transactions_by_seed,
@@ -880,6 +800,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "dash":
 
             _cache_data(
+                query_db,
                 1 * 1000,
                 "dash-get-transaction_from-" + after_transaction_id,
                 get_dash_account_transactions_by_seed,
@@ -890,6 +811,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "zcash":
 
             _cache_data(
+                query_db,
                 1 * 1000,
                 "zcash-get-transaction_from-" + after_transaction_id,
                 get_zec_account_transactions_by_seed,
@@ -911,6 +833,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "bitcoin":
 
             _cache_data(
+                query_db,
                 60 * 1000,
                 "bitcoin-get-transaction_from-id-"+id,
                 get_btc_transaction_by_id,
@@ -922,6 +845,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "litecoin":
 
             _cache_data(
+                query_db,
                 60 * 1000,
                 "litecoin-get-transaction_from-id-"+id,
                 get_ltc_transaction_by_id,
@@ -932,6 +856,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "dogecoin":
 
             _cache_data(
+                query_db,
                 60 * 1000,
                 "dogecoin-get-transaction_from-id-"+id,
                 get_doge_transaction_by_id,
@@ -942,6 +867,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "dash":
 
             _cache_data(
+                query_db,
                 60 * 1000,
                 "dash-get-transaction_from-id-"+id,
                 get_dash_transaction_by_id,
@@ -951,6 +877,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "zcash":
 
             _cache_data(
+                query_db,
                 60 * 1000,
                 "zcash-get-transaction_from-id-"+id,
                 get_zec_transaction_by_id,
@@ -964,7 +891,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
 
 }
 
-function _cache_data(cache_time_ms, query_id, api_function, api_parameters, callback_function) {
+function _cache_data(database, cache_time_ms, query_id, api_function, api_parameters, callback_function, response_to_data_formatter = (response) => {return response}) {
 
     // Get data and store it
     function gather_data(rev) {
@@ -973,16 +900,22 @@ function _cache_data(cache_time_ms, query_id, api_function, api_parameters, call
 
             if(!error) {
 
-                const data = response;
+                if(typeof response.error === "undefined") {
 
-                query_db.put({
-                    _id: query_id,
-                    _rev: rev,
-                    timestamp: Date.now(),
-                    data: JSON.stringify(data)
-                }, {force: true});
+                    const data = response_to_data_formatter(response);
 
-                callback_function(null, data);
+                    database.put({
+                        _id: query_id,
+                        _rev: rev,
+                        timestamp: Date.now(),
+                        data: JSON.stringify(data)
+                    }, {force: true});
+
+                    callback_function(null, data);
+                }else {
+
+                    callback_function(response.error, null);
+                }
             }else {
 
                 callback_function(error, null);
@@ -995,11 +928,11 @@ function _cache_data(cache_time_ms, query_id, api_function, api_parameters, call
     }
 
     // Look for data into the DB
-    query_db.get(query_id, function(err, doc) {
+    database.get(query_id, function(err, doc) {
         if (!err) {
 
             // Test if recent or if cache time equals 0 (force refresh) or navigator offline
-            if(((doc.timestamp + cache_time_ms >= Date.now() && cache_time_ms !== 0)) || !navigator.onLine) {
+            if((doc.timestamp + cache_time_ms >= Date.now() && cache_time_ms !== 0) || !navigator.onLine) {
 
                 const data = JSON.parse(clean_json_text(doc.data));
 

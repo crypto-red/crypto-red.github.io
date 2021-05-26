@@ -102,17 +102,15 @@ class CoinChartsChart extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        if(new_props.coin_id !== this.state.coin_id) {
+        const { coin_id } = this.state;
 
-            this.setState({...new_props}, function(){
+        this.setState(new_props, function(){
+
+            if(coin_id !== new_props.coin_id) {
 
                 this._get_coin_chart_data();
-            });
-        }else {
-
-            this.setState({...new_props});
-        }
-
+            }
+        });
     }
 
     componentDidMount() {
@@ -339,8 +337,8 @@ class CoinChartsChart extends React.Component {
                                                 >
                                                     <defs>
                                                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset="5%" stopColor="#131162" stopOpacity="0.66"></stop>
-                                                            <stop offset="95%" stopColor="#ffffff" stopOpacity="1"></stop>
+                                                            <stop offset="5%" stopColor="#131162" stopOpacity="0.6"></stop>
+                                                            <stop offset="95%" stopColor="#131162" stopOpacity="1"></stop>
                                                         </linearGradient>
                                                     </defs>
                                                     <CartesianGrid strokeDasharray="3 3" />
@@ -354,7 +352,7 @@ class CoinChartsChart extends React.Component {
                                                            tickFormatter={value => this._price_formatter(value, true, false)}/>
                                                     <Tooltip formatter={value => this._price_formatter(value)}
                                                              labelFormatter={value => this._date_formatter(value, _coin_chart_data_time, selected_locales_code, true)}/>
-                                                    <Area type="monotone" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3}/>
+                                                    <Area type="monotone" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={2}/>
                                                 </AreaChart>
                                             </ResponsiveContainer>:
                                             <Skeleton className={classes.chart} />

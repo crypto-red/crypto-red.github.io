@@ -24,7 +24,7 @@ function loadValueHtmlSelector(url, selector, callback_function) {
 
     http_request.onreadystatechange = () => {
 
-        if (http_request.readyState == 4  ) {
+        if (http_request.readyState === 4  ) {
             // Javascript function JSON.parse to parse JSON data
             const html = http_request.responseText.toString();
             console.log(html);
@@ -33,7 +33,7 @@ function loadValueHtmlSelector(url, selector, callback_function) {
             const text = el.textContent || el.innerText;
 
             callback_function(null, text);
-        }else if(http_request.status == 404){
+        }else if(http_request.status === 404){
 
             callback_function("Error 404", null);
         }
@@ -74,12 +74,12 @@ function loadJSON(url, callback_function) {
 
     http_request.onreadystatechange = function() {
 
-        if (http_request.readyState == 4  ) {
+        if (http_request.readyState === 4  ) {
             // Javascript function JSON.parse to parse JSON data
             let jsonObj = JSON.parse(http_request.responseText);
 
             callback_function(null, jsonObj);
-        }else if(http_request.status == 404){
+        }else if(http_request.status === 404){
 
             callback_function("Error 404", null);
         }

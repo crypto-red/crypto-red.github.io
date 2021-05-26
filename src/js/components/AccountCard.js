@@ -270,7 +270,7 @@ class AccountCard extends React.Component {
                                     horizontal: "right",
                                 }}
                                 variant="dot">
-                                <Avatar aria-label="Acronyme" className={classes.avatar} variant="square">
+                                <Avatar aria-label="Acronym" className={classes.avatar} variant="square">
                                     <Jdenticon size="48" value={account.name} />
                                 </Avatar>
                             </Badge>

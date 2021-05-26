@@ -55,32 +55,29 @@ class CoinReceive extends React.Component {
 
     componentDidMount() {
 
-        const { coin_id, logged_account } = this.state;
-
-        if(Boolean(logged_account)) {
-
-            if(logged_account.name) {
-
-                this._get_address_by_seed(coin_id, logged_account.seed);
-            }
-        }
+        this._get_address_by_seed();
     }
 
     componentWillReceiveProps(new_props) {
 
-        if (new_props.logged_account) {
+        const { coin_id, logged_account } = this.state;
 
-            if(new_props.logged_account.name) {
+        this.setState({...new_props}, function(){
 
-                this._get_address_by_seed(new_props.coin_id, new_props.logged_account.seed);
+            if(logged_account !== null) {
+
+                if(coin_id !== new_props.coin_id || logged_account.name !== new_props.logged_account.name) {
+
+                    this._get_address_by_seed();
+                }
             }
-        }
+        });
 
-        this.setState(new_props);
     }
 
-    _get_address_by_seed = (coin_id, seed) => {
+    _get_address_by_seed = () => {
 
+        const { coin_id, seed } = this.state;
         const address = api.get_address_by_seed(coin_id, seed);
         this.setState({_address: address});
     };
