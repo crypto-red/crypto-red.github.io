@@ -129,6 +129,7 @@ class Coin extends React.Component {
                 selected_currency={_selected_currency}/>,
             charts: <CoinCharts
                 coin_data={_coin_data}
+                logged_account={_logged_account}
                 selected_locales_code={_selected_locales_code}
                 selected_currency={_selected_currency}
                 coin_id={_coin_id} />,

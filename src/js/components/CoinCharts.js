@@ -8,6 +8,7 @@ import CoinChartsChart from "./CoinChartsChart";
 import CoinChartsConvert from "./CoinChartsConvert";
 import CoinChartsLinks from "./CoinChartsLinks";
 import CoinChartsRadar from "./CoinChartsRadar";
+import CoinChartAddress from "./CoinChartAddress";
 
 const styles = theme => ({
     root: {
@@ -46,7 +47,8 @@ class CoinCharts extends React.Component {
             coin_id: props.coin_id,
             selected_locales_code: props.selected_locales_code,
             selected_currency: props.selected_currency,
-            coin_data: props.coin_data
+            coin_data: props.coin_data,
+            logged_account: props.logged_account
         };
     };
 
@@ -57,7 +59,7 @@ class CoinCharts extends React.Component {
 
     render() {
 
-        const { classes, selected_currency, selected_locales_code, coin_data, coin_id } = this.state;
+        const { classes, selected_currency, selected_locales_code, coin_data, coin_id, logged_account } = this.state;
 
         return (
             <div className={classes.root}>
@@ -85,6 +87,9 @@ class CoinCharts extends React.Component {
                                 coin_data={coin_data}
                                 selected_currency={selected_currency}
                                 selected_locales_code={selected_locales_code}/>
+                        </div>
+                        <div>
+                            <CoinChartAddress coin_id={coin_id} logged_account={logged_account}/>
                         </div>
                         <div className={classes.cardContainerMarginTop}>
                             <CoinChartsLinks coin_data={coin_data}/>

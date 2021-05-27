@@ -108,7 +108,6 @@ class AppTabs extends React.Component {
             <div className={classes.appBarContainer}>
                 <AppBar position="static" className={classes.AppBar}>
                     <Tabs value={_view_name_index}
-                          indicatorColor="#FFFFFF"
                           onChange={this._handle_view_name_change}
                           variant="fullWidth"
                           aria-label="icon label tabs example"
