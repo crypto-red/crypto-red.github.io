@@ -77,9 +77,13 @@ class CoinReceive extends React.Component {
 
     _get_address_by_seed = () => {
 
-        const { coin_id, seed } = this.state;
-        const address = api.get_address_by_seed(coin_id, seed);
-        this.setState({_address: address});
+        const { coin_id, logged_account } = this.state;
+
+        if(logged_account) {
+
+            const address = api.get_address_by_seed(coin_id, logged_account.seed);
+            this.setState({_address: address});
+        }
     };
 
     _copy_address = (event, address) => {
