@@ -205,7 +205,7 @@ class Index extends React.Component {
                     onClose={this._close_snackbar}
                 />
                 <AppToolbar know_if_logged={_know_if_logged} logged_account={_logged_account} pathname={pathname} panic_mode={_panic_mode}/>
-                <AppDrawer pathname={pathname}/>
+                <AppDrawer pathname={pathname} logged_account={_logged_account}/>
                 <main className={classes.content}>
                     <Toolbar />
                     {page_tabs_component}

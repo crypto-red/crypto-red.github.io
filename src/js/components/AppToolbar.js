@@ -190,7 +190,7 @@ class AppToolbar extends React.Component {
                                 <span className={classes.swipeableDrawerAppTitle}>WALLET.CRYPTO.RED</span>
                             </div>
                         </Toolbar>
-                        <DrawerContent pathname={pathname} onClose={this._handle_close_swipeable_app_drawer}/>
+                        <DrawerContent logged_account={logged_account} pathname={pathname} onClose={this._handle_close_swipeable_app_drawer}/>
                 </SwipeableDrawer>
                 <AppBar position="fixed" className={classes.appBar}>
                     <Toolbar>

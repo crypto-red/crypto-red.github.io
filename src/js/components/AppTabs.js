@@ -32,6 +32,9 @@ const styles = theme => ({
     tabs: {
         "& .MuiTab-root": {
             minWidth: "auto"
+        },
+        "& .MuiTabs-indicator": {
+            backgroundColor: theme.palette.primary.contrastText
         }
     }
 });

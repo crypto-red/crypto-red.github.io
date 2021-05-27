@@ -461,7 +461,7 @@ class AccountDialogCreate extends React.Component {
                 aria-labelledby="create-account-dialog-title"
                 aria-describedby="create-account-dialog-description"
             >
-                <DialogTitle id="create-account-dialog-title" onClose={this.props.cancel}>Create a new account</DialogTitle>
+                <DialogTitle id="create-account-dialog-title">Create a new account</DialogTitle>
                 <Stepper activeStep={_active_view_index} alternativeLabel>
                     <Step completed={(_active_view_index >= 1)}>
                         <StepLabel>Configuration</StepLabel>

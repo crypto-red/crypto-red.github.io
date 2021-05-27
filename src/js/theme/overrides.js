@@ -1,9 +1,4 @@
 const overrides = {
-    MuiTabs: {
-        indicator: {
-            backgroundColor: "#FFFFFF"
-        }
-    },
     MuiCssBaseline: {
         "@global": {
             html: {

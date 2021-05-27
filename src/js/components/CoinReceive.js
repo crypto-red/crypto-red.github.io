@@ -89,11 +89,11 @@ class CoinReceive extends React.Component {
             clipboard.writeText(address).then(
                 function () {
 
-                    actions.trigger_snackbar("Address succesfully copied");
+                    actions.trigger_snackbar("Address successfully copied.");
                 },
                 function () {
 
-                    actions.trigger_snackbar("Cannot copy this address");
+                    actions.trigger_snackbar("Cannot copy this address.");
                 }
             );
         }else {

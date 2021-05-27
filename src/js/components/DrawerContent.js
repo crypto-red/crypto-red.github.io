@@ -28,6 +28,9 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import HelpIcon from "@material-ui/icons/Help";
 import ChromeReaderModeIcon from "@material-ui/icons/ChromeReaderMode";
 import InfoIcon from "@material-ui/icons/Info";
+import LockIcon from "@material-ui/icons/Lock";
+
+import CryptDialog from "../components/CryptDialog";
 
 import { HISTORY, COINS } from "../utils/constants";
 import api from "../utils/api";
@@ -86,10 +89,12 @@ class DrawerContent extends React.Component {
         this.state = {
             classes: props.classes,
             pathname: props.pathname,
+            logged_account: props.logged_account,
             _history: HISTORY,
             _menu_expanded: "coins", // coins, trade, about
             _current_help_dialog_id: "topup",
             _is_help_dialog_open: false,
+            _is_crypt_dialog_open: false,
             _should_open_help_dialogs: {
                 topup: false,
                 mixer: false,
@@ -263,6 +268,16 @@ class DrawerContent extends React.Component {
         }
     };
 
+    _open_crypt_dialog = () => {
+
+        this.setState({_is_crypt_dialog_open: true});
+    };
+
+    _close_crypt_dialog = () => {
+
+        this.setState({_is_crypt_dialog_open: false});
+    };
+
     _handle_current_help_dialog_checkbox_change = (event) => {
 
         this.setState({_current_help_dialog_checkbox: event.target.checked})
@@ -270,7 +285,7 @@ class DrawerContent extends React.Component {
 
     render() {
 
-        const { classes, _menu_expanded, _is_help_dialog_open, _help_dialogs_data, _current_help_dialog_id, _current_help_dialog_checkbox } = this.state;
+        const { classes, logged_account, _menu_expanded, _is_help_dialog_open, _help_dialogs_data, _current_help_dialog_id, _current_help_dialog_checkbox, _is_crypt_dialog_open } = this.state;
         
         const coinListItem = COINS.map((coin, coinIndex, coins) => {
            
@@ -286,6 +301,10 @@ class DrawerContent extends React.Component {
 
         return (
             <div>
+                <CryptDialog
+                    open={_is_crypt_dialog_open}
+                    onClose={this._close_crypt_dialog}
+                    logged_account={logged_account}/>
                 <Dialog
                     open={_is_help_dialog_open}
                     onClose={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true)}}
@@ -351,6 +370,18 @@ class DrawerContent extends React.Component {
                                 <ListItem button className={classes.nested} onClick={(event) => {this._should_open_help_dialog(event, "convert")}}>
                                     <ListItemIcon><SwapHorizIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary="Convert" />
+                                </ListItem>
+                            </List>
+                        </Collapse>
+                        <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "tools")}>
+                            <ListItemText primary="Tools" />
+                            <ExpandMoreIcon  className={_menu_expanded === "tools" ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
+                        </ListItem>
+                        <Collapse in={_menu_expanded === "tools"} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding>
+                                <ListItem button className={classes.nested} onClick={(event) => {this._open_crypt_dialog(event)}}>
+                                    <ListItemIcon><LockIcon className={classes.iconColor} /></ListItemIcon>
+                                    <ListItemText primary="Crypt" />
                                 </ListItem>
                             </List>
                         </Collapse>

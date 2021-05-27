@@ -37,7 +37,8 @@ class AppDrawer extends React.Component {
         super(props);
         this.state = {
             pathname: props.pathname,
-            classes: props.classes
+            classes: props.classes,
+            logged_account: props.logged_account
         };
     };
 
@@ -47,14 +48,14 @@ class AppDrawer extends React.Component {
 
     render() {
 
-        const { classes, pathname } = this.state;
+        const { classes, pathname, logged_account } = this.state;
         
         return (
             <Box elevation={4}>
                 <Drawer className={classes.drawer} variant="permanent" classes={{paper: classes.drawerPaper}}>
                     <Toolbar />
                     <div className={classes.drawerContainer}>
-                        <DrawerContent pathname={pathname} onClose={() => {}}/>
+                        <DrawerContent logged_account={logged_account} pathname={pathname} onClose={() => {}}/>
                     </div>
                 </Drawer>
             </Box>
