@@ -156,7 +156,7 @@ class AccountCard extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        if(new_props.current && this.state.account.name !== new_props.account.name) {
+        if(new_props.current && (this.state.account.name !== new_props.account.name || this.state.current !== new_props.current)) {
 
             this.setState(new_props, () => {
 

@@ -36,7 +36,7 @@ const PAGE_ROUTES = [
         tabs: ""
     },
     {
-        page_regex: /\/(coins)(\/bitcoin|\/cardano|\/dash|\/dogecoin|\/eos|\/ethereum|\/litecoin|\/monero|\/neo|\/v-systems|\/zcash)(\/balance|\/transactions|\/charts|\/send|\/receive)?$/,
+        page_regex: /\/(coins)(\/bitcoin|\/cardano|\/dash|\/dogecoin|\/eos|\/ethereum|\/litecoin|\/monero|\/neo|\/v-systems|\/zcash)(\/balance|\/transactions|\/charts|\/send(\/[a-zA-Z0-9]+)?|\/receive)?$/,
         page_name: "coin",
         tabs: "coin"
     },

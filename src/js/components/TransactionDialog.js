@@ -1,5 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
+import { Link } from "react-router-dom";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -116,7 +117,7 @@ class TransactionDialog extends React.Component {
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Send from</TableCell>
-                                                    <TableCell align="right">{transaction.send_from}</TableCell>
+                                                    <TableCell align="right"><Link to={`/coins/${transaction.crypto_id}/send/${transaction.send_from}`}>SEND</Link> {transaction.send_from}</TableCell>
                                                 </TableRow>
                                                 {
                                                     typeof transaction.send_from_public_key !== "undefined" ?
@@ -127,7 +128,7 @@ class TransactionDialog extends React.Component {
                                                 }
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Send to</TableCell>
-                                                    <TableCell align="right">{transaction.send_to}</TableCell>
+                                                    <TableCell align="right"><Link to={`/coins/${transaction.crypto_id}/send/${transaction.send_to}`}>SEND</Link> {transaction.send_to}</TableCell>
                                                 </TableRow>
                                                 {
                                                     typeof transaction.send_to_public_key !== "undefined" ?

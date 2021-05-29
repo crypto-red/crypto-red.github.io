@@ -111,7 +111,7 @@ class Coin extends React.Component {
     render() {
 
         const { classes } = this.state;
-        const { _coin_id, _view_name, _view_names } = this.state;
+        const { _coin_id, _view_name, pathname } = this.state;
         const { _selected_locales_code, _selected_currency, _coin_data, _logged_account } = this.state;
          
         const views = {
@@ -138,6 +138,7 @@ class Coin extends React.Component {
                 logged_account={_logged_account}
                 selected_locales_code={_selected_locales_code}
                 selected_currency={_selected_currency}
+                pathname={pathname}
                 coin_id={_coin_id} />,
             receive: <CoinReceive
                 coin_id={_coin_id}

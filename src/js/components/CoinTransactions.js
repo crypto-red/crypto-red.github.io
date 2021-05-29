@@ -58,16 +58,23 @@ class CoinTransactions extends React.Component {
 
         const { coin_id, logged_account } = this.state;
 
-        this.setState({...new_props, _loading: true, _transactions: []}, () => {
+        if(logged_account !== null) {
 
-            if(logged_account !== null) {
+            if (coin_id !== new_props.coin_id || logged_account.name !== new_props.logged_account.name) {
 
-                if (coin_id !== new_props.coin_id || logged_account.name !== new_props.logged_account.name) {
+                this.setState({...new_props, _loading: true, _transactions: []}, () => {
 
                     this._load_more_transactions();
-                }
+                });
+            }else {
+
+                this.setState({...new_props});
             }
-        });
+        }else {
+
+            this.setState({...new_props});
+        }
+
     }
 
     _handle_load_more_transactions_result = (error, result) => {
