@@ -96,7 +96,7 @@ class AccountDialogDelete extends React.Component {
                     <Button onClick={(event) => {this.props.cancel(event, account)}} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={(event) => {this._accept(event, account)}} variant="contained" color="primary" disabled={_is_confirmation_disabled}>
+                    <Button onClick={(event) => {this._accept(event, account)}} color="primary" disabled={_is_confirmation_disabled} autoFocus>
                         Delete
                     </Button>
                 </DialogActions>

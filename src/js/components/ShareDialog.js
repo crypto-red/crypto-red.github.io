@@ -207,8 +207,6 @@ class ShareDialog extends React.Component {
                                     <LinkedInIcon fontSize="large" />
                                 </IconButton>
                             </Tooltip>
-
-
                         </div>
                         <FormControl fullWidth>
                             <InputLabel htmlFor="share-dialog-url-input">Url</InputLabel>

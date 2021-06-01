@@ -328,6 +328,7 @@ class Accounts extends React.Component {
                                      accept={this._delete_selected_account}/>
 
                 <AccountDialogCreate open={_is_account_dialog_create_open}
+                                     selected_locales_code={_selected_locales_code}
                                      onComplete={this._on_account_dialog_create_complete}
                                      onClose={this._close_account_dialog_create}
                                      cancel={this._close_account_dialog_create}/>

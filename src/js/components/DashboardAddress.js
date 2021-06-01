@@ -20,6 +20,9 @@ const styles = theme => ({
     cardContainer: {
         height: "100%"
     },
+    addressCard: {
+        height: "100%"
+    },
     addressCardContent: {
         maxHeight: 472,
         overflow: "auto"
@@ -70,7 +73,7 @@ class DashboardAddress extends React.Component {
                     onClose={this._close_address_and_keys_dialog}/>
 
                 <Fade in>
-                    <Card className={classes.linksCard}>
+                    <Card className={classes.addressCard}>
                         <CardHeader title="Address" />
                         <CardContent className={classes.addressCardContent}>
                             {

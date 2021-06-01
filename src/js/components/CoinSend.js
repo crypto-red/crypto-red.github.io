@@ -103,7 +103,7 @@ class CoinSend extends React.Component {
         this._get_address_by_seed();
         this._get_coin_balance();
         this._get_send_transaction_info();
-        this.set_address_if_is_in_the_pathname();
+        this._reset_local_props_from_new_pathname();
     }
 
     componentWillReceiveProps(new_props) {
@@ -113,19 +113,16 @@ class CoinSend extends React.Component {
             this._get_address_by_seed();
             this._get_coin_balance();
             this._get_send_transaction_info();
+            this._reset_local_props_from_new_pathname();
         });
     }
 
-    set_address_if_is_in_the_pathname = () => {
+    _reset_local_props_from_new_pathname = () => {
 
         const { pathname } = this.state;
         const address = pathname.match(/\/send\/?([a-zA-Z0-9]+)?\/?/)[1] || "";
 
-        if(address.length) {
-
-            this.setState({_send_address_input: address});
-        }
-
+        this.setState({_send_address_input: address, _send_amount_input: "", _send_message_input: ""});
     };
 
     _handle_get_balance_result = (error, result) => {

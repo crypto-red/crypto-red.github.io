@@ -328,7 +328,7 @@ class DrawerContent extends React.Component {
                                     </DialogContent>
                                     <DialogActions>
                                         <Button onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true)}} color="primary">Cancel</Button>
-                                        <Button onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox)}} variant="contained"  color="primary" autoFocus>
+                                        <Button onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox)}} color="primary" autoFocus>
                                             GO
                                         </Button>
                                     </DialogActions>

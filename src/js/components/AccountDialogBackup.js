@@ -75,7 +75,7 @@ class AccountDialogBackup extends React.Component {
                                 {
                                     _shown ?
                                         <p>{account.seed}</p>:
-                                        <Button variant="contained"  color="primary" fullWidth onClick={this._show}>
+                                        <Button color="primary" fullWidth onClick={this._show}>
                                             Show
                                         </Button>
                                 }
@@ -84,7 +84,7 @@ class AccountDialogBackup extends React.Component {
                     </div>: null
                 }
                 <DialogActions>
-                    <Button onClick={(event) => {this._on_close(event, account)}} variant="contained"  color="primary" autoFocus>
+                    <Button onClick={(event) => {this._on_close(event, account)}}  color="primary" autoFocus>
                         Close
                     </Button>
                 </DialogActions>

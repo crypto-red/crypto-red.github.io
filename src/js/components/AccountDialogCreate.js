@@ -21,6 +21,7 @@ import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
 import ChipInput from "material-ui-chip-input"
 
+import { LOCALES } from "../utils/constants";
 import * as bip39 from "bip39"
 import zxcvbn from "zxcvbn";
 import api from "../utils/api";
@@ -39,6 +40,11 @@ const styles = theme => ({
                 borderRadius: 0
             },
         }
+    },
+    dialogBody: {
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column"
     },
     generationLoader: {
         textAlign: "center"
@@ -78,6 +84,8 @@ class AccountDialogCreate extends React.Component {
         this.state = {
             classes: props.classes,
             open: props.open,
+            selected_locales_code: props.selected_locales_code,
+            _locales: LOCALES,
             _bip39: bip39,
             _zxcvbn: zxcvbn,
             _account_name_input: "",
@@ -98,10 +106,46 @@ class AccountDialogCreate extends React.Component {
         };
     };
 
-    componentWillReceiveProps(nextProps, nextContext) {
+    componentDidMount() {
 
-        this.setState({...nextProps});
+        this._set_default_bip39_language();
     }
+
+    componentWillReceiveProps(new_props, nextContext) {
+
+        this.setState(new_props, () => {
+
+            this._set_default_bip39_language();
+        });
+
+    }
+
+    _set_default_bip39_language = () => {
+
+        const { _locales, selected_locales_code } = this.state;
+
+        let locale_name = _locales[0].name;
+        let { _bip39 } = this.state;
+
+        for(let i = 0; i < _locales.length; i++) {
+
+            if(_locales[i].code === selected_locales_code) {
+
+                locale_name = _locales[i].name;
+            }
+        }
+
+        ["japanese", "spanish", "italian", "french", "korean", "czech", "portuguese"].forEach(function(name){
+
+            if(locale_name.toLowerCase().includes(name)) {
+
+                _bip39.setDefaultWordlist(name);
+            }
+        });
+
+        this.setState({_bip39});
+
+    };
 
     _switch_to_mnemonic_view = () => {
 
@@ -217,7 +261,7 @@ class AccountDialogCreate extends React.Component {
     
     _generate_a_new_mnemonic = (event) => {
 
-        if(typeof event !== "undefined") {event.preventDefault()};
+        if(typeof event !== "undefined") {event.preventDefault()}
 
         const { _bip39 } = this.state;
         const mnemonic_words = _bip39.generateMnemonic().split(" ");
@@ -245,7 +289,7 @@ class AccountDialogCreate extends React.Component {
 
             this.setState(state);
 
-        }, 300);
+        }, 500);
     };
 
     _handle_key_down_input_one = (event) => {
@@ -293,115 +337,110 @@ class AccountDialogCreate extends React.Component {
                 </DialogContentText>: null;
 
         const configuration_view =
-            <Fade in>
-                <div>
-                    <DialogContent>
-                        <DialogContentText id="create-account-dialog-description">
-                            Provide a name and eventually a STRONG PASSWORD in order to create a new account (You can define it later).
-                            Everything that you type never be send to any server, it will stay on your device.
-                            Once a name and a pasword to encrypt your backup phrase is set, we will enable you to manually create or import a new backup phrase (called a mnemonic).
-                        </DialogContentText>
-                        <form noValidate autoComplete="off">
-                            <TextField
-                                onChange={this._handle_account_name_input_change}
-                                value={_account_name_input}
-                                error={_is_account_name_error}
-                                helperText={_is_account_name_error ? "Account name cannot be empty": ""}
-                                onKeyDown={this._handle_key_down_input_one}
-                                id="name"
-                                label="Name"
-                                type="text"
-                                fullWidth
-                            />
-                            <TextField
-                                onChange={this._handle_account_password_input_change}
-                                value={_account_password_input}
-                                error={_is_account_password_error}
-                                helperText={_is_account_password_error ? "Wrong password input": ""}
-                                onKeyDown={this._handle_key_down_input_two}
-                                id="password"
-                                label="Password"
-                                type="password"
-                                fullWidth
-                            />
-                            <TextField
-                                onChange={this._handle_account_confirmation_input_change}
-                                value={_account_conformation_input}
-                                error={_is_account_confirmation_error}
-                                helperText={_is_account_confirmation_error ? "Wrong password confirmation": ""}
-                                onKeyDown={this._handle_key_down_input_three}
-                                id="confirmation"
-                                label="Confirmation"
-                                type="password"
-                                fullWidth
-                            />
-                            <Collapse in={Boolean(_password_evaluation) && Boolean(_account_password_input.length)} timeout="auto" unmountOnExit>
-                                {password_feedback}
-                            </Collapse>
-                        </form>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={this._switch_to_mnemonic_view} variant="contained"  color="primary" autoFocus>
-                            Next
-                        </Button>
-                    </DialogActions>
-                </div>
-            </Fade>;
+            <div className={classes.dialogBody}>
+                <DialogContent className={classes.dialogBody}>
+                    <DialogContentText id="create-account-dialog-description">
+                        Provide a name and eventually a STRONG PASSWORD in order to create a new account (You can define it later).
+                        Everything that you type never be send to any server, it will stay on your device.
+                        Once a name and a pasword to encrypt your backup phrase is set, we will enable you to manually create or import a new backup phrase (called a mnemonic).
+                    </DialogContentText>
+                    <form noValidate autoComplete="off">
+                        <TextField
+                            onChange={this._handle_account_name_input_change}
+                            value={_account_name_input}
+                            error={_is_account_name_error}
+                            helperText={_is_account_name_error ? "Account name cannot be empty": ""}
+                            onKeyDown={this._handle_key_down_input_one}
+                            id="name"
+                            label="Name"
+                            type="text"
+                            fullWidth
+                        />
+                        <TextField
+                            onChange={this._handle_account_password_input_change}
+                            value={_account_password_input}
+                            error={_is_account_password_error}
+                            helperText={_is_account_password_error ? "Wrong password input": ""}
+                            onKeyDown={this._handle_key_down_input_two}
+                            id="password"
+                            label="Password"
+                            type="password"
+                            fullWidth
+                        />
+                        <TextField
+                            onChange={this._handle_account_confirmation_input_change}
+                            value={_account_conformation_input}
+                            error={_is_account_confirmation_error}
+                            helperText={_is_account_confirmation_error ? "Wrong password confirmation": ""}
+                            onKeyDown={this._handle_key_down_input_three}
+                            id="confirmation"
+                            label="Confirmation"
+                            type="password"
+                            fullWidth
+                        />
+                        <Collapse in={Boolean(_password_evaluation) && Boolean(_account_password_input.length)} timeout="auto" unmountOnExit>
+                            {password_feedback}
+                        </Collapse>
+                    </form>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={this._switch_to_mnemonic_view} color="primary" autoFocus>
+                        Next
+                    </Button>
+                </DialogActions>
+            </div>;
 
         const mnemonic_view =
-            <Fade in>
-                <div>
-                    <DialogContent>
-                        <DialogContentText id="create-account-dialog-description">
-                            Use an old backup phrase from another wallet or use a <Link onClick={(event) => {this._generate_a_new_mnemonic(event)}}>new random backup phrase</Link>.
-                            The backup phrase is a like a seed password that will create a master key, from this key, it will create derived keys pair for each cryptocurrency.
-                            The password you typed in the first step will enable you to log in using a password instead of this  backup phrase each and every time.<br />
-                            <b className={classes.red}>Make sure no one is looking before completing the field below and STORE IT ON PAPER.</b>
-                        </DialogContentText>
-                        <form noValidate autoComplete="off">
-                            <ChipInput
-                                value={ _account_mnemonic_input}
-                                onChange={(chips) => this._handle_private_mnemonic_input_change(chips)}
-                                onDelete={(value) => this._handle_private_mnemonic_input_delete(value)}
-                                onAdd={(value) => this._handle_private_mnemonic_input_add(value)}
-                                error={ _is_account_mnemonic_input_error}
-                                helperText={( _is_account_mnemonic_input_error) ? "Something is incorrect": ""}
-                                allowDuplicates
-                                fullWidth
-                                label={"Bip39 mnemonic"}
-                            />
-                            <Collapse in={ _account_mnemonic_input.length < 12}>
-                                <DialogContentText>
-                                    <p>
-                                        An usual seed for a bip39 mnemonic is 12 words long.
-                                    </p>
-                                </DialogContentText>
-                            </Collapse>
-                        </form>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={(event) => {this._generate_a_new_mnemonic(event)}}
-                                color="primary"
-                                variant={_account_mnemonic_input.length ? null: "contained"}
-                                autoFocus={!_account_mnemonic_input.length}>
-                            Random
-                        </Button>
-                        <Button onClick={this._switch_to_generation_view}
-                                variant="contained"
-                                color="primary"
-                                disabled={!_account_mnemonic_input.length}
-                                autoFocus={_account_mnemonic_input.length}>
-                            Next
-                        </Button>
-                    </DialogActions>
-                </div>
-            </Fade>;
+            <div className={classes.dialogBody}>
+                <DialogContent className={classes.dialogBody}>
+                    <DialogContentText id="create-account-dialog-description">
+                        Use an old backup phrase from another wallet or use a new random backup phrase.
+                        The backup phrase is a like a seed password that will create a master key, from this key, it will create derived keys pair for each cryptocurrency.
+                        The password you typed in the first step will enable you to log in using a password instead of this  backup phrase each and every time.<br />
+                        <b className={classes.red}>Make sure no one is looking before completing the field below and STORE IT ON PAPER.</b>
+                    </DialogContentText>
+                    <form noValidate autoComplete="off">
+                        <ChipInput
+                            value={ _account_mnemonic_input}
+                            onChange={(chips) => this._handle_private_mnemonic_input_change(chips)}
+                            onDelete={(value) => this._handle_private_mnemonic_input_delete(value)}
+                            onAdd={(value) => this._handle_private_mnemonic_input_add(value)}
+                            error={ _is_account_mnemonic_input_error}
+                            helperText={( _is_account_mnemonic_input_error) ? "Something is incorrect": ""}
+                            allowDuplicates
+                            fullWidth
+                            label={"Bip39 mnemonic"}
+                        />
+                        <Collapse in={ _account_mnemonic_input.length < 12}>
+                            <DialogContentText>
+                                <p>
+                                    An usual seed for a bip39 mnemonic is 12 words long.
+                                </p>
+                            </DialogContentText>
+                        </Collapse>
+                    </form>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={(event) => {this._generate_a_new_mnemonic(event)}}
+                            color="primary"
+                            autoFocus={!_account_mnemonic_input.length}>
+                        Random
+                    </Button>
+                    <Button onClick={this._switch_to_generation_view}
+
+                            color="primary"
+                            disabled={!_account_mnemonic_input.length}
+                            autoFocus={_account_mnemonic_input.length}>
+                        Next
+                    </Button>
+                </DialogActions>
+            </div>;
 
         const generation_view_inner = !_generation_completed ?
             <div>
@@ -411,7 +450,7 @@ class AccountDialogCreate extends React.Component {
             _generation_eror ?
             <div>
                 <Grow in>
-                    <Fab className={classes.generationFabError}>
+                    <Fab>
                         <CloseIcon />
                     </Fab>
                 </Grow>
@@ -427,24 +466,22 @@ class AccountDialogCreate extends React.Component {
             </div>
 
         const generation_view =
-            <Fade in>
-                <div>
-                    <DialogContent>
-                        <p>We need to create one address for each cryptocurrency listed, theses address are anonymous since they aren't linked to yourself. We'll automatically backup your account on your computer, if you change your password replace the backup file and delete the old one.</p>
-                        <div className={classes.generationLoader}>
-                            {generation_view_inner}
-                        </div>
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                            Cancel
-                        </Button>
-                        <Button onClick={(event) => {this._on_close(event)}} variant="contained"  color="primary" autoFocus>
-                            Close
-                        </Button>
-                    </DialogActions>
-                </div>
-            </Fade>;
+            <div className={classes.dialogBody}>
+                <DialogContent className={classes.dialogBody}>
+                    <p>We need to create one address for each cryptocurrency listed, theses address are anonymous since they aren't linked to yourself. We'll automatically backup your account on your computer, if you change your password replace the backup file and delete the old one.</p>
+                    <div className={classes.generationLoader}>
+                        {generation_view_inner}
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
+                        Cancel
+                    </Button>
+                    <Button onClick={(event) => {this._on_close(event)}} color="primary" autoFocus>
+                        Close
+                    </Button>
+                </DialogActions>
+            </div>;
 
         const views = [
             configuration_view,

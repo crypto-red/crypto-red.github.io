@@ -16,6 +16,19 @@ import { HISTORY } from "../utils/constants";
 import api from "../utils/api";
 
 const styles = theme => ({
+    dialog: {
+        [theme.breakpoints.down("sm")]: {
+            "& .MuiDialog-container .MuiDialog-paper": {
+                margin: "24px 0px",
+                borderRadius: 0
+            },
+        }
+    },
+    dialogBody: {
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column"
+    },
     tableCellBold: {
         fontWeight: "bold"
     },
@@ -105,14 +118,15 @@ class AddressDialog extends React.Component {
             <Dialog
                 open={open}
                 onClose={(event) => {this._on_close(event, coin_id)}}
+                className={classes.dialog}
                 aria-labelledby="show-address-and-keys-dialog-title"
                 aria-describedby="show-address-and-keys-dialog-description"
             >
                 {
                     (_address && _public_key && _private_key) ?
-                        <div>
+                        <div className={classes.dialogBody}>
                             <DialogTitle id="show-address-and-keys-dialog-title" className={classes.breakWord}>Coin's ID {coin_id}</DialogTitle>
-                            <DialogContent>
+                            <DialogContent className={classes.dialogBody}>
                                 <DialogContentText id="show-address-and-keys-dialog-description">
                                     <Table>
                                         <Table aria-label="main-info-table">
@@ -142,7 +156,7 @@ class AddressDialog extends React.Component {
                 }
 
                 <DialogActions>
-                    <Button onClick={(event) => {this._on_close(event, coin_id)}} variant="contained"  color="primary" autoFocus>
+                    <Button onClick={(event) => {this._on_close(event, coin_id)}} color="primary" autoFocus>
                         Close
                     </Button>
                 </DialogActions>

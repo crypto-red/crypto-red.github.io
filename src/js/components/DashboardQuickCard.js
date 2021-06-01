@@ -11,8 +11,9 @@ const styles = theme => ({
         backgroundColor: theme.palette.secondary.light,
         color: theme.palette.primary.contrastText
     },
-    fullWidth: {
-        width: "100%"
+    cardContainer: {
+        width: "100%",
+        cursor: "pointer"
     }
 });
 
@@ -40,7 +41,7 @@ class DashboardQuickCard extends React.Component {
         const { text_content, label_content } = this.state;
 
         return (
-            <div className={classes.fullWidth}>
+            <div className={classes.cardContainer}>
                 <Fade in>
                     <Card className={relevant ? classes.relevant: null}>
                         <CardContent>

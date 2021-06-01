@@ -36,13 +36,13 @@ const styles = theme => ({
     },
     linearProgressVisible: {
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: "#44b700"
+            backgroundColor: theme.palette.primary.light
         },
         opacity: 1,
     },
     linearProgressHidden: {
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: "#44b700"
+            backgroundColor: theme.palette.primary.light
         },
         opacity: 0,
         animation: "$hide 1.5s",

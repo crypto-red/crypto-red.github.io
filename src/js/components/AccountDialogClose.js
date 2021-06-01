@@ -56,7 +56,7 @@ class AccountDialogClose extends React.Component {
                     <Button onClick={(event) => {this.props.cancel(event, account)}} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={(event) => {this.props.accept(event, account)}} variant="contained"  color="primary" autoFocus>
+                    <Button onClick={(event) => {this.props.accept(event, account)}} color="primary" autoFocus>
                         Close
                     </Button>
                 </DialogActions>

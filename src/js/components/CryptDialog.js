@@ -1,7 +1,7 @@
 import React from "react";
+import Link from "react-router-dom/Link";
 import { withStyles } from "@material-ui/core/styles";
 
-import { green, red } from "@material-ui/core/colors";
 import Button from "@material-ui/core/Button";
 import Fade from "@material-ui/core/Fade";
 
@@ -31,6 +31,11 @@ const styles = theme => ({
                 borderRadius: 0
             },
         }
+    },
+    dialogBody: {
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column"
     },
     breakAllWords: {
         wordBreak: "break-all"
@@ -129,10 +134,12 @@ class CryptDialog extends React.Component {
             if(!_view_name_index) {
 
                 api_crypto.nacl_encrypt(_message_input, _public_key_input, this._handle_result_text_result);
+                //api_crypto.mc_eliece_encrypt(_message_input, _public_key_input, this._handle_result_text_result);
 
             }else {
 
                 api_crypto.nacl_decrypt(_message_input, _public_key_input, _private_key_input, this._handle_result_text_result);
+                //api_crypto.mc_eliece_decrypt(_message_input, _private_key_input, this._handle_result_text_result);
             }
         }
 
@@ -163,7 +170,7 @@ class CryptDialog extends React.Component {
 
             if(_view_name_index === 0) {
 
-                actions.trigger_snackbar("Warning, do you want to send an encrypted message to yourself?");
+                actions.trigger_snackbar("Warning, do you want to encrypt a message to yourself?");
             }
 
             this.setState({_public_key_input, _is_public_key_input_error: false, _private_key_input, _is_private_key_input_error: false, _is_autofill_dialog_open: false});
@@ -197,7 +204,7 @@ class CryptDialog extends React.Component {
             clipboard.writeText(text).then(
                 function () {
 
-                    actions.trigger_snackbar("Address successfully copied.");
+                    actions.trigger_snackbar("Text successfully copied.");
                 },
                 function () {
 
@@ -227,7 +234,7 @@ class CryptDialog extends React.Component {
                 >
                     <DialogTitle id="crypto-text-result-dialog-title">{_view_name_index ? "Decrypt": "Encrypt"} text ({_result_text.length} length) result</DialogTitle>
                     <DialogContent>
-                        <DialogContentText className={classes.breakAllWords} id="crypto-text-result-dialog-description">
+                        <DialogContentText id="crypto-text-result-dialog-description">
                             {_result_text}
                         </DialogContentText>
                     </DialogContent>
@@ -235,7 +242,7 @@ class CryptDialog extends React.Component {
                         <Button onClick={(event) => {this._handle_result_text_copy(event, _result_text)}} color="primary">
                             copy
                         </Button>
-                        <Button onClick={this._handle_result_dialog_close} variant="contained"  color="primary" autoFocus>
+                        <Button onClick={this._handle_result_dialog_close} color="primary" autoFocus>
                             close
                         </Button>
                     </DialogActions>
@@ -275,73 +282,69 @@ class CryptDialog extends React.Component {
                     aria-describedby="crypto-text-dialog-description"
                 >
                     <DialogTitle id="crypto-text-dialog-title">{_view_name_index ? "Decrypt": "Encrypt"} text using NaCl</DialogTitle>
-                    <Fade in>
-                        <div>
-                            <DialogContent>
-                                <DialogContentText id="crypto-text-dialog-description">
-                                    You have to provide either a public key to encrypt a message (Someone else public key) or both the public and private key (Your key pair) to decrypt the message.
-                                </DialogContentText>
-                            </DialogContent>
-                            <Tabs
-                                value={_view_name_index}
-                                onChange={this._handle_view_name_change}
-                                aria-label="Crypt tabs"
-                                indicatorColor="primary"
-                                variant="fullWidth"
-                                selectionFollowsFocus
-                            >
-                                <Tab label="Encrypt" />
-                                <Tab label="Decrypt" />
-                            </Tabs>
-                            <DialogContent>
-                                <form noValidate autoComplete="off">
+                    <div className={classes.dialogBody}>
+                        <Tabs
+                            value={_view_name_index}
+                            onChange={this._handle_view_name_change}
+                            aria-label="Crypt tabs"
+                            indicatorColor="primary"
+                            variant="fullWidth"
+                            selectionFollowsFocus
+                        >
+                            <Tab label="Encrypt" />
+                            <Tab label="Decrypt" />
+                        </Tabs>
+                        <DialogContent className={classes.dialogBody}>
+                            <DialogContentText id="crypto-text-dialog-description">
+                                You have to provide either a public key to encrypt a message (Someone else public key) or both the public and private key (Your key pair) to decrypt the message. <Link to={"/about/wiki/crypt"} onClick={(event) => {this._on_close(event)}}>See why...</Link>
+                            </DialogContentText>
+                            <form noValidate autoComplete="off">
+                                <TextField
+                                    onChange={this._handle_message_input_change}
+                                    value={_message_input}
+                                    error={_is_message_input_error}
+                                    helperText={( _is_message_input_error) ? "Something is incorrect": ""}
+                                    id="message"
+                                    label="Message"
+                                    type="text"
+                                    fullWidth
+                                />
+                                <TextField
+                                    onChange={this._handle_public_key_input_change}
+                                    value={_public_key_input}
+                                    error={_is_public_key_input_error}
+                                    helperText={( _is_public_key_input_error) ? "Something is incorrect": ""}
+                                    id="public-key"
+                                    label="Public key"
+                                    type="text"
+                                    fullWidth
+                                />
+                                <Collapse in={_view_name_index === 1}>
                                     <TextField
-                                        onChange={this._handle_message_input_change}
-                                        value={_message_input}
-                                        error={_is_message_input_error}
-                                        helperText={( _is_message_input_error) ? "Something is incorrect": ""}
-                                        id="message"
-                                        label="Message"
-                                        type="text"
+                                        onChange={this._handle_private_key_input_change}
+                                        value={_private_key_input}
+                                        error={_is_private_key_input_error}
+                                        helperText={( _is_private_key_input_error) ? "Something is incorrect": ""}
+                                        id="private-key"
+                                        label="Private key"
+                                        type="password"
                                         fullWidth
                                     />
-                                    <TextField
-                                        onChange={this._handle_public_key_input_change}
-                                        value={_public_key_input}
-                                        error={_is_public_key_input_error}
-                                        helperText={( _is_public_key_input_error) ? "Something is incorrect": ""}
-                                        id="public-key"
-                                        label="Public key"
-                                        type="text"
-                                        fullWidth
-                                    />
-                                    <Collapse in={_view_name_index === 1}>
-                                        <TextField
-                                            onChange={this._handle_private_key_input_change}
-                                            value={_private_key_input}
-                                            error={_is_private_key_input_error}
-                                            helperText={( _is_private_key_input_error) ? "Something is incorrect": ""}
-                                            id="private-key"
-                                            label="Private key"
-                                            type="password"
-                                            fullWidth
-                                        />
-                                    </Collapse>
-                                </form>
-                            </DialogContent>
-                            <DialogActions>
-                                <Button onClick={(event) => {this._on_autofill_fields(event)}} color="primary" disabled={!logged_account}>
-                                    autofill
-                                </Button>
-                                <Button onClick={(event) => {this._on_show_result(event)}} color="primary" disabled={_is_message_input_error || _is_public_key_input_error || _is_private_key_input_error}>
-                                    show
-                                </Button>
-                                <Button onClick={(event) => {this._on_close(event)}} variant="contained"  color="primary" autoFocus>
-                                    close
-                                </Button>
-                            </DialogActions>
-                        </div>
-                    </Fade>
+                                </Collapse>
+                            </form>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button onClick={(event) => {this._on_autofill_fields(event)}} color="primary" disabled={!logged_account} autoFocus>
+                                autofill key{_view_name_index === 1 ? "s": ""}
+                            </Button>
+                            <Button onClick={(event) => {this._on_show_result(event)}} color="primary" disabled={_is_message_input_error || _is_public_key_input_error || _is_private_key_input_error}>
+                                show
+                            </Button>
+                            <Button onClick={(event) => {this._on_close(event)}} color="primary">
+                                close
+                            </Button>
+                        </DialogActions>
+                    </div>
                 </Dialog>
             </div>
         );

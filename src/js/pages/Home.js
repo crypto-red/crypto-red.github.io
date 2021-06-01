@@ -15,7 +15,7 @@ const styles = theme => ({
         minHeight: "calc(100vh - 160px)",
         backgroundImage: "url(/src/images/wallet-dark-2.svg)",
         position: "relative",
-        backgroundSize: "contain",
+        backgroundSize: "cover",
         backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
         backgroundOrigin: "content-box",

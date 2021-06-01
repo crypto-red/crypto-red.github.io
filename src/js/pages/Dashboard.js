@@ -38,7 +38,7 @@ const styles = theme => ({
         minHeight: "calc(100vh - 176px)",
         backgroundImage: "url(/src/images/analytics-dark.svg)",
         position: "relative",
-        backgroundSize: "contain",
+        backgroundSize: "cover",
         backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
         backgroundOrigin: "content-box",

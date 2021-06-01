@@ -18,6 +18,19 @@ import api from "../utils/api";
 import price_formatter from "../utils/price-formatter";
 
 const styles = theme => ({
+    dialog: {
+        [theme.breakpoints.down("sm")]: {
+            "& .MuiDialog-container .MuiDialog-paper": {
+                margin: "24px 0px",
+                borderRadius: 0
+            },
+        }
+    },
+    dialogBody: {
+        overflowY: "auto",
+        display: "flex",
+        flexDirection: "column"
+    },
     tableCellBold: {
         fontWeight: "bold"
     },
@@ -90,7 +103,7 @@ class TransactionDialog extends React.Component {
 
     render() {
 
-        const { classes, transaction, selected_currency, selected_locales_code, open, _coin_data } = this.state;
+        const { classes, transaction, selected_currency, selected_locales_code, open, _coin_data, _address } = this.state;
 
         const amount_sent_fiat = _coin_data !== null ? transaction.amount_crypto * _coin_data.market_data.current_price[selected_currency.toLowerCase()]: 0;
         const amount_fee_fiat = _coin_data != null ? transaction.fee * _coin_data.market_data.current_price[selected_currency.toLowerCase()]: 0;
@@ -99,14 +112,15 @@ class TransactionDialog extends React.Component {
             <Dialog
                 open={open}
                 onClose={(event) => {this._on_close(event, transaction)}}
+                className={classes.dialog}
                 aria-labelledby="show-transaction-memo-dialog-title"
                 aria-describedby="show-transaction-memo-dialog-description"
             >
                 {
                     Boolean(transaction) ?
-                        <div>
+                        <div className={classes.dialogBody}>
                             <DialogTitle id="show-transaction-memo-dialog-title" className={classes.breakWord}>Transaction's ID {transaction.id}</DialogTitle>
-                            <DialogContent>
+                            <DialogContent className={classes.dialogBody}>
                                 <DialogContentText id="show-transaction-memo-dialog-description">
                                     <Table>
                                         <Table aria-label="main-info-table">
@@ -117,7 +131,7 @@ class TransactionDialog extends React.Component {
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Send from</TableCell>
-                                                    <TableCell align="right"><Link to={`/coins/${transaction.crypto_id}/send/${transaction.send_from}`}>SEND</Link> {transaction.send_from}</TableCell>
+                                                    <TableCell align="right">{transaction.send_from}</TableCell>
                                                 </TableRow>
                                                 {
                                                     typeof transaction.send_from_public_key !== "undefined" ?
@@ -128,7 +142,7 @@ class TransactionDialog extends React.Component {
                                                 }
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Send to</TableCell>
-                                                    <TableCell align="right"><Link to={`/coins/${transaction.crypto_id}/send/${transaction.send_to}`}>SEND</Link> {transaction.send_to}</TableCell>
+                                                    <TableCell align="right">{transaction.send_to}</TableCell>
                                                 </TableRow>
                                                 {
                                                     typeof transaction.send_to_public_key !== "undefined" ?
@@ -139,7 +153,7 @@ class TransactionDialog extends React.Component {
                                                 }
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Memo</TableCell>
-                                                    <TableCell align="right">{transaction.memo}</TableCell>
+                                                    <TableCell align="right" className={classes.breakWord}>{transaction.memo}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Amount</TableCell>
@@ -168,7 +182,18 @@ class TransactionDialog extends React.Component {
                 }
 
                 <DialogActions>
-                    <Button onClick={(event) => {this._on_close(event, transaction)}} variant="contained"  color="primary" autoFocus>
+                    {
+                        transaction ?
+                            _address === transaction.send_to ?
+                                <Button onClick={(event) => {this._open_link(event, `/coins/${transaction.crypto_id}/send/${transaction.send_from}`)}} color="primary">
+                                    Send back once
+                                </Button> :
+                                <Button onClick={(event) => {this._open_link(event, `/coins/${transaction.crypto_id}/send/${transaction.send_to}`)}}>
+                                    Send to again
+                                </Button>
+                        : null
+                    }
+                    <Button onClick={(event) => {this._on_close(event, transaction)}}  color="primary" autoFocus>
                         Close
                     </Button>
                 </DialogActions>

@@ -19,6 +19,9 @@ const styles = theme => ({
     tableCellBold: {
         fontWeight: "bold"
     },
+    breakWord: {
+        wordBreak: "break-all"
+    },
 });
 
 
@@ -33,6 +36,7 @@ class CoinSendDialog extends React.Component {
             selected_locales_code: props.selected_locales_code,
             selected_currency: props.selected_currency,
             _coin_data: null,
+            _address: null
         };
     };
 
@@ -41,12 +45,14 @@ class CoinSendDialog extends React.Component {
         this.setState({...new_props}, () => {
 
             this._get_coin_data();
+            this._get_address_by_seed();
         });
     };
 
     componentDidMount() {
 
         this._get_coin_data();
+        this._get_address_by_seed();
     }
 
     _on_close = (event, account) => {
@@ -70,6 +76,17 @@ class CoinSendDialog extends React.Component {
     _set_coin_data = (error, data) => {
 
         this.setState({_coin_data: data});
+    };
+
+    _get_address_by_seed = () => {
+
+        const { transaction, logged_account } = this.state;
+
+        if(logged_account && transaction) {
+
+            const address = api.get_address_by_seed(transaction.crypto_id, logged_account.seed);
+            this.setState({_address: address});
+        }
     };
 
     render() {
@@ -103,7 +120,7 @@ class CoinSendDialog extends React.Component {
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Memo</TableCell>
-                                                    <TableCell align="right">{transaction.memo}</TableCell>
+                                                    <TableCell align="right" className={classes.breakWord}>{transaction.memo}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Amount</TableCell>
@@ -132,10 +149,10 @@ class CoinSendDialog extends React.Component {
                 }
 
                 <DialogActions>
-                    <Button onClick={this.props.onClose} autoFocus>
+                    <Button onClick={this.props.onClose} color="primary">
                         Close
                     </Button>
-                    <Button onClick={this.props.onConfirm} variant="contained"  color="primary">
+                    <Button onClick={this.props.onConfirm} color="primary" autoFocus>
                         Confirm
                     </Button>
                 </DialogActions>

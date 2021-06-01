@@ -145,7 +145,7 @@ class Index extends React.Component {
     _set_meta_title = (pathname) => {
 
         pathname = pathname.replace("/", "").replace(/\//g, " > ");
-        update_meta_title("C WALLET | "+ pathname);
+        update_meta_title("CR-WALLET | "+ pathname);
     };
 
     _trigger_snackbar = (_snackbar_message, _snackbar_auto_hide_duration) => {

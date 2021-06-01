@@ -58,6 +58,7 @@ const VIEW_NAMES = [
     "topup",
     "mixer",
     "convert",
+    "crypt",
     "contribute",
 ];
 
@@ -144,6 +145,14 @@ class AboutWiki extends React.Component {
                         </ol>
                     </CardContent>
                 </Card>,
+            crypt:
+                <Card>
+                    <CardHeader title="Encrypt and decrypt messages"/>
+                    <CardContent>
+                        <p>In order to decrypt a message someone has sent to you, you'll have to know both your public and private key linked to the message which is an obfuscated text, since the software knows it, if you go onto tools then crypto then decrypt then autofill keys, the keys will be magically filled into our cryptographic system. You'll only have to copy the obfuscated message received and click autofill then show.</p>
+                        <p>In order to encrypt a message to someone, you'll have to know the receiver's public key, just look at a transaction from this person and copy the public key which you'll have to enter in the cryptographic tool (Encrypt tab) in tools then crypt along with the message. If you click autofill keys on encrypt section, it will be meant to be sent to yourself.</p>
+                    </CardContent>
+                </Card>,
             contribute:
                 <Card>
                     <CardHeader title="How to contribute"/>
@@ -169,6 +178,7 @@ class AboutWiki extends React.Component {
                         <Tab label="How to top up" {...this._get_tab_props(0)} />
                         <Tab label="How to mix crypto" {...this._get_tab_props(1)} />
                         <Tab label="How to convert crypto" {...this._get_tab_props(2)} />
+                        <Tab label="Encrypt and decrypt messages" {...this._get_tab_props(4)} />
                         <Tab label="How to contribute" {...this._get_tab_props(3)} />
                     </Tabs>
                 </div>
@@ -186,6 +196,7 @@ class AboutWiki extends React.Component {
                         <Tab label="How to top up" {...this._get_tab_props(0)} />
                         <Tab label="How to mix crypto" {...this._get_tab_props(1)} />
                         <Tab label="How to convert crypto" {...this._get_tab_props(2)} />
+                        <Tab label="Encrypt and decrypt messages" {...this._get_tab_props(4)} />
                         <Tab label="How to contribute" {...this._get_tab_props(3)} />
                     </Tabs>
                 </Container>
