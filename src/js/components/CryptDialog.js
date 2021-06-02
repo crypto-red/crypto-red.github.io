@@ -134,12 +134,10 @@ class CryptDialog extends React.Component {
             if(!_view_name_index) {
 
                 api_crypto.nacl_encrypt(_message_input, _public_key_input, this._handle_result_text_result);
-                //api_crypto.mc_eliece_encrypt(_message_input, _public_key_input, this._handle_result_text_result);
 
             }else {
 
                 api_crypto.nacl_decrypt(_message_input, _public_key_input, _private_key_input, this._handle_result_text_result);
-                //api_crypto.mc_eliece_decrypt(_message_input, _private_key_input, this._handle_result_text_result);
             }
         }
 

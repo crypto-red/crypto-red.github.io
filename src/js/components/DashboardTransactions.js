@@ -180,6 +180,7 @@ class DashboardTransactions extends React.Component {
                     transaction={_selected_transaction}
                     selected_currency={_selected_currency}
                     selected_locales_code={_selected_locales_code}
+                    logged_account={logged_account}
                     onClose={this._close_transaction_dialog_memo}/>
 
                 {

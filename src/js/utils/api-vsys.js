@@ -32,10 +32,8 @@ function get_vsys_private_key_by_seed(seed) {
 function _format_vsys_amount(amount) {
 
     const amount_scaled = amount / 100000000;
-    const amount_rounded = Math.round(amount_scaled * 100) / 100
-    const amount_fixed_two = amount_rounded .toFixed(2);
 
-    return amount_fixed_two * 1;
+    return amount_scaled * 1;
 }
 
 function _format_vsys_attachment(attachment) {

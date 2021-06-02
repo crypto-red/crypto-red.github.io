@@ -34,19 +34,35 @@ const styles = theme => ({
 
     },
     currencyCryptoAmountPositive: {
-        color: green[700],
-        "&::before": {
-            content: "\"+\""
+        "& span:first-child": {
+            color: green[700],
+        },
+        "& span:first-child::before": {
+            content: "\"\""
         }
     },
     currencyCryptoAmountNegative: {
-        color: red[700],
-        "&::before": {
-            content: "\"-\""
+        "& span:first-child": {
+            color: red[700],
+        },
+        "& span:first-child::before": {
+            content: "\"\""
         }
     },
     currencyFiatAmount: {
-
+        "&::before": {
+            content: "\"= \""
+        }
+    },
+    currencyFiatAmountPositive: {
+        "&::before": {
+            content: "\"+ \""
+        }
+    },
+    currencyFiatAmountNegative: {
+        "&::before": {
+            content: "\"- \""
+        }
     }
 });
 
@@ -183,7 +199,8 @@ class Transaction extends React.Component {
                             <div className={classes.spaceBetween}>
                                 <span className={classes.currencyCrypto}>{_coin_data.name}</span>
                                 <span className={feedback ? null: received ? classes.currencyCryptoAmountPositive: classes.currencyCryptoAmountNegative}>
-                                    {price_formatter(parseFloat(_full_transaction.amount_crypto), _coin_data.symbol, selected_locales_code)}
+                                    <span>{price_formatter(parseFloat(_full_transaction.amount_crypto), _coin_data.symbol, selected_locales_code).split(/\s{1}/)[0]} </span>
+                                    <span>{price_formatter(parseFloat(_full_transaction.amount_crypto), _coin_data.symbol, selected_locales_code).split(/\s{1}/)[1]}</span>
                                 </span>
                             </div>
                         }
@@ -199,7 +216,7 @@ class Transaction extends React.Component {
                                             : null
                                     }
                                 </span>
-                                <span className={classes.currencyFiatAmount}>
+                                <span className={feedback ? classes.currencyFiatAmount: received ? classes.currencyFiatAmountPositive: classes.currencyFiatAmountNegative}>
                                     ({price_formatter(amount_fiat, selected_currency, selected_locales_code)})
                                 </span>
                             </div>

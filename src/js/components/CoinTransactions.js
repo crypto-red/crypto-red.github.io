@@ -153,6 +153,7 @@ class CoinTransactions extends React.Component {
                     transaction={_selected_transaction}
                     selected_currency={selected_currency}
                     selected_locales_code={selected_locales_code}
+                    logged_account={logged_account}
                     onClose={this._close_transaction_dialog_memo}/>
 
                 <Container maxWidth="sm" className={classes.container}>

@@ -4,17 +4,22 @@ import * as bip39 from "bip39"
 import * as bitcoin from "bitcoinjs-lib";
 import { loadJSON, postDATA } from "../utils/load-json";
 import coininfo from "coininfo";
-import converters from "./converters";
+
+let NETWORK = null;
 
 function _get_network_by_coin_id(coin_id) {
 
+    let NEW_NETWORK = null;
+
     switch (coin_id) {
         case "bitcoin":
-            return coininfo.bitcoin.test.toBitcoinJS();
+            NEW_NETWORK = bitcoin.networks.testnet;
+            break;
         case "dash":
-            return coininfo.dash.test.toBitcoinJS();
+            NEW_NETWORK = coininfo.dash.test.toBitcoinJS();
+            break;
         case "dogecoin":
-            return {
+            NEW_NETWORK = {
                 messagePrefix: '\x19Dogecoin Signed Message:\n',
                 bip32: {
                     public: 0x043587cf,
@@ -24,6 +29,7 @@ function _get_network_by_coin_id(coin_id) {
                 scriptHash: 0xc4,
                 wif: 0xf1
             };
+            break;
         /*
         {
           messagePrefix: '\x19Dogecoin Signed Message:\n',
@@ -37,8 +43,20 @@ function _get_network_by_coin_id(coin_id) {
         }
         */
         case "litecoin":
-            return coininfo.litecoin.test.toBitcoinJS();
+            NEW_NETWORK = coininfo.dash.test.toBitcoinJS();
+            break;
     }
+
+    // Thanks JS without this below, it would not work.
+    if(!NETWORK) {
+
+        NETWORK = NEW_NETWORK;
+    }else if(NEW_NETWORK.messagePrefix !== NETWORK.messagePrefix) {
+
+        NETWORK = NEW_NETWORK;
+    }
+
+    return NETWORK;
 }
 
 function _get_network_name_by_coin_id(coin_id) {
@@ -109,12 +127,6 @@ function get_btc_dash_doge_ltc_private_key_by_seed(coin_id, seed) {
 function _format_btc_dash_doge_ltc_amount(coin_id, amount) {
 
     return amount * 1;
-}
-
-function _format_btc_dash_doge_ltc_attachment(coin_id, attachment) {
-
-    const attachment_bytes = base58.decode(attachment);
-    return converters.byteArrayToString(attachment_bytes);
 }
 
 function send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, callback_function, return_fee_instead_of_send = false) {
@@ -192,8 +204,7 @@ function send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo
 
                                     }catch (e) {
 
-                                        console.log(e);
-                                        callback_function("Cannot send this trx to this add.", null);
+                                        callback_function("Cannot send this transaction to this address.", null);
                                     }
                                 }else {
 

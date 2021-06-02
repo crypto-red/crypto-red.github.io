@@ -53,6 +53,7 @@ class TransactionDialog extends React.Component {
             selected_locales_code: props.selected_locales_code,
             selected_currency: props.selected_currency,
             open: props.open,
+            _address: null,
             _coin_data: null,
             _history: HISTORY
         };
@@ -63,13 +64,26 @@ class TransactionDialog extends React.Component {
         this.setState({...new_props}, () => {
 
             this._get_coin_data();
+            this._get_address_by_seed()
         });
     };
 
     componentDidMount() {
 
         this._get_coin_data();
+        this._get_address_by_seed()
     }
+
+    _get_address_by_seed = () => {
+
+        const { logged_account, transaction } = this.state;
+
+        if(logged_account && transaction) {
+
+            const address = api.get_address_by_seed(transaction.crypto_id, logged_account.seed);
+            this.setState({_address: address});
+        }
+    };
 
     _on_close = (event, account) => {
 
@@ -186,10 +200,10 @@ class TransactionDialog extends React.Component {
                         transaction ?
                             _address === transaction.send_to ?
                                 <Button onClick={(event) => {this._open_link(event, `/coins/${transaction.crypto_id}/send/${transaction.send_from}`)}} color="primary">
-                                    Send back once
+                                    Send back
                                 </Button> :
                                 <Button onClick={(event) => {this._open_link(event, `/coins/${transaction.crypto_id}/send/${transaction.send_to}`)}}>
-                                    Send to again
+                                    Send to
                                 </Button>
                         : null
                     }

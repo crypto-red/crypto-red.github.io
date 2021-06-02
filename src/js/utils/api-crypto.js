@@ -1,6 +1,5 @@
 import base58 from "bs58";
 import nacl_factory from "js-nacl";
-import mceliece from "mceliece";
 
 // https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
 function _ab2str(buf) {
@@ -59,39 +58,7 @@ function nacl_decrypt(encrypted_message, public_key, private_key, callback_funct
     });
 }
 
-function mc_eliece_encrypt(message, public_key, callback_function) {
-
-    const message_uint8array = new TextEncoder().encode(message);
-    const public_key_uint8array = new TextEncoder().encode(public_key);
-
-    mceliece.encrypt(message_uint8array, public_key_uint8array).then(function(response_uint8array){
-
-        callback_function(null, base58.encode(response_uint8array));
-
-    }).catch(function(error){
-
-        callback_function(error, "");
-    });
-}
-
-function mc_eliece_decrypt(encrypted_message, private_key, callback_function) {
-
-    const encrypted_message_uint8array = new TextEncoder().encode(encrypted_message);
-    const private_key_uint8array = new TextEncoder().encode(private_key);
-
-    mceliece.decrypt(encrypted_message_uint8array, private_key_uint8array).then(function(response_uint8array){
-
-        callback_function(null, base58.encode(response_uint8array));
-
-    }).catch(function(error){
-
-        callback_function(error, "");
-    });
-}
-
 module.exports = {
     nacl_encrypt: nacl_encrypt,
-    nacl_decrypt: nacl_decrypt,
-    mc_eliece_encrypt: mc_eliece_encrypt,
-    mc_eliece_decrypt: mc_eliece_decrypt,
+    nacl_decrypt: nacl_decrypt
 };
