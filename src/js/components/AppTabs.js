@@ -36,6 +36,35 @@ const styles = theme => ({
         "& .MuiTabs-indicator": {
             backgroundColor: theme.palette.primary.contrastText
         }
+    },
+    tab: {
+        paddingTop: 14,
+        [theme.breakpoints.up("md")]: {
+            fontWeight: "bold",
+            color: theme.palette.disabled,
+            "&.Mui-selected": {
+                color: "inherit"
+            },
+            minHeight: "inherit",
+            "& .MuiTab-wrapper": {
+                flexDirection: "inherit",
+            },
+            "& svg.MuiSvgIcon-root:first-child": {
+                margin: "0px 12px 0px 0px",
+            }
+        },
+        [theme.breakpoints.down("sm")]: {
+            minHeight: "inherit",
+            "& .MuiTab-wrapper": {
+                flexDirection: "inherit",
+            },
+            "& .MuiTab-wrapper *": {
+                display: "none"
+            },
+            "& .MuiTab-wrapper *:first-child": {
+                display: "inherit"
+            }
+        },
     }
 });
 
@@ -113,11 +142,11 @@ class AppTabs extends React.Component {
                           aria-label="icon label tabs example"
                           selectionFollowsFocus
                           className={classes.tabs}>
-                        <Tab {...this._get_tab_props(0)} icon={<AccountBalanceIcon />} />
-                        <Tab {...this._get_tab_props(1)} icon={<ViewListIcon />} />
-                        <Tab {...this._get_tab_props(2)} icon={<BarChartIcon />} />
-                        <Tab {...this._get_tab_props(3)} icon={<CallMadeIcon />} />
-                        <Tab {...this._get_tab_props(4)} icon={<CallReceivedIcon />} />
+                        <Tab {...this._get_tab_props(0)} icon={<AccountBalanceIcon />} label={<span>BALANCE</span>} className={classes.tab}/>
+                        <Tab {...this._get_tab_props(1)} icon={<ViewListIcon />} label={<span>TRANSACTIONS</span>} className={classes.tab} />
+                        <Tab {...this._get_tab_props(2)} icon={<BarChartIcon />} label={<span>CHARTS</span>} className={classes.tab} />
+                        <Tab {...this._get_tab_props(3)} icon={<CallMadeIcon />} label={<span>SEND</span>} className={classes.tab} />
+                        <Tab {...this._get_tab_props(4)} icon={<CallReceivedIcon />} label={<span>RECEIVE</span>} className={classes.tab} />
                     </Tabs>
                 </AppBar>
             </div>

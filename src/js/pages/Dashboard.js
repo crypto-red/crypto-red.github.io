@@ -15,6 +15,12 @@ import DashboardAddress from "../components/DashboardAddress";
 import FlashInfo from "../components/FlashInfo";
 
 import LockOpenIcon from "@material-ui/icons/LockOpen";
+import AccountBalanceWalletIcon from "@material-ui/icons/AccountBalanceWallet";
+import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
+import CheckIcon from "@material-ui/icons/Check";
+import CloseIcon from "@material-ui/icons/Close";
+import TrendingUpIcon from "@material-ui/icons/TrendingUp";
+import TrendingDownIcon from "@material-ui/icons/TrendingDown";
 
 import { HISTORY } from "../utils/constants";
 import price_formatter from "../utils/price-formatter";
@@ -261,6 +267,7 @@ class Dashboard extends React.Component {
 
         if(typeof _balance === "undefined" || !_coins_markets.length) { return null }
 
+        let number_of_coins_performed_with_value = 0;
         let performed_average_percentage_btc = 0;
         let total_balance_currency = 0;
         let total_balance_currency_before = 0;
@@ -292,6 +299,7 @@ class Dashboard extends React.Component {
             performed_average_percentage_array.push(price_change_1y_in_currency);
             performed_average_currency_array.push(in_currency_value);
             total_balance_currency += in_currency_value;
+            if(value){number_of_coins_performed_with_value++}
             // (+101% resulting in 2..., is in fact 101%+100% * value_before resulting in 2... therefore 2 / 201%... is value_before) ---> now_value_in_fiat / now_percent + 100% = value_before_IN_FIAT
 
             const price_performed_iy_ago_in_currency = parseFloat(in_currency_value / price_performed_1y_in_currency);
@@ -301,11 +309,9 @@ class Dashboard extends React.Component {
 
 
         let performed_average_percentage_total = 0;
-        let number_of_coins_performed_with_value = 0;
 
         performed_average_percentage_array.forEach(function(value, index, array){
             performed_average_percentage_total += value;
-            if(value){number_of_coins_performed_with_value++}
         });
 
         let performed_average_percentage_weighted = parseFloat(total_balance_currency / total_balance_currency_before) - 1;
@@ -373,6 +379,7 @@ class Dashboard extends React.Component {
                                     <DashboardQuickCard
                                         text_content={portfolio !== null ? this._price_formatter(portfolio.total_balance_currency, true): null}
                                         label_content={"Total balance"}
+                                        icon_component={<AccountBalanceWalletIcon />}
                                         relevant
                                     />
                                 </Grid>
@@ -380,18 +387,21 @@ class Dashboard extends React.Component {
                                     <DashboardQuickCard
                                         text_content={portfolio !== null ? portfolio.number_of_coins_performed_with_value + " / " + portfolio.number_of_coins_performed: null}
                                         label_content={"Cryptocurrency numbers"}
+                                        icon_component={<AccountBalanceIcon />}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
                                         text_content={portfolio !== null ? (portfolio.performed_average_percentage_weighted_on_btc * 100).toFixed(2)+"/100": null}
                                         label_content={"Performed / BTC (1Y)"}
+                                        icon_component={portfolio !== null ? portfolio.performed_average_percentage_weighted_on_btc < 1 ? <CloseIcon />: <CheckIcon />: null}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
                                         text_content={portfolio !== null ? (portfolio.performed_average_percentage_weighted * 100).toFixed(0) + "%": null}
                                         label_content={"Performed % (1Y)"}
+                                        icon_component={portfolio !== null ? portfolio.performed_average_percentage_weighted > 0 ? <TrendingUpIcon />: <TrendingDownIcon />: null}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={6} xl={8} className={classes.gridItem}>

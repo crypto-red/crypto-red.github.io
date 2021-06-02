@@ -14,6 +14,21 @@ const styles = theme => ({
     cardContainer: {
         width: "100%",
         cursor: "pointer"
+    },
+    cardContent: {
+        position: "relative"
+    },
+    iconContainer: {
+        width: 100,
+        height: 100,
+        opacity: 0.1,
+        position: "absolute",
+        top: 8,
+        right: 8,
+        "& svg": {
+            width: "100%",
+            height: "100%"
+        }
     }
 });
 
@@ -26,6 +41,7 @@ class DashboardQuickCard extends React.Component {
             classes: props.classes,
             text_content: props.text_content,
             label_content: props.label_content,
+            icon_component: props.icon_component || null,
             relevant: props.relevant || false,
         };
     };
@@ -37,14 +53,14 @@ class DashboardQuickCard extends React.Component {
 
     render() {
 
-        const { classes, relevant } = this.state;
+        const { classes, icon_component, relevant } = this.state;
         const { text_content, label_content } = this.state;
 
         return (
             <div className={classes.cardContainer}>
                 <Fade in>
                     <Card className={relevant ? classes.relevant: null}>
-                        <CardContent>
+                        <CardContent className={classes.cardContent}>
                             <h3>
                                 {
                                     text_content !== null ?
@@ -53,6 +69,9 @@ class DashboardQuickCard extends React.Component {
                                 }
                             </h3>
                             <span>{label_content}</span>
+                            <div className={classes.iconContainer}>
+                                {icon_component}
+                            </div>
                         </CardContent>
                     </Card>
                 </Fade>
