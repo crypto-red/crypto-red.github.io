@@ -43,7 +43,7 @@ function _get_network_by_coin_id(coin_id) {
         }
         */
         case "litecoin":
-            NEW_NETWORK = coininfo.dash.test.toBitcoinJS();
+            NEW_NETWORK = coininfo.litecoin.test.toBitcoinJS();
             break;
     }
 
