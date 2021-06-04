@@ -90,10 +90,10 @@ class DashboardPieChart extends React.Component {
         return (
             <g>
                 <text x={cx} y={cy} dy={-10} fontWeight="bold" textAnchor="middle" fontSize={14} fill={"#9e9e9e"}>
-                    100%
+                    {payload.name} {`${(percent * 100).toFixed(0)}%`}
                 </text>
                 <text x={cx} y={cy} dy={20} fontWeight="bold" textAnchor="middle" fontSize={19} fill={fill}>
-                    {this._price_formatter(total_balance_currency, true, true)}
+                    {this._price_formatter(value, true, true)}
                 </text>
                 <Sector
                     cx={cx}
@@ -182,7 +182,6 @@ class DashboardPieChart extends React.Component {
                                                         dataKey="value"
                                                         onMouseEnter={this._on_pie_enter}
                                                     />
-                                                    <Tooltip formatter={value => this._price_formatter(value, true, true, true, portfolio.total_balance_currency)}/>
                                                 </PieChart>
                                             </ResponsiveContainer>
                                             : Boolean(pie_data.length <= 0) ?

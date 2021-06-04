@@ -13,7 +13,7 @@ function _get_network_by_coin_id(coin_id) {
 
     switch (coin_id) {
         case "bitcoin":
-            NEW_NETWORK = bitcoin.networks.testnet;
+            NEW_NETWORK = coininfo.bitcoin.test.toBitcoinJS();
             break;
         case "dash":
             NEW_NETWORK = coininfo.dash.test.toBitcoinJS();
@@ -78,7 +78,7 @@ function _get_btc_dash_doge_ltc_account_by_seed(coin_id, seed) {
     const seeed = bip39.mnemonicToSeedSync(seed);
     const root = bip32.fromSeed(seeed, _get_network_by_coin_id(coin_id));
 
-    const path = "m/49'/1'/0'/0/0";
+    const path = "m/84'/0'/0'/0/0"; // TODO https://github.com/Anderson-Juhasc/bip84
     const child = root.derivePath(path);
 
     const _wif = child.toWIF();

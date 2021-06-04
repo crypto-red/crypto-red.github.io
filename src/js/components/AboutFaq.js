@@ -59,29 +59,44 @@ const styles = theme => ({
 });
 
 const VIEWS = {
-    organization: [
-        {question: "Who is crypto.red?", answer: "Crypto.red is an open-source project coded by a single programmer from scratch (which is/was a bit a crazy person) who realised one of his mission was to provide something life-hackers would love. He also make sure to maintain a good networking with dangerous hackers and bring other open-source projects money earned."},
-        {question: "Who can contribute to this project?", answer: "Anyone, see https://github.com/crypto-red to get involved."},
-        {question: "Who decide what to code?", answer: "Our team which is on GitHub (https://github.com/crypto-red) must agree together, meanwhile, one may duplicate the project for its own need."},
-        {question: "Who have funded this project?", answer: "Anonymous."},
-    ],
-    security: [
-        {question: "How does my coin are stored?", answer: "Your coin are stored on the behalf of your seed (private key in particular), which can only be used with the access to the blockchain respectively to the wallet in question. Many exchanges keep your coins when you're not withdrawing them, we do not."},
-        {question: "How does my data are encrypted?", answer: "Your data are encrypted trough Triplesec, see (https://keybase.io/triplesec) to get more information."},
-        {question: "Where does my data are stored?", answer: "Your seed (you're whole account) can generate all your crypto wallet it is stored in clear on your computer (with PouchDB on your browser) in persistent mode when logged and encrypted in non-persistent mode or when logged out."},
-        {question: "What if I loose my seed?", answer: "If you loose your seed, (You should write it down on paper) you can only get it back if you're account has not be cleared from your browser, you may need to log in or not."},
-        {question: "What if I loose my password?", answer: "No worries, only your seed is needed to get back everything."},
-        {question: "Can I print my password / seed?", answer: "When you're using the persistent mode for connection or if you print / store a document on your computer or printer, it may mostly last forever even if you format your storing device."},
-    ],
-    privacy: [
-        {question: "What is public on my account?", answer: "Your public key (blockchain address). You should not link your identity with your wallet's address if you want a complete privacy. You can also use a crypto mixer to obfuscate the source of your funding on a new wallet."}
-    ],
-    fees: [
-        {question: "What are the fees of using it?", answer: "We have an affiliate link for selling and trading cryptocurrency, theses partners rewards us with a part of their profit, meanwhile they compare where you can buy and trade cryptocurrency at the best exchange rate without increasing the operation cost for you."}
-    ],
-    usage: [
-        {question: "Should I use it if it can present a risk for my fund?", answer: "You should download a stable version from torrent download if you want to use it with a lot of money on it."}
-    ]
+    organization: {
+        name: "Orgnaization",
+        qa: [
+            {question: "Who is crypto.red?", answer: "Crypto.red is an open-source project coded by a single programmer from scratch (which is/was a bit of a mad developer and designer) who realised one of his mission was to provide something life-hackers would love. He also make sure to maintain a good networking with non-dangerous hackers and bring other open-source projects money earned."},
+            {question: "Who can contribute to this project?", answer: "Anyone, see https://github.com/crypto-red to get involved."},
+            {question: "Who decide what to code?", answer: "Our team which is on GitHub (https://github.com/crypto-red) must agree together, meanwhile, one may duplicate the project for its own need."},
+            {question: "Who have funded this project?", answer: "Anonymous."},
+        ]
+    },
+    security: {
+        name: "Security",
+        qa: [
+            {question: "How does my coin are stored?", answer: "Your coin are stored on the behalf of your seed (private key in particular), which can only be used with the access to the blockchain respectively to the wallet in question. Many exchanges keep your coins when you're not withdrawing them, we do not."},
+            {question: "How does my data are encrypted?", answer: "Your data are encrypted trough Triplesec, see (https://keybase.io/triplesec) to get more information."},
+            {question: "Where does my data are stored?", answer: "Your seed (you're whole account) can generate all your crypto wallet it is stored in clear on your computer (with PouchDB on your browser) in persistent mode when logged and encrypted in non-persistent mode or when logged out."},
+            {question: "What if I loose my seed?", answer: "If you loose your seed, (You should write it down on paper) you can only get it back if you're account has not be cleared from your browser, you may need to log in or not."},
+            {question: "What if I loose my password?", answer: "No worries, only your seed is needed to get back everything."},
+            {question: "Can I print my password / seed?", answer: "When you're using the persistent mode for connection or if you print / store a document on your computer or printer, it may mostly last forever even if you format your storing device."},
+        ]
+    },
+    privacy: {
+        name: "Privacy",
+        qa: [
+            {question: "What is public on my account?", answer: "Your public key (blockchain address). You should not link your identity with your wallet's address if you want a complete privacy. You can also use a crypto mixer to obfuscate the source of your funding on a new wallet."}
+        ]
+    },
+    fees: {
+        name: "Fees",
+        qa: [
+            {question: "What are the fees of using it?", answer: "We have an affiliate link for selling and trading cryptocurrency, theses partners rewards us with a part of their profit, meanwhile they compare where you can buy and trade cryptocurrency at the best exchange rate without increasing the operation cost for you."}
+        ]
+    },
+    usage: {
+        name: "Usage",
+        qa: [
+            {question: "Should I use it if it can present a risk for my fund?", answer: "You should download a stable version from torrent download if you want to use it with a lot of money on it."}
+        ],
+    }
 };
 
 let VIEW_NAMES = [];
@@ -99,8 +114,8 @@ class AboutFaq extends React.Component {
         this.state = {
             classes: props.classes,
             pathname: props.pathname,
-            _view_name: props.pathname.split("/")[3] || "organization",
-            _view_name_index: VIEW_NAMES.indexOf(!~props.pathname.split("/")[3] || "organization") ? 0: VIEW_NAMES.indexOf(props.pathname.split("/")[3] || "organization"),
+            _view_name: props.pathname.split("/")[3] || VIEW_NAMES[0],
+            _view_name_index: VIEW_NAMES.indexOf(!~props.pathname.split("/")[3] || VIEW_NAMES[0]) ? 0: VIEW_NAMES.indexOf(props.pathname.split("/")[3] || VIEW_NAMES[0]),
             _history: HISTORY,
             _view_names: VIEW_NAMES,
             _views: VIEWS,
@@ -113,7 +128,7 @@ class AboutFaq extends React.Component {
         const { _view_names } = this.state;
         const new_pathname = new_props.pathname;
 
-        const _view_name = new_props.pathname.split("/")[3] || "organization";
+        const _view_name = new_props.pathname.split("/")[3] || VIEW_NAMES[0];
         const _view_name_index = !~_view_names.indexOf(_view_name) ? 0: _view_names.indexOf(_view_name);
         this.setState({pathname: new_pathname, _view_name, _view_name_index});
 
@@ -123,7 +138,7 @@ class AboutFaq extends React.Component {
 
         const { _history, _view_names } = this.state;
 
-        const _view_name = _view_names[view_name_index] || "organization";
+        const _view_name = _view_names[view_name_index] || VIEW_NAMES[0];
         const _view_name_index = !~_view_names.indexOf(_view_name) ? 0: _view_names.indexOf(_view_name);
 
         const new_pathname = "/about/faq/" + _view_name;
@@ -155,7 +170,37 @@ class AboutFaq extends React.Component {
 
         const { classes, _view_name, _view_names, _view_name_index, _accordion_expanded, _views } = this.state;
 
-        const accordion_data = Boolean(_view_name) ? _views[_view_name]: [];
+        let horizontal_tabs = [];
+        let vertical_tabs = [];
+        Object.entries(_views).forEach((entry, index) => {
+
+            const [key, value] = entry;
+            horizontal_tabs.push(<Tab label={value.name} {...this._get_tab_props(index, "horizontal")} />);
+            vertical_tabs.push(<Tab label={value.name} {...this._get_tab_props(index, "vertical")} />);
+        })
+
+        const accordions = [];
+        _views[_view_name].qa.map((value, index) => {
+
+            accordions.push(
+                <Fade in timeout={index*200}>
+                    <Accordion key={`${_view_name}-${index}`}
+                               expanded={_accordion_expanded === `_view_name-${_view_name}-${index}`}
+                               onChange={(event) => this._handle_accordion_expanded_change(event, `_view_name-${_view_name}-${index}`)}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon/>}
+                            aria-controls="panel1a-content"
+                            id="panel1a-header"
+                        >
+                            <span className={classes.heading}>{value.question}</span>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                            <p>{value.answer}</p>
+                        </AccordionDetails>
+                    </Accordion>
+                </Fade>
+            );
+        })
 
         return (
             <div className={classes.root}>
@@ -168,36 +213,13 @@ class AboutFaq extends React.Component {
                         scrollButtons="on"
                         className={classes.horizontalTabs}
                     >
-                        {_view_names.map((value, index, array) => {
-                            return <Tab label={value} {...this._get_tab_props(index, "horizontal")} />;
-                        })}
+                        {horizontal_tabs}
                     </Tabs>
                 </div>
                 <Container maxWidth="md" className={classes.containerElement}>
                     <Fade in>
                         <div className={classes.accordionContainer}>
-                            {accordion_data.map((value, index, array) => {
-
-                                return (
-                                    <Fade in timeout={index*200}>
-                                        <Accordion key={`${_view_name}-${index}`}
-                                                   expanded={_accordion_expanded === `_view_name-${_view_name}-${index}`}
-                                                   onChange={(event) => this._handle_accordion_expanded_change(event, `_view_name-${_view_name}-${index}`)}>
-                                            <AccordionSummary
-                                                expandIcon={<ExpandMoreIcon/>}
-                                                aria-controls="panel1a-content"
-                                                id="panel1a-header"
-                                            >
-                                                <span className={classes.heading}>{value.question}</span>
-                                            </AccordionSummary>
-                                            <AccordionDetails>
-                                                <p>{value.answer}</p>
-                                            </AccordionDetails>
-                                        </Accordion>
-                                    </Fade>
-                                );
-                                })}
-
+                            {accordions}
                         </div>
                     </Fade>
                     <Tabs
@@ -206,9 +228,7 @@ class AboutFaq extends React.Component {
                         onChange={this._handle_view_name_change}
                         className={classes.verticalTabs}
                     >
-                        {_view_names.map((value, index, array) => {
-                            return <Tab label={value} {...this._get_tab_props(index, "vertical")} />;
-                        })}
+                        {vertical_tabs}
                     </Tabs>
                 </Container>
             </div>

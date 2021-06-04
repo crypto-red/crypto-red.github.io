@@ -41,7 +41,7 @@ const PAGE_ROUTES = [
         tabs: "coin"
     },
     {
-        page_regex: /\/(about)((\/info(\/intellectual|\/terms)?)|(\/wiki(\/topup|\/mixer|\/convert|\/crypt|\/contribute)?)|(\/faq(\/organization|\/security|\/privacy|\/fees|\/usage)?))?$/,
+        page_regex: /\/(about)((\/info(\/intellectual|\/terms)?)|(\/wiki(\/topup|\/mixer|\/swap|\/crypt|\/contribute)?)|(\/faq(\/organization|\/security|\/privacy|\/fees|\/usage)?))?$/,
         page_name: "about",
         tabs: ""
     }

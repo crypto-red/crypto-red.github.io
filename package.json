@@ -32,6 +32,7 @@
     "react-dom": "^16.14.0",
     "react-id-swiper": "^4.0.0",
     "react-jdenticon": "^0.0.9",
+    "react-markdown": "^6.0.2",
     "react-qr-reader": "2.1.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
@@ -39,6 +40,7 @@
     "recharts": "^2.0.8",
     "redux": "^3.7.2",
     "regtest-client": "^0.2.0",
+    "remark-gfm": "^1.0.0",
     "triplesec": "^4.0.3",
     "wif": "^2.0.6",
     "zxcvbn": "^4.4.2"

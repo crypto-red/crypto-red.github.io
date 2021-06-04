@@ -319,7 +319,7 @@ class Dashboard extends React.Component {
         const number_of_coins_performed = performed_average_percentage_array.length;
         const performed_average_percentage = performed_average_percentage_total / number_of_coins_performed;
 
-        const performed_average_percentage_weighted_on_btc = (performed_average_percentage_weighted + 1) / performed_average_percentage_btc;
+        const performed_average_percentage_weighted_on_btc = (performed_average_percentage_weighted > 0 ? performed_average_percentage_weighted + 1: performed_average_percentage_weighted) / performed_average_percentage_btc;
 
         const portfolio = {
             performed_average_percentage_weighted_on_btc,
@@ -442,7 +442,8 @@ class Dashboard extends React.Component {
                                 </Grow>
                             </div>
                         }
-                    </div>: null}
+                    </div>: null
+                }
             </div>
         );
     }

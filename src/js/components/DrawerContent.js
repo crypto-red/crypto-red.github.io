@@ -29,6 +29,7 @@ import HelpIcon from "@material-ui/icons/Help";
 import ChromeReaderModeIcon from "@material-ui/icons/ChromeReaderMode";
 import InfoIcon from "@material-ui/icons/Info";
 import LockIcon from "@material-ui/icons/Lock";
+import AtmIcon from "@material-ui/icons/Atm";
 
 import CryptDialog from "../components/CryptDialog";
 
@@ -98,7 +99,7 @@ class DrawerContent extends React.Component {
             _should_open_help_dialogs: {
                 topup: false,
                 mixer: false,
-                convert: false
+                swap: false
             },
             _help_dialogs_data: {
                 topup: {
@@ -119,13 +120,13 @@ class DrawerContent extends React.Component {
                     help_link: "/about/wiki/mixer",
                     help_link_content: "Learn more..."
                 },
-                convert: {
-                    id: "convert",
+                swap: {
+                    id: "swap",
                     url: "https://swapspace.co?ref=6264baf9e63aa11df52cd6d3",
                     image: "currency-dark.svg",
                     title: "Do you know how to trade your assets?",
                     body: "To exchange one currency to another, you have to pass trough an swap platform.",
-                    help_link: "/about/wiki/convert",
+                    help_link: "/about/wiki/swap",
                     help_link_content: "Learn more..."
                 },
             }
@@ -149,7 +150,7 @@ class DrawerContent extends React.Component {
         const _should_open_help_dialogs = settings.help || {
             topup: true,
             mixer: true,
-            convert: true
+            swap: true
         };
 
         this.setState({ _should_open_help_dialogs });
@@ -211,7 +212,7 @@ class DrawerContent extends React.Component {
         this.props.onClose();
     };
 
-    open_link = (event, url) =>{
+    _open_link = (event, url) =>{
 
         window.open(url);
     };
@@ -243,7 +244,7 @@ class DrawerContent extends React.Component {
             if(!just_close) {
 
                 const url = _help_dialogs_data[_current_help_dialog_id].url;
-                this.open_link(null, url);
+                this._open_link(null, url);
             }
 
             this.props.onClose();
@@ -264,7 +265,7 @@ class DrawerContent extends React.Component {
             this._open_help_dialog(help_dialog_id);
         }else {
 
-            this.open_link(null, url);
+            this._open_link(null, url);
         }
     };
 
@@ -367,9 +368,9 @@ class DrawerContent extends React.Component {
                                     <ListItemIcon><RefreshIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary="Mixer" />
                                 </ListItem>
-                                <ListItem button className={classes.nested} onClick={(event) => {this._should_open_help_dialog(event, "convert")}}>
+                                <ListItem button className={classes.nested} onClick={(event) => {this._should_open_help_dialog(event, "swap")}}>
                                     <ListItemIcon><SwapHorizIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="Convert" />
+                                    <ListItemText primary="Swap" />
                                 </ListItem>
                             </List>
                         </Collapse>
@@ -382,6 +383,12 @@ class DrawerContent extends React.Component {
                                 <ListItem button className={classes.nested} onClick={(event) => {this._open_crypt_dialog(event)}}>
                                     <ListItemIcon><LockIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary="Crypt" />
+                                </ListItem>
+                            </List>
+                            <List component="div" disablePadding>
+                                <ListItem button className={classes.nested} onClick={(event) => {this._open_link(event, "https://coinatmradar.com/")}}>
+                                    <ListItemIcon><AtmIcon className={classes.iconColor} /></ListItemIcon>
+                                    <ListItemText primary="ATM" />
                                 </ListItem>
                             </List>
                         </Collapse>
@@ -403,11 +410,11 @@ class DrawerContent extends React.Component {
                                     <ListItemIcon><HelpIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary="F.A.Q." />
                                 </ListItem>
-                                <ListItem button className={classes.nested} onClick={(event) => this.open_link(event, "https://github.com/crypto-red/crypto-red.github.io")}>
+                                <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://github.com/crypto-red/crypto-red.github.io")}>
                                     <ListItemIcon><CodeIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary="Source code" />
                                 </ListItem>
-                                <ListItem button className={classes.nested} onClick={(event) => this.open_link(event, "https://opencollective.com/crypto-red")}>
+                                <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://opencollective.com/crypto-red")}>
                                     <ListItemIcon><MonetizationOnIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary="Donations" />
                                 </ListItem>

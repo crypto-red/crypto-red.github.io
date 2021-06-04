@@ -1,13 +1,16 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
+
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+
 import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
-import ViewListIcon from "@material-ui/icons/ViewList";
 import BarChartIcon from "@material-ui/icons/BarChart";
 import CallMadeIcon from "@material-ui/icons/CallMade";
 import CallReceivedIcon from "@material-ui/icons/CallReceived";
+import ReceiptIcon from "@material-ui/icons/Receipt";
+
 import { HISTORY } from "../utils/constants";
 
 const styles = theme => ({
@@ -143,7 +146,7 @@ class AppTabs extends React.Component {
                           selectionFollowsFocus
                           className={classes.tabs}>
                         <Tab {...this._get_tab_props(0)} icon={<AccountBalanceIcon />} label={<span>BALANCE</span>} className={classes.tab}/>
-                        <Tab {...this._get_tab_props(1)} icon={<ViewListIcon />} label={<span>TRANSACTIONS</span>} className={classes.tab} />
+                        <Tab {...this._get_tab_props(1)} icon={<ReceiptIcon />} label={<span>TRANSACTIONS</span>} className={classes.tab} />
                         <Tab {...this._get_tab_props(2)} icon={<BarChartIcon />} label={<span>CHARTS</span>} className={classes.tab} />
                         <Tab {...this._get_tab_props(3)} icon={<CallMadeIcon />} label={<span>SEND</span>} className={classes.tab} />
                         <Tab {...this._get_tab_props(4)} icon={<CallReceivedIcon />} label={<span>RECEIVE</span>} className={classes.tab} />
