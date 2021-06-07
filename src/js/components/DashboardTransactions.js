@@ -104,7 +104,7 @@ class DashboardTransactions extends React.Component {
     _open_transaction = (event, transaction) => {
 
         this.setState({_selected_transaction: transaction, _is_transaction_dialog_open: true});
-        actions.trigger_sfx("alert_high-intensity");
+        actions.trigger_sfx("state-change_confirm-up");
     };
 
     _close_transaction_dialog_memo = () => {
