@@ -220,6 +220,7 @@ class DrawerContent extends React.Component {
     _open_help_dialog = (_current_help_dialog_id) => {
 
         this.setState({_current_help_dialog_id, _is_help_dialog_open: true});
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     _on_settings_changed = () => {
@@ -245,6 +246,10 @@ class DrawerContent extends React.Component {
 
                 const url = _help_dialogs_data[_current_help_dialog_id].url;
                 this._open_link(null, url);
+                actions.trigger_sfx("state-change_confirm-up");
+            }else {
+
+                actions.trigger_sfx("state-change_confirm-down");
             }
 
             this.props.onClose();
@@ -272,6 +277,7 @@ class DrawerContent extends React.Component {
     _open_crypt_dialog = () => {
 
         this.setState({_is_crypt_dialog_open: true});
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     _close_crypt_dialog = () => {
@@ -279,9 +285,24 @@ class DrawerContent extends React.Component {
         this.setState({_is_crypt_dialog_open: false});
     };
 
+    _cancel_crypt_dialog = () => {
+
+        this.setState({_is_crypt_dialog_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
+    };
+
     _handle_current_help_dialog_checkbox_change = (event) => {
 
-        this.setState({_current_help_dialog_checkbox: event.target.checked})
+        const checked = event.target.checked;
+        this.setState({_current_help_dialog_checkbox: checked});
+
+        if(checked){
+
+            actions.trigger_sfx("ui_lock");
+        }else {
+
+            actions.trigger_sfx("ui_unlock");
+        }
     };
 
     render() {
@@ -305,6 +326,7 @@ class DrawerContent extends React.Component {
                 <CryptDialog
                     open={_is_crypt_dialog_open}
                     onClose={this._close_crypt_dialog}
+                    cancel={this._cancel_crypt_dialog}
                     logged_account={logged_account}/>
                 <Dialog
                     open={_is_help_dialog_open}

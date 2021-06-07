@@ -133,6 +133,7 @@ function get_settings(callback_function) {
             settings = {
                 locales,
                 currency: _get_currency_by_locales(locales),
+                sfx_enabled: true,
                 panic: false,
                 help: {
                     topup: true,
@@ -207,6 +208,7 @@ function set_settings(settings, callback_function) {
             const default_all_settings = {
                 locales,
                 currency: _get_currency_by_locales(locales),
+                sfx_enabled: true,
                 panic: false,
                 help: {
                     topup: true,

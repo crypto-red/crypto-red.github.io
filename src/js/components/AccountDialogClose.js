@@ -9,6 +9,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
 import TimeAgo from "react-timeago"
+import actions from "../actions/utils";
 
 const styles = theme => ({
 
@@ -31,6 +32,18 @@ class AccountDialogClose extends React.Component {
         this.setState({...nextProps});
     }
 
+    _on_cancel = (event, account) => {
+
+        actions.trigger_sfx("state-change_confirm-down");
+        this.props.cancel(event, account)
+    };
+
+    _on_accept = (event, account) => {
+
+        actions.trigger_sfx("state-change_confirm-up");
+        this.props.accept(event, account)
+    };
+
     render() {
 
         const { classes, account, open } = this.state;
@@ -38,7 +51,7 @@ class AccountDialogClose extends React.Component {
         return (
             <Dialog
                 open={open}
-                onClose={(event) => {this.props.cancel(event, account)}}
+                onClose={(event) => {this.props.onClose(event, account)}}
                 aria-labelledby="close-account-dialog-title"
                 aria-describedby="close-account-dialog-description"
             >
@@ -53,10 +66,10 @@ class AccountDialogClose extends React.Component {
                     </div>: null
                 }
                 <DialogActions>
-                    <Button onClick={(event) => {this.props.cancel(event, account)}} color="primary">
+                    <Button onClick={(event) => {this._on_cancel(event, account)}} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={(event) => {this.props.accept(event, account)}} color="primary" autoFocus>
+                    <Button onClick={(event) => {this._on_accept(event, account)}} color="primary" autoFocus>
                         Close
                     </Button>
                 </DialogActions>

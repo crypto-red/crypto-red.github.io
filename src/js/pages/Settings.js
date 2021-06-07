@@ -40,6 +40,7 @@ class Settings extends React.Component {
             _currency_countries: CURRENCY_COUNTRIES,
             _selected_locales_code: null,
             _selected_currency: null,
+            _sfx_enabled: true,
             _panic_mode: false
         };
     };
@@ -52,11 +53,12 @@ class Settings extends React.Component {
     _process_settings_query_result = (error, settings) => {
 
         // Set new settings from query result
+        const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: true;
         const _selected_locales_code = settings.locales || "en-US";
         const _selected_currency = settings.currency || "USD";
         const _panic_mode = settings.panic || false;
 
-        this.setState({ _selected_locales_code, _selected_currency, _panic_mode });
+        this.setState({ _sfx_enabled, _selected_locales_code, _selected_currency, _panic_mode });
     };
 
     _update_settings() {
@@ -78,6 +80,7 @@ class Settings extends React.Component {
             const settings = { locales: value.original.code };
             this.setState({_selected_locales_code: value.original.code});
             api.set_settings(settings, this._on_settings_changed);
+            actions.trigger_sfx("ui_lock");
         }
     }
 
@@ -88,6 +91,7 @@ class Settings extends React.Component {
             const settings = { currency: value.original.toUpperCase() };
             this.setState({_selected_currency: value.original.toUpperCase()});
             api.set_settings(settings, this._on_settings_changed);
+            actions.trigger_sfx("ui_lock");
         }
     }
 
@@ -95,8 +99,33 @@ class Settings extends React.Component {
 
         const checked = Boolean(this.state._panic_mode);
 
+        if(checked){
+
+            actions.trigger_sfx("ui_lock");
+        }else {
+
+            actions.trigger_sfx("ui_unlock");
+        }
+
         const settings = { panic: !checked };
         this.setState({_panic_mode: !checked});
+        api.set_settings(settings, this._on_settings_changed);
+    };
+
+    _handle_sfx_enabled_switch_change = (event) => {
+
+        const checked = Boolean(this.state._sfx_enabled);
+
+        if(checked){
+
+            actions.trigger_sfx("ui_lock");
+        }else {
+
+            actions.trigger_sfx("ui_unlock");
+        }
+
+        const settings = { sfx_enabled: !checked };
+        this.setState({_sfx_enabled: !checked});
         api.set_settings(settings, this._on_settings_changed);
     };
 
@@ -124,7 +153,7 @@ class Settings extends React.Component {
 
     render() {
 
-        const { _locales, _selected_currency, _currency_countries, _selected_locales_code, _panic_mode, classes } = this.state;
+        const { _locales, _sfx_enabled, _selected_currency, _currency_countries, _selected_locales_code, _panic_mode, classes } = this.state;
 
         let locales = _locales[0];
 
@@ -180,6 +209,19 @@ class Settings extends React.Component {
                         </Card>
                     </Fade>
                     <Fade in timeout={300*3}>
+                        <Card className={classes.marginTop}>
+                            <CardHeader title="Sounds" />
+                            <CardContent>
+                                <FormControlLabel
+                                    value="Show sound effects"
+                                    control={<Switch checked={_sfx_enabled} onChange={this._handle_sfx_enabled_switch_change} color="primary" />}
+                                    label="Enable sound effects"
+                                    labelPlacement="end"
+                                />
+                            </CardContent>
+                        </Card>
+                    </Fade>
+                    <Fade in timeout={300*4}>
                         <Card className={classes.marginTop}>
                             <CardHeader title="Security" />
                             <CardContent>

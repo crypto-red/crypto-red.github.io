@@ -12,6 +12,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     backdrop: {
@@ -50,6 +51,7 @@ class AccountDialogOpen extends React.Component {
         const { _account_password_input, account, _persistent } = this.state;
 
         this.setState({_account_password_input: "", _persistent: false, _loading: true});
+        actions.trigger_sfx("ui_loading");
         this.props.onComplete(event, account, _account_password_input, _persistent);
     };
 
@@ -69,7 +71,24 @@ class AccountDialogOpen extends React.Component {
 
     _handle_persistent_checkbox_change = (event) => {
 
-        this.setState({_persistent: event.target.checked})
+        this.setState({_persistent: event.target.checked});
+        actions.trigger_sfx("ui_tap-variant-01");
+    };
+
+    _on_cancel = (event) => {
+
+        actions.trigger_sfx("state-change_confirm-down");
+        setTimeout(() => {
+
+            const state = {
+                _account_password_input: "",
+                _persistent: false,
+            };
+
+            this.setState(state);
+
+        }, 500);
+        this.props.cancel(event);
     };
 
     render() {
@@ -83,7 +102,7 @@ class AccountDialogOpen extends React.Component {
                 </Backdrop>
                 <Dialog
                     open={open}
-                    onClose={(event) => {this.props.cancel(event, account)}}
+                    onClose={(event) => {this.props.onClose(event, account)}}
                     aria-labelledby="open-account-dialog-title"
                     aria-describedby="open-account-dialog-description"
                 >
@@ -123,7 +142,7 @@ class AccountDialogOpen extends React.Component {
                         </div>: null
                     }
                     <DialogActions>
-                        <Button onClick={(event) => {this.props.cancel(event)}} color="primary">
+                        <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
                             Cancel
                         </Button>
                         <Button onClick={(event) => {this._on_complete(event)}} color="primary" autoFocus>

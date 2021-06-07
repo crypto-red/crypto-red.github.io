@@ -90,6 +90,11 @@ class TransactionDialog extends React.Component {
         this.props.onClose(event, account);
     };
 
+    _on_cancel = (event, account) => {
+
+        this.props.cancel(event, account);
+    };
+
     _get_coin_data() {
 
         const { transaction } = this.state;
@@ -207,8 +212,8 @@ class TransactionDialog extends React.Component {
                                 </Button>
                         : null
                     }
-                    <Button onClick={(event) => {this._on_close(event, transaction)}}  color="primary" autoFocus>
-                        Close
+                    <Button onClick={(event) => {this._on_cancel(event, transaction)}}  color="primary" autoFocus>
+                        Cancel
                     </Button>
                 </DialogActions>
             </Dialog>

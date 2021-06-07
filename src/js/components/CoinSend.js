@@ -178,7 +178,8 @@ class CoinSend extends React.Component {
                 _send_address_input: data
             });
 
-            this._close_scanner_dialog();
+            this.setState({_is_scanner_dialog_open: false});
+            actions.trigger_sfx("ui_camera-shutter");
         }
     };
 
@@ -191,11 +192,13 @@ class CoinSend extends React.Component {
     _open_scanner_dialog = () => {
 
         this.setState({_is_scanner_dialog_open: true});
+        actions.trigger_sfx("navigation_selection-complete-celebration");
     };
 
     _close_scanner_dialog = () => {
 
         this.setState({_is_scanner_dialog_open: false});
+        actions.trigger_sfx("navigation_backward-selection-minimal");
     };
 
     _handle_send_address_input_change = (event) => {
@@ -230,7 +233,14 @@ class CoinSend extends React.Component {
 
         this.setState({_is_confirmation_dialog_open, _send_address_input_error, _send_amount_input_error}, () => {
 
-            this._estimate_transacation_fee();
+            if(_is_confirmation_dialog_open){
+
+                this._estimate_transacation_fee();
+                actions.trigger_sfx("state-change_confirm-up");
+            }else {
+
+                actions.trigger_sfx("alert_error-01");
+            }
         });
     }
 
@@ -254,10 +264,12 @@ class CoinSend extends React.Component {
         if(!error) {
 
             actions.trigger_snackbar("Transaction sent");
+            actions.trigger_sfx("hero_decorative-celebration-03");
             this._clear_form();
         }else {
 
             actions.trigger_snackbar(error);
+            actions.trigger_sfx("alert_error-01");
         }
     }
 
@@ -287,13 +299,19 @@ class CoinSend extends React.Component {
     _on_coin_send_dialog_confirm = () => {
 
         this.setState({_is_backdrop_shown: true});
+        actions.trigger_sfx("ui_loading");
         this._send_transaction();
     }
 
     _on_coin_send_dialog_close = () => {
 
+        this.setState({_is_confirmation_dialog_open: false});
+    }
+
+    _on_coin_send_dialog_cancel = () => {
 
         this.setState({_is_confirmation_dialog_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
     }
 
     render() {
@@ -322,6 +340,7 @@ class CoinSend extends React.Component {
                                             fee_crypto: _fee,
                                         }}
                                         onConfirm={this._on_coin_send_dialog_confirm}
+                                        cancel={this._on_coin_send_dialog_cancel}
                                         onClose={this._on_coin_send_dialog_close}/>:
                         null
                 }

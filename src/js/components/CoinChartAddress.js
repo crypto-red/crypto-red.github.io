@@ -8,6 +8,7 @@ import Fade from "@material-ui/core/Fade";
 
 import AddressListItem from "../components/AddressListItem";
 import AddressDialog from "./AddressDialog";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     fullHeight: {
@@ -32,11 +33,18 @@ class CoinChartsAddress extends React.Component {
     _open_address_and_keys_dialog = (event, coin_id) => {
 
         this.setState({_is_address_and_keys_dialog_open: true, _selected_coin_id: coin_id});
+        actions.trigger_sfx("alert_high-intensity");
     };
 
-    _close_address_and_keys_dialog = (event, coiN_id) => {
+    _close_address_and_keys_dialog = (event, coin_id) => {
 
         this.setState({_is_address_and_keys_dialog_open: false, _selected_coin_id: null});
+    };
+
+    _cancel_address_and_keys_dialog = (event, coin_id) => {
+
+        this.setState({_is_address_and_keys_dialog_open: false, _selected_coin_id: null});
+        actions.trigger_sfx("state-change_confirm-down");
     };
 
     render() {
@@ -50,7 +58,8 @@ class CoinChartsAddress extends React.Component {
                     open={_is_address_and_keys_dialog_open}
                     logged_account={logged_account}
                     coin_id={_selected_coin_id}
-                    onClose={this._close_address_and_keys_dialog}/>
+                    onClose={this._close_address_and_keys_dialog}
+                    cancel={this._cancel_address_and_keys_dialog}/>
                 <Fade in>
                     <Card>
                         <CardHeader title="Address" />

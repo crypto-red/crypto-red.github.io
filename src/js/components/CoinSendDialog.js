@@ -149,7 +149,7 @@ class CoinSendDialog extends React.Component {
                 }
 
                 <DialogActions>
-                    <Button onClick={this.props.onClose} color="primary">
+                    <Button onClick={this.props.cancel} color="primary">
                         Close
                     </Button>
                     <Button onClick={this.props.onConfirm} color="primary" autoFocus>

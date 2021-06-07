@@ -337,8 +337,8 @@ class CoinChartsChart extends React.Component {
                                                 >
                                                     <defs>
                                                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset="5%" stopColor="#131162" stopOpacity="0.6"></stop>
-                                                            <stop offset="95%" stopColor="#131162" stopOpacity="1"></stop>
+                                                            <stop offset="5%" stopColor="#131162" stopOpacity="0"></stop>
+                                                            <stop offset="95%" stopColor="#131162" stopOpacity="0"></stop>
                                                         </linearGradient>
                                                     </defs>
                                                     <CartesianGrid strokeDasharray="3 3" />

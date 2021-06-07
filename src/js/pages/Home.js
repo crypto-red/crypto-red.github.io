@@ -9,6 +9,7 @@ import ShareIcon from "@material-ui/icons/Share";
 import ShareDialog from "../components/ShareDialog";
 import Fab from "@material-ui/core/Fab";
 import Grow from "@material-ui/core/Grow";
+import actions from "../actions/utils";
 
 const quotes = [
     {author: "Charlie Chaplin", text: "You, the people have the power - the power to create machines. The power to create happiness! You, the people, have the power to make this life free and beautiful, to make this life a wonderful adventure."},
@@ -97,6 +98,7 @@ class Home extends React.Component {
     _handle_share_dialog_open = () => {
 
         this.setState({_is_share_dialog_open: true});
+        actions.trigger_sfx("hero_decorative-celebration-02");
     };
 
     _handle_speed_dial_close = () => {

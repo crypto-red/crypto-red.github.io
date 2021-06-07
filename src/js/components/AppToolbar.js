@@ -23,6 +23,7 @@ import api  from "../utils/api";
 import { HISTORY } from "../utils/constants";
 import InnerToolbar from "../components/InnerToolbar";
 import DrawerContent from "../components/DrawerContent";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     appBar: {
@@ -123,11 +124,13 @@ class AppToolbar extends React.Component {
     _handle_open_swipeable_app_drawer = () => {
         
         this.setState({_swipeable_app_drawer_open: true});
+        actions.trigger_sfx("navigation_transition-left");
     };
 
     _handle_close_swipeable_app_drawer = () => {
 
         this.setState({_swipeable_app_drawer_open: false});
+        actions.trigger_sfx("navigation_transition-left");
     };
 
     _open_account_menu = (event) => {

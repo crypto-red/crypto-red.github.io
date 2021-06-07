@@ -73,7 +73,8 @@ class Accounts extends React.Component {
             _is_account_dialog_backup_open: false,
             _login_error: false,
             _selected_locales_code: null,
-            _selected_currency: null
+            _selected_currency: null,
+            _sfx_enabled: true,
         };
     };
 
@@ -94,10 +95,11 @@ class Accounts extends React.Component {
         const { _coins_id } = this.state;
 
         // Set new settings from query result
+        const _sfx_enabled = settings.sfx_enabled;
         const _selected_locales_code = settings.locales;
         const _selected_currency = settings.currency;
 
-        this.setState({ _selected_locales_code, _selected_currency }, function(){
+        this.setState({ _sfx_enabled, _selected_locales_code, _selected_currency }, function(){
             this._get_accounts();
             this._is_logged();
             api.get_coins_markets(_coins_id, _selected_currency.toLowerCase(), this._set_coins_markets);
@@ -162,9 +164,11 @@ class Accounts extends React.Component {
             this.setState({_is_account_dialog_open_open: false, _login_error: false, _logged_account: result});
             actions.trigger_login_update();
             actions.trigger_snackbar("You're logged to a new account");
+            actions.trigger_sfx("hero_decorative-celebration-01");
         }else {
 
             this.setState({_login_error: true});
+            actions.trigger_sfx("alert_error-01");
         }
     };
 
@@ -182,9 +186,11 @@ class Accounts extends React.Component {
         if(!is_to_close) {
 
             this.setState({_selected_account: account, _is_account_dialog_open_open: true});
+            actions.trigger_sfx("alert_high-intensity");
         }else {
 
             this.setState({_selected_account: account, _is_account_dialog_close_open: true});
+            actions.trigger_sfx("alert_high-intensity");
         }
 
     };
@@ -192,6 +198,7 @@ class Accounts extends React.Component {
     _backup_account = (event, account) => {
 
         this.setState({_is_account_dialog_backup_open: true, _selected_account: account});
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     _close_account_dialog_close = () => {
@@ -207,6 +214,7 @@ class Accounts extends React.Component {
     _open_account_dialog_open = (event, account) => {
 
         this.setState({_selected_account: account, _is_account_dialog_open_open: true});
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     _close_selected_account = (event, account) => {
@@ -224,6 +232,7 @@ class Accounts extends React.Component {
     _open_delete_account_dialog = (event, account) => {
 
         this.setState({_selected_account: account, _is_account_dialog_delete_open: true});
+        actions.trigger_sfx("alert_high-intensity")
     };
 
     _close_account_dialog_delete = () => {
@@ -259,18 +268,19 @@ class Accounts extends React.Component {
     _open_account_dialog_create = () => {
 
         this.setState({_is_account_dialog_create_open: true});
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     _on_account_dialog_create_complete = () => {
 
         this._get_accounts();
-        this._close_account_dialog_create();
+        this.setState({_is_account_dialog_create_open: false});
     }
 
     render() {
 
         const { classes, _selected_account, _logged_account, _accounts, _selected_locales_code, _selected_currency, _login_error , _coins_markets, _no_accounts_db } = this.state;
-        const { _is_account_dialog_close_open, _is_account_dialog_open_open, _is_account_dialog_delete_open, _is_account_dialog_create_open, _is_account_dialog_backup_open } = this.state;
+        const { _sfx_enabled, _is_account_dialog_close_open, _is_account_dialog_open_open, _is_account_dialog_delete_open, _is_account_dialog_create_open, _is_account_dialog_backup_open } = this.state;
 
         const logged_account_name = Boolean(_logged_account) ? _logged_account.name: null;
 
@@ -329,6 +339,7 @@ class Accounts extends React.Component {
 
                 <AccountDialogCreate open={_is_account_dialog_create_open}
                                      selected_locales_code={_selected_locales_code}
+                                     sfx_enabled={_sfx_enabled}
                                      onComplete={this._on_account_dialog_create_complete}
                                      onClose={this._close_account_dialog_create}
                                      cancel={this._close_account_dialog_create}/>

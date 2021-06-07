@@ -13,6 +13,7 @@ import api from "../utils/api";
 
 import TransactionDialog from "../components/TransactionDialog";
 import Transaction from "./Transaction";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     linearProgressVisible: {
@@ -103,11 +104,18 @@ class DashboardTransactions extends React.Component {
     _open_transaction = (event, transaction) => {
 
         this.setState({_selected_transaction: transaction, _is_transaction_dialog_open: true});
+        actions.trigger_sfx("state-change_confirm-up");
     };
 
     _close_transaction_dialog_memo = () => {
 
         this.setState({_is_transaction_dialog_open: false});
+    };
+
+    _cancel_transaction_dialog_memo = () => {
+
+        this.setState({_is_transaction_dialog_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
     };
 
     _handle_get_transactions_by_seed_response = (error, response, coin_id) => {
@@ -181,7 +189,9 @@ class DashboardTransactions extends React.Component {
                     selected_currency={_selected_currency}
                     selected_locales_code={_selected_locales_code}
                     logged_account={logged_account}
-                    onClose={this._close_transaction_dialog_memo}/>
+                    onClose={this._close_transaction_dialog_memo}
+                    cancel={this._cancel_transaction_dialog_memo}
+                    />
 
                 {
                     _selected_currency && _selected_locales_code ?

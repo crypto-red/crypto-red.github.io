@@ -8,6 +8,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import { red } from "@material-ui/core/colors";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     red: {
@@ -40,19 +41,16 @@ class AccountDialogBackup extends React.Component {
 
     _on_close = (event, account) => {
 
-        this._on_cancel(event);
+        actions.trigger_sfx("state-change_confirm-up");
+        setTimeout(() => {this.setState({_shown: false});}, 500);
         this.props.onClose(event, account);
     };
 
     _on_cancel = () => {
 
-        setTimeout(() => {
-
-            this.setState({
-
-                _shown: false
-            });
-        }, 500);
+        actions.trigger_sfx("state-change_confirm-down");
+        setTimeout(() => {this.setState({_shown: false});}, 500);
+        this.props.cancel(event, account);
     };
 
     render() {
@@ -62,7 +60,7 @@ class AccountDialogBackup extends React.Component {
         return (
             <Dialog
                 open={open}
-                onClose={(event) => {this._on_close(event, account)}}
+                onClose={(event) => {this.props.onClose(event, account)}}
                 aria-labelledby="backup-account-dialog-title"
                 aria-describedby="backup-account-dialog-description"
             >

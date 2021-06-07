@@ -21,6 +21,7 @@ import Coin from "./Coin";
 import Unknown from "./Unknown";
 
 import api from "../utils/api";
+import sound_api from "../utils/sound-api";
 import { update_meta_title } from "../utils/meta-tags";
 import { PAGE_ROUTES, HISTORY } from "../utils/constants";
 
@@ -45,6 +46,8 @@ class Index extends React.Component {
             _snackbar_open: false,
             _snackbar_message: "",
             _snackbar_auto_hide_duration: 1975,
+            _sfx_enabled: true,
+            _vocal_enabled: false,
             _selected_locales_code: null,
             _selected_currency: null,
             _panic_mode: false,
@@ -74,10 +77,21 @@ class Index extends React.Component {
 
     }
 
+    _trigger_sound = (category, name, volume) => {
+
+        sound_api.play_sound(category, name, volume);
+    };
+
     _handle_events(event) {
+
+        const { _sfx_enabled } = this.state;
 
         // Make different actions send from a dispatcher bounded to this function
         switch(event.type) {
+
+            case "TRIGGER_SFX":
+                if(_sfx_enabled) { this._trigger_sound("sfx", event.data.pack, event.data.name, event.data.volume); }
+                break;
 
             case "SNACKBAR":
                 this._trigger_snackbar(event.data.message, event.data.auto_hide_duration);
@@ -115,13 +129,14 @@ class Index extends React.Component {
     _process_settings_query_result = (error, settings) => {
 
         // Set new settings from query result
+        const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: true;
         const _selected_locales_code = settings.locales || "en-US";
         const _selected_currency = settings.currency || "USD";
         const _panic_mode = settings.panic || false;
         const lang = _selected_locales_code.split("-")[0];
 
         document.documentElement.lang = lang;
-        this.setState({ _selected_locales_code, _selected_currency, _panic_mode });
+        this.setState({ _sfx_enabled, _selected_locales_code, _selected_currency, _panic_mode });
     };
 
     _update_settings() {

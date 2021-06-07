@@ -75,7 +75,7 @@ class AddressDialog extends React.Component {
         this._get_address_and_keys_data();
     }
 
-    _on_close = (event, account) => {
+    _reset_state = () => {
 
         setTimeout(() => {
 
@@ -86,8 +86,18 @@ class AddressDialog extends React.Component {
             });
 
         }, 500);
+    };
 
+    _on_close = (event, account) => {
+
+        this._reset_state();
         this.props.onClose(event, account);
+    };
+
+    _on_cancel = (event, account) => {
+
+        this._reset_state();
+        this.props.cancel(event, account);
     };
 
     _get_address_and_keys_data() {
@@ -156,8 +166,8 @@ class AddressDialog extends React.Component {
                 }
 
                 <DialogActions>
-                    <Button onClick={(event) => {this._on_close(event, coin_id)}} color="primary" autoFocus>
-                        Close
+                    <Button onClick={(event) => {this._on_cancel(event, coin_id)}} color="primary" autoFocus>
+                        Cancel
                     </Button>
                 </DialogActions>
             </Dialog>

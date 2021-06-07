@@ -127,11 +127,18 @@ class CoinTransactions extends React.Component {
     _open_transaction = (event, transaction) => {
 
         this.setState({_selected_transaction: transaction, _is_transaction_dialog_memo_open: true});
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     _close_transaction_dialog_memo = () => {
 
         this.setState({_is_transaction_dialog_memo_open: false});
+    };
+
+    _cancel_transaction_dialog_memo = () => {
+
+        this.setState({_is_transaction_dialog_memo_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
     };
 
     _open_accounts_page = () => {
@@ -154,7 +161,9 @@ class CoinTransactions extends React.Component {
                     selected_currency={selected_currency}
                     selected_locales_code={selected_locales_code}
                     logged_account={logged_account}
-                    onClose={this._close_transaction_dialog_memo}/>
+                    onClose={this._close_transaction_dialog_memo}
+                    cancel={this._cancel_transaction_dialog_memo}
+                />
 
                 <Container maxWidth="sm" className={classes.container}>
                     <Fade in>

@@ -9,6 +9,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import { red } from "@material-ui/core/colors";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     red: {
@@ -35,12 +36,19 @@ class AccountDialogDelete extends React.Component {
         this.setState({...nextProps});
     }
 
-    _accept = (event, account) => {
+    _on_accept = (event, account) => {
 
         if(!this.state._is_confirmation_disabled) {
 
+            actions.trigger_sfx("state-change_confirm-up");
             this.props.accept(event, account);
         }
+    };
+
+    _on_cancel = (event, account) => {
+
+        actions.trigger_sfx("state-change_confirm-down");
+        this.props.cancel(event, account);
     };
 
     _handle_account_name_input_change = (event) => {
@@ -56,7 +64,7 @@ class AccountDialogDelete extends React.Component {
         if(event.keyCode === 13){
 
             const { account } = this.state;
-            this._accept(event, account);
+            this._on_accept(event, account);
         }
     };
 
@@ -67,7 +75,7 @@ class AccountDialogDelete extends React.Component {
         return (
             <Dialog
                 open={open}
-                onClose={(event) => {this.props.cancel(event, account)}}
+                onClose={(event) => {this.props.onClose(event, account)}}
                 aria-labelledby="delete-account-dialog-title"
                 aria-describedby="delete-account-dialog-description"
             >
@@ -93,10 +101,10 @@ class AccountDialogDelete extends React.Component {
                     </div>: null
                 }
                 <DialogActions>
-                    <Button onClick={(event) => {this.props.cancel(event, account)}} color="primary">
+                    <Button onClick={(event) => {this._on_cancel(event, account)}} color="primary">
                         Cancel
                     </Button>
-                    <Button onClick={(event) => {this._accept(event, account)}} color="primary" disabled={_is_confirmation_disabled} autoFocus>
+                    <Button onClick={(event) => {this._on_accept(event, account)}} color="primary" disabled={_is_confirmation_disabled} autoFocus>
                         Delete
                     </Button>
                 </DialogActions>

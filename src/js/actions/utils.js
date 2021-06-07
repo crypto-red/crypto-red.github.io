@@ -2,6 +2,30 @@ import dispatcher from "../dispatcher";
 
 // Functions enabling events to be dispatched and received elsewhere in the code with data
 
+function trigger_sfx(name, volume = 1, pack = "md") {
+
+    dispatcher.dispatch({
+        type: 'TRIGGER_SFX',
+        data: {
+            pack,
+            name,
+            volume
+        }
+    });
+}
+
+function trigger_vocal(name, volume = 1, pack = "gg") {
+
+    dispatcher.dispatch({
+        type: 'TRIGGER_VOCAL',
+        data: {
+            pack,
+            name,
+            volume
+        }
+    });
+}
+
 function trigger_snackbar(message = "", auto_hide_duration = 2500) {
 
     dispatcher.dispatch({
@@ -30,6 +54,7 @@ function trigger_settings_update() {
 }
 
 module.exports = {
+    trigger_sfx: trigger_sfx,
     trigger_snackbar: trigger_snackbar,
     trigger_login_update: trigger_login_update,
     trigger_settings_update: trigger_settings_update

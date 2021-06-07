@@ -31,6 +31,7 @@ import CloseIcon from "@material-ui/icons/Close";
 
 import { COINS } from "../utils/constants";
 import {Collapse} from "@material-ui/core";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     dialog: {
@@ -144,7 +145,6 @@ class AccountDialogCreate extends React.Component {
         });
 
         this.setState({_bip39});
-
     };
 
     _switch_to_mnemonic_view = () => {
@@ -156,6 +156,10 @@ class AccountDialogCreate extends React.Component {
             if(is_current_step_valid) {
 
                 that.setState({_active_view_index: 1});
+                actions.trigger_sfx("navigation_transition-right");
+            }else {
+
+                actions.trigger_sfx("alert_error-01");
             }
         }
 
@@ -173,6 +177,7 @@ class AccountDialogCreate extends React.Component {
 
                 api.create_account(_account_name_input, _account_password_input, _account_mnemonic_input.join(" "), that._process_create_account_result);
                 that.setState({_active_view_index: 2});
+                actions.trigger_sfx("navigation_transition-right");
             }
         }
 
@@ -185,10 +190,13 @@ class AccountDialogCreate extends React.Component {
         if(!error) {
 
             this.setState({_generation_eror: false, _generation_completed: true});
+            actions.trigger_sfx("hero_decorative-celebration-01");
+            this._reset_fields();
             this.props.onComplete();
         }else {
 
             this.setState({_generation_eror: true, _generation_completed: true});
+            actions.trigger_sfx("alert_error-01");
         }
 
     };
@@ -265,13 +273,12 @@ class AccountDialogCreate extends React.Component {
 
         const { _bip39 } = this.state;
         const mnemonic_words = _bip39.generateMnemonic().split(" ");
+        actions.trigger_sfx("state-change_confirm-up");
         this.setState({ _account_mnemonic_input: mnemonic_words});
 
     };
 
-    _on_cancel = (event) => {
-
-        this.props.cancel(event);
+    _reset_fields = ()  => {
 
         setTimeout(() => {
 
@@ -290,6 +297,13 @@ class AccountDialogCreate extends React.Component {
             this.setState(state);
 
         }, 500);
+    };
+
+    _on_cancel = (event) => {
+
+        this.props.cancel(event);
+        actions.trigger_sfx("state-change_confirm-down");
+        this._reset_fields();
     };
 
     _handle_key_down_input_one = (event) => {
@@ -316,9 +330,11 @@ class AccountDialogCreate extends React.Component {
         }
     };
 
-    _on_close = (event) => {
+    _on_close = () => {
 
-        this._on_cancel(event);
+        this.props.onClose(event);
+        actions.trigger_sfx("state-change_confirm-down");
+        this._reset_fields();
     };
 
     render() {
@@ -338,7 +354,7 @@ class AccountDialogCreate extends React.Component {
 
         const configuration_view =
             <div className={classes.dialogBody}>
-                <DialogContent className={classes.dialogBody}>
+                <DialogContent className={classes.dialogBody} dividers>
                     <DialogContentText id="create-account-dialog-description">
                         Provide a name and eventually a STRONG PASSWORD in order to create a new account (You can define it later).
                         Everything that you type never be send to any server, it will stay on your device.
@@ -450,7 +466,7 @@ class AccountDialogCreate extends React.Component {
             _generation_eror ?
             <div>
                 <Grow in>
-                    <Fab>
+                    <Fab className={classes.generationFabError}>
                         <CloseIcon />
                     </Fab>
                 </Grow>
@@ -494,7 +510,7 @@ class AccountDialogCreate extends React.Component {
                 className={classes.dialog}
                 open={open}
                 scroll={"paper"}
-                onClose={(event) => {this.props.cancel(event, account)}}
+                onClose={(event) => {this.props.onClose(event, account)}}
                 aria-labelledby="create-account-dialog-title"
                 aria-describedby="create-account-dialog-description"
             >

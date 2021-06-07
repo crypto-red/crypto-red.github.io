@@ -11,6 +11,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
+import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -74,7 +75,7 @@ class CryptDialog extends React.Component {
         this.setState({_account_name_input: event.target.value, _is_account_name_error: false});
     };
 
-    _on_close = (event) => {
+    _reset_state = () => {
 
         setTimeout(() => {
 
@@ -94,13 +95,24 @@ class CryptDialog extends React.Component {
             this.setState(state);
 
         }, 500);
+    };
 
+    _on_close = (event) => {
+
+        this._reset_state();
         this.props.onClose(event);
+    };
+
+    _on_cancel = (event) => {
+
+        this._reset_state();
+        this.props.cancel(event);
     };
 
     _on_autofill_fields = (event) => {
 
         this.setState({_is_autofill_dialog_open: true});
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     _handle_autofill_dialog_close = (event) => {
@@ -108,14 +120,21 @@ class CryptDialog extends React.Component {
         this.setState({_is_autofill_dialog_open: false});
     };
 
+    _handle_autofill_dialog_cancel = (event) => {
+
+        this.setState({_is_autofill_dialog_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
+    };
+
     _handle_result_text_result = (error, result) => {
 
         if(!error && result) {
 
-            this.setState({_result_text: result});
-            this.setState({_is_result_dialog_open: true});
+            this.setState({_result_text: result, _is_result_dialog_open: true});
+            actions.trigger_sfx("alert_high-intensity");
         }else {
 
+            actions.trigger_sfx("alert_error-01");
             actions.trigger_snackbar(error);
         }
     };
@@ -145,16 +164,26 @@ class CryptDialog extends React.Component {
 
     };
 
-    _handle_result_dialog_close = (event) => {
-
-        this.setState({_is_result_dialog_open: false});
+    _reset_result_state = () => {
 
         setTimeout(() => {
 
             this.setState({_result_text: ""});
 
         }, 500);
+    };
 
+    _handle_result_dialog_close = (event) => {
+
+        this.setState({_is_result_dialog_open: false});
+        this._reset_result_state()
+    };
+
+    _handle_result_dialog_cancel = (event) => {
+
+        this.setState({_is_result_dialog_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
+        this._reset_result_state();
     };
 
     _set_key_pair = (event, coin_id) => {
@@ -172,6 +201,7 @@ class CryptDialog extends React.Component {
             }
 
             this.setState({_public_key_input, _is_public_key_input_error: false, _private_key_input, _is_private_key_input_error: false, _is_autofill_dialog_open: false});
+            actions.trigger_sfx("hero_decorative-celebration-03");
         }
     };
 
@@ -203,15 +233,18 @@ class CryptDialog extends React.Component {
                 function () {
 
                     actions.trigger_snackbar("Text successfully copied.");
+                    actions.trigger_sfx("navigation_forward-selection");
                 },
                 function () {
 
                     actions.trigger_snackbar("Cannot copy this text.");
+                    actions.trigger_sfx("navigation_backward-selection");
                 }
             );
         }else {
 
             actions.trigger_snackbar("Cannot copy \"null\" text.");
+            actions.trigger_sfx("navigation_backward-selection");
         }
     };
 
@@ -231,8 +264,8 @@ class CryptDialog extends React.Component {
                     aria-describedby="crypto-text-result-dialog-description"
                 >
                     <DialogTitle id="crypto-text-result-dialog-title">{_view_name_index ? "Decrypt": "Encrypt"} text ({_result_text.length} length) result</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText id="crypto-text-result-dialog-description">
+                    <DialogContent dividers className={classes.dialogBody}>
+                        <DialogContentText id="crypto-text-result-dialog-description" className={classes.breakAllWords}>
                             {_result_text}
                         </DialogContentText>
                     </DialogContent>
@@ -240,7 +273,7 @@ class CryptDialog extends React.Component {
                         <Button onClick={(event) => {this._handle_result_text_copy(event, _result_text)}} color="primary">
                             copy
                         </Button>
-                        <Button onClick={this._handle_result_dialog_close} color="primary" autoFocus>
+                        <Button onClick={this._handle_result_dialog_cancel} color="primary" autoFocus>
                             close
                         </Button>
                     </DialogActions>
@@ -255,18 +288,20 @@ class CryptDialog extends React.Component {
                     aria-describedby="crypto-text-autofill-dialog-description"
                 >
                     <DialogTitle id="crypto-text-autofill-dialog-title">Autofill keys</DialogTitle>
-                    <DialogContent divider>
+                    <DialogContent>
                         <DialogContentText>
                             Select from which coin the public and private keys should be generated.
                         </DialogContentText>
+                        <Divider />
                         <List component="nav" aria-label="Crypto keypair autofill list">
-                            <ListItem button>
-                                <ListItemText primary="v-systems" onClick={(event) => {this._set_key_pair(event, "v-systems")}}/>
+                            <ListItem onClick={(event) => {this._set_key_pair(event, "v-systems")}} button>
+                                <ListItemText primary="v-systems"/>
                             </ListItem>
                         </List>
+                        <Divider />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this._handle_autofill_dialog_close} variant="contained"  color="primary" autoFocus>
+                        <Button onClick={this._handle_autofill_dialog_cancel} color="primary" autoFocus>
                             close
                         </Button>
                     </DialogActions>
@@ -292,7 +327,7 @@ class CryptDialog extends React.Component {
                             <Tab label="Encrypt" />
                             <Tab label="Decrypt" />
                         </Tabs>
-                        <DialogContent className={classes.dialogBody}>
+                        <DialogContent className={classes.dialogBody} dividers>
                             <DialogContentText id="crypto-text-dialog-description">
                                 You have to provide either a public key to encrypt a message (Someone else public key) or both the public and private key (Your key pair) to decrypt the message. <Link to={"/about/wiki/crypt"} onClick={(event) => {this._on_close(event)}}>See why...</Link>
                             </DialogContentText>
@@ -338,8 +373,8 @@ class CryptDialog extends React.Component {
                             <Button onClick={(event) => {this._on_show_result(event)}} color="primary" disabled={_is_message_input_error || _is_public_key_input_error || _is_private_key_input_error}>
                                 show
                             </Button>
-                            <Button onClick={(event) => {this._on_close(event)}} color="primary">
-                                close
+                            <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
+                                cancel
                             </Button>
                         </DialogActions>
                     </div>
