@@ -131,7 +131,7 @@ class Transaction extends React.Component {
 
         if((typeof transaction.amount_crypto === "undefined" && _full_transaction === null) || force_update_full_transaction) {
 
-            api.get_transactions_by_id(transaction.crypto_id, transaction.id, logged_account.seed, this._handle_set_full_transaction)
+            api.get_transactions_by_id(transaction.crypto_id, transaction.id, logged_account.seed, this._handle_set_full_transaction);
         }else {
 
             this.setState({_full_transaction: transaction});

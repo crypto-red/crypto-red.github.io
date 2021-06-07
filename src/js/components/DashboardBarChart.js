@@ -75,7 +75,6 @@ class DashboardBarChart extends React.Component {
                                                     width={400}
                                                     height={475}
                                                     data={data_bar}
-                                                    barSize={25}
                                                 >
                                                     <CartesianGrid strokeDasharray="3 3" />
                                                     <XAxis dataKey="name" interval={0} angle={90} height={75} dy={10} textAnchor="start"/>

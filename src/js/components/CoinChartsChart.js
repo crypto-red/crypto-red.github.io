@@ -337,8 +337,8 @@ class CoinChartsChart extends React.Component {
                                                 >
                                                     <defs>
                                                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset="5%" stopColor="#131162" stopOpacity="0"></stop>
-                                                            <stop offset="95%" stopColor="#131162" stopOpacity="0"></stop>
+                                                            <stop offset={1} stopColor="#131162" stopOpacity="0.1"></stop>
+                                                            <stop offset={1} stopColor="#131162" stopOpacity="0.1"></stop>
                                                         </linearGradient>
                                                     </defs>
                                                     <CartesianGrid strokeDasharray="3 3" />
@@ -352,7 +352,7 @@ class CoinChartsChart extends React.Component {
                                                            tickFormatter={value => this._price_formatter(value, true, false)}/>
                                                     <Tooltip formatter={value => this._price_formatter(value)}
                                                              labelFormatter={value => this._date_formatter(value, _coin_chart_data_time, selected_locales_code, true)}/>
-                                                    <Area type="monotone" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={2}/>
+                                                    <Area type="monotone" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3} activeDot={{ strokeWidth: 0, r: 6 }}/>
                                                 </AreaChart>
                                             </ResponsiveContainer>:
                                             <Skeleton className={classes.chart} />

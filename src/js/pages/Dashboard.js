@@ -7,7 +7,7 @@ import Grow from "@material-ui/core/Grow";
 import Fab from "@material-ui/core/Fab";
 
 import DashboardPieChart from "../components/DashboardPieChart";
-import DashboardBarChart from "../components/DashboardBarChart";
+import DashboardLineChart from "../components/DashboardLineChart";
 import DashboardQuickCardMobile from "../components/DashboardQuickCardMobile";
 import DashboardQuickCard from "../components/DashboardQuickCard";
 import DashboardTransactions from "../components/DashboardTransactions";
@@ -406,7 +406,11 @@ class Dashboard extends React.Component {
                                 </Grid>
                                 <Grid item xs={12} lg={6} xl={8} className={classes.gridItem}>
                                     {
-                                        <DashboardBarChart coins_markets={_coins_markets}/>
+                                        Boolean(_we_know_if_logged && _logged_account) ?
+                                        <DashboardLineChart
+                                            coins_markets={_coins_markets}
+                                            logged_account={_logged_account} />
+                                        : null
                                     }
                                 </Grid>
                                 <Grid item xs={12} lg={6} xl={4} className={classes.gridItem}>
