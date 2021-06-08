@@ -30,9 +30,9 @@ const quote = quotes[random_quote_index];
 const styles = theme => ({
     backgroundImage: {
         minHeight: "calc(100vh - 160px)",
-        backgroundImage: "url(/src/images/wallet-dark-2.svg)",
+        backgroundImage: "url(/src/images/personal-finance.svg)",
         position: "relative",
-        backgroundSize: "cover",
+        backgroundSize: "contain",
         backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
         backgroundOrigin: "content-box",

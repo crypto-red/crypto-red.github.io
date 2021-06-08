@@ -7,7 +7,16 @@ import CardHeader from "@material-ui/core/CardHeader";
 import Fade from "@material-ui/core/Fade";
 
 
-import {ResponsiveContainer, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Tooltip} from "recharts";
+import {
+    ResponsiveContainer,
+    Radar,
+    RadarChart,
+    PolarGrid,
+    PolarAngleAxis,
+    PolarRadiusAxis,
+    Tooltip,
+    Area
+} from "recharts";
 
 const styles = theme => ({
     radarChart: {
@@ -41,6 +50,19 @@ class CoinChartsRadar extends React.Component {
         this.setState({...new_props});
     }
 
+    _custom_tooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            return (
+                <Card style={{padding: 12}}>
+                    <b>{label}</b><br />
+                    <span>Score: {payload[0].value}</span>
+                </Card>
+            );
+        }
+
+        return null;
+    };
+
     render() {
 
         const { classes, coin_data } = this.state;
@@ -64,8 +86,8 @@ class CoinChartsRadar extends React.Component {
                                         <PolarGrid/>
                                         <PolarAngleAxis dataKey="domain" />
                                         <PolarRadiusAxis angle={90} />
-                                        <Radar name={coin_data.name} dataKey="score" stroke="#131162" fill="#131162" strokeWidth={3} fillOpacity={0.3} />
-                                        <Tooltip/>
+                                        <Radar name={coin_data.name} dataKey="score" stroke="#131162" fill="#131162"  dot={false} strokeWidth={3} activeDot={{ strokeWidth: 0, r: 6 }} fillOpacity={0.3} />
+                                        <Tooltip content={data => this._custom_tooltip(data)}/>
                                     </RadarChart>
                                 </ResponsiveContainer>
                             </div>

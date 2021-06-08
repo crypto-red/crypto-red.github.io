@@ -20,6 +20,7 @@ import ExploreIcon from "@material-ui/icons/Explore";
 import ForumIcon from "@material-ui/icons/Forum";
 import ChatIcon from "@material-ui/icons/Chat";
 import GitHubIcon from "@material-ui/icons/GitHub";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     hidden: {
@@ -122,6 +123,7 @@ class CoinChartsLinks extends React.Component {
     _open_link_dialog = (event, link_dialog_name, link_dialog_data) => {
 
         this.setState({_link_dialog_open: true, _link_dialog_name: link_dialog_name, _link_dialog_data: link_dialog_data});
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     render() {

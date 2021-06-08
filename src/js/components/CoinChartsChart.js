@@ -264,39 +264,55 @@ class CoinChartsChart extends React.Component {
             price_formatter(price, null, selected_locales_code, compact);
     };
 
-    _date_formatter = (date, coin_chart_data_time, selected_locales_code, precise = false) => {
+    _date_formatter = (date, precise = false) => {
 
-        if(coin_chart_data_time === "1") {
+        const { _coin_chart_data_time, selected_locales_code } = this.state;
+
+        if(_coin_chart_data_time === "1") {
 
             return precise ?
                 new Intl.DateTimeFormat(selected_locales_code, {hour: "numeric", minute: "numeric"}).format(new Date(date)):
                 new Intl.DateTimeFormat(selected_locales_code, {hour: "numeric"}).format(new Date(date));
-        }else if(coin_chart_data_time === "7"){
+        }else if(_coin_chart_data_time === "7"){
 
             return precise ?
                 new Intl.DateTimeFormat(selected_locales_code, {hour: "numeric", day: "numeric", month: "short"}).format(new Date(date)):
                 new Intl.DateTimeFormat(selected_locales_code, {day: "numeric", month: "short"}).format(new Date(date));
-        }else if(coin_chart_data_time === "30"){
+        }else if(_coin_chart_data_time === "30"){
 
             return precise ?
                 new Intl.DateTimeFormat(selected_locales_code, {hour: "numeric", day: "numeric", month: "short"}).format(new Date(date)):
                 new Intl.DateTimeFormat(selected_locales_code, {day: "numeric", month: "short"}).format(new Date(date));
-        }else if(coin_chart_data_time === "180"){
+        }else if(_coin_chart_data_time === "180"){
 
             return precise ?
                 new Intl.DateTimeFormat(selected_locales_code, {day: "numeric", month: "short"}).format(new Date(date)):
                 new Intl.DateTimeFormat(selected_locales_code, {month: "short"}).format(new Date(date));
-        }else if(coin_chart_data_time === "360"){
+        }else if(_coin_chart_data_time === "360"){
 
             return precise ?
                 new Intl.DateTimeFormat(selected_locales_code, {day: "numeric", month: "short", year: "numeric"}).format(new Date(date)):
                 new Intl.DateTimeFormat(selected_locales_code, {month: "short", year: "numeric"}).format(new Date(date));
-        }else if(coin_chart_data_time === "max"){
+        }else if(_coin_chart_data_time === "max"){
 
             return precise ?
                 new Intl.DateTimeFormat(selected_locales_code, {day: "numeric", month: "short", year: "numeric"}).format(new Date(date)):
                 new Intl.DateTimeFormat(selected_locales_code, {month: "short", year: "numeric"}).format(new Date(date));
         }
+    };
+
+    _custom_tooltip = ({ active, payload, label }) => {
+
+        if (active && payload && payload.length) {
+            return (
+                <Card style={{padding: 12}}>
+                    <b>{this._date_formatter(label,  true)}</b><br />
+                    <span>{this._price_formatter(payload[0].value)}</span>
+                </Card>
+            );
+        }
+
+        return null;
     };
 
     render() {
@@ -337,22 +353,21 @@ class CoinChartsChart extends React.Component {
                                                 >
                                                     <defs>
                                                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset="5%" stopColor="#131162" stopOpacity="0"></stop>
-                                                            <stop offset="95%" stopColor="#131162" stopOpacity="0"></stop>
+                                                            <stop offset={1} stopColor="#131162" stopOpacity="0.1"></stop>
+                                                            <stop offset={1} stopColor="#131162" stopOpacity="0.1"></stop>
                                                         </linearGradient>
                                                     </defs>
                                                     <CartesianGrid strokeDasharray="3 3" />
                                                     <XAxis dataKey="date"
                                                            angle={60} height={75} dy={10} textAnchor="start"
-                                                           tickFormatter={value => this._date_formatter(value, _coin_chart_data_time, selected_locales_code)}
+                                                           tickFormatter={value => this._date_formatter(value)}
                                                            ticks={_ticks_array}
                                                            tickCount={_ticks_array.length}/>
                                                     <YAxis dataKey="value"
                                                            type={"number"}
                                                            tickFormatter={value => this._price_formatter(value, true, false)}/>
-                                                    <Tooltip formatter={value => this._price_formatter(value)}
-                                                             labelFormatter={value => this._date_formatter(value, _coin_chart_data_time, selected_locales_code, true)}/>
-                                                    <Area type="monotone" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={2}/>
+                                                    <Tooltip content={data => this._custom_tooltip(data)}/>
+                                                    <Area type="monotone" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3} activeDot={{ strokeWidth: 0, r: 6 }}/>
                                                 </AreaChart>
                                             </ResponsiveContainer>:
                                             <Skeleton className={classes.chart} />

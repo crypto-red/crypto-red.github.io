@@ -7,7 +7,7 @@ import Grow from "@material-ui/core/Grow";
 import Fab from "@material-ui/core/Fab";
 
 import DashboardPieChart from "../components/DashboardPieChart";
-import DashboardBarChart from "../components/DashboardBarChart";
+import DashboardLineChart from "../components/DashboardLineChart";
 import DashboardQuickCardMobile from "../components/DashboardQuickCardMobile";
 import DashboardQuickCard from "../components/DashboardQuickCard";
 import DashboardTransactions from "../components/DashboardTransactions";
@@ -42,9 +42,9 @@ const styles = theme => ({
     },
     backgroundImage: {
         minHeight: "calc(100vh - 176px)",
-        backgroundImage: "url(/src/images/analytics-dark.svg)",
+        backgroundImage: "url(/src/images/statistics.svg)",
         position: "relative",
-        backgroundSize: "cover",
+        backgroundSize: "contain",
         backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
         backgroundOrigin: "content-box",
@@ -56,8 +56,9 @@ const styles = theme => ({
         width: "100%",
         marginTop: -4,
         opacity: 1,
+        backgroundColor: "#110b5d26",
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: "#000244"
+            backgroundColor: theme.palette.primary.actionLighter
         }
     },
     linearProgressHidden: {
@@ -66,8 +67,9 @@ const styles = theme => ({
         width: "100%",
         marginTop: -4,
         opacity: 0,
+        backgroundColor: "#110b5d26",
             "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: "#000244"
+                backgroundColor: theme.palette.primary.actionLighter
         },
         animation: "$hide 1.5s",
         "@global": {
@@ -148,25 +150,24 @@ class Dashboard extends React.Component {
 
     componentDidMount() {
 
-        let coins_id = [];
-
-        for (let i = 0; i < COINS.length; i++) {
-
-            coins_id.push(COINS[i].id);
-        }
-
-        this.setState({_coins_id: coins_id}, () => {
+        this.setState({_coins_id: COINS.map(c => c.id)}, () => {
 
             this._update_settings();
+            this._is_logged();
         });
-        this._is_logged();
     }
 
     componentWillReceiveProps(new_props) {
 
+        const { _logged_account } = this.state;
+        const should_refresh_balance = _logged_account !== new_props._logged_account;
+
         this.setState(new_props, () => {
 
-            this._refresh_balance();
+            if(should_refresh_balance) {
+
+                this._refresh_balance();
+            }
         });
     }
 
@@ -406,7 +407,11 @@ class Dashboard extends React.Component {
                                 </Grid>
                                 <Grid item xs={12} lg={6} xl={8} className={classes.gridItem}>
                                     {
-                                        <DashboardBarChart coins_markets={_coins_markets}/>
+                                        Boolean(_we_know_if_logged && _logged_account) ?
+                                            <DashboardLineChart
+                                                coins_markets={_coins_markets}
+                                                logged_account={_logged_account} />
+                                            : null
                                     }
                                 </Grid>
                                 <Grid item xs={12} lg={6} xl={4} className={classes.gridItem}>

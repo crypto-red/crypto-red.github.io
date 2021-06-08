@@ -98,7 +98,7 @@ class InnerToolbar extends React.Component {
             }
             
             
-            return element === "" ? null: <Fade in key={index} timeout={index*50}><Link key={index} to={link_to} className={classes.link} >&nbsp;>&nbsp;{element}</Link></Fade>;
+            return element === "" ? null: <Fade in key={index} timeout={index*50}><Link key={index} to={link_to} className={classes.link} >&nbsp;›&nbsp;{element}</Link></Fade>;
         });
         
         return (

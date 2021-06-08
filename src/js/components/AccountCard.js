@@ -36,15 +36,17 @@ const styles = theme => ({
     },
     linearProgressVisible: {
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.light
+            backgroundColor: theme.palette.primary.actionLighter
         },
         opacity: 1,
+        backgroundColor: "#110b5d26",
     },
     linearProgressHidden: {
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.light
+            backgroundColor: theme.palette.primary.actionLighter
         },
         opacity: 0,
+        backgroundColor: "#110b5d26",
         animation: "$hide 1.5s",
         "@global": {
             "@keyframes hide": {

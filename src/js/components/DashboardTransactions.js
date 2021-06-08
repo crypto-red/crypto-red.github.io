@@ -18,15 +18,17 @@ import actions from "../actions/utils";
 const styles = theme => ({
     linearProgressVisible: {
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.light
+            backgroundColor: theme.palette.primary.actionLighter
         },
         opacity: 1,
+        backgroundColor: "#110b5d26",
     },
     linearProgressHidden: {
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.light
+            backgroundColor: theme.palette.primary.actionLighter
         },
         opacity: 0,
+        backgroundColor: "#110b5d26",
         animation: "$hide 1.5s",
         "@global": {
             "@keyframes hide": {
@@ -221,7 +223,7 @@ class DashboardTransactions extends React.Component {
                                                     </CardContent>:
                                                     <CardContent>
                                                         <img className={classes.noTransactionImage}
-                                                             src="/src/images/money-transfer-dark.svg"/>
+                                                             src="/src/images/transfer.svg"/>
                                                         <p>You've not made any transactions yet, transactions will show up here.</p>
                                                     </CardContent>
                                                 }

@@ -186,7 +186,7 @@ class DashboardPieChart extends React.Component {
                                             </ResponsiveContainer>
                                             : Boolean(pie_data.length <= 0) ?
                                                 <div>
-                                                    <img className={classes.fullWidth} src="/src/images/accountant-dark.svg"/>
+                                                    <img className={classes.fullWidth} src="/src/images/segment.svg"/>
                                                     <p>You've not made any transactions yet, therefore your portfolio is empty but it will show here.</p>
                                                 </div>
                                                 :null
