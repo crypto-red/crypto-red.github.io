@@ -131,7 +131,7 @@ class CryptDialog extends React.Component {
         if(!error && result) {
 
             this.setState({_result_text: result, _is_result_dialog_open: true});
-            actions.trigger_sfx("alert_high-intensity");
+            actions.trigger_sfx("hero_decorative-celebration-01");
         }else {
 
             actions.trigger_sfx("alert_error-01");
@@ -158,6 +158,9 @@ class CryptDialog extends React.Component {
 
                 api_crypto.nacl_decrypt(_message_input, _public_key_input, _private_key_input, this._handle_result_text_result);
             }
+        }else {
+
+            actions.trigger_sfx("alert_error-01");
         }
 
         this.setState({_is_message_input_error, _is_public_key_input_error, _is_private_key_input_error});

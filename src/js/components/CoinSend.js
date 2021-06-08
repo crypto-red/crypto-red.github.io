@@ -236,7 +236,7 @@ class CoinSend extends React.Component {
             if(_is_confirmation_dialog_open){
 
                 this._estimate_transacation_fee();
-                actions.trigger_sfx("state-change_confirm-up");
+                actions.trigger_sfx("alert_high-intensity");
             }else {
 
                 actions.trigger_sfx("alert_error-01");

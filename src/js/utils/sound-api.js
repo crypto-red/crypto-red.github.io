@@ -6,10 +6,10 @@ function play_sound(category, pack, name, volume_optional) {
 
     const src_mp3 =  "/src/sounds/" + category + "/" + pack + "/" + name + ".wav";
     const sound = new Howl({
-        src: [src_mp3]
+        src: [src_mp3],
+        volume
     });
 
-    Howler.volume(volume);
     sound.play();
 }
 

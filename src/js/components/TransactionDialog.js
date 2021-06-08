@@ -16,6 +16,7 @@ import Table from "@material-ui/core/Table";
 import { HISTORY } from "../utils/constants";
 import api from "../utils/api";
 import price_formatter from "../utils/price-formatter";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     dialog: {
@@ -115,6 +116,7 @@ class TransactionDialog extends React.Component {
 
     _open_link = (event, link) => {
 
+        actions.trigger_sfx("state-change_confirm-up");
         const { _history } = this.state;
         _history.push(link);
     };

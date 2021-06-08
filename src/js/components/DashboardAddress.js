@@ -52,7 +52,7 @@ class DashboardAddress extends React.Component {
     _open_address_and_keys_dialog = (event, coin_id) => {
 
         this.setState({_is_address_and_keys_dialog_open: true, _selected_coin_id: coin_id});
-        actions.trigger_sfx("state-change_confirm-up");
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     _close_address_and_keys_dialog = (event, coin_id) => {

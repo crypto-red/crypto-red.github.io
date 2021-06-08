@@ -93,6 +93,7 @@ class Home extends React.Component {
     _handle_share_dialog_close = () => {
 
         this.setState({_is_share_dialog_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
     };
 
     _handle_share_dialog_open = () => {

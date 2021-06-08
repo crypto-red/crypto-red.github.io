@@ -77,9 +77,9 @@ class Index extends React.Component {
 
     }
 
-    _trigger_sound = (category, name, volume) => {
+    _trigger_sound = (category, pack, name, volume) => {
 
-        sound_api.play_sound(category, name, volume);
+        sound_api.play_sound(category, pack, name, volume);
     };
 
     _handle_events(event) {
@@ -154,7 +154,7 @@ class Index extends React.Component {
 
         // set meta title
         this._set_meta_title(new_pathname);
-
+        actions.trigger_sfx("navigation_transition-right", .25);
     };
 
     _set_meta_title = (pathname) => {

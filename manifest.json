@@ -1,19 +1,19 @@
 {
   "manifest_version": 2,
-  "version": "0.0.9",
+  "version": "0.0.10",
   "name": "WALLET.CRYPTO.RED",
   "short_name": "CR WALLET",
   "description": "Fast and very simple cryptocurrency wallet.",
   "display": "standalone",
   "theme_color": "#060f23",
-  "background_color": "#060f23",
+  "background_color": "#ffffff",
   "browser_action": {
     "default_icon": "/src/images/manifest/icon-white.png",
     "default_popup": "index.html"
   },
   "icons": [
     {
-      "src": "/src/images/manifest/icon.png",
+      "src": "/src/images/manifest/icon-white.png",
       "sizes": "2048x2048",
       "type": "image/png"
     }
