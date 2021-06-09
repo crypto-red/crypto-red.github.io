@@ -134,6 +134,7 @@ function get_settings(callback_function) {
                 locales,
                 currency: _get_currency_by_locales(locales),
                 sfx_enabled: true,
+                jamy_enabled: true,
                 panic: false,
                 help: {
                     topup: true,
@@ -209,6 +210,7 @@ function set_settings(settings, callback_function) {
                 locales,
                 currency: _get_currency_by_locales(locales),
                 sfx_enabled: true,
+                jamy_enabled: true,
                 panic: false,
                 help: {
                     topup: true,

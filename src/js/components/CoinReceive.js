@@ -95,17 +95,20 @@ class CoinReceive extends React.Component {
 
                     actions.trigger_snackbar("Address successfully copied.");
                     actions.trigger_sfx("navigation_forward-selection");
+                    actions.jamy_update("happy");
                 },
                 function () {
 
                     actions.trigger_snackbar("Cannot copy this address.");
                     actions.trigger_sfx("navigation_backward-selection");
+                    actions.jamy_update("annoyed");
                 }
             );
         }else {
 
             actions.trigger_snackbar("Cannot copy \"null\" address");
             actions.trigger_sfx("navigation_backward-selection");
+            actions.jamy_update("annoyed");
         }
     }
 

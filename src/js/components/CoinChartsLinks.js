@@ -124,6 +124,7 @@ class CoinChartsLinks extends React.Component {
 
         this.setState({_link_dialog_open: true, _link_dialog_name: link_dialog_name, _link_dialog_data: link_dialog_data});
         actions.trigger_sfx("alert_high-intensity");
+        actions.jamy_update("flirty");
     };
 
     render() {

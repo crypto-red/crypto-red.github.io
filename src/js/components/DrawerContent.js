@@ -105,7 +105,7 @@ class DrawerContent extends React.Component {
                 topup: {
                     id: "topup",
                     url: "https://changelly.com/",
-                    image: "card-dark.svg",
+                    image: "card.svg",
                     title: "Do you know how to top up?",
                     body: "To add fund to one of your cryptocurrencies, you have to pass trough an exchange.",
                     help_link: "/about/wiki/topup",
@@ -114,7 +114,7 @@ class DrawerContent extends React.Component {
                 mixer: {
                     id: "mixer",
                     url: "https://blender.io/",
-                    image: "banknote-dark.svg",
+                    image: "hacker.svg",
                     title: "Do you know how and why to use a mixer?",
                     body: "To obfuscate the source of your coin, you can use a mixer, it will make it difficult to link two wallet together.",
                     help_link: "/about/wiki/mixer",
@@ -123,7 +123,7 @@ class DrawerContent extends React.Component {
                 swap: {
                     id: "swap",
                     url: "https://swapspace.co?ref=6264baf9e63aa11df52cd6d3",
-                    image: "currency-dark.svg",
+                    image: "swap.svg",
                     title: "Do you know how to trade your assets?",
                     body: "To exchange one currency to another, you have to pass trough an swap platform.",
                     help_link: "/about/wiki/swap",

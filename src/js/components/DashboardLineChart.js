@@ -39,6 +39,13 @@ const styles = theme => ({
         width: "100%",
         height: 475
     },
+    noTransactionCardContent: {
+        textAlign: "center",
+    },
+    noTransactionImage: {
+        maxHeight: 475 - 48,
+        height: "100%",
+    },
 });
 
 
@@ -252,12 +259,10 @@ class DashboardLineChart extends React.Component {
 
     render() {
 
-        const { classes, logged_account, _selected_locales_code, _selected_currency } = this.state;
-        const { _coins, _coin_id_loaded, coins_markets } = this.state;
-        const transactions = this.state._transactions.sort((a, b) => b.timestamp-a.timestamp).slice(0, 20);
-        const full_transactions = this.state._full_transactions.sort((a, b) => b.timestamp-a.timestamp).slice(0, 20);
+        const { classes, _coins, _coin_id_loaded, coins_markets } = this.state;
+        const full_transactions = this.state._full_transactions.sort((a, b) => a.timestamp-b.timestamp).slice(0, 20);
 
-        const loaded_percent = Math.floor((full_transactions.length / transactions.length) * 100);
+        const loaded_percent = Math.floor((_coin_id_loaded.length / _coins.length) * 100);
         let transactions_data = [];
 
         if(loaded_percent === 100 && coins_markets.length) {
@@ -288,42 +293,50 @@ class DashboardLineChart extends React.Component {
                 <Fade in>
                     <Card className={classes.performanceCard}>
                         <CardHeader title="Cashflow" />
-                        <CardContent>
                             {
-                                transactions_data.length ?
-                                    <Fade in>
-                                        <div className={classes.barChart}>
-                                            <ResponsiveContainer>
-                                                <AreaChart
-                                                    data={transactions_data}
-                                                    width={400}
-                                                    height={475}
-                                                >
-                                                    <defs>
-                                                        <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset={() => this.gradient_offset(transactions_data)} stopColor="#131162" stopOpacity={.1} />
-                                                            <stop offset={() => this.gradient_offset(transactions_data)} stopColor="#131162" stopOpacity={.1} />
-                                                        </linearGradient>
-                                                    </defs>
-                                                    <CartesianGrid strokeDasharray="3 3" />
-                                                    <XAxis dataKey="timestamp"
-                                                           angle={60} height={75} dy={10} textAnchor="start"
-                                                           tickFormatter={value => this._date_formatter(value)}/>
+                                loaded_percent === 100 ?
+                                    <div>
+                                        {transactions_data.length ?
+                                            <CardContent>
+                                                <div className={classes.barChart}>
+                                                    <ResponsiveContainer>
+                                                        <AreaChart
+                                                            data={transactions_data}
+                                                            width={400}
+                                                            height={475}
+                                                        >
+                                                            <defs>
+                                                                <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
+                                                                    <stop offset={() => this.gradient_offset(transactions_data)} stopColor="#131162" stopOpacity={.1} />
+                                                                    <stop offset={() => this.gradient_offset(transactions_data)} stopColor="#131162" stopOpacity={.1} />
+                                                                </linearGradient>
+                                                            </defs>
+                                                            <CartesianGrid strokeDasharray="3 3" />
+                                                            <XAxis dataKey="timestamp"
+                                                                   angle={60} height={75} dy={10} textAnchor="start"
+                                                                   tickFormatter={value => this._date_formatter(value)}/>
 
-                                                    <YAxis dataKey="value"
-                                                           type={"number"}
-                                                           tickFormatter={value => this._price_formatter(value, true, false)}/>
-                                                    <Tooltip content={data => this._custom_tooltip(data)} />
-                                                    <Area type="monotone" stroke="#131162" fill="url(#splitColor)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3} activeDot={{ strokeWidth: 0, r: 6 }}/>
-                                                </AreaChart>
-                                            </ResponsiveContainer>
-                                        </div>
-                                    </Fade>:
-                                    <Fade in timeout={300}>
-                                        <Skeleton height={475}/>
-                                    </Fade>
+                                                            <YAxis dataKey="value"
+                                                                   type={"number"}
+                                                                   tickFormatter={value => this._price_formatter(value, true, false)}/>
+                                                            <Tooltip content={data => this._custom_tooltip(data)} />
+                                                            <Area type="monotone" stroke="#131162" fill="url(#splitColor)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3} activeDot={{ strokeWidth: 0, r: 6 }}/>
+                                                        </AreaChart>
+                                                    </ResponsiveContainer>
+                                                </div>
+                                            </CardContent>:
+                                            <CardContent className={classes.noTransactionCardContent}>
+                                                <img className={classes.noTransactionImage} src="/src/images/data.svg"/>
+                                                <p>You've not made any transactions yet, latest transactions will show up here in a chart.</p>
+                                            </CardContent>
+                                        }
+                                    </div>:
+                                    <div>
+                                        <CardContent>
+                                            <Skeleton height={475}/>
+                                        </CardContent>
+                                    </div>
                             }
-                        </CardContent>
                     </Card>
                 </Fade>
             </div>

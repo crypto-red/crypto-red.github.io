@@ -265,11 +265,13 @@ class CoinSend extends React.Component {
 
             actions.trigger_snackbar("Transaction sent");
             actions.trigger_sfx("hero_decorative-celebration-03");
+            actions.jamy_update("happy");
             this._clear_form();
         }else {
 
             actions.trigger_snackbar(error);
             actions.trigger_sfx("alert_error-01");
+            actions.jamy_update("angry");
         }
     }
 
@@ -300,12 +302,14 @@ class CoinSend extends React.Component {
 
         this.setState({_is_backdrop_shown: true});
         actions.trigger_sfx("ui_loading");
+        actions.jamy_update("flirty", 500);
         this._send_transaction();
     }
 
     _on_coin_send_dialog_close = () => {
 
         this.setState({_is_confirmation_dialog_open: false});
+        actions.jamy_update("annoyed");
     }
 
     _on_coin_send_dialog_cancel = () => {

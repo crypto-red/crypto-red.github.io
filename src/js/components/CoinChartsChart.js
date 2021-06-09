@@ -15,6 +15,7 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tool
 
 import price_formatter from "../utils/price-formatter";
 import api from "../utils/api";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     root: {
@@ -195,6 +196,7 @@ class CoinChartsChart extends React.Component {
 
     _set_coin_chart_data_type = (type) => {
 
+        actions.jamy_update("happy", 500);
         this.setState({
             _coin_chart_data_type: type
         }, this._get_coin_chart_data);

@@ -90,7 +90,7 @@ class Accounts extends React.Component {
         this.setState({_coins_id: coins_id}, this._update_settings);
     }
 
-    _process_settings_query_result = (error, settings) => {;
+    _process_settings_query_result = (error, settings) => {
 
         const { _coins_id } = this.state;
 
@@ -165,10 +165,13 @@ class Accounts extends React.Component {
             actions.trigger_login_update();
             actions.trigger_snackbar("You're logged to a new account");
             actions.trigger_sfx("hero_decorative-celebration-01");
+            actions.jamy_update("happy");
+
         }else {
 
             this.setState({_login_error: true});
             actions.trigger_sfx("alert_error-01");
+            actions.jamy_update("angry");
         }
     };
 
@@ -221,6 +224,7 @@ class Accounts extends React.Component {
 
         api.logout(this._process_logout_result);
         this.setState({_is_account_dialog_close_open: false, _logged_account: null});
+        actions.jamy_update("sad");
     };
 
     _open_selected_account = (event, account, password, persistent) => {
@@ -232,7 +236,7 @@ class Accounts extends React.Component {
     _open_delete_account_dialog = (event, account) => {
 
         this.setState({_selected_account: account, _is_account_dialog_delete_open: true});
-        actions.trigger_sfx("alert_high-intensity")
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     _close_account_dialog_delete = () => {
@@ -253,6 +257,7 @@ class Accounts extends React.Component {
         }
         api.delete_account_by_name(account.name, this._get_accounts);
         this.setState({_is_account_dialog_delete_open: false});
+        actions.jamy_update("sad");
     };
 
     _close_account_dialog_backup = () => {
@@ -263,18 +268,28 @@ class Accounts extends React.Component {
     _close_account_dialog_create = () => {
 
         this.setState({_is_account_dialog_create_open: false});
+        actions.jamy_update("flirty");
     };
 
     _open_account_dialog_create = () => {
 
         this.setState({_is_account_dialog_create_open: true});
         actions.trigger_sfx("alert_high-intensity");
+        actions.jamy_update("happy");
     };
 
     _on_account_dialog_create_complete = () => {
 
         this._get_accounts();
         this.setState({_is_account_dialog_create_open: false});
+        actions.trigger_sfx("hero_decorative-celebration-01");
+        actions.jamy_update("happy");
+    }
+
+    _on_account_dialog_create_error = () => {
+
+        actions.trigger_sfx("alert_error-01");
+        actions.jamy_update("angry");
     }
 
     render() {
@@ -341,6 +356,7 @@ class Accounts extends React.Component {
                                      selected_locales_code={_selected_locales_code}
                                      sfx_enabled={_sfx_enabled}
                                      onComplete={this._on_account_dialog_create_complete}
+                                     onError={this._on_account_dialog_create_error}
                                      onClose={this._close_account_dialog_create}
                                      cancel={this._close_account_dialog_create}/>
 

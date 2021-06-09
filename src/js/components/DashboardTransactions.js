@@ -44,9 +44,12 @@ const styles = theme => ({
             }
         }
     },
+    noTransactionCardContent: {
+        textAlign: "center",
+    },
     noTransactionImage: {
-        padding: theme.spacing(4),
-        width: "100%"
+        maxHeight: 475 - 48,
+        height: "100%",
     },
     gridItem: {
         padding: theme.spacing(1),
@@ -58,7 +61,7 @@ const styles = theme => ({
         height: "100%"
     },
     transactionsCardContent: {
-        maxHeight: 472,
+        maxHeight: 475,
         overflow: "auto"
     }
 });
@@ -221,14 +224,18 @@ class DashboardTransactions extends React.Component {
                                                             );
                                                         })}
                                                     </CardContent>:
-                                                    <CardContent>
+                                                    <CardContent className={classes.noTransactionCardContent}>
                                                         <img className={classes.noTransactionImage}
                                                              src="/src/images/transfer.svg"/>
                                                         <p>You've not made any transactions yet, transactions will show up here.</p>
                                                     </CardContent>
                                                 }
+                                            </div>:
+                                            <div>
+                                                <CardContent>
+                                                    <Skeleton height={475} />
+                                                </CardContent>
                                             </div>
-                                            : <Skeleton height={475} />
                                     }
                                 </Card>
                             </Fade>

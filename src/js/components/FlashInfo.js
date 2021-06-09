@@ -3,6 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 
 import Card from "@material-ui/core/Card";
 import Button from "@material-ui/core/Button";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     flashInfo: {
@@ -54,6 +55,12 @@ class FlashInfo extends React.Component {
         };
     };
 
+    _on_click = (event) => {
+
+        this.props.onClick(event);
+        actions.jamy_update("happy", 500);
+    };
+
     render() {
 
         const { classes } = this.state;
@@ -63,7 +70,7 @@ class FlashInfo extends React.Component {
             <Card className={classes.flashInfo} elevation={4}>
                 <img src={image} className={classes.flashInfoImage}/>
                 <span className={classes.flashInfoText}>{text}</span>
-                <Button onClick={this.props.onClick} className={classes.flashInfoButton} variant="contained" color="primary">{button}</Button>
+                <Button onClick={event => this._on_click(event)} className={classes.flashInfoButton} variant="contained" color="primary">{button}</Button>
             </Card>
         );
     }

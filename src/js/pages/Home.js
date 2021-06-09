@@ -30,7 +30,7 @@ const quote = quotes[random_quote_index];
 const styles = theme => ({
     backgroundImage: {
         minHeight: "calc(100vh - 160px)",
-        backgroundImage: "url(/src/images/personal-finance.svg)",
+        backgroundImage: "url(/src/images/logo-transparent.png)",
         position: "relative",
         backgroundSize: "contain",
         backgroundPosition: "center center",
@@ -94,12 +94,14 @@ class Home extends React.Component {
 
         this.setState({_is_share_dialog_open: false});
         actions.trigger_sfx("state-change_confirm-down");
+        actions.jamy_update("suspicious");
     };
 
     _handle_share_dialog_open = () => {
 
         this.setState({_is_share_dialog_open: true});
         actions.trigger_sfx("hero_decorative-celebration-02");
+        actions.jamy_update("happy");
     };
 
     _handle_speed_dial_close = () => {

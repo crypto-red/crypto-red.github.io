@@ -68,6 +68,14 @@ class CoinBalance extends React.Component {
         if(!error) {
 
             this.setState({_coin_balance: result});
+
+            if(result === 0) {
+
+                actions.jamy_update("sad");
+            }else {
+
+                actions.jamy_update("happy");
+            }
         }else {
 
             actions.trigger_snackbar(error);

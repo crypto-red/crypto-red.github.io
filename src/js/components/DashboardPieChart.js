@@ -23,10 +23,14 @@ const styles = theme => ({
     },
     pieChart: {
         width: "100%",
-        height: 400
+        height: 475
     },
-    fullWidth: {
-        width: "100%"
+    noTransactionCardContent: {
+        textAlign: "center",
+    },
+    noTransactionImage: {
+        maxHeight: 475 - 48,
+        height: "100%",
     },
     cardContent: {
         height: "calc(100% - 64px)"
@@ -167,7 +171,7 @@ class DashboardPieChart extends React.Component {
                             {coins_markets.length > 0 && portfolio ?
                                 <Fade in>
                                     <div className={classes.pieChart}>
-                                        {pie_data.length > 0 ?
+                                        {pie_data.length !== 0 ?
                                             <ResponsiveContainer>
                                                 <PieChart width={400} height={400}>
                                                     <Pie
@@ -185,8 +189,8 @@ class DashboardPieChart extends React.Component {
                                                 </PieChart>
                                             </ResponsiveContainer>
                                             : Boolean(pie_data.length <= 0) ?
-                                                <div>
-                                                    <img className={classes.fullWidth} src="/src/images/segment.svg"/>
+                                                <div className={classes.noTransactionCardContent}>
+                                                    <img className={classes.noTransactionImage} src="/src/images/segment.svg"/>
                                                     <p>You've not made any transactions yet, therefore your portfolio is empty but it will show here.</p>
                                                 </div>
                                                 :null

@@ -4,6 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import FlashInfo from "../components/FlashInfo";
 
 import { HISTORY } from "../utils/constants";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     backgroundImage: {
@@ -45,6 +46,11 @@ class Unknown extends React.Component {
             _history: HISTORY
         };
     };
+
+    componentDidMount() {
+
+        actions.jamy_update("annoyed");
+    }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
 

@@ -2,6 +2,18 @@ import dispatcher from "../dispatcher";
 
 // Functions enabling events to be dispatched and received elsewhere in the code with data
 
+
+function jamy_update(state_of_mind = "shocked", duration = 1000) {
+
+    dispatcher.dispatch({
+        type: "JAMY_UPDATE",
+        data: {
+            state_of_mind,
+            duration
+        }
+    });
+}
+
 function trigger_sfx(name, volume = 1, pack = "md") {
 
     dispatcher.dispatch({
@@ -25,7 +37,6 @@ function trigger_vocal(name, volume = 1, pack = "gg") {
         }
     });
 }
-
 function trigger_snackbar(message = "", auto_hide_duration = 2500) {
 
     dispatcher.dispatch({
@@ -54,6 +65,7 @@ function trigger_settings_update() {
 }
 
 module.exports = {
+    jamy_update: jamy_update,
     trigger_sfx: trigger_sfx,
     trigger_snackbar: trigger_snackbar,
     trigger_login_update: trigger_login_update,

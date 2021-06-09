@@ -157,9 +157,11 @@ class AccountDialogCreate extends React.Component {
 
                 that.setState({_active_view_index: 1});
                 actions.trigger_sfx("navigation_transition-right");
+                actions.jamy_update("happy");
             }else {
 
                 actions.trigger_sfx("alert_error-01");
+                actions.jamy_update("angry");
             }
         }
 
@@ -178,6 +180,7 @@ class AccountDialogCreate extends React.Component {
                 api.create_account(_account_name_input, _account_password_input, _account_mnemonic_input.join(" "), that._process_create_account_result);
                 that.setState({_active_view_index: 2});
                 actions.trigger_sfx("navigation_transition-right");
+                actions.jamy_update("happy");
             }
         }
 
@@ -190,13 +193,12 @@ class AccountDialogCreate extends React.Component {
         if(!error) {
 
             this.setState({_generation_eror: false, _generation_completed: true});
-            actions.trigger_sfx("hero_decorative-celebration-01");
             this._reset_fields();
             this.props.onComplete();
         }else {
 
             this.setState({_generation_eror: true, _generation_completed: true});
-            actions.trigger_sfx("alert_error-01");
+            this.props.onError();
         }
 
     };
@@ -274,6 +276,7 @@ class AccountDialogCreate extends React.Component {
         const { _bip39 } = this.state;
         const mnemonic_words = _bip39.generateMnemonic().split(" ");
         actions.trigger_sfx("state-change_confirm-up");
+        actions.jamy_update("happy");
         this.setState({ _account_mnemonic_input: mnemonic_words});
 
     };

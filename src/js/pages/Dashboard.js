@@ -233,7 +233,7 @@ class Dashboard extends React.Component {
         const _selected_locales_code = settings.locales;
         const _selected_currency = settings.currency;
 
-        this.setState({ _selected_locales_code, _selected_currency }, function(){
+        this.setState({ _selected_locales_code, _selected_currency }, () => {
 
             api.get_coins_markets(_coins_id, _selected_currency.toLowerCase(), this._set_coins_markets);
         });

@@ -21,6 +21,7 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import { COINS, HISTORY } from "../utils/constants";
 import api from "../utils/api";
 import price_formatter from "../utils/price-formatter";
+import actions from "../actions/utils";
 
 
 const styles = theme => ({
@@ -246,6 +247,7 @@ class Coins extends React.Component {
     _create_sort_handler = (property, event) => {
         
         this._handle_request_sort(event, property);
+        actions.jamy_update("happy");
     };
 
     _price_formatter = (price) => {

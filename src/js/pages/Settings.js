@@ -41,6 +41,7 @@ class Settings extends React.Component {
             _selected_locales_code: null,
             _selected_currency: null,
             _sfx_enabled: true,
+            _jamy_enabled: true,
             _panic_mode: false
         };
     };
@@ -54,11 +55,12 @@ class Settings extends React.Component {
 
         // Set new settings from query result
         const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: true;
+        const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: true;
         const _selected_locales_code = settings.locales || "en-US";
         const _selected_currency = settings.currency || "USD";
         const _panic_mode = settings.panic || false;
 
-        this.setState({ _sfx_enabled, _selected_locales_code, _selected_currency, _panic_mode });
+        this.setState({ _sfx_enabled, _jamy_enabled, _selected_locales_code, _selected_currency, _panic_mode });
     };
 
     _update_settings() {
@@ -81,6 +83,7 @@ class Settings extends React.Component {
             this.setState({_selected_locales_code: value.original.code});
             api.set_settings(settings, this._on_settings_changed);
             actions.trigger_sfx("ui_lock");
+            actions.jamy_update("happy");
         }
     }
 
@@ -92,6 +95,7 @@ class Settings extends React.Component {
             this.setState({_selected_currency: value.original.toUpperCase()});
             api.set_settings(settings, this._on_settings_changed);
             actions.trigger_sfx("ui_lock");
+            actions.jamy_update("happy");
         }
     }
 
@@ -102,9 +106,11 @@ class Settings extends React.Component {
         if(checked){
 
             actions.trigger_sfx("ui_lock");
+            actions.jamy_update("shocked");
         }else {
 
             actions.trigger_sfx("ui_unlock");
+            actions.jamy_update("suspicious");
         }
 
         const settings = { panic: !checked };
@@ -119,13 +125,34 @@ class Settings extends React.Component {
         if(checked){
 
             actions.trigger_sfx("ui_lock");
+            actions.jamy_update("happy");
         }else {
 
             actions.trigger_sfx("ui_unlock");
+            actions.jamy_update("happy");
         }
 
         const settings = { sfx_enabled: !checked };
         this.setState({_sfx_enabled: !checked});
+        api.set_settings(settings, this._on_settings_changed);
+    };
+
+    _handle_jamy_enabled_switch_change = (event) => {
+
+        const checked = Boolean(this.state._jamy_enabled);
+
+        if(checked){
+
+            actions.trigger_sfx("ui_lock");
+            actions.jamy_update("sad");
+        }else {
+
+            actions.trigger_sfx("ui_unlock");
+            actions.jamy_update("happy");
+        }
+
+        const settings = { jamy_enabled: !checked };
+        this.setState({_jamy_enabled: !checked});
         api.set_settings(settings, this._on_settings_changed);
     };
 
@@ -153,7 +180,7 @@ class Settings extends React.Component {
 
     render() {
 
-        const { _locales, _sfx_enabled, _selected_currency, _currency_countries, _selected_locales_code, _panic_mode, classes } = this.state;
+        const { _locales, _sfx_enabled, _jamy_enabled, _selected_currency, _currency_countries, _selected_locales_code, _panic_mode, classes } = this.state;
 
         let locales = _locales[0];
 
@@ -222,6 +249,20 @@ class Settings extends React.Component {
                         </Card>
                     </Fade>
                     <Fade in timeout={300*4}>
+                        <Card className={classes.marginTop}>
+                            <CardHeader title="Superintendent" />
+                            <CardContent>
+                                <FormControlLabel
+                                    value="Enable the superintendent"
+                                    control={<Switch checked={_jamy_enabled} onChange={this._handle_jamy_enabled_switch_change} color="primary" />}
+                                    label="Make Jamy active"
+                                    labelPlacement="end"
+                                />
+                                <p>Jamy is responsible for the surveillance, judgement, and reaction of your actions as a user. He can't tell anyone what you are doing, but he is present if you enable him to be so.</p>
+                            </CardContent>
+                        </Card>
+                    </Fade>
+                    <Fade in timeout={300*5}>
                         <Card className={classes.marginTop}>
                             <CardHeader title="Security" />
                             <CardContent>

@@ -40,6 +40,7 @@ class Index extends React.Component {
         super(props);
         this.state = {
             pathname: props.location.pathname,
+            _jamy_state_of_mind: "shocked",
             _history: HISTORY,
             _unlisten: null,
             _logged_account: null,
@@ -47,11 +48,13 @@ class Index extends React.Component {
             _snackbar_message: "",
             _snackbar_auto_hide_duration: 1975,
             _sfx_enabled: true,
+            _jamy_enabled: true,
             _vocal_enabled: false,
             _selected_locales_code: null,
             _selected_currency: null,
             _panic_mode: false,
             _know_if_logged: false,
+            _know_the_settings: false,
             classes: props.classes,
         };
     };
@@ -97,6 +100,10 @@ class Index extends React.Component {
                 this._trigger_snackbar(event.data.message, event.data.auto_hide_duration);
                 break;
 
+            case "JAMY_UPDATE":
+                this._update_jamy(event.data.state_of_mind, event.data.duration);
+                break;
+
             case "LOGIN_UPDATE":
                 this._update_login();
                 break;
@@ -130,13 +137,14 @@ class Index extends React.Component {
 
         // Set new settings from query result
         const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: true;
+        const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: true;
         const _selected_locales_code = settings.locales || "en-US";
         const _selected_currency = settings.currency || "USD";
         const _panic_mode = settings.panic || false;
         const lang = _selected_locales_code.split("-")[0];
 
         document.documentElement.lang = lang;
-        this.setState({ _sfx_enabled, _selected_locales_code, _selected_currency, _panic_mode });
+        this.setState({ _sfx_enabled, _jamy_enabled, _selected_locales_code, _selected_currency, _panic_mode, _know_the_settings: true });
     };
 
     _update_settings() {
@@ -163,6 +171,17 @@ class Index extends React.Component {
         update_meta_title("CR-WALLET | "+ pathname);
     };
 
+    _update_jamy = (state_of_mind, duration) => {
+
+        this.setState({_jamy_state_of_mind: state_of_mind}, () => {
+
+            setTimeout(() => {
+
+                this.setState({_jamy_state_of_mind: "shocked"});
+            }, duration);
+        });
+    }
+
     _trigger_snackbar = (_snackbar_message, _snackbar_auto_hide_duration) => {
 
         this.setState({_snackbar_message, _snackbar_auto_hide_duration, _snackbar_open: true});
@@ -177,7 +196,7 @@ class Index extends React.Component {
 
         const { pathname, classes } = this.state;
         const { _snackbar_open, _snackbar_message, _snackbar_auto_hide_duration } = this.state;
-        const { _logged_account, _panic_mode, _know_if_logged } = this.state;
+        const { _logged_account, _panic_mode, _know_if_logged, _know_the_settings, _jamy_state_of_mind, _jamy_enabled } = this.state;
 
         // This is the custom router
         let page_component = null;
@@ -219,8 +238,17 @@ class Index extends React.Component {
                     autoHideDuration={_snackbar_auto_hide_duration}
                     onClose={this._close_snackbar}
                 />
-                <AppToolbar know_if_logged={_know_if_logged} logged_account={_logged_account} pathname={pathname} panic_mode={_panic_mode}/>
-                <AppDrawer pathname={pathname} logged_account={_logged_account}/>
+                <AppToolbar
+                    know_if_logged={_know_if_logged}
+                    know_the_settings={_know_the_settings}
+                    logged_account={_logged_account}
+                    pathname={pathname}
+                    panic_mode={_panic_mode}
+                    jamy_enabled={_jamy_enabled}
+                    jamy_state_of_mind={_jamy_state_of_mind}/>
+                <AppDrawer
+                    pathname={pathname}
+                    logged_account={_logged_account}/>
                 <main className={classes.content}>
                     <Toolbar />
                     {page_tabs_component}

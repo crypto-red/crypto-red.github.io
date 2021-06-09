@@ -132,9 +132,11 @@ class CryptDialog extends React.Component {
 
             this.setState({_result_text: result, _is_result_dialog_open: true});
             actions.trigger_sfx("hero_decorative-celebration-01");
+            actions.jamy_update("happy");
         }else {
 
             actions.trigger_sfx("alert_error-01");
+            actions.jamy_update("angry");
             actions.trigger_snackbar(error);
         }
     };
@@ -161,6 +163,7 @@ class CryptDialog extends React.Component {
         }else {
 
             actions.trigger_sfx("alert_error-01");
+            actions.jamy_update("angry");
         }
 
         this.setState({_is_message_input_error, _is_public_key_input_error, _is_private_key_input_error});
@@ -201,6 +204,10 @@ class CryptDialog extends React.Component {
             if(_view_name_index === 0) {
 
                 actions.trigger_snackbar("Warning, do you want to encrypt a message to yourself?");
+                actions.jamy_update("annoyed");
+            }else {
+
+                actions.jamy_update("happy");
             }
 
             this.setState({_public_key_input, _is_public_key_input_error: false, _private_key_input, _is_private_key_input_error: false, _is_autofill_dialog_open: false});
