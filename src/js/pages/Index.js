@@ -20,6 +20,8 @@ import Coins from "./Coins";
 import Coin from "./Coin";
 import Unknown from "./Unknown";
 
+import Slide from "@material-ui/core/Slide";
+
 import api from "../utils/api";
 import sound_api from "../utils/sound-api";
 import { update_meta_title } from "../utils/meta-tags";
@@ -32,6 +34,11 @@ const styles = theme => ({
     content: {
         flexGrow: 1
     },
+    snackbar: {
+        "& .MuiSnackbarContent-root	": {
+            backgroundColor: theme.palette.primary.dark
+        }
+    }
 });
 
 class Index extends React.Component {
@@ -54,6 +61,7 @@ class Index extends React.Component {
             _selected_currency: null,
             _panic_mode: false,
             _know_if_logged: false,
+            _logged_once: false,
             _know_the_settings: false,
             classes: props.classes,
         };
@@ -75,9 +83,6 @@ class Index extends React.Component {
         this._update_settings();
         this._update_login();
         dispatcher.register(this._handle_events.bind(this));
-
-        actions.trigger_snackbar("This app uses testnet network for all crypto excepting VSYS.", 3500);
-
     }
 
     _trigger_sound = (category, pack, name, volume) => {
@@ -116,8 +121,21 @@ class Index extends React.Component {
 
     _process_is_logged_result = (error, result) => {
 
+        const { _logged_once } = this.state;
         const _logged_account = error ? {}: result;
-        this.setState({_logged_account, _know_if_logged: true});
+
+        if(!_logged_account && !_logged_once){
+
+            actions.trigger_snackbar("Multi-cryptocurrency wallet in ReactJS.", 3000);
+
+            setTimeout(() => {
+
+                actions.trigger_snackbar("Open-source, for free, for everyone, forever.", 4000);
+            }, 4500);
+
+        }
+
+        this.setState({_logged_account, _know_if_logged: true, _logged_once: true});
     };
 
     _is_logged = () => {
@@ -233,8 +251,16 @@ class Index extends React.Component {
             <div className={classes.root}>
                 <CssBaseline />
                 <Snackbar
+                    className={classes.snackbar}
                     open={_snackbar_open}
-                    message={_snackbar_message}
+                    anchorOrigin={{
+                        vertical: "top",
+                        horizontal: "center",
+                    }}
+                    message={<div>
+                        {_jamy_enabled ? <img src={`/src/images/jamy-${_jamy_state_of_mind}.svg`} style={{height: 24, marginRight: 12, verticalAlign: "middle"}}/>: null}
+                        <span>{_snackbar_message}</span>
+                    </div>}
                     autoHideDuration={_snackbar_auto_hide_duration}
                     onClose={this._close_snackbar}
                 />

@@ -139,7 +139,7 @@ function get_settings(callback_function) {
                 help: {
                     topup: true,
                     mixer: true,
-                    convert: true
+                    swap: true
                 }
             };
 
@@ -215,7 +215,7 @@ function set_settings(settings, callback_function) {
                 help: {
                     topup: true,
                     mixer: true,
-                    convert: true
+                    swap: true
                 }
             };
 

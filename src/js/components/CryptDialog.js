@@ -203,8 +203,8 @@ class CryptDialog extends React.Component {
 
             if(_view_name_index === 0) {
 
+                actions.jamy_update("flirty");
                 actions.trigger_snackbar("Warning, do you want to encrypt a message to yourself?");
-                actions.jamy_update("annoyed");
             }else {
 
                 actions.jamy_update("happy");

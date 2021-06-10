@@ -97,6 +97,7 @@ class AccountDialogCreate extends React.Component {
             _is_account_confimation_error: false,
             _configuration_view_auto_focus_index: 0,
             _password_evaluation: null,
+            _password_warning: null,
             _active_view_index: 0,
             _generation_completed: false,
             _generation_eror: false,
@@ -163,6 +164,16 @@ class AccountDialogCreate extends React.Component {
                 actions.trigger_sfx("alert_error-01");
                 actions.jamy_update("angry");
             }
+
+            setTimeout(() => {
+
+                if(that.state._password_evaluation.score <= 3) {
+
+                    actions.jamy_update("suspicious", 3000);
+                    actions.trigger_snackbar(`WARNING: Only ${that.state._password_evaluation.crack_times_display.offline_slow_hashing_1e4_per_second} is required to crack your password.`, 6000);
+                }
+
+            }, 500);
         }
 
         this._validate_step_1(validate_current_step);
@@ -210,9 +221,15 @@ class AccountDialogCreate extends React.Component {
 
     _handle_account_password_input_change = (event) => {
 
-        const { _zxcvbn } = this.state;
+        const { _zxcvbn, _password_warning } = this.state;
         const _account_password_input = event.target.value;
         const _password_evaluation = _zxcvbn(_account_password_input);
+
+        if(_password_evaluation.feedback.warning && _password_evaluation.feedback.warning !== _password_warning) {
+
+            actions.jamy_update("angry", 3000);
+            actions.trigger_snackbar(_password_evaluation.feedback.warning, 3500);
+        }
 
         this.setState({_account_password_input, _password_evaluation, _is_account_confirmation_error: false, _is_account_password_error: false});
     };
@@ -251,7 +268,7 @@ class AccountDialogCreate extends React.Component {
         const _is_account_confirmation_error = !(_account_password_input.toString() === _account_confirmation_input.toString());
         const _is_account_password_error = !(_account_password_input.toString().length);
         
-        this.setState({_is_account_name_error, _is_account_confirmation_error, _is_account_password_error}, function(){
+        this.setState({_is_account_name_error, _is_account_confirmation_error, _is_account_password_error}, () => {
 
             callback_function(!_is_account_name_error && !_is_account_confirmation_error && !_is_account_password_error);
         });
@@ -262,10 +279,10 @@ class AccountDialogCreate extends React.Component {
         const {  _account_mnemonic_input } = this.state;
         const  _is_account_mnemonic_input_error = ( _account_mnemonic_input.length < 12);
 
-        this.setState({ _is_account_mnemonic_input_error}, function(){
+        this.setState({ _is_account_mnemonic_input_error}, () => {
 
             callback_function(!_is_account_mnemonic_input_error);
-        })
+        });
 
     };
     
@@ -350,8 +367,7 @@ class AccountDialogCreate extends React.Component {
         const password_feedback = Boolean(_password_evaluation) ?
                 <DialogContentText id="create-account-dialog-description">
                     <p>
-                        Password strength score is {_password_evaluation.score} it would require ~10^{_password_evaluation.guesses_log10.toString().split(".")[0]} attempts (<b className={_password_evaluation.guesses_log10.toString().split(".")[0] >= 13 ? classes.green: classes.red}>or {_password_evaluation.crack_times_display.offline_slow_hashing_1e4_per_second} for multiples hackers to crack it</b>). {_password_evaluation.feedback.suggestions[0]}.
-                        <br /> <b>{_password_evaluation.feedback.warning}.</b>
+                        Password strength is {_password_evaluation.score} / 4
                     </p>
                 </DialogContentText>: null;
 
@@ -359,9 +375,9 @@ class AccountDialogCreate extends React.Component {
             <div className={classes.dialogBody}>
                 <DialogContent className={classes.dialogBody} dividers>
                     <DialogContentText id="create-account-dialog-description">
-                        Provide a name and eventually a STRONG PASSWORD in order to create a new account (You can define it later).
-                        Everything that you type never be send to any server, it will stay on your device.
-                        Once a name and a pasword to encrypt your backup phrase is set, we will enable you to manually create or import a new backup phrase (called a mnemonic).
+                        Provide a name and a STRONG PASSWORD in order to create a new account.
+                        Everything that you type won't never be send to anyone, it will stay on your device.
+                        Once a name and a password to encrypt your backup phrase is set, we will enable you to manually create or import your new backup phrase (called a mnemonic).
                     </DialogContentText>
                     <form noValidate autoComplete="off">
                         <TextField
@@ -419,7 +435,7 @@ class AccountDialogCreate extends React.Component {
                         Use an old backup phrase from another wallet or use a new random backup phrase.
                         The backup phrase is a like a seed password that will create a master key, from this key, it will create derived keys pair for each cryptocurrency.
                         The password you typed in the first step will enable you to log in using a password instead of this  backup phrase each and every time.<br />
-                        <b className={classes.red}>Make sure no one is looking before completing the field below and STORE IT ON PAPER.</b>
+                        <b className={classes.red}>Make sure no one is looking before completing the field below and STORE IT ON PAPER for a better security.</b>
                     </DialogContentText>
                     <form noValidate autoComplete="off">
                         <ChipInput

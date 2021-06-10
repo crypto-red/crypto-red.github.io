@@ -71,8 +71,15 @@ class AccountDialogOpen extends React.Component {
 
     _handle_persistent_checkbox_change = (event) => {
 
-        this.setState({_persistent: event.target.checked});
+        const _persistent = event.target.checked;
+        this.setState({_persistent});
         actions.trigger_sfx("ui_tap-variant-01");
+
+        if(_persistent) {
+
+            actions.jamy_update("flirty", 3000);
+            actions.trigger_snackbar("WARNING: Your password will be in your browser.", 3500);
+        }
     };
 
     _on_cancel = (event) => {
@@ -131,13 +138,6 @@ class AccountDialogOpen extends React.Component {
                                     control={<Checkbox checked={_persistent} onChange={this._handle_persistent_checkbox_change} name="persistent" />}
                                     label="Stay logged"
                                 />
-                                <DialogContentText>
-                                    {
-                                        _persistent ?
-                                            "WARNING: Your account's password will be stored unencrypted.":
-                                            "GOOD: Your account's password won't be stored unencrypted."
-                                    }
-                                </DialogContentText>
                             </DialogContent>
                         </div>: null
                     }

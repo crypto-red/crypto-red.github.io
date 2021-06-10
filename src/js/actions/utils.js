@@ -3,7 +3,7 @@ import dispatcher from "../dispatcher";
 // Functions enabling events to be dispatched and received elsewhere in the code with data
 
 
-function jamy_update(state_of_mind = "shocked", duration = 1000) {
+function jamy_update(state_of_mind = "shocked", duration = 1500) {
 
     dispatcher.dispatch({
         type: "JAMY_UPDATE",

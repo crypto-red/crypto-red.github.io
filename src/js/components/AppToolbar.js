@@ -193,13 +193,14 @@ class AppToolbar extends React.Component {
 
     _handle_jamy_mouse_enter = () => {
 
-        this.setState({_jamy_mouse_hover: true});
+        this.setState({_jamy_mouse_hover: true, _jamy_mouse_hover_click: 0, _look_much_jamy: false, _look_very_much_jamy: false, _click_much_jamy: false}, () => {
 
-        setTimeout(() => {
+            setTimeout(() => {
 
-            this._show_look_much_jamy();
+                this._show_look_much_jamy();
 
-        }, 8000);
+            }, 8000);
+        });
     };
 
     _handle_jamy_mouse_leave = () => {
@@ -214,23 +215,19 @@ class AppToolbar extends React.Component {
             this.setState({_look_much_jamy: true}, () => {
 
                 actions.jamy_update("suspicious", 7000);
+                actions.trigger_snackbar("The longer you look, the shiner I get.");
                 setTimeout(() => {
-
-                    this.setState({_look_much_jamy: false});
 
                     if(this.state._jamy_mouse_hover) {
 
                         this.setState({_look_very_much_jamy: true}, () => {
 
                             actions.jamy_update("happy", 4000);
-                            setTimeout(() => {
-
-                                this.setState({_look_very_much_jamy: false});
-                            }, 8000)
+                            actions.trigger_snackbar("Take a picture, it last longer.");
                         });
                     }
 
-                }, 8000)
+                }, 7100)
             });
         }
     };
@@ -241,11 +238,12 @@ class AppToolbar extends React.Component {
 
             this.setState({_click_much_jamy: true}, () => {
 
-                actions.jamy_update("angry", 4000);
+                actions.jamy_update("angry", 6000);
+                actions.trigger_snackbar("Stop bitchslapping me!");
                 setTimeout(() => {
 
                     this.setState({_click_much_jamy: false});
-                }, 8000)
+                }, 6000)
             });
         }
     };
@@ -296,6 +294,7 @@ class AppToolbar extends React.Component {
                                                 title={_click_much_jamy ? "Stop bitchslapping me!": _look_very_much_jamy ? "Take a picture, it last longer." : _look_much_jamy ? "The longer you look, the shiner I get.": "Hey, I am Jamy."}
                                                 aria-label="Jamy"
                                                 onMouseEnter={this._handle_jamy_mouse_enter}
+                                                onMouseLeave={this._handle_jamy_mouse_leave}
                                                 onMouseOut={this._handle_jamy_mouse_leave}
                                                 onClick={this._handle_jamy_mouse_click}>
                                                 <img src={`/src/images/jamy-${jamy_state_of_mind}.svg`} className={classes.jamy}/>
