@@ -77,7 +77,6 @@ function precache() {
       "/src/images/favicon.ico",
       "/src/images/jamy-angry.svg",
       "/src/images/jamy-sad.svg",
-      "/src/images/manifest",
       "/src/images/pig-coins.svg",
       "/src/images/swap.svg",
       "/src/images/wallet-dark.svg",
