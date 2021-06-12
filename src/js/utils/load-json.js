@@ -76,9 +76,16 @@ function loadJSON(url, callback_function) {
 
         if (http_request.readyState === 4  ) {
             // Javascript function JSON.parse to parse JSON data
-            let jsonObj = JSON.parse(http_request.responseText);
 
-            callback_function(null, jsonObj);
+            try {
+
+                let jsonObj = JSON.parse(http_request.responseText);
+                callback_function(null, jsonObj);
+            }catch(e) {
+
+                callback_function("Cannot understand response from network.", null);
+            }
+
         }else if(http_request.status === 404){
 
             callback_function("Error 404", null);
@@ -119,9 +126,16 @@ function postDATA(url, data, callback_function) {
 
         if (http_request.readyState == 4 && http_request.status == 200) {
             // Javascript function JSON.parse to parse JSON data
-            let jsonObj = JSON.parse(http_request.responseText);
 
-            callback_function(null, jsonObj);
+            try {
+
+                let jsonObj = JSON.parse(http_request.responseText);
+                callback_function(null, jsonObj);
+            }catch(e) {
+
+                callback_function("Cannot understand response from network.", null);
+            }
+
         }else if(http_request.status == 404){
 
             callback_function("Error 404", null);

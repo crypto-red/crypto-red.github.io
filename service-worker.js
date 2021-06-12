@@ -1,4 +1,4 @@
-var CACHE = 'network-or-cache-v1.0';
+var CACHE = 'network-or-cache-v1.2';
 
 // On install, cache some resource.
 self.addEventListener('install', function(evt) {
@@ -14,8 +14,13 @@ self.addEventListener('install', function(evt) {
 self.addEventListener('fetch', function(evt) {
   console.log('The service worker is serving the asset.');
   // Try network and if it fails, go for the cached copy.
-  evt.respondWith(fromNetwork(evt.request, 400).catch(function () {
-    return fromCache(evt.request);
+  evt.respondWith(fromNetwork(evt.request, 700).catch(function () {
+
+      return fromCache(evt.request).catch(function(e){
+
+          throw Error('error status ' + e);
+
+      });
   }));
 });
 
