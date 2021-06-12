@@ -47,10 +47,16 @@
         <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="msapplication-tap-highlight" content="no">
 
+        <!-- Service worker -->
+        <script>
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("service-worker.js");
+            }
+        </script>
     </head>
 
     <body>
         <div id="app"></div>
-        <script src="client.min.js?v=9.2"></script>
+        <script src="client.min.js?v=9.3"></script>
     </body>
 </html>

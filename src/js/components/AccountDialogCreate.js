@@ -219,19 +219,37 @@ class AccountDialogCreate extends React.Component {
         this.setState({_account_name_input: event.target.value, _is_account_name_error: false});
     };
 
+    _eval_password_if_state_equals_to_param = (account_password_input) => {
+
+        const { _zxcvbn, _account_password_input } = this.state;
+
+        if(account_password_input === _account_password_input) {
+
+            const _password_evaluation = _zxcvbn(account_password_input);
+
+            if(_password_evaluation.feedback.warning) {
+
+                actions.jamy_update("angry", 3000);
+                actions.trigger_snackbar(_password_evaluation.feedback.warning, 3500);
+            }else if(account_password_input.length && _password_evaluation.score >= 4){
+
+                actions.jamy_update("happy", 3000);
+                actions.trigger_snackbar("That's good! Your password is strong.", 3500);
+            }
+            this.setState({_password_evaluation});
+        }
+    };
+
     _handle_account_password_input_change = (event) => {
 
-        const { _zxcvbn, _password_warning } = this.state;
         const _account_password_input = event.target.value;
-        const _password_evaluation = _zxcvbn(_account_password_input);
 
-        if(_password_evaluation.feedback.warning && _password_evaluation.feedback.warning !== _password_warning) {
+        setTimeout(() => {
 
-            actions.jamy_update("angry", 3000);
-            actions.trigger_snackbar(_password_evaluation.feedback.warning, 3500);
-        }
+            this._eval_password_if_state_equals_to_param(_account_password_input);
+        }, 750);
 
-        this.setState({_account_password_input, _password_evaluation, _is_account_confirmation_error: false, _is_account_password_error: false});
+        this.setState({_account_password_input, _is_account_confirmation_error: false, _is_account_password_error: false});
     };
 
     _handle_account_confirmation_input_change = (event) => {
