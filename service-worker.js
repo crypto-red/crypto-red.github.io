@@ -1,34 +1,13 @@
-var CACHE = 'network-or-cache-v1.2';
+var CACHE = 'network-or-cache-v1.3';
 
 // On install, cache some resource.
 self.addEventListener('install', function(evt) {
   console.log('The service worker is being installed.');
-
-  // Ask the service worker to keep installing until the returning promise
-  // resolves.
-  evt.waitUntil(precache());
-});
-
-// On fetch, use cache but update the entry with the latest contents
-// from the server.
-self.addEventListener('fetch', function(evt) {
-  console.log('The service worker is serving the asset.');
-  // Try network and if it fails, go for the cached copy.
-  evt.respondWith(fromNetwork(evt.request, 700).catch(function () {
-
-      return fromCache(evt.request).catch(function(e){
-
-          throw Error('error status ' + e);
-
-      });
-  }));
-});
-
-// Open a cache and use `addAll()` with an array of assets to add all of them
-// to the cache. Return a promise resolving when all the assets are added.
-function precache() {
-  return caches.open(CACHE).then(function (cache) {
-    return cache.addAll([
+  // Open a cache and use `addAll()` with an array of assets to add all of them
+  // to the cache. Ask the service worker to keep installing until the
+  // returning promise resolves.
+  evt.waitUntil(caches.open(CACHE).then(function (cache) {
+    cache.addAll([
       "/client.min.js",
       "/src/sounds/sfx/md/alert_error-01.wav",
       "/src/sounds/sfx/md/navigation_transition-left.wav",
@@ -86,31 +65,64 @@ function precache() {
       "/src/images/swap.svg",
       "/src/images/wallet-dark.svg",
     ]);
-  });
-}
+  }));
+});
 
-// Time limited network request. If the network fails or the response is not
-// served before timeout, the promise is rejected.
-function fromNetwork(request, timeout) {
-  return new Promise(function (fulfill, reject) {
-    // Reject in case of timeout.
-    var timeoutId = setTimeout(reject, timeout);
-    // Fulfill in case of success.
-    fetch(request).then(function (response) {
-      clearTimeout(timeoutId);
-      fulfill(response);
-    // Reject also if network fetch rejects.
-    }, reject);
-  });
-}
+// On fetch, use cache but update the entry with the latest contents
+// from the server.
+self.addEventListener('fetch', function(evt) {
+  console.log('The service worker is serving the asset.');
+  // You can use `respondWith()` to answer ASAP...
+  evt.respondWith(fromCache(evt.request));
+  // ...and `waitUntil()` to prevent the worker to be killed until
+  // the cache is updated.
+  evt.waitUntil(
+      update(evt.request)
+          // Finally, send a message to the client to inform it about the
+          // resource is up to date.
+          .then(refresh)
+  );
+});
 
 // Open the cache where the assets were stored and search for the requested
 // resource. Notice that in case of no matching, the promise still resolves
 // but it does with `undefined` as value.
 function fromCache(request) {
   return caches.open(CACHE).then(function (cache) {
-    return cache.match(request).then(function (matching) {
-      return matching || Promise.reject('no-match');
+    return cache.match(request);
+  });
+}
+
+
+// Update consists in opening the cache, performing a network request and
+// storing the new response data.
+function update(request) {
+  return caches.open(CACHE).then(function (cache) {
+    return fetch(request).then(function (response) {
+      return cache.put(request, response.clone()).then(function () {
+        return response;
+      });
+    });
+  });
+}
+
+// Sends a message to the clients.
+function refresh(response) {
+  return self.clients.matchAll().then(function (clients) {
+    clients.forEach(function (client) {
+      // Encode which resource has been updated. By including the
+      // [ETag](https://en.wikipedia.org/wiki/HTTP_ETag) the client can
+      // check if the content has changed.
+      var message = {
+        type: 'refresh',
+        url: response.url,
+        // Notice not all servers return the ETag header. If this is not
+        // provided you should use other cache headers or rely on your own
+        // means to check if the content has changed.
+        eTag: response.headers.get('ETag')
+      };
+      // Tell the client about the update.
+      client.postMessage(JSON.stringify(message));
     });
   });
 }
