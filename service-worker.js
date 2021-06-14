@@ -11,6 +11,10 @@ self.addEventListener("install", function(evt) {
       "/",
       "/404.html",
       "/client.min.js?v=9.3",
+      "src/fonts/Cantarell-Regular.ttf",
+      "src/fonts/OpenSans-Regular.ttf",
+      "src/fonts/Saira-Regular.ttf",
+      "src/fonts/SourceSansPro-Regular.ttf",
       "/src/sounds/sfx/md/alert_error-01.wav",
       "/src/sounds/sfx/md/navigation_transition-left.wav",
       "/src/sounds/sfx/md/alert_high-intensity.wav",
@@ -77,16 +81,15 @@ self.addEventListener("fetch", function(event) {
         caches
             // Try the cache
             .match(event.request)
-            .then(function(response) {
+            .then(function(response, unable_to_resolve) {
               // Or fall back to network
-              return response || fetch(event.request);
-            })
-            .catch(function(error) {
-              // If both fail, show a generic fallback:
-              return caches.open(CACHE).then(function(cache) {
-                return cache.match("/index.html");
-              });
-            })
+              return response || fetch(event.request).catch(unable_to_resolve);
+            }).catch(unable_to_resolve)
     );
   }
 });
+
+function unable_to_resolve() {
+
+  return caches.match("/");
+}
