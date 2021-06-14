@@ -84,7 +84,7 @@ self.addEventListener("fetch", function(event) {
           return cache.match(event.request).then(function (response) {
             return (
                 response ||
-                fetch(event.request).then(function (response) {
+                fetch(event.request).then(function (response) { // Fetch, clone, and serve
                   cache.put(event.request, response.clone());
                   return response;
                 })
@@ -94,23 +94,10 @@ self.addEventListener("fetch", function(event) {
     );
 
 
-  }else if(event.request.mode === "navigate") {
+  }else if(event.request.mode === "navigate" && !event.request.url.includes(".js")) {
 
     // Return the same index.html page for all navigation query
     event.respondWith( caches.match("/") || fetch(event.request));
   }
 
 });
-
-function fetch_cache_serve(event){
-  // Update from network
-  event.waitUntil(
-      caches.open(CACHE).then(function (cache) {
-        return fetch(event.request).then(function (response) {
-          return cache.put(event.request, response.clone()).then(function () {
-            return response;
-          });
-        });
-      })
-  );
-}
