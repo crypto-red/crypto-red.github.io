@@ -29,10 +29,10 @@ import {
     get_btc_dash_doge_ltc_private_key_by_seed
 } from "./api-btc-dash-doge-ltc";
 
-const query_db = new PouchDB("query_db", {revs_limit: 1, auto_compaction: true});
-const settings_db = new PouchDB("settings_db", {revs_limit: 1, auto_compaction: true});
-const accounts_db = new PouchDB("accounts_db", {revs_limit: 1, auto_compaction: true});
-const logged_accounts_db = new PouchDB("logged_accounts_db", {revs_limit: 1, auto_compaction: true});
+const query_db = new PouchDB("query_db", {revs_limit: 0, auto_compaction: false});
+const settings_db = new PouchDB("settings_db", {revs_limit: 0, auto_compaction: false});
+const accounts_db = new PouchDB("accounts_db", {revs_limit: 0, auto_compaction: false});
+const logged_accounts_db = new PouchDB("logged_accounts_db", {revs_limit: 0, auto_compaction: false});
 
 let settings = null;
 let logged_account = null;
@@ -248,7 +248,7 @@ function get_coins_markets(coins_id, vs_currency, callback_function) {
 
     _cache_data(
         query_db,
-        1,// 30 * 60 * 1000,
+        30 * 60 * 1000,
         "get_coins_markets__" + coins_id_string + "__" + vs_currency,
         get_coins_markets_query,
         {url},
@@ -269,7 +269,7 @@ function get_coin_data(coin_id, callback_function) {
 
     _cache_data(
         query_db,
-        1,// 30 * 60 * 1000,
+        30 * 60 * 1000,
         "get_coin_data__" + coin_id,
         get_coin_data_query,
         {url},
@@ -289,7 +289,7 @@ function get_coin_chart_data(coin_id, vs_currency, days, callback_function) {
 
     _cache_data(
         query_db,
-        1,// 30 * 60 * 1000,
+        30 * 60 * 1000,
         "get_coin_chart_data__" + coin_id + "__" + vs_currency + "__" + days,
         get_coin_chart_data_query,
         {url},
@@ -906,6 +906,8 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
 
 function _cache_data(database, cache_time_ms, query_id, api_function, api_parameters, callback_function, response_to_data_formatter = (response) => {return response}) {
 
+    let data_in_db = null;
+
     // Get data and store it
     function gather_data(rev) {
 
@@ -927,11 +929,23 @@ function _cache_data(database, cache_time_ms, query_id, api_function, api_parame
                     callback_function(null, data);
                 }else {
 
-                    callback_function(response.error, null);
+                    if(data_in_db) {
+
+                        callback_function(null, data_in_db);
+                    }else {
+
+                        callback_function(response.error, null);
+                    }
                 }
             }else {
 
-                callback_function(error, null);
+                if(data_in_db) {
+
+                    callback_function(null, data_in_db);
+                }else {
+
+                    callback_function(error, null);
+                }
             }
 
         }
@@ -947,9 +961,9 @@ function _cache_data(database, cache_time_ms, query_id, api_function, api_parame
             // Test if recent or if cache time equals 0 (force refresh) or navigator offline
             if((doc.timestamp + cache_time_ms >= Date.now() && cache_time_ms !== 0) || !navigator.onLine) {
 
-                const data = JSON.parse(clean_json_text(doc.data));
+                data_in_db = JSON.parse(clean_json_text(doc.data));
 
-                callback_function(null, data);
+                callback_function(null, data_in_db);
             }else { // if old update
 
                 gather_data(doc._rev);

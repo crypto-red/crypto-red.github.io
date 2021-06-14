@@ -186,6 +186,7 @@ class CoinSend extends React.Component {
     _handle_on_scanner_error = () => {
 
         actions.trigger_snackbar("Cannot load QR Code scanner");
+        actions.jamy_update("sad");
         this._close_scanner_dialog();
     };
 
@@ -302,7 +303,7 @@ class CoinSend extends React.Component {
 
         this.setState({_is_backdrop_shown: true});
         actions.trigger_sfx("ui_loading");
-        actions.jamy_update("flirty", 500);
+        actions.jamy_update("flirty");
         this._send_transaction();
     }
 

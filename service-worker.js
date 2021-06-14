@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v1.0.1";
+var CACHE = "network-or-cache-v2.0.0";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -76,20 +76,41 @@ self.addEventListener("install", function(evt) {
 
 self.addEventListener("fetch", function(event) {
 
-  if(event.request.method === "GET") {
+  if(event.request.url.includes(".png") && event.request.mode !== "same-origin") {
+
+    // Serve cached image if doesn't fail
     event.respondWith(
-        caches
-            // Try the cache
-            .match(event.request)
-            .then(function(response, unable_to_resolve) {
-              // Or fall back to network
-              return response || fetch(event.request).catch(unable_to_resolve);
-            }).catch(unable_to_resolve)
+        caches.open(CACHE).then(function (cache) {
+          return cache.match(event.request).then(function (response) {
+            return (
+                response ||
+                fetch(event.request).then(function (response) {
+                  cache.put(event.request, response.clone());
+                  return response;
+                })
+            );
+          });
+        }),
     );
+
+
+  }else if(event.request.mode === "navigate") {
+
+    // Return the same index.html page for all navigation query
+    event.respondWith( caches.match("/") || fetch(event.request));
   }
+
 });
 
-function unable_to_resolve() {
-
-  return caches.match("/");
+function fetch_cache_serve(event){
+  // Update from network
+  event.waitUntil(
+      caches.open(CACHE).then(function (cache) {
+        return fetch(event.request).then(function (response) {
+          return cache.put(event.request, response.clone()).then(function () {
+            return response;
+          });
+        });
+      })
+  );
 }

@@ -38,7 +38,22 @@ const styles = theme => ({
         "& .MuiSnackbarContent-root	": {
             backgroundColor: theme.palette.primary.dark
         }
-    }
+    },
+    snackbarSuccess: {
+        "& .MuiSnackbarContent-root	": {
+            backgroundColor: "#06230e"
+        }
+    },
+    snackbarWarning: {
+        "& .MuiSnackbarContent-root	": {
+            backgroundColor: "#202306"
+        }
+    },
+    snackbarError: {
+        "& .MuiSnackbarContent-root	": {
+            backgroundColor: "#230606"
+        }
+    },
 });
 
 class Index extends React.Component {
@@ -63,6 +78,7 @@ class Index extends React.Component {
             _know_if_logged: false,
             _logged_once: false,
             _know_the_settings: false,
+            is_online: true,
             classes: props.classes,
         };
     };
@@ -83,6 +99,20 @@ class Index extends React.Component {
         this._update_settings();
         this._update_login();
         dispatcher.register(this._handle_events.bind(this));
+
+        setInterval(() => {
+
+            const { is_online } = this.state;
+            if(navigator.onLine !== is_online){
+
+                this.setState({is_online: navigator.onLine});
+                actions.trigger_snackbar(
+            navigator.onLine ? "We're online!": "We're offline!",
+                    navigator.onLine ? 3500: 10500
+                );
+                actions.jamy_update(navigator.onLine ? "happy": "sad");
+            }
+        }, 1000)
     }
 
     _trigger_sound = (category, pack, name, volume) => {
@@ -247,6 +277,13 @@ class Index extends React.Component {
             }
         }
 
+        const snack_bar_msg_lwc = _snackbar_message.toString().toLowerCase();
+        let snackbar_class =
+            snack_bar_msg_lwc.includes("error") ? classes.snackbarError:
+                snack_bar_msg_lwc.includes("waring") ? classes.snackbarWarning:
+                    snack_bar_msg_lwc.includes("success") ? classes.snackbarSuccess:
+                    classes.snackbar;
+
         return (
             <div className={classes.root}>
                 <CssBaseline />
@@ -259,7 +296,7 @@ class Index extends React.Component {
                     }}
                     message={<div>
                         {_jamy_enabled ? <img src={`/src/images/jamy-${_jamy_state_of_mind}.svg`} style={{height: 24, marginRight: 12, verticalAlign: "middle"}}/>: null}
-                        <span>{_snackbar_message}</span>
+                        <span>{_snackbar_message.toString()}</span>
                     </div>}
                     autoHideDuration={_snackbar_auto_hide_duration}
                     onClose={this._close_snackbar}

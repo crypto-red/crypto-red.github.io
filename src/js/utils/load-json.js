@@ -92,7 +92,13 @@ function loadJSON(url, callback_function) {
         }
     }
 
-    http_request.send();
+    try {
+
+        http_request.send();
+    }catch (e) {
+
+        callback_function("Failed to fetch", null);
+    }
 }
 
 function postDATA(url, data, callback_function) {
@@ -142,7 +148,13 @@ function postDATA(url, data, callback_function) {
         }
     }
 
-    http_request.send(data);
+    try {
+
+        http_request.send();
+    }catch(e) {
+
+        callback_function("Failed to post", null);
+    }
 }
 
 module.exports = {

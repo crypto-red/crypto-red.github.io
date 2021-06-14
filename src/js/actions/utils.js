@@ -3,7 +3,7 @@ import dispatcher from "../dispatcher";
 // Functions enabling events to be dispatched and received elsewhere in the code with data
 
 
-function jamy_update(state_of_mind = "shocked", duration = 1500) {
+function jamy_update(state_of_mind = "shocked", duration = 2500) {
 
     dispatcher.dispatch({
         type: "JAMY_UPDATE",
@@ -37,7 +37,7 @@ function trigger_vocal(name, volume = 1, pack = "gg") {
         }
     });
 }
-function trigger_snackbar(message = "", auto_hide_duration = 2500) {
+function trigger_snackbar(message = "", auto_hide_duration = 3500) {
 
     dispatcher.dispatch({
         type: "SNACKBAR",

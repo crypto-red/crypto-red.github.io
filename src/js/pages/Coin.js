@@ -54,15 +54,18 @@ class Coin extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        const { pathname } = this.state;
+        const { pathname, _coin_id } = this.state;
         const new_pathname = new_props.pathname;
 
         if(pathname !== new_pathname) {
 
-            const _coin_id = new_props.pathname.split("/")[2] || "";
-            const _view_name = new_props.pathname.split("/")[3] || "balance";
-            this.setState({pathname: new_pathname, _coin_id, _view_name}, function(){
-                this._get_coin_data();
+            const _new_coin_id = new_props.pathname.split("/")[2] || "";
+            const _new_view_name = new_props.pathname.split("/")[3] || "balance";
+            this.setState({pathname: new_pathname, _coin_id: _new_coin_id, _view_name: _new_view_name}, () => {
+                if(_coin_id !== _new_coin_id) {
+
+                    this._get_coin_data();
+                }
                 this._is_logged();
             });
         }
@@ -146,8 +149,7 @@ class Coin extends React.Component {
                 coin_data={_coin_data}/>
         };
 
-        const coin_data_id = _coin_data === null ? null: _coin_data.id;
-        const view = _selected_currency !== null && _selected_locales_code !== null ? views[_view_name]: <span>Loading...</span>;
+        const view = _selected_currency !== null && _selected_locales_code !== null ? views[_view_name]: null;
 
         return (
             <div className={classes.root}>

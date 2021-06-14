@@ -74,19 +74,19 @@ function send_vsys_transaction(seed, address, amount, memo, callback_function) {
     const signature = account.getSignature(bytes);
     const send_transaction = transaction.toJsonForSendingTx(signature);
 
-    account.sendTransaction(chain, send_transaction).then(response => {
+        account.sendTransaction(chain, send_transaction).then(response => {
 
-        if(typeof response.error === "undefined") {
+            if(typeof response.error === "undefined") {
 
-            callback_function(null, true);
-        }else {
+                callback_function(null, true);
+            }else {
 
-            callback_function(response.message, false);
-        }
-    }, error => {
+                callback_function(response.message, false);
+            }
+        }, error => {
 
-        callback_function(error, false);
-    });
+            callback_function(error, false);
+        });
 
 }
 
