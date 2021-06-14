@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v1.0.0";
+var CACHE = "network-or-cache-v1.0.1";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -8,7 +8,7 @@ self.addEventListener("install", function(evt) {
   // returning promise resolves.
   evt.waitUntil(caches.open(CACHE).then(function (cache) {
     cache.addAll([
-      "/index.html",
+      "/",
       "/404.html",
       "/client.min.js?v=9.3",
       "/src/sounds/sfx/md/alert_error-01.wav",
@@ -73,7 +73,13 @@ self.addEventListener("install", function(evt) {
 self.addEventListener("fetch", function(event) {
   event.respondWith(
       caches.match(event.request).then(function(response) {
-        return response || fetch(event.request);
+        return response || fetch(event.request).catch(function(error) {
+          // `fetch()` throws an exception when the server is unreachable but not
+          // for valid HTTP responses, even `4xx` or `5xx` range.
+          return caches.open(CACHE).then(function(cache) {
+            return cache.match("index.html");
+          });
+        });
       })
   );
 });
