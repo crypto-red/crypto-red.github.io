@@ -1,14 +1,16 @@
-var CACHE = 'network-or-cache-v1.3';
+var CACHE = "network-or-cache-v1.0.0";
 
 // On install, cache some resource.
-self.addEventListener('install', function(evt) {
-  console.log('The service worker is being installed.');
+self.addEventListener("install", function(evt) {
+
   // Open a cache and use `addAll()` with an array of assets to add all of them
   // to the cache. Ask the service worker to keep installing until the
   // returning promise resolves.
   evt.waitUntil(caches.open(CACHE).then(function (cache) {
     cache.addAll([
-      "/client.min.js",
+      "/index.html",
+      "/404.html",
+      "/client.min.js?v=9.3",
       "/src/sounds/sfx/md/alert_error-01.wav",
       "/src/sounds/sfx/md/navigation_transition-left.wav",
       "/src/sounds/sfx/md/alert_high-intensity.wav",
@@ -68,7 +70,7 @@ self.addEventListener('install', function(evt) {
   }));
 });
 
-self.addEventListener('fetch', function(event) {
+self.addEventListener("fetch", function(event) {
   event.respondWith(
       caches.match(event.request).then(function(response) {
         return response || fetch(event.request);
