@@ -71,15 +71,22 @@ self.addEventListener("install", function(evt) {
 });
 
 self.addEventListener("fetch", function(event) {
-  event.respondWith(
-      caches.match(event.request).then(function(response) {
-        return response || fetch(event.request).catch(function(error) {
-          // `fetch()` throws an exception when the server is unreachable but not
-          // for valid HTTP responses, even `4xx` or `5xx` range.
-          return caches.open(CACHE).then(function(cache) {
-            return cache.match("index.html");
-          });
-        });
-      })
-  );
+
+  if(event.request.method === "GET") {
+    event.respondWith(
+        caches
+            // Try the cache
+            .match(event.request)
+            .then(function(response) {
+              // Or fall back to network
+              return response || fetch(event.request);
+            })
+            .catch(function(error) {
+              // If both fail, show a generic fallback:
+              return caches.open(CACHE).then(function(cache) {
+                return cache.match("/index.html");
+              });
+            })
+    );
+  }
 });
