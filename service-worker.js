@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v2.0.0";
+var CACHE = "network-or-cache-v2.0.1";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -10,7 +10,7 @@ self.addEventListener("install", function(evt) {
     cache.addAll([
       "/",
       "/404.html",
-      "/client.min.js?v=9.3",
+      "/client.min.js?v=10.1",
       "src/fonts/Cantarell-Regular.ttf",
       "src/fonts/OpenSans-Regular.ttf",
       "src/fonts/Saira-Regular.ttf",
@@ -70,11 +70,18 @@ self.addEventListener("install", function(evt) {
       "/src/images/pig-coins.svg",
       "/src/images/swap.svg",
       "/src/images/wallet-dark.svg",
+      "/src/images/invest.svg",
+      "/src/images/open.svg",
+      "/src/images/trade.svg",
     ]);
   }));
 });
 
 self.addEventListener("fetch", function(event) {
+
+  if (event.request.url.indexOf('upload') !== -1) {
+    return;
+  }
 
   if(event.request.url.includes(".png") && event.request.mode !== "same-origin") {
 
@@ -94,10 +101,26 @@ self.addEventListener("fetch", function(event) {
     );
 
 
-  }else if(event.request.mode === "navigate" && !event.request.url.includes(".js")) {
+  }else if(event.request.mode === "navigate") {
 
     // Return the same index.html page for all navigation query
     event.respondWith( caches.match("/") || fetch(event.request));
   }
 
+});
+
+self.addEventListener('activate', function(event) {
+  event.waitUntil(
+      caches.keys().then(function(cache_names) {
+        return Promise.all(
+            cache_names.filter(function(cache_name) {
+
+              return cache_name !== CACHE;
+            }).map(function(cache_name) {
+
+              return caches.delete(cache_name);
+            })
+        );
+      })
+  );
 });

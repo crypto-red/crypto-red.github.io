@@ -2,6 +2,7 @@ import React from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { withStyles } from "@material-ui/core/styles";
 
+import { AutoRotatingCarousel, Slide } from "material-auto-rotating-carousel";
 import Snackbar from "@material-ui/core/Snackbar";
 import Toolbar from "@material-ui/core/Toolbar";
 
@@ -20,8 +21,6 @@ import Coins from "./Coins";
 import Coin from "./Coin";
 import Unknown from "./Unknown";
 
-import Slide from "@material-ui/core/Slide";
-
 import api from "../utils/api";
 import sound_api from "../utils/sound-api";
 import { update_meta_title } from "../utils/meta-tags";
@@ -30,6 +29,10 @@ import { PAGE_ROUTES, HISTORY } from "../utils/constants";
 const styles = theme => ({
     root: {
         display: "flex"
+    },
+    carouselImage: {
+        padding: 32,
+        maxWidth: "100%",
     },
     content: {
         flexGrow: 1
@@ -72,6 +75,8 @@ class Index extends React.Component {
             _sfx_enabled: true,
             _jamy_enabled: true,
             _vocal_enabled: false,
+            _onboarding_enabled: false,
+            _onboarding_autoplay_enabled: true,
             _selected_locales_code: null,
             _selected_currency: null,
             _panic_mode: false,
@@ -80,6 +85,8 @@ class Index extends React.Component {
             _know_the_settings: false,
             is_online: true,
             classes: props.classes,
+            _width: 0,
+            _height: 0
         };
     };
     
@@ -94,11 +101,26 @@ class Index extends React.Component {
         }
     }
 
+    _update_dimensions() {
+
+        let w = window,
+            d = document,
+            documentElement = d.documentElement,
+            body = d.getElementsByTagName('body')[0],
+            _width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
+            _height = w.innerHeight|| documentElement.clientHeight || body.clientHeight;
+
+        this.setState({_width, _height});
+    }
+
     componentDidMount() {
 
         this._update_settings();
         this._update_login();
         dispatcher.register(this._handle_events.bind(this));
+
+        window.addEventListener("resize", this._update_dimensions.bind(this));
+        this._update_dimensions();
 
         setInterval(() => {
 
@@ -113,6 +135,12 @@ class Index extends React.Component {
                 actions.jamy_update(navigator.onLine ? "happy": "sad");
             }
         }, 1000)
+    }
+
+    componentWillUnmount() {
+
+        this.state._unlisten();
+        window.removeEventListener("resize", this._update_dimensions.bind(this));
     }
 
     _trigger_sound = (category, pack, name, volume) => {
@@ -189,10 +217,11 @@ class Index extends React.Component {
         const _selected_locales_code = settings.locales || "en-US";
         const _selected_currency = settings.currency || "USD";
         const _panic_mode = settings.panic || false;
+        const _onboarding_enabled = typeof settings.onboarding !== "undefined" ? settings.onboarding: true;
         const lang = _selected_locales_code.split("-")[0];
 
         document.documentElement.lang = lang;
-        this.setState({ _sfx_enabled, _jamy_enabled, _selected_locales_code, _selected_currency, _panic_mode, _know_the_settings: true });
+        this.setState({ _onboarding_enabled, _sfx_enabled, _jamy_enabled, _selected_locales_code, _selected_currency, _panic_mode, _know_the_settings: true });
     };
 
     _update_settings() {
@@ -240,10 +269,23 @@ class Index extends React.Component {
         this.setState({_snackbar_open: false});
     };
 
+    _close_carousel = () => {
+
+        this.setState({_onboarding_enabled: false});
+    };
+
+    _stop_carousel_autoplay = () => {
+
+        this.setState({_onboarding_autoplay_enabled: false});
+        api.set_settings({onboarding: false});
+        actions.trigger_settings_update();
+    };
+
     render() {
 
         const { pathname, classes } = this.state;
         const { _snackbar_open, _snackbar_message, _snackbar_auto_hide_duration } = this.state;
+        const { _onboarding_enabled, _onboarding_autoplay_enabled, _width } = this.state;
         const { _logged_account, _panic_mode, _know_if_logged, _know_the_settings, _jamy_state_of_mind, _jamy_enabled } = this.state;
 
         // This is the custom router
@@ -301,6 +343,42 @@ class Index extends React.Component {
                     autoHideDuration={_snackbar_auto_hide_duration}
                     onClose={this._close_snackbar}
                 />
+                <div>
+                    <AutoRotatingCarousel
+                        label="Get started"
+                        onClose={this._close_carousel}
+                        onStart={this._close_carousel}
+                        mobile={_width <= 960}
+                        open={_onboarding_enabled}
+                        autoplay={_onboarding_autoplay_enabled}
+                        interval={6000}
+                    >
+                        <Slide
+                            onClick={this._stop_carousel_autoplay}
+                            media={<img className={classes.carouselImage} src="/src/images/invest.svg" />}
+                            mediaBackgroundStyle={{ backgroundColor: "#fff" }}
+                            style={{ backgroundColor: "#060f23" }}
+                            title="Invest with confidence."
+                            subtitle="Investing has never be so simple while being open, just buy some crypto at ATM, or easily with changelly."
+                        />
+                        <Slide
+                            onClick={this._stop_carousel_autoplay}
+                            media={<img className={classes.carouselImage} src="/src/images/trade.svg" />}
+                            mediaBackgroundStyle={{ backgroundColor: "#fff" }}
+                            style={{ backgroundColor: "#060f23" }}
+                            title="Good trading, trading freely."
+                            subtitle="Wallet Crypto Red doesn't push you to swap your crypto, we only suggest you to hold some funds freely without fees with a strong belief in cryptos."
+                        />
+                        <Slide
+                            onClick={this._stop_carousel_autoplay}
+                            media={<img className={classes.carouselImage} src="/src/images/open.svg" />}
+                            mediaBackgroundStyle={{ backgroundColor: "#fff" }}
+                            style={{ backgroundColor: "#060f23" }}
+                            title="Wallet made open source"
+                            subtitle="Our software for cryptocurrency payments is certified to be 100% open-source, anyone can see the code, more eyes, more secure. Trust people."
+                        />
+                    </AutoRotatingCarousel>
+                </div>
                 <AppToolbar
                     know_if_logged={_know_if_logged}
                     know_the_settings={_know_the_settings}

@@ -1,50 +1,3 @@
-function loadValueHtmlSelector(url, selector, callback_function) {
-
-    let data_file = url;
-    let http_request = new XMLHttpRequest();
-    try{
-        // Opera 8.0+, Firefox, Chrome, Safari
-        http_request = new XMLHttpRequest();
-    }catch (e) {
-        // Internet Explorer Browsers
-        try{
-            http_request = new ActiveXObject("Msxml2.XMLHTTP");
-
-        }catch (e) {
-
-            try{
-                http_request = new ActiveXObject("Microsoft.XMLHTTP");
-            }catch (e) {
-                // Something went wrong
-                callback_function("Cannot load data", null);
-            }
-
-        }
-    }
-
-    http_request.onreadystatechange = () => {
-
-        if (http_request.readyState === 4  ) {
-            // Javascript function JSON.parse to parse JSON data
-            const html = http_request.responseText.toString();
-            console.log(html);
-            const doc = new DOMParser().parseFromString(html, 'text/html');
-            const el = doc.querySelector(selector);
-            const text = el.textContent || el.innerText;
-
-            callback_function(null, text);
-        }else if(http_request.status === 404){
-
-            callback_function("Error 404", null);
-        }
-    }
-
-    http_request.open("POST", data_file, true);
-    http_request.setRequestHeader("Content-type", "text/html; charset=UTF-8");
-    http_request.send();
-
-}
-
 function loadJSON(url, callback_function) {
 
     let data_file = url;
@@ -74,8 +27,7 @@ function loadJSON(url, callback_function) {
 
     http_request.onreadystatechange = function() {
 
-        if (http_request.readyState === 4  ) {
-            // Javascript function JSON.parse to parse JSON data
+        if (http_request.readyState == 4 && http_request.status == 200) {
 
             try {
 
@@ -86,7 +38,7 @@ function loadJSON(url, callback_function) {
                 callback_function("Cannot understand response from network.", null);
             }
 
-        }else if(http_request.status === 404){
+        }else if(http_request.readyState == 4 && http_request.status == 404){
 
             callback_function("Error 404", null);
         }
@@ -131,7 +83,6 @@ function postDATA(url, data, callback_function) {
     http_request.onreadystatechange = function() {
 
         if (http_request.readyState == 4 && http_request.status == 200) {
-            // Javascript function JSON.parse to parse JSON data
 
             try {
 
@@ -142,7 +93,7 @@ function postDATA(url, data, callback_function) {
                 callback_function("Cannot understand response from network.", null);
             }
 
-        }else if(http_request.status == 404){
+        }else if(http_request.readyState == 4 && http_request.status == 404){
 
             callback_function("Error 404", null);
         }
@@ -150,7 +101,8 @@ function postDATA(url, data, callback_function) {
 
     try {
 
-        http_request.send();
+        console.log(data);
+        http_request.send(data);
     }catch(e) {
 
         callback_function("Failed to post", null);
@@ -158,7 +110,6 @@ function postDATA(url, data, callback_function) {
 }
 
 module.exports = {
-    loadValueHtmlSelector: loadValueHtmlSelector,
     loadJSON: loadJSON,
     postDATA: postDATA
 };

@@ -56,6 +56,25 @@ function _merge_object(obj1, obj2){
     return merged_object;
 }
 
+function _get_default_settings() {
+
+    const locales = get_browser_locales()[0].split("-").length === 2 ? get_browser_locales()[0]: "en-US";
+
+    return {
+        locales,
+        currency: _get_currency_by_locales(locales),
+        sfx_enabled: true,
+        jamy_enabled: true,
+        panic: false,
+        onboarding: true,
+        help: {
+            topup: true,
+            mixer: true,
+            swap: true
+            }
+    };
+}
+
 function _get_currency_by_locales(locales) {
 
     const country = locales.split("-").length === 2 ? locales.split("-")[1] : "US";
@@ -128,20 +147,7 @@ function get_settings(callback_function) {
 
         if(settings_docs_undefined || error){
 
-            const locales = get_browser_locales()[0].split("-").length === 2 ? get_browser_locales()[0]: "en-US";
-
-            settings = {
-                locales,
-                currency: _get_currency_by_locales(locales),
-                sfx_enabled: true,
-                jamy_enabled: true,
-                panic: false,
-                help: {
-                    topup: true,
-                    mixer: true,
-                    swap: true
-                }
-            };
+            settings = _get_default_settings();
 
             settings_db.post({
                 data: JSON.stringify(settings)
@@ -204,20 +210,7 @@ function set_settings(settings, callback_function) {
         // Create new
         if(error || settings_doc_undefined) {
 
-            const locales = get_browser_locales()[0].split("-").length === 2 ? get_browser_locales()[0]: "en-US";
-
-            const default_all_settings = {
-                locales,
-                currency: _get_currency_by_locales(locales),
-                sfx_enabled: true,
-                jamy_enabled: true,
-                panic: false,
-                help: {
-                    topup: true,
-                    mixer: true,
-                    swap: true
-                }
-            };
+            const default_all_settings = _get_default_settings();
 
             settings = _merge_object(default_all_settings, settings);
 

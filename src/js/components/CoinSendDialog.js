@@ -22,6 +22,14 @@ const styles = theme => ({
     breakWord: {
         wordBreak: "break-all"
     },
+    dialog: {
+        [theme.breakpoints.down("sm")]: {
+            "& .MuiDialog-container .MuiDialog-paper": {
+                margin: "24px 0px",
+                borderRadius: 0
+            },
+        }
+    }
 });
 
 
@@ -100,6 +108,7 @@ class CoinSendDialog extends React.Component {
             <Dialog
                 open={open}
                 onClose={this.props.onClose}
+                className={classes.dialog}
             >
                 {
                     Boolean(transaction) ?
@@ -112,11 +121,11 @@ class CoinSendDialog extends React.Component {
                                             <TableBody>
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Send from</TableCell>
-                                                    <TableCell align="right">{transaction.send_from}</TableCell>
+                                                    <TableCell align="right" className={classes.breakWord}>{transaction.send_from}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Send to</TableCell>
-                                                    <TableCell align="right">{transaction.send_to}</TableCell>
+                                                    <TableCell align="right" className={classes.breakWord}>{transaction.send_to}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>Memo</TableCell>
