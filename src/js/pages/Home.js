@@ -30,7 +30,7 @@ const quote = quotes[random_quote_index];
 const styles = theme => ({
     backgroundImage: {
         minHeight: "calc(100vh - 160px)",
-        backgroundImage: "url(/src/images/logo-transparent.png)",
+        backgroundImage: "url(/src/images/investment-data.svg)",
         position: "relative",
         backgroundSize: "contain",
         backgroundPosition: "center center",

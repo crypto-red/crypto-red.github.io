@@ -355,19 +355,27 @@ class Index extends React.Component {
                     >
                         <Slide
                             onClick={this._stop_carousel_autoplay}
+                            media={<img className={classes.carouselImage} src="/src/images/logo-transparent.png" />}
+                            mediaBackgroundStyle={{ backgroundColor: "#fff" }}
+                            style={{ backgroundColor: "#060f23" }}
+                            title="Welcome"
+                            subtitle="Wallet.crypto.red is an free, anonymous, and open-source software."
+                        />
+                        <Slide
+                            onClick={this._stop_carousel_autoplay}
                             media={<img className={classes.carouselImage} src="/src/images/invest.svg" />}
                             mediaBackgroundStyle={{ backgroundColor: "#fff" }}
                             style={{ backgroundColor: "#060f23" }}
-                            title="Invest with confidence."
-                            subtitle="Investing has never be so simple while being open, just buy some crypto at ATM, or easily with changelly."
+                            title="Invest for free"
+                            subtitle="Investing has never be so simple while being open, just buy some crypto at ATM, or easily with changelly or else without fees."
                         />
                         <Slide
                             onClick={this._stop_carousel_autoplay}
                             media={<img className={classes.carouselImage} src="/src/images/trade.svg" />}
                             mediaBackgroundStyle={{ backgroundColor: "#fff" }}
                             style={{ backgroundColor: "#060f23" }}
-                            title="Good trading, trading freely."
-                            subtitle="Wallet Crypto Red doesn't push you to swap your crypto, we only suggest you to hold some funds freely without fees with a strong belief in cryptos."
+                            title="Good anonymous trading."
+                            subtitle="Wallet Crypto Red doesn't push you to swap your crypto, we only suggest you to hold some funds freely without fees with a strong belief in privacy."
                         />
                         <Slide
                             onClick={this._stop_carousel_autoplay}
