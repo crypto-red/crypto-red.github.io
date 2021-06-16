@@ -115,7 +115,7 @@ self.addEventListener('activate', function(event) {
         return Promise.all(
             cache_names.filter(function(cache_name) {
 
-              return cache_name !== CACHE;
+              return Boolean(cache_name === CACHE);
             }).map(function(cache_name) {
 
               return caches.delete(cache_name);
