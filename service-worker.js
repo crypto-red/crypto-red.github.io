@@ -35,41 +35,29 @@ self.addEventListener("install", function(evt) {
       "/src/sounds/sfx/md/ui_unlock.wav",
       "/src/images/404-dark-2.svg",
       "/src/images/analytics.svg",
-      "/src/images/coins-dark.svg",
       "/src/images/hacker.svg",
       "/src/images/jamy-annoyed.svg",
       "/src/images/jamy-shocked.svg",
-      "/src/images/money-dark.svg",
-      "/src/images/savings-dark.svg",
-      "/src/images/transfer-dark.svg",
       "/src/images/wallet-green.svg",
       "/src/images/404-dark.svg",
-      "/src/images/banknote-dark.svg",
-      "/src/images/currency-dark.svg",
       "/src/images/hatch_strip_blue.png",
       "/src/images/jamy-flirty.svg",
       "/src/images/jamy-suspicious.svg",
-      "/src/images/money-transfer-dark.svg",
       "/src/images/segment.svg",
       "/src/images/transfer.svg",
       "/src/images/wallet.svg",
-      "/src/images/accountant-dark.svg",
-      "/src/images/card-dark.svg",
       "/src/images/data.svg",
       "/src/images/hatch_strip_square_blue.png",
       "/src/images/jamy-happy.svg",
       "/src/images/logo-transparent.png",
       "/src/images/personal-finance.svg",
       "/src/images/statistics.svg",
-      "/src/images/wallet-dark-2.svg",
-      "/src/images/analytics-dark.svg",
       "/src/images/card.svg",
       "/src/images/favicon.ico",
       "/src/images/jamy-angry.svg",
       "/src/images/jamy-sad.svg",
       "/src/images/pig-coins.svg",
       "/src/images/swap.svg",
-      "/src/images/wallet-dark.svg",
       "/src/images/invest.svg",
       "/src/images/open.svg",
       "/src/images/trade.svg",
@@ -115,7 +103,7 @@ self.addEventListener('activate', function(event) {
         return Promise.all(
             cache_names.filter(function(cache_name) {
 
-              return Boolean(cache_name === CACHE);
+              return Boolean(cache_name !== CACHE);
             }).map(function(cache_name) {
 
               return caches.delete(cache_name);
