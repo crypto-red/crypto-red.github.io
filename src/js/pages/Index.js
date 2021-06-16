@@ -217,11 +217,11 @@ class Index extends React.Component {
         const _selected_locales_code = settings.locales || "en-US";
         const _selected_currency = settings.currency || "USD";
         const _panic_mode = settings.panic || false;
-        const _onboarding_autoplay_enabled = typeof settings.onboarding !== "undefined" ? settings.onboarding: true;
+        const _onboarding_enabled = typeof settings.onboarding !== "undefined" ? settings.onboarding: true;
         const lang = _selected_locales_code.split("-")[0];
 
         document.documentElement.lang = lang;
-        this.setState({ _onboarding_autoplay_enabled, _sfx_enabled, _jamy_enabled, _selected_locales_code, _selected_currency, _panic_mode, _know_the_settings: true });
+        this.setState({ _onboarding_enabled, _sfx_enabled, _jamy_enabled, _selected_locales_code, _selected_currency, _panic_mode, _know_the_settings: true });
     };
 
     _update_settings() {
@@ -269,6 +269,13 @@ class Index extends React.Component {
         this.setState({_snackbar_open: false});
     };
 
+    _accept_close_carousel = () => {
+
+        this.setState({_onboarding_enabled: false});
+        api.set_settings({onboarding: false});
+        actions.trigger_settings_update();
+    };
+
     _close_carousel = () => {
 
         this.setState({_onboarding_enabled: false});
@@ -277,8 +284,6 @@ class Index extends React.Component {
     _stop_carousel_autoplay = () => {
 
         this.setState({_onboarding_autoplay_enabled: false});
-        api.set_settings({onboarding: false});
-        actions.trigger_settings_update();
     };
 
     render() {
@@ -347,7 +352,7 @@ class Index extends React.Component {
                     <AutoRotatingCarousel
                         label="Get started"
                         onClose={this._close_carousel}
-                        onStart={this._close_carousel}
+                        onStart={this._accept_close_carousel}
                         mobile={_width <= 960}
                         open={_onboarding_enabled}
                         autoplay={_onboarding_autoplay_enabled}
