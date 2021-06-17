@@ -87,7 +87,7 @@ class CoinChartsRadar extends React.Component {
                                         <PolarGrid/>
                                         <PolarAngleAxis dataKey="domain" />
                                         <PolarRadiusAxis angle={90} />
-                                        <Radar name={coin_data.name} dataKey="score" stroke="#131162" fill="#131162"  dot={false} strokeWidth={3} activeDot={<ChartDot dotColor={"#131162"}/>} fillOpacity={0.3} />
+                                        <Radar name={coin_data.name} dataKey="score" stroke="#131162" fill="#131162"  dot={false} strokeWidth={3} activeDot={<ChartDot dotColor={"#131162"}/>} fillOpacity={0.2} />
                                         <Tooltip content={data => this._custom_tooltip(data)}/>
                                     </RadarChart>
                                 </ResponsiveContainer>

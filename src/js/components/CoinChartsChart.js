@@ -12,7 +12,7 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import ChartDot from "../icons/ChartDot";
 
 import { scaleTime } from "d3-scale";
-import {utcHour, utcDay, utcMonth, utcMonday} from "d3-time";
+import {utcHour, utcDay, utcMonth, utcWeek} from "d3-time";
 
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import price_formatter from "../utils/price-formatter";
@@ -254,6 +254,7 @@ class CoinChartsChart extends React.Component {
             case "1":
 
                 ticks = scale.ticks(utcHour, 1);
+                ticks = ticks.filter((entry, index) => {return index % 2});
                 return ticks.map(entry => +entry);
             case "7":
 
@@ -261,7 +262,7 @@ class CoinChartsChart extends React.Component {
                 return ticks.map(entry => +entry);
             case "30":
 
-                ticks = scale.ticks(utcMonday, 1);
+                ticks = scale.ticks(utcWeek, 1);
                 return ticks.map(entry => +entry);
             case "180":
 
@@ -393,8 +394,8 @@ class CoinChartsChart extends React.Component {
                                                 >
                                                     <defs>
                                                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset={1} stopColor="#131162" stopOpacity="0.1"></stop>
-                                                            <stop offset={1} stopColor="#131162" stopOpacity="0.1"></stop>
+                                                            <stop offset={1} stopColor="#131162" stopOpacity="0.2"></stop>
+                                                            <stop offset={1} stopColor="#131162" stopOpacity="0.2"></stop>
                                                         </linearGradient>
                                                         <linearGradient id="colorBtc" x1="0" y1="0" x2="0" y2="1">
                                                             <stop offset={1} stopColor="#131162" stopOpacity="0"></stop>
@@ -403,8 +404,10 @@ class CoinChartsChart extends React.Component {
                                                     </defs>
                                                     <CartesianGrid strokeDasharray="3 3" />
                                                     <XAxis dataKey="date"
+                                                           domain={['dataMin', 'dataMax']}
+                                                           interval={0}
                                                            angle={60} height={75} dy={10} textAnchor="start"
-                                                           tickFormatter={value => this._date_formatter(value)}
+                                                           tickFormatter={date => this._date_formatter(date)}
                                                            ticks={_ticks_array}
                                                            tickCount={_ticks_array.length}/>
                                                     <YAxis yAxisId="left"
@@ -417,8 +420,8 @@ class CoinChartsChart extends React.Component {
                                                            type={"number"}
                                                            tickFormatter={bitcoin => this._price_formatter(bitcoin, true, false)}/>
                                                    <Tooltip content={data => this._custom_tooltip(data)}/>
-                                                    <Area type="monotone" yAxisId="right" stroke="#494785" fill="url(#colorBtc)" dataKey="bitcoin" strokeLinecap="round" dot={false} strokeWidth={1.5} activeDot={{ strokeWidth: 0, r: 2.5 }}/>
-                                                    <Area type="monotone" yAxisId="left" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3} activeDot={<ChartDot dotColor={"#131162"}/>}/>
+                                                    <Area type="monotone" yAxisId="right" stroke="#c6c6d9" fill="url(#colorBtc)" dataKey="bitcoin" strokeLinecap="round" dot={false} strokeWidth={1.5} activeDot={{ strokeWidth: 0, r: 2.5 }}/>
+                                                    <Area type="monotone" yAxisId="left" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={2.5} activeDot={<ChartDot dotColor={"#131162"}/>}/>
                                                 </AreaChart>
                                             </ResponsiveContainer>:
                                             <Skeleton className={classes.chart} />

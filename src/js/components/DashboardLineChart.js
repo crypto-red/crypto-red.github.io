@@ -300,7 +300,7 @@ class DashboardLineChart extends React.Component {
             <div className={classes.cardContainer}>
                 <Fade in>
                     <Card className={classes.performanceCard}>
-                        <CardHeader title="Cashflow" />
+                        <CardHeader title="Latest transactions" />
                             {
                                 loaded_percent === 100 ?
                                     <div>
@@ -315,8 +315,8 @@ class DashboardLineChart extends React.Component {
                                                         >
                                                             <defs>
                                                                 <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
-                                                                    <stop offset={() => this.gradient_offset(transactions_data)} stopColor="#131162" stopOpacity={.1} />
-                                                                    <stop offset={() => this.gradient_offset(transactions_data)} stopColor="#131162" stopOpacity={.1} />
+                                                                    <stop offset={() => this.gradient_offset(transactions_data)} stopColor="#131162" stopOpacity={.2} />
+                                                                    <stop offset={() => this.gradient_offset(transactions_data)} stopColor="#131162" stopOpacity={.2} />
                                                                 </linearGradient>
                                                             </defs>
                                                             <CartesianGrid strokeDasharray="3 3" />
