@@ -1,24 +1,21 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import LinearProgress from "@material-ui/core/LinearProgress";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Fade from "@material-ui/core/Fade";
 import Skeleton from "@material-ui/lab/Skeleton";
 
+import ChartDot from "../icons/ChartDot";
+
 import { COINS, HISTORY } from "../utils/constants";
 import api from "../utils/api";
 
-import TransactionDialog from "../components/TransactionDialog";
-import Transaction from "./Transaction";
 import actions from "../actions/utils";
 import {
     Area,
     AreaChart,
-    Bar,
-    BarChart,
     CartesianGrid,
     ReferenceLine,
     ResponsiveContainer,
@@ -213,6 +210,11 @@ class DashboardLineChart extends React.Component {
 
         const { selected_locales_code, selected_currency } = this.state;
 
+        if(display_currency !== true && display_currency !== false) {
+
+            return price_formatter(price, display_currency, selected_locales_code, compact);
+        }
+
         return display_currency ?
             price_formatter(price, selected_currency, selected_locales_code, compact):
             price_formatter(price, null, selected_locales_code, compact);
@@ -228,7 +230,7 @@ class DashboardLineChart extends React.Component {
     };
 
     gradient_offset = (data) => {
-        console.log(data);
+
         const dataMax = Math.max(...data.map((i) => i.value));
         const dataMin = Math.min(...data.map((i) => i.value));
 
@@ -245,11 +247,13 @@ class DashboardLineChart extends React.Component {
     };
 
     _custom_tooltip = ({ active, payload, label }) => {
+
         if (active && payload && payload.length) {
+            console.log(payload);
             return (
                 <Card style={{padding: 12}}>
                     <b>{payload[0].payload.name}</b><span> / {this._date_formatter(label, true)}</span><br />
-                    <span>{this._price_formatter(payload[0].value)}</span>
+                    <span>{this._price_formatter(payload[0].value)} ({this._price_formatter(payload[0].payload.amount_crypto, false, payload[0].payload.symbol)})</span>
                 </Card>
             );
         }
@@ -276,12 +280,16 @@ class DashboardLineChart extends React.Component {
             transactions_data = full_transactions.map((element, index, array) => {
 
                 const value = coins_market_object[element.crypto_id].current_price * element.amount_crypto;
+                const amount_crypto = element.amount_crypto;
                 const name = coins_market_object[element.crypto_id].name;
+                const symbol = coins_market_object[element.crypto_id].symbol;
                 const timestamp = element.timestamp;
 
                 return {
                     value,
+                    amount_crypto,
                     name,
+                    symbol,
                     timestamp
                 };
             });
@@ -318,9 +326,9 @@ class DashboardLineChart extends React.Component {
 
                                                             <YAxis dataKey="value"
                                                                    type={"number"}
-                                                                   tickFormatter={value => this._price_formatter(value, true, false)}/>
+                                                                   tickFormatter={value => this._price_formatter(value, true, true)}/>
                                                             <Tooltip content={data => this._custom_tooltip(data)} />
-                                                            <Area type="monotone" stroke="#131162" fill="url(#splitColor)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3} activeDot={{ strokeWidth: 0, r: 6 }}/>
+                                                            <Area type="monotone" stroke="#131162" fill="url(#splitColor)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3} activeDot={<ChartDot dotColor={"#131162"}/>}/>
                                                         </AreaChart>
                                                     </ResponsiveContainer>
                                                 </div>

@@ -394,6 +394,10 @@ class DrawerContent extends React.Component {
                                     <ListItemIcon><SwapHorizIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary="Swap" />
                                 </ListItem>
+                                <ListItem button className={classes.nested} onClick={(event) => {this._open_link(event, "https://coinatmradar.com/")}}>
+                                    <ListItemIcon><AtmIcon className={classes.iconColor} /></ListItemIcon>
+                                    <ListItemText primary="ATM" />
+                                </ListItem>
                             </List>
                         </Collapse>
                         <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "tools")}>
@@ -405,12 +409,6 @@ class DrawerContent extends React.Component {
                                 <ListItem button className={classes.nested} onClick={(event) => {this._open_crypt_dialog(event)}}>
                                     <ListItemIcon><LockIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary="Crypt" />
-                                </ListItem>
-                            </List>
-                            <List component="div" disablePadding>
-                                <ListItem button className={classes.nested} onClick={(event) => {this._open_link(event, "https://coinatmradar.com/")}}>
-                                    <ListItemIcon><AtmIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="ATM" />
                                 </ListItem>
                             </List>
                         </Collapse>

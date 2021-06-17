@@ -176,7 +176,7 @@ class CoinTransactions extends React.Component {
                                     logged_account ?
                                         _yet_not_any_transactions ?
                                             <CardContent>
-                                                <img className={classes.noTransactionImage} src="/src/images/money-transfer-dark.svg"/>
+                                                <img className={classes.noTransactionImage} src="/src/images/transfer.svg"/>
                                                 <p>You've not made any transactions yet, transactions will show up here.</p>
                                             </CardContent>:
                                             <CardContent>

@@ -1,6 +1,6 @@
 function price_formatter(price = 0, _selected_currency = "usd", _selected_locales_code = "en-US", compact = false) {
 
-
+    price = parseFloat(price);
     let currency = null;
     if(_selected_currency !== null) {
 

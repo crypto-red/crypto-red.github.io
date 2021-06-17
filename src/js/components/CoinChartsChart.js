@@ -9,10 +9,12 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import Fade from "@material-ui/core/Fade";
 import Skeleton from "@material-ui/lab/Skeleton";
 
+import ChartDot from "../icons/ChartDot";
+
 import { scaleTime } from "d3-scale";
 import {utcHour, utcDay, utcMonth, utcMonday} from "d3-time";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import price_formatter from "../utils/price-formatter";
 import api from "../utils/api";
 import actions from "../actions/utils";
@@ -98,6 +100,11 @@ class CoinChartsChart extends React.Component {
             _is_coin_chart_data_loading: false,
             _coin_chart_data_time: "360",
             _coin_chart_data_type: "prices",
+            _regular_formatted_complete_sorted_data: [],
+            _regular_complete_sorted_data: {},
+            _ticks_array: [],
+            _coin_chart_data_loaded: false,
+            _bitcoin_chart_data_loaded: false,
         };
     };
 
@@ -123,18 +130,33 @@ class CoinChartsChart extends React.Component {
 
         const { coin_id, selected_currency, _coin_chart_data_time } = this.state;
 
-        this.setState({_is_coin_chart_data_loading: true},
+        this.setState({_is_coin_chart_data_loading: true, _coin_chart_data_loaded: false, _bitcoin_chart_data_loaded: false}, () => {
 
-            api.get_coin_chart_data(coin_id, selected_currency.toLowerCase(), _coin_chart_data_time, this._set_coin_chart_data)
-        );
+            api.get_coin_chart_data(coin_id, selected_currency.toLowerCase(), _coin_chart_data_time, (error, response) => {
+                this._set_coin_chart_data(error, response, "coin_id")
+            });
+
+            api.get_coin_chart_data("bitcoin", selected_currency.toLowerCase(), _coin_chart_data_time, (error, response) => {
+                this._set_coin_chart_data(error, response, "bitcoin")
+            });
+        });
     }
 
-    _set_coin_chart_data = (error, _coin_chart_data) => {
+    _set_coin_chart_data = (error, _coin_chart_data, coin_id) => {
 
-        if(!error) {
+        if(!error && _coin_chart_data) {
 
+            let { _regular_complete_sorted_data, _ticks_array } = this.state;
+            let { _coin_chart_data_loaded, _bitcoin_chart_data_loaded } = this.state;
 
-            this.setState({_is_coin_chart_data_loading: false}, function(){
+            _coin_chart_data_loaded = coin_id === "coin_id" ? true: _coin_chart_data_loaded;
+            _bitcoin_chart_data_loaded = coin_id === "bitcoin" ? true: _bitcoin_chart_data_loaded;
+
+            _regular_complete_sorted_data[coin_id] = [];
+
+            let _is_coin_chart_data_loading = !_coin_chart_data_loaded || !_bitcoin_chart_data_loaded;
+
+            this.setState({_is_coin_chart_data_loading, _coin_chart_data_loaded, _bitcoin_chart_data_loaded}, () => {
 
                 const { _coin_chart_data_type, _coin_chart_data_time, _is_coin_chart_data_loading } = this.state;
 
@@ -147,17 +169,16 @@ class CoinChartsChart extends React.Component {
                     return a.date - b.date;
                 });
 
-                const ticks_array = this._get_coin_chart_data_ticks(sorted_graph_data, _coin_chart_data_time);
-                const complete_data = this._get_graph_data_with_ticks(sorted_graph_data, ticks_array);
+                _ticks_array = this._get_coin_chart_data_ticks(sorted_graph_data, _coin_chart_data_time);
+                const complete_data = this._get_graph_data_with_ticks(sorted_graph_data, _ticks_array );
 
                 const sorted_complete_graph_data = complete_data.sort(function(a, b) {
                     return a.date - b.date;
                 });
 
-                let regular_complete_sorted_data = [];
                 sorted_complete_graph_data.forEach(function(item, index, array) {
 
-                    if(item.value === "irregular" && !_is_coin_chart_data_loading) {
+                    if(item.value === "irregular") {
 
                         const previous_item = index > 0 ? array[index-1].value: array[index].value;
                         const next_item = index < array.length-1 ? array[index+1].value: array[index].value;
@@ -166,20 +187,37 @@ class CoinChartsChart extends React.Component {
                             date: item.date
                         };
 
-                        regular_complete_sorted_data.push(middle_item);
+                        _regular_complete_sorted_data[coin_id].push(middle_item);
 
                     }else {
 
-                        regular_complete_sorted_data.push(item);
+                        _regular_complete_sorted_data[coin_id].push(item);
                     }
                 });
 
-                this.setState({_regular_complete_sorted_data: regular_complete_sorted_data, _ticks_array: ticks_array});
+
+                if( !_is_coin_chart_data_loading ) {
+
+                    const _regular_formatted_complete_sorted_data =
+
+                        _regular_complete_sorted_data["coin_id"].map((element, index, array) => {
+
+                            const new_element = {
+                                date: element.date,
+                                value: element.value,
+                                bitcoin: typeof _regular_complete_sorted_data["bitcoin"][index] === "undefined" ? 0: _regular_complete_sorted_data["bitcoin"][index].value
+                            };
+
+                            return new_element;
+                        });
+
+                    this.setState({_regular_complete_sorted_data, _ticks_array, _regular_formatted_complete_sorted_data});
+                }else {
+
+                    this.setState({_regular_complete_sorted_data});
+                }
 
             });
-
-
-
 
         }else {
 
@@ -309,7 +347,7 @@ class CoinChartsChart extends React.Component {
             return (
                 <Card style={{padding: 12}}>
                     <b>{this._date_formatter(label,  true)}</b><br />
-                    <span>{this._price_formatter(payload[0].value)}</span>
+                    <span>{this._price_formatter(payload[0].payload.value)}</span>
                 </Card>
             );
         }
@@ -319,7 +357,7 @@ class CoinChartsChart extends React.Component {
 
     render() {
 
-        const { classes, selected_locales_code, _regular_complete_sorted_data, _ticks_array, _coin_chart_data_time, _coin_chart_data_type, _is_coin_chart_data_loading } = this.state;
+        const { classes, selected_locales_code, _regular_formatted_complete_sorted_data, _ticks_array, _coin_chart_data_time, _coin_chart_data_type, _is_coin_chart_data_loading, coin_id } = this.state;
 
         return (
             <div className={classes.fullHeight}>
@@ -348,15 +386,19 @@ class CoinChartsChart extends React.Component {
                             <Fade in timeout={300}>
                                 <div className={classes.chart}>
                                     {
-                                        Boolean(_regular_complete_sorted_data) ?
+                                        _regular_formatted_complete_sorted_data.length ?
                                             <ResponsiveContainer>
                                                 <AreaChart
-                                                    data={_regular_complete_sorted_data}
+                                                    data={_regular_formatted_complete_sorted_data}
                                                 >
                                                     <defs>
                                                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                                                             <stop offset={1} stopColor="#131162" stopOpacity="0.1"></stop>
                                                             <stop offset={1} stopColor="#131162" stopOpacity="0.1"></stop>
+                                                        </linearGradient>
+                                                        <linearGradient id="colorBtc" x1="0" y1="0" x2="0" y2="1">
+                                                            <stop offset={1} stopColor="#131162" stopOpacity="0"></stop>
+                                                            <stop offset={1} stopColor="#131162" stopOpacity="0"></stop>
                                                         </linearGradient>
                                                     </defs>
                                                     <CartesianGrid strokeDasharray="3 3" />
@@ -365,11 +407,18 @@ class CoinChartsChart extends React.Component {
                                                            tickFormatter={value => this._date_formatter(value)}
                                                            ticks={_ticks_array}
                                                            tickCount={_ticks_array.length}/>
-                                                    <YAxis dataKey="value"
+                                                    <YAxis yAxisId="left"
+                                                           dataKey="value"
                                                            type={"number"}
                                                            tickFormatter={value => this._price_formatter(value, true, false)}/>
-                                                    <Tooltip content={data => this._custom_tooltip(data)}/>
-                                                    <Area type="monotone" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3} activeDot={{ strokeWidth: 0, r: 6 }}/>
+                                                    <YAxis yAxisId="right"
+                                                           orientation="right"
+                                                           dataKey="bitcoin"
+                                                           type={"number"}
+                                                           tickFormatter={bitcoin => this._price_formatter(bitcoin, true, false)}/>
+                                                   <Tooltip content={data => this._custom_tooltip(data)}/>
+                                                    <Area type="monotone" yAxisId="right" stroke="#494785" fill="url(#colorBtc)" dataKey="bitcoin" strokeLinecap="round" dot={false} strokeWidth={1.5} activeDot={{ strokeWidth: 0, r: 2.5 }}/>
+                                                    <Area type="monotone" yAxisId="left" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3} activeDot={<ChartDot dotColor={"#131162"}/>}/>
                                                 </AreaChart>
                                             </ResponsiveContainer>:
                                             <Skeleton className={classes.chart} />

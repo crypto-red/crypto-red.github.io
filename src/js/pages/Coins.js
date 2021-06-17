@@ -291,13 +291,13 @@ class Coins extends React.Component {
                                         align={head_cell.numeric ? "right" : "left"}
                                         padding={head_cell.disablePadding ? "none" : "default"}
                                         sortDirection={_order_by === head_cell.id ? _order : false}
+                                        onClick={() => this._create_sort_handler(head_cell.id)}
                                     >
                                         <Tooltip title={head_cell.tooltip} aria-label={head_cell.tooltip}>
                                             <TableSortLabel
                                                 classes={{root: classes.tableSortLabelRoot, active: classes.tableSortLabelActive, icon: classes.tableSortLabelIcon}}
                                                 active={_order_by === head_cell.id}
                                                 direction={_order_by === head_cell.id ? _order : "asc"}
-                                                onClick={() => this._create_sort_handler(head_cell.id)}
                                             >
                                                 {head_cell.label}
                                                 {_order_by === head_cell.id ? (
