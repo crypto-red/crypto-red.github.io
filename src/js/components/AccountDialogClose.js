@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -57,20 +60,22 @@ class AccountDialogClose extends React.Component {
             >
                 {Boolean(account) ?
                     <div>
-                        <DialogTitle id="close-account-dialog-title">Close {account.name}?</DialogTitle>
+                        <DialogTitle id="close-account-dialog-title">
+                            {t(L, "components.account_dialog_close.close", {account_name: account.name})}
+                        </DialogTitle>
                         <DialogContent>
                             <DialogContentText id="close-account-dialog-description">
-                                This account was opened <TimeAgo date={account.timestamp} />
+                                {t(L, "components.account_dialog_close.opened", {time_ago: ""})} <TimeAgo date={account.timestamp} />
                             </DialogContentText>
                         </DialogContent>
                     </div>: null
                 }
                 <DialogActions>
                     <Button onClick={(event) => {this._on_cancel(event, account)}} color="primary">
-                        Cancel
+                        {t(L, "words.cancel" )}
                     </Button>
                     <Button onClick={(event) => {this._on_accept(event, account)}} color="primary" autoFocus>
-                        Close
+                        {t(L, "words.close" )}
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Fade from "@material-ui/core/Fade";
 import Card from "@material-ui/core/Card";
 import Button from "@material-ui/core/Button";
@@ -94,7 +97,7 @@ class CoinTransactions extends React.Component {
 
             if(error || !result.length) {
 
-                actions.trigger_snackbar("Cannot load more transactions")
+                actions.trigger_snackbar(t(L, "sentences.cannot load more transaction"))
             }
 
             this.setState({_loading: false, _transactions: all_transactions, _yet_not_any_transactions});
@@ -169,7 +172,7 @@ class CoinTransactions extends React.Component {
                     <Fade in>
                         <Card>
                             <CardHeader
-                                title="Transactions"
+                                title={t(L, "words.transactions", {}, {FLC: true})}
                             />
                             {
                                 !_loading ?
@@ -197,13 +200,13 @@ class CoinTransactions extends React.Component {
                                                     })}
                                                 </List>
                                                 <Button fullWidth color="primary" variant="contained" onClick={this._load_more_transactions}>
-                                                    Load more
+                                                    {t(L, "sentences.load more")}
                                                 </Button>
                                             </CardContent>
                                         :
                                         <CardContent>
                                             <Button fullWidth color="primary" variant="contained" onClick={this._open_accounts_page}>
-                                                Open an account
+                                                {t(L, "sentences.open an account")}
                                             </Button>
                                         </CardContent>
                                     :

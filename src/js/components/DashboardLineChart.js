@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -24,8 +27,39 @@ import {
     YAxis
 } from "recharts";
 import price_formatter from "../utils/price-formatter";
+import LinearProgress from "@material-ui/core/LinearProgress";
+
+const MAX_TRX_LOADING = 20;
 
 const styles = theme => ({
+    linearProgressVisible: {
+        "& .MuiLinearProgress-barColorPrimary": {
+            backgroundColor: theme.palette.primary.actionLighter
+        },
+        opacity: 1,
+        backgroundColor: "#110b5d26",
+    },
+    linearProgressHidden: {
+        "& .MuiLinearProgress-barColorPrimary": {
+            backgroundColor: theme.palette.primary.actionLighter
+        },
+        opacity: 0,
+        backgroundColor: "#110b5d26",
+        animation: "$hide 1.5s",
+        "@global": {
+            "@keyframes hide": {
+                "0%": {
+                    opacity: 1,
+                },
+                "85%": {
+                    opacity: 1,
+                },
+                "100%": {
+                    opacity: 0,
+                },
+            }
+        }
+    },
     cardContainer: {
         height: "100%"
     },
@@ -61,6 +95,7 @@ class DashboardLineChart extends React.Component {
             _coin_id_loaded: [],
             _selected_locales_code: null,
             _selected_currency: null,
+            _are_raws_transactions_loaded: false,
         };
     };
 
@@ -158,9 +193,9 @@ class DashboardLineChart extends React.Component {
             _coins_address[element.id] = api.get_address_by_seed(element.id, logged_account.seed);
         });
 
-        this.setState({_coins_address}, () => {
+        this.setState({_coins_address, _are_raws_transactions_loaded: true}, () => {
 
-            const transactions = _transactions.sort((a, b) => b.timestamp-a.timestamp).slice(0, 20);
+            const transactions = _transactions.sort((a, b) => b.timestamp-a.timestamp).slice(0, MAX_TRX_LOADING);
 
             transactions.forEach((element, index, array) => {
 
@@ -182,7 +217,7 @@ class DashboardLineChart extends React.Component {
 
         const { logged_account, _coins } = this.state;
 
-        this.setState({_coin_id_loaded: [], _transactions: []}, () => {
+        this.setState({_coin_id_loaded: [], _transactions: [], _are_raws_transactions_loaded: false}, () => {
 
             _coins.map((coin) => {
 
@@ -261,66 +296,86 @@ class DashboardLineChart extends React.Component {
         return null;
     };
 
-    render() {
+    _get_transactions_data = () => {
 
-        const { classes, _coins, _coin_id_loaded, coins_markets } = this.state;
-        const full_transactions = this.state._full_transactions.sort((a, b) => a.timestamp-b.timestamp).slice(0, 20);
+        const { _coins, _coin_id_loaded, coins_markets, _transactions, _full_transactions, _are_raws_transactions_loaded } = this.state;
 
-        const loaded_percent = Math.floor((_coin_id_loaded.length / _coins.length) * 100);
+        const full_latest_transactions = _full_transactions.sort((a, b) => a.timestamp - b.timestamp).slice(0, MAX_TRX_LOADING);
+
+        let loaded_percent = 0;
+        loaded_percent += Math.floor((_coin_id_loaded.length / _coins.length) * 40);
+        loaded_percent +=  _are_raws_transactions_loaded && _full_transactions.length === 0?
+            40:
+            Math.floor((_full_transactions.length / _transactions.slice(0, MAX_TRX_LOADING).length) * 40);
+        loaded_percent += coins_markets.length ? 20: 0;
+
         let transactions_data = [];
 
-        if(loaded_percent === 100 && coins_markets.length) {
+        if(loaded_percent !== 100) {
 
-            let coins_market_object = {};
-            coins_markets.forEach((element, index, array) => {
-
-                coins_market_object[element.id] = element;
-            });
-
-            transactions_data = full_transactions.map((element, index, array) => {
-
-                const value = coins_market_object[element.crypto_id].current_price * element.amount_crypto;
-                const amount_crypto = element.amount_crypto;
-                const name = coins_market_object[element.crypto_id].name;
-                const symbol = coins_market_object[element.crypto_id].symbol;
-                const timestamp = element.timestamp;
-
-                return {
-                    value,
-                    amount_crypto,
-                    name,
-                    symbol,
-                    timestamp
-                };
-            });
-
+            return {
+                data: transactions_data,
+                loaded: loaded_percent
+            }
         }
+
+        let coins_market_object = {};
+        coins_markets.forEach((element, index, array) => {
+
+            coins_market_object[element.id] = element;
+        });
+
+        transactions_data = full_latest_transactions.map((element, index, array) => {
+
+            const value = coins_market_object[element.crypto_id].current_price * element.amount_crypto;
+            const amount_crypto = element.amount_crypto;
+            const name = coins_market_object[element.crypto_id].name;
+            const symbol = coins_market_object[element.crypto_id].symbol;
+            const timestamp = element.timestamp;
+
+            return { value, amount_crypto, name, symbol, timestamp };
+        });
+
+        return {
+            data: transactions_data,
+            loaded: loaded_percent
+        };
+    }
+
+    render() {
+
+        const { classes } = this.state;
+
+        const { data, loaded } = this._get_transactions_data();
 
         return (
             <div className={classes.cardContainer}>
                 <Fade in>
                     <Card className={classes.performanceCard}>
-                        <CardHeader title="Latest transactions" />
+
+                        <CardHeader title={t(L, "components.dashboard_line_chart.title")} />
                             {
-                                loaded_percent === 100 ?
+                                loaded === 100 ?
                                     <div>
-                                        {transactions_data.length ?
+                                        {data.length ?
                                             <CardContent>
                                                 <div className={classes.barChart}>
                                                     <ResponsiveContainer>
                                                         <AreaChart
-                                                            data={transactions_data}
+                                                            data={data}
                                                             width={400}
                                                             height={475}
                                                         >
                                                             <defs>
                                                                 <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
-                                                                    <stop offset={() => this.gradient_offset(transactions_data)} stopColor="#131162" stopOpacity={.2} />
-                                                                    <stop offset={() => this.gradient_offset(transactions_data)} stopColor="#131162" stopOpacity={.2} />
+                                                                    <stop offset={() => this.gradient_offset(data)} stopColor="#131162" stopOpacity={.2} />
+                                                                    <stop offset={() => this.gradient_offset(data)} stopColor="#131162" stopOpacity={.2} />
                                                                 </linearGradient>
                                                             </defs>
                                                             <CartesianGrid strokeDasharray="3 3" />
-                                                            <XAxis dataKey="timestamp"
+                                                            <XAxis domain={['dataMin', 'dataMax']}
+                                                                   interval={0}
+                                                                   dataKey="timestamp"
                                                                    angle={60} height={75} dy={10} textAnchor="start"
                                                                    tickFormatter={value => this._date_formatter(value)}/>
 
@@ -335,7 +390,7 @@ class DashboardLineChart extends React.Component {
                                             </CardContent>:
                                             <CardContent className={classes.noTransactionCardContent}>
                                                 <img className={classes.noTransactionImage} src="/src/images/data.svg"/>
-                                                <p>You've not made any transactions yet, latest transactions will show up here in a chart.</p>
+                                                <p>{t(L, "sentences.no transactions maid chart")}</p>
                                             </CardContent>
                                         }
                                     </div>:

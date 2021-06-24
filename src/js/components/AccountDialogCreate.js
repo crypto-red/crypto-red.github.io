@@ -1,6 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
+
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
 
 import { green, red } from "@material-ui/core/colors";
 import Button from "@material-ui/core/Button";
@@ -170,7 +172,7 @@ class AccountDialogCreate extends React.Component {
                 if(that.state._password_evaluation.score <= 3) {
 
                     actions.jamy_update("suspicious", 3000);
-                    actions.trigger_snackbar(`WARNING: Only ${that.state._password_evaluation.crack_times_display.offline_slow_hashing_1e4_per_second} is required to crack your password.`, 6000);
+                    actions.trigger_snackbar(t(L, "components.account_dialog_create.password_evaluation_warning", {time: that.state._password_evaluation.crack_times_display.offline_slow_hashing_1e4_per_second}), 6000)
                 }
 
             }, 500);
@@ -234,7 +236,7 @@ class AccountDialogCreate extends React.Component {
             }else if(account_password_input.length && _password_evaluation.score >= 4){
 
                 actions.jamy_update("happy", 3000);
-                actions.trigger_snackbar("That's good! Your password is strong.", 3500);
+                actions.trigger_snackbar(t(L, "components.account_dialog_create.password_evaluation_good"), 3500);
             }
             this.setState({_password_evaluation});
         }
@@ -385,7 +387,7 @@ class AccountDialogCreate extends React.Component {
         const password_feedback = Boolean(_password_evaluation) ?
                 <DialogContentText id="create-account-dialog-description">
                     <p>
-                        Password strength is {_password_evaluation.score} / 4
+                        {t(L, "components.account_dialog_create.password_strength", {score: _password_evaluation.score})}
                     </p>
                 </DialogContentText>: null;
 
@@ -393,19 +395,17 @@ class AccountDialogCreate extends React.Component {
             <div className={classes.dialogBody}>
                 <DialogContent className={classes.dialogBody} dividers>
                     <DialogContentText id="create-account-dialog-description">
-                        Provide a name and a STRONG PASSWORD in order to create a new account.
-                        Everything that you type won't never be send to anyone, it will stay on your device.
-                        Once a name and a password to encrypt your backup phrase is set, we will enable you to manually create or import your new backup phrase (called a mnemonic).
+                        {t(L, "components.account_dialog_create.configuration_view.description")}
                     </DialogContentText>
                     <form noValidate autoComplete="off">
                         <TextField
                             onChange={this._handle_account_name_input_change}
                             value={_account_name_input}
                             error={_is_account_name_error}
-                            helperText={_is_account_name_error ? "Account name cannot be empty": ""}
+                            helperText={_is_account_name_error ? t(L, "sentences.account name cannot be empty"): ""}
                             onKeyDown={this._handle_key_down_input_one}
                             id="name"
-                            label="Name"
+                            label={t(L, "words.name", {}, {FLC: true})}
                             type="text"
                             fullWidth
                         />
@@ -413,10 +413,10 @@ class AccountDialogCreate extends React.Component {
                             onChange={this._handle_account_password_input_change}
                             value={_account_password_input}
                             error={_is_account_password_error}
-                            helperText={_is_account_password_error ? "Wrong password input": ""}
+                            helperText={_is_account_password_error ? t(L, "sentences.wrong password input"): ""}
                             onKeyDown={this._handle_key_down_input_two}
                             id="password"
-                            label="Password"
+                            label={t(L, "words.password", {}, {FLC: true})}
                             type="password"
                             fullWidth
                         />
@@ -424,10 +424,10 @@ class AccountDialogCreate extends React.Component {
                             onChange={this._handle_account_confirmation_input_change}
                             value={_account_conformation_input}
                             error={_is_account_confirmation_error}
-                            helperText={_is_account_confirmation_error ? "Wrong password confirmation": ""}
+                            helperText={_is_account_confirmation_error ? t(L, "sentences.wrong password confirmation"): ""}
                             onKeyDown={this._handle_key_down_input_three}
                             id="confirmation"
-                            label="Confirmation"
+                            label={t(L, "words.confirmation", {}, {FLC: true})}
                             type="password"
                             fullWidth
                         />
@@ -450,10 +450,8 @@ class AccountDialogCreate extends React.Component {
             <div className={classes.dialogBody}>
                 <DialogContent className={classes.dialogBody}>
                     <DialogContentText id="create-account-dialog-description">
-                        Use an old backup phrase from another wallet or use a new random backup phrase.
-                        The backup phrase is a like a seed password that will create a master key, from this key, it will create derived keys pair for each cryptocurrency.
-                        The password you typed in the first step will enable you to log in using a password instead of this  backup phrase each and every time.<br />
-                        <b className={classes.red}>Make sure no one is looking before completing the field below and STORE IT ON PAPER for a better security.</b>
+                        {t(L, "components.account_dialog_create.mnemonic_view.description")}
+                        <br /><b className={classes.red}>{t(L, "components.account_dialog_create.mnemonic_view.description_bold")}</b>
                     </DialogContentText>
                     <form noValidate autoComplete="off">
                         <ChipInput
@@ -462,15 +460,15 @@ class AccountDialogCreate extends React.Component {
                             onDelete={(value) => this._handle_private_mnemonic_input_delete(value)}
                             onAdd={(value) => this._handle_private_mnemonic_input_add(value)}
                             error={ _is_account_mnemonic_input_error}
-                            helperText={( _is_account_mnemonic_input_error) ? "Something is incorrect": ""}
+                            helperText={( _is_account_mnemonic_input_error) ? t(L, "sentences.something is incorrect"): ""}
                             allowDuplicates
                             fullWidth
-                            label={"Bip39 mnemonic"}
+                            label={t(L, "sentences.bip39 mnemonic")}
                         />
                         <Collapse in={ _account_mnemonic_input.length < 12}>
                             <DialogContentText>
                                 <p>
-                                    An usual seed for a bip39 mnemonic is 12 words long.
+                                    {t(L, "components.account_dialog_create.mnemonic_view.usual_seed")}
                                 </p>
                             </DialogContentText>
                         </Collapse>
@@ -478,19 +476,19 @@ class AccountDialogCreate extends React.Component {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                        Cancel
+                        {t(L, "words.cancel")}
                     </Button>
                     <Button onClick={(event) => {this._generate_a_new_mnemonic(event)}}
                             color="primary"
                             autoFocus={!_account_mnemonic_input.length}>
-                        Random
+                        {t(L, "words.random")}
                     </Button>
                     <Button onClick={this._switch_to_generation_view}
 
                             color="primary"
                             disabled={!_account_mnemonic_input.length}
                             autoFocus={_account_mnemonic_input.length}>
-                        Next
+                        {t(L, "words.next")}
                     </Button>
                 </DialogActions>
             </div>;
@@ -498,7 +496,7 @@ class AccountDialogCreate extends React.Component {
         const generation_view_inner = !_generation_completed ?
             <div>
                 <Grow in><CircularProgress /></Grow>
-                <Fade in><p>Generating...</p></Fade>
+                <Fade in><p>{t(L, "components.account_dialog_create.generation_view.generating")}</p></Fade>
             </div>:
             _generation_eror ?
             <div>
@@ -507,7 +505,7 @@ class AccountDialogCreate extends React.Component {
                         <CloseIcon />
                     </Fab>
                 </Grow>
-                <Fade in><p>ERROR: Your account has not been created.</p></Fade>
+                <Fade in><p>{t(L, "components.account_dialog_create.generation_view.error")}</p></Fade>
             </div>:
             <div>
                 <Grow in>
@@ -515,23 +513,23 @@ class AccountDialogCreate extends React.Component {
                         <CheckIcon />
                     </Fab>
                 </Grow>
-                <Fade in><p>Your account will be soon displayed.</p></Fade>
+                <Fade in><p>{t(L, "components.account_dialog_create.generation_view.success")}</p></Fade>
             </div>
 
         const generation_view =
             <div className={classes.dialogBody}>
                 <DialogContent className={classes.dialogBody}>
-                    <p>We need to create one address for each cryptocurrency listed, theses address are anonymous since they aren't linked to yourself. We'll automatically backup your account on your computer, if you change your password replace the backup file and delete the old one.</p>
+                    <p>{t(L, "components.account_dialog_create.generation_view.description")}</p>
                     <div className={classes.generationLoader}>
                         {generation_view_inner}
                     </div>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                        Cancel
+                        {t(L, "words.cancel")}
                     </Button>
                     <Button onClick={(event) => {this._on_close(event)}} color="primary" autoFocus>
-                        Close
+                        {t(L, "words.close")}
                     </Button>
                 </DialogActions>
             </div>;
@@ -551,16 +549,16 @@ class AccountDialogCreate extends React.Component {
                 aria-labelledby="create-account-dialog-title"
                 aria-describedby="create-account-dialog-description"
             >
-                <DialogTitle id="create-account-dialog-title">Create a new account</DialogTitle>
+                <DialogTitle id="create-account-dialog-title">{t(L, "sentences.create a new account")}</DialogTitle>
                 <Stepper activeStep={_active_view_index} alternativeLabel>
                     <Step completed={(_active_view_index >= 1)}>
-                        <StepLabel>Configuration</StepLabel>
+                        <StepLabel>{t(L, "components.account_dialog_create.stepper.configure")}</StepLabel>
                     </Step>
                     <Step completed={(_active_view_index >= 2)} optional={<span>Optional</span>}>
-                        <StepLabel>Import</StepLabel>
+                        <StepLabel>{t(L, "components.account_dialog_create.stepper.import")}</StepLabel>
                     </Step>
                     <Step completed={(_active_view_index >= 2 && _generation_completed)}>
-                        <StepLabel>Generation</StepLabel>
+                        <StepLabel>{t(L, "components.account_dialog_create.stepper.create")}</StepLabel>
                     </Step>
                 </Stepper>
                 {views[_active_view_index]}

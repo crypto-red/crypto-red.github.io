@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import { ResponsiveContainer, PieChart, Pie, Sector, Tooltip } from "recharts";
 
 import { HISTORY } from "../utils/constants";
@@ -166,7 +169,7 @@ class DashboardPieChart extends React.Component {
             <div className={classes.cardContainer}>
                 <Fade in>
                     <Card className={classes.balanceCard}>
-                        <CardHeader title="Portfolio and balance" />
+                        <CardHeader title={t(L, "components.dashboard_pie_chart.title")} />
                         <CardContent className={classes.cardContent}>
                             {coins_markets.length > 0 && portfolio ?
                                 <Fade in>
@@ -191,7 +194,7 @@ class DashboardPieChart extends React.Component {
                                             : Boolean(pie_data.length <= 0) ?
                                                 <div className={classes.noTransactionCardContent}>
                                                     <img className={classes.noTransactionImage} src="/src/images/segment.svg"/>
-                                                    <p>You've not made any transactions yet, therefore your portfolio is empty but it will show here.</p>
+                                                    <p>{t(L, "sentences.no transactions maid portfolio")}</p>
                                                 </div>
                                                 :null
                                         }

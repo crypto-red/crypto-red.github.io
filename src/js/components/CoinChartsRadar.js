@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -69,10 +72,10 @@ class CoinChartsRadar extends React.Component {
         const { classes, coin_data } = this.state;
 
         const market_radar_card_data = coin_data !== null ? [
-            { domain: "Feeling", score: coin_data.sentiment_votes_up_percentage },
-            { domain: "Avr. Score", score: coin_data.coingecko_score },
-            { domain: "Dev. score", score: coin_data.developer_score },
-            { domain: "Liquidity", score: coin_data.liquidity_score }
+            { domain: t(L, "words.feelings", {}, {FLC: true}), score: coin_data.sentiment_votes_up_percentage },
+            { domain: t(L, "words.average score", {}, {FLC: true}), score: coin_data.coingecko_score },
+            { domain: t(L, "words.development score", {}, {FLC: true}), score: coin_data.developer_score },
+            { domain: t(L, "words.liquidity", {}, {FLC: true}), score: coin_data.liquidity_score }
         ]: [];
 
         const market_score_card = coin_data !== null ?

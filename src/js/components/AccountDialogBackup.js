@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -66,15 +69,17 @@ class AccountDialogBackup extends React.Component {
             >
                 {Boolean(account) ?
                     <div>
-                        <DialogTitle id="backup-account-dialog-title">Seed of {account.name}</DialogTitle>
+                        <DialogTitle id="backup-account-dialog-title">
+                            {t(L, "components.account_dialog_backup.seed", {account_name: account.name})}
+                        </DialogTitle>
                         <DialogContent>
                             <DialogContentText id="backup-account-dialog-description">
-                                <p className={classes.red}>STORE IT ON PAPER, NEVER SHARE THIS SEED TO ANYONE!!!</p>
+                                <p className={classes.red}>{t(L, "components.account_dialog_backup.store", {account_name: account.name})}</p>
                                 {
                                     _shown ?
                                         <p>{account.seed}</p>:
                                         <Button color="primary" fullWidth onClick={this._show}>
-                                            Show
+                                            {t(L, "words.show" )}
                                         </Button>
                                 }
                             </DialogContentText>
@@ -83,7 +88,7 @@ class AccountDialogBackup extends React.Component {
                 }
                 <DialogActions>
                     <Button onClick={(event) => {this._on_close(event, account)}}  color="primary" autoFocus>
-                        Close
+                        {t(L, "words.close" )}
                     </Button>
                 </DialogActions>
             </Dialog>

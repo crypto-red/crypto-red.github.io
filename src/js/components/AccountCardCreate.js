@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -57,23 +60,23 @@ class AccountCardCreate extends React.Component {
             <Card className={classes.accountCard}  variant="outlined" onClick={(event) => {this.props.onCreate(event)}}>
                 <CardHeader
                     avatar={
-                        <Avatar aria-label="Acronyme" className={classes.avatar}>
+                        <Avatar aria-label="Acronym" className={classes.avatar}>
                             <Jdenticon size="48" value="_new" />
                         </Avatar>
                     }
-                    title={"New account"}
-                    subheader={"Today"}
+                    title={t(L, "sentences.new account", {}, {FLC: true})}
+                    subheader={t(L, "words.today", {}, {FLC: true})}
                 />
                 <CardContent>
                     <h2 className={classes.createNewCardActionArea}>
-                        No balance
+                        {t(L, "sentences.no balance", {}, {FLC: true})}
                     </h2>
                 </CardContent>
                 <CardActions className={classes.cardAction}>
                     <Button startIcon={<AddIcon />}
                             className={classes.floatRight}
                             color="primary">
-                        New
+                        {t(L, "words.new", {})}
                     </Button>
                 </CardActions>
             </Card>

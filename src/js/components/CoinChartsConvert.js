@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -153,13 +156,10 @@ class CoinChartsConvert extends React.Component {
                                 className={classes.noTopMargin}
                                 margin="normal"
                                 id="date-picker-dialog"
-                                label="Date picker"
+                                label={t(L, "sentences.pick a date")}
                                 format={date_format}
                                 value={_selected_date}
                                 onChange={this._handle_selected_date_change}
-                                KeyboardButtonProps={{
-                                    "aria-label": "change date",
-                                }}
                             />
                         </MuiPickersUtilsProvider>
                         <Button className={classes.buyButton}

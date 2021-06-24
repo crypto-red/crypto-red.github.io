@@ -1,5 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
+
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Fade from "@material-ui/core/Fade";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -215,7 +219,7 @@ class AppToolbar extends React.Component {
             this.setState({_look_much_jamy: true}, () => {
 
                 actions.jamy_update("suspicious", 7000);
-                actions.trigger_snackbar("The longer you look, the shiner I get.");
+                actions.trigger_snackbar(t(L, "sentences.the longer you look the shiner i get"));
                 setTimeout(() => {
 
                     if(this.state._jamy_mouse_hover) {
@@ -223,7 +227,7 @@ class AppToolbar extends React.Component {
                         this.setState({_look_very_much_jamy: true}, () => {
 
                             actions.jamy_update("happy", 4000);
-                            actions.trigger_snackbar("Take a picture, it last longer.");
+                            actions.trigger_snackbar(t(L, "sentences.take a picture it last longer"));
                         });
                     }
 
@@ -239,7 +243,7 @@ class AppToolbar extends React.Component {
             this.setState({_click_much_jamy: true}, () => {
 
                 actions.jamy_update("angry", 6000);
-                actions.trigger_snackbar("Stop bitchslapping me!");
+                actions.trigger_snackbar(t(L, "sentences.stop bitchslapping me"));
                 setTimeout(() => {
 
                     this.setState({_click_much_jamy: false});
@@ -261,7 +265,7 @@ class AppToolbar extends React.Component {
 
     render() {
 
-        const { classes, pathname, know_if_logged, know_the_settings, _look_much_jamy, _look_very_much_jamy, _click_much_jamy, _swipeable_app_drawer_open, _account_menu_anchor_element, logged_account, panic_mode, jamy_state_of_mind, jamy_enabled } = this.state;
+        const { classes, pathname, know_if_logged, know_the_settings, _swipeable_app_drawer_open, _account_menu_anchor_element, logged_account, panic_mode, jamy_state_of_mind, jamy_enabled } = this.state;
 
         return (
             <div>
@@ -291,7 +295,7 @@ class AppToolbar extends React.Component {
                                     know_the_settings ?
                                         jamy_enabled ?
                                             <Tooltip
-                                                title={_click_much_jamy ? "Stop bitchslapping me!": _look_very_much_jamy ? "Take a picture, it last longer." : _look_much_jamy ? "The longer you look, the shiner I get.": "Hey, I am Jamy."}
+                                                title={t(L, "sentences.hey i am jamy")}
                                                 aria-label="Jamy"
                                                 onMouseEnter={this._handle_jamy_mouse_enter}
                                                 onMouseLeave={this._handle_jamy_mouse_leave}
@@ -309,8 +313,8 @@ class AppToolbar extends React.Component {
                         <Fade in={know_if_logged}>
                             {
                                 logged_account ?
-                                    <Tooltip title={logged_account.name} aria-label="Account's name">
-                                        <Avatar aria-label="Acronym"
+                                    <Tooltip title={logged_account.name} aria-label={t(L, "sentences.account name")}>
+                                        <Avatar aria-label={t(L, "words.acronym")}
                                                 variant="square"
                                                 className={classes.avatar}
                                                 onClick={this._open_account_menu}>
@@ -319,7 +323,6 @@ class AppToolbar extends React.Component {
                                     </Tooltip> :
                                     <IconButton className={know_if_logged ? classes.accountButton: classes.accountButtonHidden}
                                                 edge="end"
-                                                aria-label="account of current user"
                                                 aria-haspopup="true"
                                                 color="inherit"
                                                 onClick={this._open_account_menu}>
@@ -337,13 +340,13 @@ class AppToolbar extends React.Component {
                                 <ListItemIcon>
                                     <AccountCircleIcon fontSize="small" />
                                 </ListItemIcon>
-                                <ListItemText primary="All accounts"/>
+                                <ListItemText primary={t(L, "sentences.all accounts")}/>
                             </MenuItem>
                             <MenuItem onClick={this._open_settings}>
                                 <ListItemIcon>
                                     <SettingsIcon fontSize="small" />
                                 </ListItemIcon>
-                                <ListItemText primary="Settings"/>
+                                <ListItemText primary={t(L, "words.settings", {}, {FLC: true})}/>
                             </MenuItem>
                             {
                                 Boolean(panic_mode) ?
@@ -353,7 +356,7 @@ class AppToolbar extends React.Component {
                                         <ListItemIcon>
                                             <SecurityIcon fontSize="small" />
                                         </ListItemIcon>
-                                        <ListItemText primary="RESET"/>
+                                        <ListItemText primary={t(L, "words.settings", {}, {TUC: true})}/>
                                     </MenuItem>
                                 </div>: null
                             }

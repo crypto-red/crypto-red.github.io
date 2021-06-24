@@ -1,6 +1,8 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+import { t } from "../utils/t";
+
 import Container from "@material-ui/core/Container";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -39,6 +41,7 @@ class Settings extends React.Component {
             _locales: LOCALES,
             _currency_countries: CURRENCY_COUNTRIES,
             _selected_locales_code: null,
+            _language: document.documentElement.lang,
             _selected_currency: null,
             _sfx_enabled: true,
             _jamy_enabled: true,
@@ -57,10 +60,11 @@ class Settings extends React.Component {
         const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: true;
         const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: true;
         const _selected_locales_code = settings.locales || "en-US";
+        const _language = _selected_locales_code.split("-")[0];
         const _selected_currency = settings.currency || "USD";
         const _panic_mode = settings.panic || false;
 
-        this.setState({ _sfx_enabled, _jamy_enabled, _selected_locales_code, _selected_currency, _panic_mode });
+        this.setState({ _sfx_enabled, _jamy_enabled, _selected_locales_code, _language, _selected_currency, _panic_mode });
     };
 
     _update_settings() {
@@ -71,7 +75,9 @@ class Settings extends React.Component {
 
     _on_settings_changed = () => {
 
-        actions.trigger_snackbar("Settings changed");
+        const { _language } = this.state;
+
+        actions.trigger_snackbar(t(_language, "pages.settings.settings_changed"));
         actions.trigger_settings_update();
     }
 
@@ -80,7 +86,7 @@ class Settings extends React.Component {
         if(value) {
 
             const settings = { locales: value.original.code };
-            this.setState({_selected_locales_code: value.original.code});
+            this.setState({_selected_locales_code: value.original.code, _language: value.original.code.split("-")[0]});
             api.set_settings(settings, this._on_settings_changed);
             actions.trigger_sfx("ui_lock");
             actions.jamy_update("happy");
@@ -180,7 +186,7 @@ class Settings extends React.Component {
 
     render() {
 
-        const { _locales, _sfx_enabled, _jamy_enabled, _selected_currency, _currency_countries, _selected_locales_code, _panic_mode, classes } = this.state;
+        const { _locales, _language, _sfx_enabled, _jamy_enabled, _selected_currency, _currency_countries, _selected_locales_code, _panic_mode, classes } = this.state;
 
         let locales = _locales[0];
 
@@ -201,7 +207,7 @@ class Settings extends React.Component {
                 <Container maxWidth="sm" className={classes.container}>
                     <Fade in timeout={300*1}>
                         <Card>
-                            <CardHeader title="Language" />
+                            <CardHeader title={t(_language, "pages.settings.language")} />
                             <CardContent>
                                 <Autocomplete
                                     fullWidth
@@ -212,14 +218,14 @@ class Settings extends React.Component {
                                     options={_locales}
                                     getOptionLabel={(option) => option.name || option.original.name}
                                     renderOption={(option) => <span dangerouslySetInnerHTML={{ __html: option.string }}></span>}
-                                    renderInput={(params) => <TextField {...params} label="Locales" margin="normal" />}
+                                    renderInput={(params) => <TextField {...params} label={t(_language, "words.locales", {}, {FLC: true})} margin="normal" />}
                                 />
                             </CardContent>
                         </Card>
                     </Fade>
                     <Fade in timeout={300*2}>
                         <Card className={classes.marginTop}>
-                            <CardHeader title="Currency" />
+                            <CardHeader title={t(_language, "pages.settings.currency")} />
                             <CardContent>
                                 <Autocomplete
                                     fullWidth
@@ -230,19 +236,19 @@ class Settings extends React.Component {
                                     options={currencies}
                                     getOptionLabel={(option) => option.original || option}
                                     renderOption={(option) => <span dangerouslySetInnerHTML={{ __html: option.string }}></span>}
-                                    renderInput={(params) => <TextField {...params} label="Currency" margin="normal" />}
+                                    renderInput={(params) => <TextField {...params} label={t(_language, "words.currency", {}, {FLC: true})} margin="normal" />}
                                 />
                             </CardContent>
                         </Card>
                     </Fade>
                     <Fade in timeout={300*3}>
                         <Card className={classes.marginTop}>
-                            <CardHeader title="Sounds" />
+                            <CardHeader title={t(_language, "pages.settings.sound")} />
                             <CardContent>
                                 <FormControlLabel
-                                    value="Show sound effects"
+                                    value={t(_language, "pages.settings.enable_sound_effects")}
                                     control={<Switch checked={_sfx_enabled} onChange={this._handle_sfx_enabled_switch_change} color="primary" />}
-                                    label="Enable sound effects"
+                                    label={t(_language, "pages.settings.enable_sound_effects")}
                                     labelPlacement="end"
                                 />
                             </CardContent>
@@ -250,26 +256,26 @@ class Settings extends React.Component {
                     </Fade>
                     <Fade in timeout={300*4}>
                         <Card className={classes.marginTop}>
-                            <CardHeader title="Superintendent" />
+                            <CardHeader title={t(_language, "pages.settings.superintendent")} />
                             <CardContent>
                                 <FormControlLabel
-                                    value="Enable the superintendent"
+                                    value={t(_language, "pages.settings.enable_the_superintendent")}
                                     control={<Switch checked={_jamy_enabled} onChange={this._handle_jamy_enabled_switch_change} color="primary" />}
-                                    label="Make Jamy active"
+                                    label={t(_language, "pages.settings.make_jamy_active")}
                                     labelPlacement="end"
                                 />
-                                <p>Jamy is responsible for the surveillance, judgement, and reaction of your actions as a user. He can't tell anyone what you are doing, but he is present if you enable him to be so.</p>
+                                <p>{t(_language, "pages.settings.description_of_jamy")}</p>
                             </CardContent>
                         </Card>
                     </Fade>
                     <Fade in timeout={300*5}>
                         <Card className={classes.marginTop}>
-                            <CardHeader title="Security" />
+                            <CardHeader title={t(_language, "pages.settings.security")} />
                             <CardContent>
                                 <FormControlLabel
-                                    value="Show panic mode"
+                                    value={t(_language, "pages.settings.enable_reset_option_in_menu")}
                                     control={<Switch checked={_panic_mode} onChange={this._handle_panic_switch_change} color="primary" />}
-                                    label="Enable reset menu option"
+                                    label={t(_language, "pages.settings.enable_reset_option_in_menu")}
                                     labelPlacement="end"
                                 />
                             </CardContent>

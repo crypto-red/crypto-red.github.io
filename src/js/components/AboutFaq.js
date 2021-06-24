@@ -11,6 +11,9 @@ import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 
 const styles = theme => ({
@@ -58,46 +61,7 @@ const styles = theme => ({
     }
 });
 
-const VIEWS = {
-    organization: {
-        name: "Orgnaization",
-        qa: [
-            {question: "Who is crypto.red?", answer: "Crypto.red is an open-source project coded by a single programmer from scratch (which is/was a bit of a mad developer and designer) who realised one of his mission was to provide something life-hackers would love. He also make sure to maintain a good networking with non-dangerous hackers and bring other open-source projects money earned."},
-            {question: "Who can contribute to this project?", answer: "Anyone, see https://github.com/crypto-red to get involved."},
-            {question: "Who decide what to code?", answer: "Our team which is on GitHub (https://github.com/crypto-red) must agree together, meanwhile, one may duplicate the project for its own need."},
-            {question: "Who have funded this project?", answer: "Anonymous."},
-        ]
-    },
-    security: {
-        name: "Security",
-        qa: [
-            {question: "How does my coin are stored?", answer: "Your coin are stored on the behalf of your seed (private key in particular), which can only be used with the access to the blockchain respectively to the wallet in question. Many exchanges keep your coins when you're not withdrawing them, we do not."},
-            {question: "How does my data are encrypted?", answer: "Your data are encrypted trough Triplesec, see (https://keybase.io/triplesec) to get more information."},
-            {question: "Where does my data are stored?", answer: "Your seed (you're whole account) can generate all your crypto wallet it is stored in clear on your computer (with PouchDB on your browser) in persistent mode when logged and encrypted in non-persistent mode or when logged out."},
-            {question: "What if I loose my seed?", answer: "If you loose your seed, (You should write it down on paper) you can only get it back if you're account has not be cleared from your browser, you may need to log in or not."},
-            {question: "What if I loose my password?", answer: "No worries, only your seed is needed to get back everything."},
-            {question: "Can I print my password / seed?", answer: "When you're using the persistent mode for connection or if you print / store a document on your computer or printer, it may mostly last forever even if you format your storing device."},
-        ]
-    },
-    privacy: {
-        name: "Privacy",
-        qa: [
-            {question: "What is public on my account?", answer: "Your public key (blockchain address). You should not link your identity with your wallet's address if you want a complete privacy. You can also use a crypto mixer to obfuscate the source of your funding on a new wallet."}
-        ]
-    },
-    fees: {
-        name: "Fees",
-        qa: [
-            {question: "What are the fees of using it?", answer: "We have an affiliate link for selling and trading cryptocurrency, theses partners rewards us with a part of their profit, meanwhile they compare where you can buy and trade cryptocurrency at the best exchange rate without increasing the operation cost for you."}
-        ]
-    },
-    usage: {
-        name: "Usage",
-        qa: [
-            {question: "Should I use it if it can present a risk for my fund?", answer: "You should download a stable version from torrent download if you want to use it with a lot of money on it."}
-        ],
-    }
-};
+const VIEWS = t(L, "components.about_faq");
 
 let VIEW_NAMES = [];
 

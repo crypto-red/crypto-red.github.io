@@ -1,5 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
+
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Container from "@material-ui/core/Container";
 import Fade from "@material-ui/core/Fade";
 import Card from "@material-ui/core/Card";
@@ -93,20 +97,20 @@ class CoinReceive extends React.Component {
             clipboard.writeText(address).then(
                 function () {
 
-                    actions.trigger_snackbar("Address successfully copied.");
+                    actions.trigger_snackbar(t(L, "sentences.address successfully copied"));
                     actions.trigger_sfx("navigation_forward-selection");
                     actions.jamy_update("happy");
                 },
                 function () {
 
-                    actions.trigger_snackbar("Cannot copy this address.");
+                    actions.trigger_snackbar(t(L, "sentences.cannot copy this address"));
                     actions.trigger_sfx("navigation_backward-selection");
                     actions.jamy_update("annoyed");
                 }
             );
         }else {
 
-            actions.trigger_snackbar("Cannot copy \"null\" address");
+            actions.trigger_snackbar(t(L, "sentences.cannot copy a null address"));
             actions.trigger_sfx("navigation_backward-selection");
             actions.jamy_update("annoyed");
         }
@@ -128,7 +132,7 @@ class CoinReceive extends React.Component {
                     <Fade in>
                         <Card>
                             <CardHeader
-                                title="Receive"
+                                title={t(L, "words.receive", {}, {FLC: true})}
                             />
                             {
                                 _address ?
@@ -156,7 +160,7 @@ class CoinReceive extends React.Component {
                                                 endAdornment={
                                                     <InputAdornment position="end">
                                                         <IconButton
-                                                            aria-label="Copy address"
+                                                            aria-label={t(L, "sentences.copy address")}
                                                             onClick={(event) => this._copy_address(event, _address)}
                                                             edge="end"
                                                         >
@@ -169,7 +173,7 @@ class CoinReceive extends React.Component {
                                     </CardContent> :
                                     <CardContent>
                                         <Button fullWidth color="primary" variant="contained" onClick={this._open_accounts_page}>
-                                            Open an account
+                                            {t(L, "sentences.open an account")}
                                         </Button>
                                     </CardContent>
                                 }

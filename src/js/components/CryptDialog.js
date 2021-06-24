@@ -2,8 +2,10 @@ import React from "react";
 import Link from "react-router-dom/Link";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Button from "@material-ui/core/Button";
-import Fade from "@material-ui/core/Fade";
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -204,7 +206,7 @@ class CryptDialog extends React.Component {
             if(_view_name_index === 0) {
 
                 actions.jamy_update("flirty");
-                actions.trigger_snackbar("Warning, do you want to encrypt a message to yourself?");
+                actions.trigger_snackbar(t(L, "components.crypt_dialog.warning_encrypt_to_yourself"));
             }else {
 
                 actions.jamy_update("happy");
@@ -242,18 +244,18 @@ class CryptDialog extends React.Component {
             clipboard.writeText(text).then(
                 function () {
 
-                    actions.trigger_snackbar("Text successfully copied.");
+                    actions.trigger_snackbar(t(L, "sentences.text successfully copied"));
                     actions.trigger_sfx("navigation_forward-selection");
                 },
                 function () {
 
-                    actions.trigger_snackbar("Cannot copy this text.");
+                    actions.trigger_snackbar(t(L, "sentences.cannot copy this text"));
                     actions.trigger_sfx("navigation_backward-selection");
                 }
             );
         }else {
 
-            actions.trigger_snackbar("Cannot copy \"null\" text.");
+            actions.trigger_snackbar(t(L, "sentences.cannot copy non-existent text"));
             actions.trigger_sfx("navigation_backward-selection");
         }
     };
@@ -273,7 +275,11 @@ class CryptDialog extends React.Component {
                     aria-labelledby="crypto-text-result-dialog-title"
                     aria-describedby="crypto-text-result-dialog-description"
                 >
-                    <DialogTitle id="crypto-text-result-dialog-title">{_view_name_index ? "Decrypt": "Encrypt"} text ({_result_text.length} length) result</DialogTitle>
+                    <DialogTitle id="crypto-text-result-dialog-title">
+                        {_view_name_index ?
+                            t(L, "components.crypt_dialog.result_dialog.decrypt_title", {length: _result_text.length}):
+                            t(L, "components.crypt_dialog.result_dialog.encrypt_title", {length: _result_text.length})}
+                    </DialogTitle>
                     <DialogContent dividers className={classes.dialogBody}>
                         <DialogContentText id="crypto-text-result-dialog-description" className={classes.breakAllWords}>
                             {_result_text}
@@ -281,10 +287,10 @@ class CryptDialog extends React.Component {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={(event) => {this._handle_result_text_copy(event, _result_text)}} color="primary">
-                            copy
+                            {t(L, "words.copy")}
                         </Button>
                         <Button onClick={this._handle_result_dialog_cancel} color="primary" autoFocus>
-                            close
+                            {t(L, "words.ok")}
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -297,10 +303,12 @@ class CryptDialog extends React.Component {
                     aria-labelledby="crypto-text-autofill-dialog-title"
                     aria-describedby="crypto-text-autofill-dialog-description"
                 >
-                    <DialogTitle id="crypto-text-autofill-dialog-title">Autofill keys</DialogTitle>
+                    <DialogTitle id="crypto-text-autofill-dialog-title">
+                        {t(L, "components.crypt_dialog.autofill_dialog.title")}
+                    </DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            Select from which coin the public and private keys should be generated.
+                            {t(L, "components.crypt_dialog.autofill_dialog.body")}
                         </DialogContentText>
                         <Divider />
                         <List component="nav" aria-label="Crypto keypair autofill list">
@@ -312,7 +320,7 @@ class CryptDialog extends React.Component {
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={this._handle_autofill_dialog_cancel} color="primary" autoFocus>
-                            close
+                            {t(L, "words.close")}
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -324,7 +332,7 @@ class CryptDialog extends React.Component {
                     aria-labelledby="crypto-text-dialog-title"
                     aria-describedby="crypto-text-dialog-description"
                 >
-                    <DialogTitle id="crypto-text-dialog-title">{_view_name_index ? "Decrypt": "Encrypt"} text using NaCl</DialogTitle>
+                    <DialogTitle id="crypto-text-dialog-title">{_view_name_index ? t(L, "components.crypt_dialog.title_decrypt"): t(L, "components.crypt_dialog.title_encrypt")}</DialogTitle>
                     <div className={classes.dialogBody}>
                         <Tabs
                             value={_view_name_index}
@@ -339,16 +347,16 @@ class CryptDialog extends React.Component {
                         </Tabs>
                         <DialogContent className={classes.dialogBody} dividers>
                             <DialogContentText id="crypto-text-dialog-description">
-                                You have to provide either a public key to encrypt a message (Someone else public key) or both the public and private key (Your key pair) to decrypt the message. <Link to={"/about/wiki/crypt"} onClick={(event) => {this._on_close(event)}}>See why...</Link>
+                                {t(L, "components.crypt_dialog.body")} <Link to={"/about/wiki/crypt"} onClick={(event) => {this._on_close(event)}}>{t(L, "components.crypt_dialog.why_link_text")}</Link>
                             </DialogContentText>
                             <form noValidate autoComplete="off">
                                 <TextField
                                     onChange={this._handle_message_input_change}
                                     value={_message_input}
                                     error={_is_message_input_error}
-                                    helperText={( _is_message_input_error) ? "Something is incorrect": ""}
+                                    helperText={_is_message_input_error ? t(L, "sentences.something is incorrect"): ""}
                                     id="message"
-                                    label="Message"
+                                    label={t(L, "words.message", {}, {FLC: true})}
                                     type="text"
                                     fullWidth
                                 />
@@ -356,9 +364,9 @@ class CryptDialog extends React.Component {
                                     onChange={this._handle_public_key_input_change}
                                     value={_public_key_input}
                                     error={_is_public_key_input_error}
-                                    helperText={( _is_public_key_input_error) ? "Something is incorrect": ""}
+                                    helperText={_is_public_key_input_error ? t(L, "sentences.something is incorrect"): ""}
                                     id="public-key"
-                                    label="Public key"
+                                    label={t(L, "words.public key", {}, {FLC: true})}
                                     type="text"
                                     fullWidth
                                 />
@@ -367,9 +375,9 @@ class CryptDialog extends React.Component {
                                         onChange={this._handle_private_key_input_change}
                                         value={_private_key_input}
                                         error={_is_private_key_input_error}
-                                        helperText={( _is_private_key_input_error) ? "Something is incorrect": ""}
+                                        helperText={( _is_private_key_input_error) ? t(L, "sentences.something is incorrect"): ""}
                                         id="private-key"
-                                        label="Private key"
+                                        label={t(L, "words.private key", {}, {FLC: true})}
                                         type="password"
                                         fullWidth
                                     />
@@ -378,13 +386,13 @@ class CryptDialog extends React.Component {
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={(event) => {this._on_autofill_fields(event)}} color="primary" disabled={!logged_account} autoFocus>
-                                autofill key{_view_name_index === 1 ? "s": ""}
+                                {_view_name_index ? t(L, "components.crypt_dialog.autofill_keys"): t(L, "components.crypt_dialog.autofill_key")}
                             </Button>
                             <Button onClick={(event) => {this._on_show_result(event)}} color="primary" disabled={_is_message_input_error || _is_public_key_input_error || _is_private_key_input_error}>
-                                show
+                                {t(L, "words.show")}
                             </Button>
                             <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                                cancel
+                                {t(L, "words.cancel")}
                             </Button>
                         </DialogActions>
                     </div>

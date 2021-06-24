@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -135,26 +138,26 @@ class AddressDialog extends React.Component {
                 {
                     (_address && _public_key && _private_key) ?
                         <div className={classes.dialogBody}>
-                            <DialogTitle id="show-address-and-keys-dialog-title" className={classes.breakWord}>Coin's ID {coin_id}</DialogTitle>
+                            <DialogTitle id="show-address-and-keys-dialog-title" className={classes.breakWord}>{t(L, "components.address_dialog.title", {coin_id})}</DialogTitle>
                             <DialogContent className={classes.dialogBody}>
                                 <DialogContentText id="show-address-and-keys-dialog-description">
                                     <Table>
                                         <Table aria-label="main-info-table">
                                             <TableBody>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>Address</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t(L, "words.address", {}, {FLC: true})}</TableCell>
                                                     <TableCell align="right">{_address}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>Public key</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t(L, "words.public key", {}, {FLC: true})}</TableCell>
                                                     <TableCell align="right">{_public_key}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>Private key</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t(L, "words.private key", {}, {FLC: true})}</TableCell>
                                                     <TableCell align="right">{_private_key}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>Crypto id</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t(L, "words.crypto id", {}, {FLC: true})}</TableCell>
                                                     <TableCell align="right" className={classes.underline} onClick={(event) => {this._open_link(event, "/coins/" + coin_id + "/transactions")}}>{coin_id}</TableCell>
                                                 </TableRow>
                                             </TableBody>
@@ -167,7 +170,7 @@ class AddressDialog extends React.Component {
 
                 <DialogActions>
                     <Button onClick={(event) => {this._on_cancel(event, coin_id)}} color="primary" autoFocus>
-                        Cancel
+                        {t(L, "words.close")}
                     </Button>
                 </DialogActions>
             </Dialog>

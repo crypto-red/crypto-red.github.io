@@ -420,7 +420,7 @@ class CoinChartsChart extends React.Component {
                                                            type={"number"}
                                                            tickFormatter={bitcoin => this._price_formatter(bitcoin, true, false)}/>
                                                    <Tooltip content={data => this._custom_tooltip(data)}/>
-                                                    <Area type="monotone" yAxisId="right" stroke="#c6c6d9" fill="url(#colorBtc)" dataKey="bitcoin" strokeLinecap="round" dot={false} strokeWidth={1.5} activeDot={{ strokeWidth: 0, r: 2.5 }}/>
+                                                    <Area type="monotone" yAxisId="right" stroke="#c6c6d9" fill="url(#colorBtc)" dataKey="bitcoin" strokeLinecap="round" dot={false} strokeWidth={1.5} activeDot={{ strokeWidth: 0, r: 3 }}/>
                                                     <Area type="monotone" yAxisId="left" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={2.5} activeDot={<ChartDot dotColor={"#131162"}/>}/>
                                                 </AreaChart>
                                             </ResponsiveContainer>:

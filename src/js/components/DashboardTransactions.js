@@ -1,7 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import LinearProgress from "@material-ui/core/LinearProgress";
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -203,7 +205,7 @@ class DashboardTransactions extends React.Component {
                         <div className={classes.cardContainer}>
                             <Fade in>
                                 <Card className={classes.numberCard}>
-                                    <LinearProgress color="primary" variant="determinate" className={loaded_percent === 100 ? classes.linearProgressHidden: classes.linearProgressVisible} value={loaded_percent}/>
+
                                     <CardHeader title="Transactions" />
                                     {
                                         loaded_percent === 100 ?
@@ -227,7 +229,7 @@ class DashboardTransactions extends React.Component {
                                                     <CardContent className={classes.noTransactionCardContent}>
                                                         <img className={classes.noTransactionImage}
                                                              src="/src/images/transfer.svg"/>
-                                                        <p>You've not made any transactions yet, transactions will show up here.</p>
+                                                        <p>{t(L, "sentences.no transactions maid")}</p>
                                                     </CardContent>
                                                 }
                                             </div>:

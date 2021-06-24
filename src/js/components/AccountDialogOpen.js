@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Button from "@material-ui/core/Button";
 import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -78,7 +81,7 @@ class AccountDialogOpen extends React.Component {
         if(_persistent) {
 
             actions.jamy_update("flirty", 3000);
-            actions.trigger_snackbar("WARNING: Your password will be in your browser.", 3500);
+            actions.trigger_snackbar(t(L, "components.account_dialog_open.warning_password_stored_browser"), 3500);
         }
     };
 
@@ -118,35 +121,35 @@ class AccountDialogOpen extends React.Component {
                             <DialogTitle id="open-account-dialog-title">Open {account.name}?</DialogTitle>
                             <DialogContent>
                                 <DialogContentText id="open-account-dialog-description">
-                                    Open <b>{account.name}</b> account, wallets, and notes temporarily.
+                                    {t(L, "components.account_dialog_open.open_account", {account_name: account.name})}
                                     <br />
-                                    Please Type in the password of the account to log in.
+                                    {t(L, "components.account_dialog_open.write_password")}
                                 </DialogContentText>
                                 <TextField
                                     onChange={this._handle_account_password_input_change}
                                     onKeyDown={this._handle_key_down_input}
                                     value={_account_password_input}
                                     error={error}
-                                    helperText={error ? "Wrong password": ""}
+                                    helperText={error ? t(L, "sentences.wrong password"): ""}
                                     autoFocus
                                     id="password"
-                                    label="Password"
+                                    label={t(L, "words.password")}
                                     type="password"
                                     fullWidth
                                 />
                                 <FormControlLabel
                                     control={<Checkbox checked={_persistent} onChange={this._handle_persistent_checkbox_change} name="persistent" />}
-                                    label="Stay logged"
+                                    label={t(L, "sentences.stay logged")}
                                 />
                             </DialogContent>
                         </div>: null
                     }
                     <DialogActions>
                         <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                            Cancel
+                            {t(L, "words.cancel")}
                         </Button>
                         <Button onClick={(event) => {this._on_complete(event)}} color="primary" autoFocus>
-                            Open
+                            {t(L, "words.open")}
                         </Button>
                     </DialogActions>
                 </Dialog>

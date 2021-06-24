@@ -1,5 +1,9 @@
 import React from "react";
 import { withStyles } from '@material-ui/core/styles'
+
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Fade from "@material-ui/core/Fade";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -117,7 +121,7 @@ class CoinBalance extends React.Component {
                     <Fade in>
                         <Card>
                             <CardHeader
-                                title="Balance"
+                                title={t(L, "words.balance", {}, {FLC: true})}
                             />
 
                             <CardContent>
@@ -134,8 +138,8 @@ class CoinBalance extends React.Component {
                                                 <div>
                                                     {_coin_balance === 0 ?
                                                         <div className={classes.center}>
-                                                            <h2>You need to add fund to this account.</h2>
-                                                            <h4>Just do it trough the link in the menu.</h4>
+                                                            <h2>{t(L, "sentences.you need to add fund to this account")}</h2>
+                                                            <h4>{t(L, "sentences.just do it trough the link in the menu")}</h4>
                                                         </div>
                                                         :
                                                         <div className={classes.center}>
@@ -150,7 +154,7 @@ class CoinBalance extends React.Component {
                                     </div>:
                                     <div>
                                         <Button fullWidth color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/accounts")}}>
-                                            Open an account
+                                            {t(L, "sentences.open an account")}
                                         </Button>
                                     </div>
                                 }

@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -211,7 +214,7 @@ class Transaction extends React.Component {
                                     {
                                         typeof _full_transaction.confirmations !== "undefined"?
                                             _full_transaction.confirmations <= 6 ?
-                                                " (Unconfirmed)"
+                                                t(L, "components.transaction.unconfirmed")
                                                 : null
                                             : null
                                     }

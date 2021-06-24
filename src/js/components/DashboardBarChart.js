@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from "recharts";
 
 import Card from "@material-ui/core/Card";
@@ -64,7 +67,7 @@ class DashboardBarChart extends React.Component {
             <div className={classes.cardContainer}>
                 <Fade in>
                     <Card className={classes.performanceCard}>
-                        <CardHeader title="1 Year performance" />
+                        <CardHeader title={t(L, "components.dashboard_bar_chart.title")} />
                         <CardContent>
                             {
                                 data_bar.length ?

@@ -1,6 +1,8 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
-import { Link } from "react-router-dom";
+
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -140,7 +142,7 @@ class TransactionDialog extends React.Component {
                 {
                     Boolean(transaction) ?
                         <div className={classes.dialogBody}>
-                            <DialogTitle id="show-transaction-memo-dialog-title" className={classes.breakWord}>Transaction's ID {transaction.id}</DialogTitle>
+                            <DialogTitle id="show-transaction-memo-dialog-title" className={classes.breakWord}>{t(L, "components.transaction_dialog.title", {transaction_id: transaction.id})}</DialogTitle>
                             <DialogContent className={classes.dialogBody}>
                                 <DialogContentText id="show-transaction-memo-dialog-description">
                                     <Table>

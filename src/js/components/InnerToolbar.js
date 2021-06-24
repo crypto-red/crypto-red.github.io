@@ -2,6 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Fade from "@material-ui/core/Fade";
 
 const styles = theme => ({
@@ -105,7 +108,7 @@ class InnerToolbar extends React.Component {
             <div className={classes.innerToolbar}>
                 <span className={classes.innerToolbarTextWrapper}>
                     <span className={classes.innerToolbarText}>
-                        <Fade in={know_if_logged} timeout={0}><Link className={classes.link} to={logged_account ? "/": "/"}>{know_if_logged ? logged_account ? logged_account.name: "Guest": ""} </Link></Fade>
+                        <Fade in={know_if_logged} timeout={0}><Link className={classes.link} to={logged_account ? "/": "/"}>{know_if_logged ? logged_account ? logged_account.name: t(L, "components.inner_toolbar.guest"): ""} </Link></Fade>
                         {pathame_items}
                     </span>
                 </span>

@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -93,7 +96,7 @@ class AccountDialogDelete extends React.Component {
                                 onKeyDown={this._handle_key_down_input}
                                 autoFocus
                                 id="name"
-                                label="Name"
+                                label={t(L, "words.name", {}, {FLC: true})}
                                 type="text"
                                 fullWidth
                             />

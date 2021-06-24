@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Container from "@material-ui/core/Container";
 import Fade from "@material-ui/core/Fade";
 import Card from "@material-ui/core/Card";
@@ -191,7 +194,7 @@ class CoinSend extends React.Component {
 
     _handle_on_scanner_error = () => {
 
-        actions.trigger_snackbar("Cannot load QR Code scanner");
+        actions.trigger_snackbar(t(L, "sentences.cannot load QR code scanner"));
         actions.jamy_update("sad");
         this._close_scanner_dialog();
     };
@@ -270,7 +273,7 @@ class CoinSend extends React.Component {
 
         if(!error) {
 
-            actions.trigger_snackbar("Transaction sent");
+            actions.trigger_snackbar(t(L, "sentences.transaction sent"));
             actions.trigger_sfx("hero_decorative-celebration-03");
             actions.jamy_update("happy");
             this._clear_form();
@@ -362,7 +365,7 @@ class CoinSend extends React.Component {
                     aria-labelledby="qr-code-scanner-dialog-title"
                     aria-describedby="qr-code-scanner-dialog-description"
                 >
-                    <DialogTitle id="qr-code-scanner-dialog-title">Scan an address</DialogTitle>
+                    <DialogTitle id="qr-code-scanner-dialog-title">{t(L, "sentences.scan an address")}</DialogTitle>
                     <DialogContent className={classes.dialogContent}>
                         <QrReader
                             delay={300}
@@ -376,7 +379,7 @@ class CoinSend extends React.Component {
                     <Fade in>
                         <Card>
                             <CardHeader
-                                title="Send"
+                                title={t(L, "words.send", {}, {FLC: true})}
                             />
                             {
                                 logged_account ?
@@ -391,9 +394,9 @@ class CoinSend extends React.Component {
                                                     onChange={this._handle_send_address_input_change}
                                                     value={_send_address_input}
                                                     error={_send_address_input_error}
-                                                    helperText={_send_address_input_error ? "Incorrect address": ""}
+                                                    helperText={_send_address_input_error ? t(L, "sentences.incorrect address"): ""}
                                                     id="address"
-                                                    label="Address"
+                                                    label={t(L, "words.address", {}, {FLC: true})}
                                                     type="text"
                                                     fullWidth
                                                 />
@@ -402,9 +405,9 @@ class CoinSend extends React.Component {
                                                     onChange={this._handle_send_amount_input_change}
                                                     value={_send_amount_input}
                                                     error={_send_amount_input_error}
-                                                    helperText={_send_amount_input_error ? "Incorrect amount": ""}
+                                                    helperText={_send_amount_input_error ? t(L, "sentences.incorrect amount"): ""}
                                                     id="amount"
-                                                    label="Amount"
+                                                    label={t(L, "words.amount", {}, {FLC: true})}
                                                     type="number"
                                                     fullWidth
                                                 />
@@ -413,21 +416,21 @@ class CoinSend extends React.Component {
                                                     onChange={this._handle_send_message_input_change}
                                                     value={_send_message_input}
                                                     error={_send_message_input_error}
-                                                    helperText={_send_message_input_error ? "Incorrect message": ""}
+                                                    helperText={_send_message_input_error ? t(L, "sentences.incorrect message"): ""}
                                                     disabled={_send_transaction_info.max_message_length === 0}
                                                     id="message"
-                                                    label="Message"
+                                                    label={t(L, "words.message", {}, {FLC: true})}
                                                     type="text"
                                                     multiline
                                                     fullWidth
                                                 />
-                                                <Button fullWidth variant="contained"  color="primary" onClick={this._confirm_and_open_coin_send_dialog}>SEND</Button>
+                                                <Button fullWidth variant="contained"  color="primary" onClick={this._confirm_and_open_coin_send_dialog}>{t(L, "words.send")}</Button>
                                             </form>: null
                                         }
                                     </CardContent>:
                                     <CardContent>
                                         <Button fullWidth color="primary" variant="contained" onClick={this._open_accounts_page}>
-                                            Open an account
+                                            {t(L, "sentences.open an account")}
                                         </Button>
                                     </CardContent>
                             }

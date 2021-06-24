@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Grid from "@material-ui/core/Grid";
 import Fab from "@material-ui/core/Fab";
 import Fade from "@material-ui/core/Fade";
@@ -163,7 +166,7 @@ class Accounts extends React.Component {
 
             this.setState({_is_account_dialog_open_open: false, _login_error: false, _logged_account: result});
             actions.trigger_login_update();
-            actions.trigger_snackbar("You're logged to a new account");
+            actions.trigger_snackbar(t(L, "pages.accounts.logged_new_account"));
             actions.trigger_sfx("hero_decorative-celebration-01");
             actions.jamy_update("happy");
 

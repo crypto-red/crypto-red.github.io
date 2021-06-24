@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
@@ -142,7 +145,6 @@ class AppTabs extends React.Component {
                     <Tabs value={_view_name_index}
                           onChange={this._handle_view_name_change}
                           variant="fullWidth"
-                          aria-label="icon label tabs example"
                           selectionFollowsFocus
                           className={classes.tabs}>
                         <Tab {...this._get_tab_props(0)} icon={<AccountBalanceIcon />} label={<span>BALANCE</span>} className={classes.tab}/>

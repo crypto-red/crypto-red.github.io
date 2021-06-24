@@ -2,6 +2,8 @@ import React from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { withStyles } from "@material-ui/core/styles";
 
+import { t } from "../utils/t";
+
 import { AutoRotatingCarousel, Slide } from "material-auto-rotating-carousel";
 import Snackbar from "@material-ui/core/Snackbar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -68,6 +70,7 @@ class Index extends React.Component {
             _jamy_state_of_mind: "shocked",
             _history: HISTORY,
             _unlisten: null,
+            _language: document.documentElement.lang,
             _logged_account: null,
             _snackbar_open: false,
             _snackbar_message: "",
@@ -124,12 +127,12 @@ class Index extends React.Component {
 
         setInterval(() => {
 
-            const { is_online } = this.state;
+            const { is_online, _language } = this.state;
             if(navigator.onLine !== is_online){
 
                 this.setState({is_online: navigator.onLine});
                 actions.trigger_snackbar(
-            navigator.onLine ? "We're online!": "We're offline!",
+            navigator.onLine ? t(_language, "sentences.online"): t(_language, "sentences.offline"),
                     navigator.onLine ? 3500: 10500
                 );
                 actions.jamy_update(navigator.onLine ? "happy": "sad");
@@ -179,16 +182,16 @@ class Index extends React.Component {
 
     _process_is_logged_result = (error, result) => {
 
-        const { _logged_once } = this.state;
+        const { _logged_once, _language } = this.state;
         const _logged_account = error ? {}: result;
 
         if(!_logged_account && !_logged_once){
 
-            actions.trigger_snackbar("Multi-cryptocurrency wallet in ReactJS.", 3000);
+            actions.trigger_snackbar(t(_language, "pages.index.first_snackbar"), 3000);
 
             setTimeout(() => {
 
-                actions.trigger_snackbar("Open-source, for free, for everyone, forever.", 4000);
+                actions.trigger_snackbar(t(_language, "pages.index.second_snackbar"), 4000);
             }, 4500);
 
         }
@@ -215,13 +218,13 @@ class Index extends React.Component {
         const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: true;
         const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: true;
         const _selected_locales_code = settings.locales || "en-US";
+        const _language = _selected_locales_code.split("-")[0];
         const _selected_currency = settings.currency || "USD";
         const _panic_mode = settings.panic || false;
         const _onboarding_enabled = typeof settings.onboarding !== "undefined" ? settings.onboarding: true;
-        const lang = _selected_locales_code.split("-")[0];
 
-        document.documentElement.lang = lang;
-        this.setState({ _onboarding_enabled, _sfx_enabled, _jamy_enabled, _selected_locales_code, _selected_currency, _panic_mode, _know_the_settings: true });
+        document.documentElement.lang = _language;
+        this.setState({ _onboarding_enabled, _sfx_enabled, _jamy_enabled, _selected_locales_code, _language, _selected_currency, _panic_mode, _know_the_settings: true });
     };
 
     _update_settings() {
@@ -290,7 +293,7 @@ class Index extends React.Component {
 
         const { pathname, classes } = this.state;
         const { _snackbar_open, _snackbar_message, _snackbar_auto_hide_duration } = this.state;
-        const { _onboarding_enabled, _onboarding_autoplay_enabled, _width } = this.state;
+        const { _onboarding_enabled, _onboarding_autoplay_enabled, _width, _language } = this.state;
         const { _logged_account, _panic_mode, _know_if_logged, _know_the_settings, _jamy_state_of_mind, _jamy_enabled } = this.state;
 
         // This is the custom router
@@ -304,7 +307,7 @@ class Index extends React.Component {
             about: <About pathname={pathname}></About>,
             dashboard: <Dashboard></Dashboard>,
             settings: <Settings></Settings>,
-            accounts: <Accounts></Accounts>,
+            accounts: <Accounts ></Accounts>,
             coin: <Coin pathname={pathname}></Coin>,
             coins: <Coins></Coins>
         };
@@ -331,83 +334,71 @@ class Index extends React.Component {
                     snack_bar_msg_lwc.includes("success") ? classes.snackbarSuccess:
                     classes.snackbar;
 
+        const L = _language;
+
         return (
-            <div className={classes.root}>
-                <CssBaseline />
-                <Snackbar
-                    className={classes.snackbar}
-                    open={_snackbar_open}
-                    anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "center",
-                    }}
-                    message={<div>
-                        {_jamy_enabled ? <img src={`/src/images/jamy-${_jamy_state_of_mind}.svg`} style={{height: 24, marginRight: 12, verticalAlign: "middle"}}/>: null}
-                        <span>{_snackbar_message.toString()}</span>
-                    </div>}
-                    autoHideDuration={_snackbar_auto_hide_duration}
-                    onClose={this._close_snackbar}
-                />
-                <div>
-                    <AutoRotatingCarousel
-                        label="Get started"
-                        onClose={this._close_carousel}
-                        onStart={this._accept_close_carousel}
-                        mobile={_width <= 960}
-                        open={_onboarding_enabled}
-                        autoplay={_onboarding_autoplay_enabled}
-                        interval={6000}
-                    >
-                        <Slide
-                            onClick={this._stop_carousel_autoplay}
-                            media={<img className={classes.carouselImage} src="/src/images/logo-transparent.png" />}
-                            mediaBackgroundStyle={{ backgroundColor: "#fff" }}
-                            style={{ backgroundColor: "#060f23" }}
-                            title="Welcome"
-                            subtitle="Wallet.crypto.red is an free, anonymous, and open-source software."
+            <div>
+                {_language ?
+
+                    <div className={classes.root}>
+                        <CssBaseline />
+                        <Snackbar
+                            className={classes.snackbar}
+                            open={_snackbar_open}
+                            anchorOrigin={{
+                                vertical: "top",
+                                horizontal: "center",
+                            }}
+                            message={<div>
+                                {_jamy_enabled ? <img src={`/src/images/jamy-${_jamy_state_of_mind}.svg`} style={{height: 24, marginRight: 12, verticalAlign: "middle"}}/>: null}
+                                <span>{_snackbar_message.toString()}</span>
+                            </div>}
+                            autoHideDuration={_snackbar_auto_hide_duration}
+                            onClose={this._close_snackbar}
                         />
-                        <Slide
-                            onClick={this._stop_carousel_autoplay}
-                            media={<img className={classes.carouselImage} src="/src/images/invest.svg" />}
-                            mediaBackgroundStyle={{ backgroundColor: "#fff" }}
-                            style={{ backgroundColor: "#060f23" }}
-                            title="Invest for free"
-                            subtitle="Investing has never be so simple while being open, just buy some crypto at ATM, or easily with changelly or else without fees."
-                        />
-                        <Slide
-                            onClick={this._stop_carousel_autoplay}
-                            media={<img className={classes.carouselImage} src="/src/images/trade.svg" />}
-                            mediaBackgroundStyle={{ backgroundColor: "#fff" }}
-                            style={{ backgroundColor: "#060f23" }}
-                            title="Good anonymous trading."
-                            subtitle="Wallet Crypto Red doesn't push you to swap your crypto, we only suggest you to hold some funds freely without fees with a strong belief in privacy."
-                        />
-                        <Slide
-                            onClick={this._stop_carousel_autoplay}
-                            media={<img className={classes.carouselImage} src="/src/images/open.svg" />}
-                            mediaBackgroundStyle={{ backgroundColor: "#fff" }}
-                            style={{ backgroundColor: "#060f23" }}
-                            title="Wallet made open source"
-                            subtitle="Our software for cryptocurrency payments is certified to be 100% open-source, anyone can see the code, more eyes, more secure. Trust people."
-                        />
-                    </AutoRotatingCarousel>
-                </div>
-                <AppToolbar
-                    know_if_logged={_know_if_logged}
-                    know_the_settings={_know_the_settings}
-                    logged_account={_logged_account}
-                    pathname={pathname}
-                    panic_mode={_panic_mode}
-                    jamy_enabled={_jamy_enabled}
-                    jamy_state_of_mind={_jamy_state_of_mind}/>
-                <AppDrawer
-                    pathname={pathname}
-                    logged_account={_logged_account}/>
-                <main className={classes.content}>
-                    <Toolbar />
-                    {page_tabs_component}
-                    {page_component}
-                </main>
+                        <div>
+                            <AutoRotatingCarousel
+                                label={t(_language, "pages.index.carousel.button_label")}
+                                onClose={this._close_carousel}
+                                onStart={this._accept_close_carousel}
+                                mobile={_width <= 960}
+                                open={_onboarding_enabled}
+                                autoplay={_onboarding_autoplay_enabled}
+                                interval={6000}
+                            >
+                                {t(_language, "pages.index.carousel.slides").map((slide, index) =>
+                                    <Slide
+                                        key={index}
+                                        onClick={this._stop_carousel_autoplay}
+                                        media={<img className={classes.carouselImage} src={slide.img} />}
+                                        mediaBackgroundStyle={{ backgroundColor: "#fff" }}
+                                        style={{ backgroundColor: "#060f23" }}
+                                        title={slide.title}
+                                        subtitle={slide.subtitle}
+                                    />
+                                )}
+                            </AutoRotatingCarousel>
+                        </div>
+                        <AppToolbar
+                            know_if_logged={_know_if_logged}
+                            know_the_settings={_know_the_settings}
+                            logged_account={_logged_account}
+                            pathname={pathname}
+                            panic_mode={_panic_mode}
+                            jamy_enabled={_jamy_enabled}
+                            jamy_state_of_mind={_jamy_state_of_mind}/>
+                        <AppDrawer
+                            pathname={pathname}
+                            logged_account={_logged_account}/>
+                        <main className={classes.content}>
+                            <Toolbar />
+                            {page_tabs_component}
+                            {page_component}
+                        </main>
+                    </div>
+
+                    :null
+                }
             </div>
         );
     }

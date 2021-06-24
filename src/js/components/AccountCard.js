@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Fade from "@material-ui/core/Fade";
 import Card from "@material-ui/core/Card";
 import LinearProgress from "@material-ui/core/LinearProgress";
@@ -179,7 +182,7 @@ class AccountCard extends React.Component {
             this.setState({_balance});
         }else {
 
-            actions.trigger_snackbar(crypto_id + " balance error");
+            actions.trigger_snackbar(t(L, "account_card.crypto_balance_error", {crypto_id}));
         }
     };
 

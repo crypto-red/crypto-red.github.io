@@ -2,6 +2,9 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 import { Link } from "react-router-dom";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Avatar from "@material-ui/core/Avatar";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -267,19 +270,19 @@ class Coins extends React.Component {
         const { classes, _coins_markets, _coins_id, _order, _order_by } = this.state;
 
         const head_cells = [
-            { id: "name", numeric: false, disablePadding: false, label: "Name", tooltip: "Coin's name" },
-            { id: "current_price", numeric: true, disablePadding: false, label: "Price", tooltip: "Current price" },
-            { id: "price_change_percentage_24h_in_currency", numeric: true, disablePadding: false, label: "Day", tooltip: "Price change within 24h" },
-            { id: "price_change_percentage_7d_in_currency", numeric: true, disablePadding: false, label: "Week", tooltip: "Price change within a 7d"},
-            { id: "price_change_percentage_30d_in_currency", numeric: true, disablePadding: false, label: "Month", tooltip: "Price chamge within 30d"},
-            { id: "price_change_percentage_1y_in_currency", numeric: true, disablePadding: false, label: "Year", tooltip: "Price chamge within 1y"},
-            { id: "market_cap", numeric: true, disablePadding: false, label: "Market cap", tooltip: "Market Capitalization"},
+            { id: "name", numeric: false, disablePadding: false, label: t(L, "pages.coins.name"), tooltip: t(L, "pages.coins.coins_name") },
+            { id: "current_price", numeric: true, disablePadding: false, label: t(L, "pages.coins.price"), tooltip: t(L, "pages.coins.current_price") },
+            { id: "price_change_percentage_24h_in_currency", numeric: true, disablePadding: false, label: t(L, "pages.coins.day"), tooltip: t(L, "pages.coins.price_change_day") },
+            { id: "price_change_percentage_7d_in_currency", numeric: true, disablePadding: false, label: t(L, "pages.coins.week"), tooltip: t(L, "pages.coins.price_change_week")},
+            { id: "price_change_percentage_30d_in_currency", numeric: true, disablePadding: false, label: t(L, "pages.coins.month"), tooltip: t(L, "pages.coins.price_change_month")},
+            { id: "price_change_percentage_1y_in_currency", numeric: true, disablePadding: false, label: t(L, "pages.coins.year"), tooltip: t(L, "pages.coins.price_change_year")},
+            { id: "market_cap", numeric: true, disablePadding: false, label: t(L, "pages.coins.market_capitalization_short"), tooltip: t(L, "pages.coins.market_capitalization")},
         ];
         
         return (
             <div className={classes.tableContainerContainer}>
                 <TableContainer className={classes.paperTable} component={Paper}>
-                    <Table aria-label="simple table">
+                    <Table>
                         {!_coins_markets.length ? <LinearProgress className={classes.tableLinearProgress} />: null}
                         <TableHead className={classes.tableHead}>
                             <TableRow>

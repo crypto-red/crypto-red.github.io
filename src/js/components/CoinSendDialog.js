@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -113,7 +116,7 @@ class CoinSendDialog extends React.Component {
                 {
                     Boolean(transaction) ?
                         <div>
-                            <DialogTitle>Confirm transaction</DialogTitle>
+                            <DialogTitle>{t(L, "sentences.send this transaction")}</DialogTitle>
                             <DialogContent>
                                 <DialogContentText>
                                     <Table>
@@ -159,10 +162,10 @@ class CoinSendDialog extends React.Component {
 
                 <DialogActions>
                     <Button onClick={this.props.cancel} color="primary">
-                        Cancel
+                        {t(L, "words.cancel")}
                     </Button>
                     <Button onClick={this.props.onConfirm} color="primary" autoFocus>
-                        Confirm
+                        {t(L, "words.confirm")}
                     </Button>
                 </DialogActions>
             </Dialog>

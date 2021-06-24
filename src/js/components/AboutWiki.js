@@ -1,6 +1,9 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import { HISTORY } from "../utils/constants";
 
 import Fade from "@material-ui/core/Fade";
@@ -20,14 +23,17 @@ const styles = theme => ({
     containerElement: {
         padding: theme.spacing(2),
         display: "flex",
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
             padding: theme.spacing(2, 0),
             display: "inherit"
         }
     },
     horizontalTabsContainer: {
-        [theme.breakpoints.up('lg')]: {
+        [theme.breakpoints.up("lg")]: {
             display: "none"
+        },
+        [theme.breakpoints.between('md', "lg")]: {
+            width: "calc(100vw - 256px)"
         },
         width: "100vw",
         marginTop: theme.spacing(2)
@@ -39,7 +45,7 @@ const styles = theme => ({
         }
     },
     verticalTabs: {
-        [theme.breakpoints.down('md')]: {
+        [theme.breakpoints.down("md")]: {
             display: "none"
         },
         marginLeft: theme.spacing(2),
@@ -51,55 +57,12 @@ const styles = theme => ({
             left: 0
         }
     },
-    cardContainer: {
+    accordionContainer: {
         width: "inherit"
     }
 });
 
-const VIEWS = {
-    topup: {
-        title: "How to top-up",
-        content_markdown: "Although we receive nothing if you don't use Changelly, it is a simple service and the second recommended after public ATMs for privacy concerns.\n" +
-            "\n" +
-            "You will have to follow the instruction and at the end enter the public address of the coin selected of the account you've chosen and that's it, you can pay by card and do it quickly and simply."
-    },
-    mixer: {
-        title: "How to mix cryptocurrency",
-        content_markdown: "We currently use Blender.io, it will enable you to mix your coin with other coin it will be like if your coins disappeared in the nether and from completely different sources came (other coins nearly with the same amount) to an address (maybe a completely new one if you create a new account for that) hours or even days later!\n" +
-            "\n" +
-            "You just have to create a new account on wallet.crypto.red in order to generate a fresh new and new address and to put that address in the mixer (you can split the amount send to multiples address). Then just send the amount you like from the account you have chosen to use for sending coins.\n" +
-            "\n" +
-            "Be careful! Don't send back the coins you received from the mixer onto the new address you've freshly created, it will enable one to know that this address is linked to the previous one (obvious captain)."
-    },
-    swap: {
-        title: "How to swap cryptocurrency",
-        content_markdown: "You have to go to the convert menu item in the drawer at left (burger menu on mobile devices) and use a \"swap\" services, we currently use SwapSpace.co since it doesn't charge more than the showed swap exchange that it compare for you so you can be sure to pay the less on the market!\n" +
-            "\n" +
-            "You have to choose the amount an the currency you want to send along with the currency you want to receive in exchange. Then click on the \"VIEW OFFERS\" button.\n" +
-            "\n" +
-            "Then just choose the exchange you want to use for the conversion you're doing, it should show many offers of all-trusted exchange. So when you have clicked on the \"EXCHANGE\" button just enter the new address of the currency you will receive, you have to copy the right address from the right account of yours of the cryptocurrency you have chosen to receive in exchange of the amount you'll have to send.\n" +
-            "\n" +
-            "**In other words:**\n" +
-            "\n" +
-            "1.  Enter the amount and choose the swap service.\n" +
-            "2.  Enter the recipient address.\n" +
-            "3.  Transfer your funds to the exchange service.\n" +
-            "4.  Wait for the exchange to proceed."
-
-    },
-    crypt: {
-        title: "Encrypt and decrypt messages",
-        content_markdown: "In order to decrypt a message someone has sent to you, you'll have to know both your public and private key linked to the message which is an obfuscated text, since the software knows it, if you go onto tools then crypto then decrypt then autofill keys, the keys will be magically filled into our cryptographic system. You'll only have to copy the obfuscated message received and click autofill then show.\n" +
-            "\n" +
-            "In order to encrypt a message to someone, you'll have to know the receiver's public key, just look at a transaction from this person and copy the public key which you'll have to enter in the cryptographic tool (Encrypt tab) in tools then crypt along with the message. If you click autofill keys on encrypt section, it will be meant to be sent to yourself."
-
-    },
-    contribute: {
-        title: "How to contribute",
-        content_markdown: "You can contribute to our repository, this is where our code and application is hosted: [https://github.com/crypto-red/crypto-red.github.io](https://github.com/crypto-red/crypto-red.github.io) (everything is transparent on GitHub). You can also donate to us in order to accelerate de development of this project and other projects (since we also fund other projects that we use trough [OpenCollective](https://opencollective.com/crypto-red)) trough sending bitcoin in the address shown where our code is hosted."
-
-    }
-};
+const VIEWS = t(L, "components.about_wiki");
 
 let VIEW_NAMES = [];
 

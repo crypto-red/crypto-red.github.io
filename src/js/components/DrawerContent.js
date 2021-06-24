@@ -2,6 +2,9 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
+const L = document.documentElement.lang;
+import { t } from "../utils/t";
+
 import Fade from "@material-ui/core/Fade";
 import Collapse from "@material-ui/core/Collapse";
 import List from "@material-ui/core/List";
@@ -101,35 +104,7 @@ class DrawerContent extends React.Component {
                 mixer: false,
                 swap: false
             },
-            _help_dialogs_data: {
-                topup: {
-                    id: "topup",
-                    url: "https://changelly.com/",
-                    image: "card.svg",
-                    title: "Do you know how to top up?",
-                    body: "To add fund to one of your cryptocurrencies, you have to pass trough an exchange.",
-                    help_link: "/about/wiki/topup",
-                    help_link_content: "Learn more..."
-                },
-                mixer: {
-                    id: "mixer",
-                    url: "https://blender.io/",
-                    image: "hacker.svg",
-                    title: "Do you know how and why to use a mixer?",
-                    body: "To obfuscate the source of your coin, you can use a mixer, it will make it difficult to link two wallet together.",
-                    help_link: "/about/wiki/mixer",
-                    help_link_content: "Learn more..."
-                },
-                swap: {
-                    id: "swap",
-                    url: "https://swapspace.co?ref=6264baf9e63aa11df52cd6d3",
-                    image: "swap.svg",
-                    title: "Do you know how to trade your assets?",
-                    body: "To exchange one currency to another, you have to pass trough an swap platform.",
-                    help_link: "/about/wiki/swap",
-                    help_link_content: "Learn more..."
-                },
-            }
+            _help_dialogs_data: t(L, "components.drawer_content.help_dialogs_data")
 
         };
     };
@@ -346,13 +321,13 @@ class DrawerContent extends React.Component {
                                         </DialogContentText>
                                         <FormControlLabel
                                             control={<Checkbox checked={_current_help_dialog_checkbox} onChange={this._handle_current_help_dialog_checkbox_change} name="persistent" />}
-                                            label="Don't show it again"
+                                            label={t(L, "components.drawer_content.dont_show_again")}
                                         />
                                     </DialogContent>
                                     <DialogActions>
-                                        <Button onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true)}} color="primary">Cancel</Button>
+                                        <Button onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true)}} color="primary">{t(L, "words.cancel")}</Button>
                                         <Button onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox)}} color="primary" autoFocus>
-                                            GO
+                                            {t(L, "components.drawer_content.go")}
                                         </Button>
                                     </DialogActions>
                                 </div>
@@ -362,13 +337,13 @@ class DrawerContent extends React.Component {
                 <Fade in timeout={500}>
                     <List>
                         <ListItem button onClick={this._open_dashboard_page}>
-                            <ListItemText primary="Dashboard" />
+                            <ListItemText primary={t(L, "components.drawer_content.menu.dashboard")} />
                         </ListItem>
                         <ListItem button onClick={this._open_coins_page}>
-                            <ListItemText primary="All coins" />
+                            <ListItemText primary={t(L, "components.drawer_content.menu.all_coins")} />
                         </ListItem>
                         <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "coins")}>
-                            <ListItemText primary="Coins" />
+                            <ListItemText primary={t(L, "components.drawer_content.menu.coins")} />
                             <ExpandMoreIcon  className={_menu_expanded === "coins" ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
                         </ListItem>
                         <Collapse in={_menu_expanded === "coins"} timeout="auto" unmountOnExit>
@@ -377,66 +352,66 @@ class DrawerContent extends React.Component {
                             </List>
                         </Collapse>
                         <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "trade")}>
-                            <ListItemText primary="Trade" />
+                            <ListItemText primary={t(L, "components.drawer_content.menu.trade.trade")} />
                             <ExpandMoreIcon  className={_menu_expanded === "trade" ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
                         </ListItem>
                         <Collapse in={_menu_expanded === "trade"} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding>
                                 <ListItem button className={classes.nested} onClick={(event) => {this._should_open_help_dialog(event, "topup")}}>
                                     <ListItemIcon><SwapVertIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="Top up" />
+                                    <ListItemText primary={t(L, "components.drawer_content.menu.trade.top_up")} />
                                 </ListItem>
                                 <ListItem button className={classes.nested} onClick={(event) => {this._should_open_help_dialog(event, "mixer")}}>
                                     <ListItemIcon><RefreshIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="Mixer" />
+                                    <ListItemText primary={t(L, "components.drawer_content.menu.trade.mixer")} />
                                 </ListItem>
                                 <ListItem button className={classes.nested} onClick={(event) => {this._should_open_help_dialog(event, "swap")}}>
                                     <ListItemIcon><SwapHorizIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="Swap" />
+                                    <ListItemText primary={t(L, "components.drawer_content.menu.trade.swap")} />
                                 </ListItem>
                                 <ListItem button className={classes.nested} onClick={(event) => {this._open_link(event, "https://coinatmradar.com/")}}>
                                     <ListItemIcon><AtmIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="ATM" />
+                                    <ListItemText primary={t(L, "components.drawer_content.menu.trade.atm")} />
                                 </ListItem>
                             </List>
                         </Collapse>
                         <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "tools")}>
-                            <ListItemText primary="Tools" />
+                            <ListItemText primary={t(L, "components.drawer_content.menu.tools.tools")} />
                             <ExpandMoreIcon  className={_menu_expanded === "tools" ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
                         </ListItem>
                         <Collapse in={_menu_expanded === "tools"} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding>
                                 <ListItem button className={classes.nested} onClick={(event) => {this._open_crypt_dialog(event)}}>
                                     <ListItemIcon><LockIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="Crypt" />
+                                    <ListItemText primary={t(L, "components.drawer_content.menu.tools.crypt")} />
                                 </ListItem>
                             </List>
                         </Collapse>
                         <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "about")}>
-                            <ListItemText primary="About" />
+                            <ListItemText primary={t(L, "components.drawer_content.menu.about.about")} />
                             <ExpandMoreIcon  className={_menu_expanded === "about"  ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
                         </ListItem>
                         <Collapse in={_menu_expanded === "about"} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding>
                                 <ListItem button className={classes.nested} onClick={() => this._open_about_page("info")}>
                                     <ListItemIcon><InfoIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="Info" />
+                                    <ListItemText primary={t(L, "components.drawer_content.menu.about.info")} />
                                 </ListItem>
                                 <ListItem button className={classes.nested} onClick={() => this._open_about_page("wiki")}>
                                     <ListItemIcon><ChromeReaderModeIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="Wiki" />
+                                    <ListItemText primary={t(L, "components.drawer_content.menu.about.wiki")} />
                                 </ListItem>
                                 <ListItem button className={classes.nested} onClick={() => this._open_about_page("faq")}>
                                     <ListItemIcon><HelpIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="F.A.Q." />
+                                    <ListItemText primary={t(L, "components.drawer_content.menu.about.faq")} />
                                 </ListItem>
                                 <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://github.com/crypto-red/crypto-red.github.io")}>
                                     <ListItemIcon><CodeIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="Source code" />
+                                    <ListItemText primary={t(L, "components.drawer_content.menu.about.source_code")} />
                                 </ListItem>
                                 <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://opencollective.com/crypto-red")}>
                                     <ListItemIcon><MonetizationOnIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary="Donations" />
+                                    <ListItemText primary={t(L, "components.drawer_content.menu.about.donations")} />
                                 </ListItem>
                             </List>
                         </Collapse>
