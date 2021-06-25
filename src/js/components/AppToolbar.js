@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Fade from "@material-ui/core/Fade";
@@ -219,7 +218,7 @@ class AppToolbar extends React.Component {
             this.setState({_look_much_jamy: true}, () => {
 
                 actions.jamy_update("suspicious", 7000);
-                actions.trigger_snackbar(t(L, "sentences.the longer you look the shiner i get"));
+                actions.trigger_snackbar(t( "sentences.the longer you look the shiner i get"));
                 setTimeout(() => {
 
                     if(this.state._jamy_mouse_hover) {
@@ -227,7 +226,7 @@ class AppToolbar extends React.Component {
                         this.setState({_look_very_much_jamy: true}, () => {
 
                             actions.jamy_update("happy", 4000);
-                            actions.trigger_snackbar(t(L, "sentences.take a picture it last longer"));
+                            actions.trigger_snackbar(t( "sentences.take a picture it last longer"));
                         });
                     }
 
@@ -243,7 +242,7 @@ class AppToolbar extends React.Component {
             this.setState({_click_much_jamy: true}, () => {
 
                 actions.jamy_update("angry", 6000);
-                actions.trigger_snackbar(t(L, "sentences.stop bitchslapping me"));
+                actions.trigger_snackbar(t( "sentences.stop bitchslapping me"));
                 setTimeout(() => {
 
                     this.setState({_click_much_jamy: false});
@@ -295,7 +294,7 @@ class AppToolbar extends React.Component {
                                     know_the_settings ?
                                         jamy_enabled ?
                                             <Tooltip
-                                                title={t(L, "sentences.hey i am jamy")}
+                                                title={t( "sentences.hey i am jamy")}
                                                 aria-label="Jamy"
                                                 onMouseEnter={this._handle_jamy_mouse_enter}
                                                 onMouseLeave={this._handle_jamy_mouse_leave}
@@ -313,8 +312,8 @@ class AppToolbar extends React.Component {
                         <Fade in={know_if_logged}>
                             {
                                 logged_account ?
-                                    <Tooltip title={logged_account.name} aria-label={t(L, "sentences.account name")}>
-                                        <Avatar aria-label={t(L, "words.acronym")}
+                                    <Tooltip title={logged_account.name} aria-label={t( "sentences.account name")}>
+                                        <Avatar aria-label={t( "words.acronym")}
                                                 variant="square"
                                                 className={classes.avatar}
                                                 onClick={this._open_account_menu}>
@@ -340,13 +339,13 @@ class AppToolbar extends React.Component {
                                 <ListItemIcon>
                                     <AccountCircleIcon fontSize="small" />
                                 </ListItemIcon>
-                                <ListItemText primary={t(L, "sentences.all accounts")}/>
+                                <ListItemText primary={t( "sentences.all accounts")}/>
                             </MenuItem>
                             <MenuItem onClick={this._open_settings}>
                                 <ListItemIcon>
                                     <SettingsIcon fontSize="small" />
                                 </ListItemIcon>
-                                <ListItemText primary={t(L, "words.settings", {}, {FLC: true})}/>
+                                <ListItemText primary={t( "words.settings", {}, {FLC: true})}/>
                             </MenuItem>
                             {
                                 Boolean(panic_mode) ?
@@ -356,7 +355,7 @@ class AppToolbar extends React.Component {
                                         <ListItemIcon>
                                             <SecurityIcon fontSize="small" />
                                         </ListItemIcon>
-                                        <ListItemText primary={t(L, "words.settings", {}, {TUC: true})}/>
+                                        <ListItemText primary={t( "words.reset", {}, {TUC: true})}/>
                                     </MenuItem>
                                 </div>: null
                             }

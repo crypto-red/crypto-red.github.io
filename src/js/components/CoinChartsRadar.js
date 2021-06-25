@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Card from "@material-ui/core/Card";
@@ -72,16 +71,16 @@ class CoinChartsRadar extends React.Component {
         const { classes, coin_data } = this.state;
 
         const market_radar_card_data = coin_data !== null ? [
-            { domain: t(L, "words.feelings", {}, {FLC: true}), score: coin_data.sentiment_votes_up_percentage },
-            { domain: t(L, "words.average score", {}, {FLC: true}), score: coin_data.coingecko_score },
-            { domain: t(L, "words.development score", {}, {FLC: true}), score: coin_data.developer_score },
-            { domain: t(L, "words.liquidity", {}, {FLC: true}), score: coin_data.liquidity_score }
+            { domain: t( "words.feelings", {}, {FLC: true}), score: coin_data.sentiment_votes_up_percentage },
+            { domain: t( "words.average score", {}, {FLC: true}), score: coin_data.coingecko_score },
+            { domain: t( "words.development score", {}, {FLC: true}), score: coin_data.developer_score },
+            { domain: t( "words.liquidity", {}, {FLC: true}), score: coin_data.liquidity_score }
         ]: [];
 
         const market_score_card = coin_data !== null ?
             <Fade in={true}>
                 <Card className={classes.fullHeight}>
-                    <CardHeader title="Score" />
+                    <CardHeader title={t("components.coin_charts_radar.title")} />
                     <CardContent>
                         <Fade in timeout={300}>
                             <div className={classes.radarChart}>

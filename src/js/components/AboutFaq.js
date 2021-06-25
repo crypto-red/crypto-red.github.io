@@ -1,18 +1,17 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import { HISTORY } from "../utils/constants";
+import { t } from "../utils/t";
 
+import { HISTORY } from "../utils/constants";
 import Fade from "@material-ui/core/Fade";
 import Container from "@material-ui/core/Container";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
 import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
 
-const L = document.documentElement.lang;
-import { t } from "../utils/t";
+import Tab from "@material-ui/core/Tab";
 
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 
@@ -61,7 +60,7 @@ const styles = theme => ({
     }
 });
 
-const VIEWS = t(L, "components.about_faq");
+const VIEWS = t( "components.about_faq");
 
 let VIEW_NAMES = [];
 
@@ -82,7 +81,7 @@ class AboutFaq extends React.Component {
             _view_name_index: VIEW_NAMES.indexOf(!~props.pathname.split("/")[3] || VIEW_NAMES[0]) ? 0: VIEW_NAMES.indexOf(props.pathname.split("/")[3] || VIEW_NAMES[0]),
             _history: HISTORY,
             _view_names: VIEW_NAMES,
-            _views: VIEWS,
+            _views: t( "components.about_faq"),
             _accordion_expanded: ""
         };
     };

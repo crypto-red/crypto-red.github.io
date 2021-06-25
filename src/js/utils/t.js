@@ -1,13 +1,14 @@
 import en from "../locales/en";
+import fr from "../locales/fr";
 
-const T = { en };
+const T = { en, fr };
 
-function t(locales = "en", path = "", variables = {}, parameters = {}) {
+function t(path = "", variables = {}, parameters = {}) {
 
     const paths_array = path.split(".");
 
     // Goes to the last dir specified in the path
-    let dir = T[locales] || T["en"];
+    let dir = T[document.documentElement.lang] || T["en"];
 
     for(let i = 0; i < paths_array.length-1; i++) {
 
@@ -44,7 +45,7 @@ function t(locales = "en", path = "", variables = {}, parameters = {}) {
         }else { // "dog"
 
             const need_to_find_string = "{{" + variable_name_to_replace + "}}";
-            const need_to_replace_string = (variable_value_to_replace || "").toString();
+            const need_to_replace_string = variable_value_to_replace === null ? "": variable_value_to_replace.toString();
 
             value_with_variables = value_with_variables.replaceAll(need_to_find_string, need_to_replace_string);
         }
@@ -74,6 +75,6 @@ function t(locales = "en", path = "", variables = {}, parameters = {}) {
 }
 
 module.exports = {
-    t: t
+    t
 };
 

@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Fade from "@material-ui/core/Fade";
@@ -97,7 +96,7 @@ class CoinTransactions extends React.Component {
 
             if(error || !result.length) {
 
-                actions.trigger_snackbar(t(L, "sentences.cannot load more transaction"))
+                actions.trigger_snackbar(t( "sentences.cannot load more transaction"))
             }
 
             this.setState({_loading: false, _transactions: all_transactions, _yet_not_any_transactions});
@@ -172,7 +171,7 @@ class CoinTransactions extends React.Component {
                     <Fade in>
                         <Card>
                             <CardHeader
-                                title={t(L, "words.transactions", {}, {FLC: true})}
+                                title={t( "words.transactions", {}, {FLC: true})}
                             />
                             {
                                 !_loading ?
@@ -180,7 +179,7 @@ class CoinTransactions extends React.Component {
                                         _yet_not_any_transactions ?
                                             <CardContent>
                                                 <img className={classes.noTransactionImage} src="/src/images/transfer.svg"/>
-                                                <p>You've not made any transactions yet, transactions will show up here.</p>
+                                                <p>{t("sentences.no transactions maid")}</p>
                                             </CardContent>:
                                             <CardContent>
                                                 <List>
@@ -200,13 +199,13 @@ class CoinTransactions extends React.Component {
                                                     })}
                                                 </List>
                                                 <Button fullWidth color="primary" variant="contained" onClick={this._load_more_transactions}>
-                                                    {t(L, "sentences.load more")}
+                                                    {t( "sentences.load more")}
                                                 </Button>
                                             </CardContent>
                                         :
                                         <CardContent>
                                             <Button fullWidth color="primary" variant="contained" onClick={this._open_accounts_page}>
-                                                {t(L, "sentences.open an account")}
+                                                {t( "sentences.open an account")}
                                             </Button>
                                         </CardContent>
                                     :

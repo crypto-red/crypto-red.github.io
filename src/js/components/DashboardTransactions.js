@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Card from "@material-ui/core/Card";
@@ -229,7 +228,7 @@ class DashboardTransactions extends React.Component {
                                                     <CardContent className={classes.noTransactionCardContent}>
                                                         <img className={classes.noTransactionImage}
                                                              src="/src/images/transfer.svg"/>
-                                                        <p>{t(L, "sentences.no transactions maid")}</p>
+                                                        <p>{t( "sentences.no transactions maid")}</p>
                                                     </CardContent>
                                                 }
                                             </div>:

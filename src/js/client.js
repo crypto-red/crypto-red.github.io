@@ -3,6 +3,14 @@ import ReactDOM from "react-dom";
 import { Route, Router } from "react-router-dom";
 import { HISTORY } from "./utils/constants";
 
+import TimeAgo from "javascript-time-ago";
+
+import en from "javascript-time-ago/locale/en"
+import fr from "javascript-time-ago/locale/fr"
+
+TimeAgo.addDefaultLocale(en);
+TimeAgo.addLocale(fr);
+
 // Pages
 import Index from "./pages/Index";
 

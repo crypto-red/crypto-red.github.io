@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Button from "@material-ui/core/Button";
@@ -84,19 +83,19 @@ class AccountDialogDelete extends React.Component {
             >
                 {Boolean(account) ?
                     <div>
-                        <DialogTitle id="delete-account-dialog-title">Delete {account.name}?</DialogTitle>
+                        <DialogTitle id="delete-account-dialog-title">{t("components.account_dialog_delete.title", {account_name: account.name})}</DialogTitle>
                         <DialogContent>
                             <DialogContentText id="delete-account-dialog-description">
-                                This action <b className={classes.red}>CANNOT</b> be undone. This will delete the <b>{account.name}</b> account, wallets, and notes permanently.
+                                {t("components.account_dialog_delete.cannot_be_undone", {account_name: account.name})}
                                 <br />
-                                Please Type in the name of the account to confirm.
+                                {t("components.account_dialog_delete.repeat_name")}
                             </DialogContentText>
                             <TextField
                                 onChange={this._handle_account_name_input_change}
                                 onKeyDown={this._handle_key_down_input}
                                 autoFocus
                                 id="name"
-                                label={t(L, "words.name", {}, {FLC: true})}
+                                label={t( "words.name", {}, {FLC: true})}
                                 type="text"
                                 fullWidth
                             />
@@ -105,10 +104,10 @@ class AccountDialogDelete extends React.Component {
                 }
                 <DialogActions>
                     <Button onClick={(event) => {this._on_cancel(event, account)}} color="primary">
-                        Cancel
+                        {t("words.cancel")}
                     </Button>
                     <Button onClick={(event) => {this._on_accept(event, account)}} color="primary" disabled={_is_confirmation_disabled} autoFocus>
-                        Delete
+                        {t("words.delete")}
                     </Button>
                 </DialogActions>
             </Dialog>

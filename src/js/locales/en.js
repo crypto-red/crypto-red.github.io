@@ -74,6 +74,8 @@ module.exports = {
         "link": "link",
         "locales": "locales",
         "currency": "currency",
+        "create": "create",
+        "chart": "chart",
     },
     sentences: {
         "new account": "New account",
@@ -290,6 +292,7 @@ module.exports = {
             }
         },
         account_dialog_delete: {
+            title: "Delete {{account_name}}?",
             cannot_be_undone: "This action CANNOT be undone. This will delete the {{account_name}}} account and it's wallets permanently.",
             repeat_name: "Please Type in the name of the account to confirm."
         },
@@ -300,6 +303,31 @@ module.exports = {
         },
         address_dialog: {
             title: "Coin's ID {{coin_id}}",
+        },
+        coin_charts_convert: {
+            title: "Price search",
+            buy_x: "Buy some {{coin_name}}",
+        },
+        coin_charts_data: {
+            day: "24h: ",
+            week: "7d: ",
+            month: "30d: ",
+            year: "1y: ",
+            price: "Price",
+            market_cap: "Market Cap.",
+            total_supply: "Total Supply",
+            market_cap_rank: "Market Cap. Rank",
+            alexa_rank: "Alexa Rank",
+            today_score: "Today Score",
+            all_time_high: "All-Time High",
+            all_time_low: "All-Time Low",
+            data_provided_by: "Data provided by ",
+        },
+        coin_charts_links: {
+            title: "Links",
+        },
+        coin_charts_radar: {
+            title: "Score",
         },
         coin_send: {
             title: "Balance: {{balance}}",
@@ -390,7 +418,7 @@ module.exports = {
                     wiki: "Wiki",
                     faq: "F.A.Q.",
                     source_code: "Source code",
-                    donations: "donations",
+                    donations: "Donations",
                 }
             }
         },

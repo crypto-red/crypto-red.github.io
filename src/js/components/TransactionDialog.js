@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Button from "@material-ui/core/Button";
@@ -142,58 +141,58 @@ class TransactionDialog extends React.Component {
                 {
                     Boolean(transaction) ?
                         <div className={classes.dialogBody}>
-                            <DialogTitle id="show-transaction-memo-dialog-title" className={classes.breakWord}>{t(L, "components.transaction_dialog.title", {transaction_id: transaction.id})}</DialogTitle>
+                            <DialogTitle id="show-transaction-memo-dialog-title" className={classes.breakWord}>{t( "components.transaction_dialog.title", {transaction_id: transaction.id})}</DialogTitle>
                             <DialogContent className={classes.dialogBody}>
                                 <DialogContentText id="show-transaction-memo-dialog-description">
                                     <Table>
                                         <Table aria-label="main-info-table">
                                             <TableBody>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>Send at</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.send at", {}, {FLC: true})}</TableCell>
                                                     <TableCell align="right">{new Intl.DateTimeFormat(selected_locales_code, {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"}).format(new Date(transaction.timestamp))}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>Send from</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.send from", {}, {FLC: true})}</TableCell>
                                                     <TableCell align="right">{transaction.send_from}</TableCell>
                                                 </TableRow>
                                                 {
                                                     typeof transaction.send_from_public_key !== "undefined" ?
                                                     <TableRow>
-                                                        <TableCell align="left" className={classes.tableCellBold}>Send from Public Key</TableCell>
+                                                        <TableCell align="left" className={classes.tableCellBold}>{t("words.send from public key", {}, {FLC: true})}</TableCell>
                                                         <TableCell align="right">{transaction.send_from_public_key}</TableCell>
                                                     </TableRow>: null
                                                 }
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>Send to</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.send to", {}, {FLC: true})}</TableCell>
                                                     <TableCell align="right">{transaction.send_to}</TableCell>
                                                 </TableRow>
                                                 {
                                                     typeof transaction.send_to_public_key !== "undefined" ?
                                                     <TableRow>
-                                                        <TableCell align="left" className={classes.tableCellBold}>Send to Public Key</TableCell>
+                                                        <TableCell align="left" className={classes.tableCellBold}>{t("words.send to public key", {}, {FLC: true})}</TableCell>
                                                         <TableCell align="right">{transaction.send_to_public_key}</TableCell>
                                                     </TableRow>: null
                                                 }
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>Memo</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.memo", {}, {FLC: true})}</TableCell>
                                                     <TableCell align="right" className={classes.breakWord}>{transaction.memo}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>Amount</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.amount", {}, {FLC: true})}</TableCell>
                                                     {_coin_data ?
                                                         <TableCell align="right">{price_formatter(parseFloat(transaction.amount_crypto), _coin_data.symbol, selected_locales_code)} ({price_formatter(amount_sent_fiat, selected_currency, selected_locales_code)})</TableCell>
                                                         : null
                                                     }
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>Fee</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.fee", {}, {FLC: true})}</TableCell>
                                                     {_coin_data ?
                                                         <TableCell align="right">{price_formatter(parseFloat(transaction.fee), _coin_data.symbol, selected_locales_code)} ({price_formatter(amount_fee_fiat, selected_currency, selected_locales_code)})</TableCell>
                                                         : null
                                                     }
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>Crypto id</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.crypto id", {}, {FLC: true})}</TableCell>
                                                     <TableCell align="right" className={classes.underline} onClick={(event) => {this._open_link(event, "/coins/" + transaction.crypto_id + "/transactions")}}>{transaction.crypto_id}</TableCell>
                                                 </TableRow>
                                             </TableBody>
@@ -209,15 +208,15 @@ class TransactionDialog extends React.Component {
                         transaction ?
                             _address === transaction.send_to ?
                                 <Button onClick={(event) => {this._open_link(event, `/coins/${transaction.crypto_id}/send/${transaction.send_from}`)}} color="primary">
-                                    Send back
+                                    {t("words.send back")}
                                 </Button> :
                                 <Button onClick={(event) => {this._open_link(event, `/coins/${transaction.crypto_id}/send/${transaction.send_to}`)}}>
-                                    Send to
+                                    {t("words.send to")}
                                 </Button>
                         : null
                     }
                     <Button onClick={(event) => {this._on_cancel(event, transaction)}}  color="primary" autoFocus>
-                        Cancel
+                        {t("words.close")}
                     </Button>
                 </DialogActions>
             </Dialog>

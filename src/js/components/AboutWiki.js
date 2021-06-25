@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import { HISTORY } from "../utils/constants";
@@ -62,7 +61,7 @@ const styles = theme => ({
     }
 });
 
-const VIEWS = t(L, "components.about_wiki");
+const VIEWS = t( "components.about_wiki");
 
 let VIEW_NAMES = [];
 
@@ -84,7 +83,7 @@ class AboutWiki extends React.Component {
             _view_name_index: VIEW_NAMES.indexOf(!~props.pathname.split("/")[3] || "topup") ? 0: VIEW_NAMES.indexOf(props.pathname.split("/")[3] || "topup"),
             _history: HISTORY,
             _view_names: VIEW_NAMES,
-            _views: VIEWS,
+            _views: t( "components.about_wiki"),
         };
     };
 

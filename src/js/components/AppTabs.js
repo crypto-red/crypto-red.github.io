@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import AppBar from "@material-ui/core/AppBar";
@@ -147,11 +146,11 @@ class AppTabs extends React.Component {
                           variant="fullWidth"
                           selectionFollowsFocus
                           className={classes.tabs}>
-                        <Tab {...this._get_tab_props(0)} icon={<AccountBalanceIcon />} label={<span>BALANCE</span>} className={classes.tab}/>
-                        <Tab {...this._get_tab_props(1)} icon={<ReceiptIcon />} label={<span>TRANSACTIONS</span>} className={classes.tab} />
-                        <Tab {...this._get_tab_props(2)} icon={<BarChartIcon />} label={<span>CHARTS</span>} className={classes.tab} />
-                        <Tab {...this._get_tab_props(3)} icon={<CallMadeIcon />} label={<span>SEND</span>} className={classes.tab} />
-                        <Tab {...this._get_tab_props(4)} icon={<CallReceivedIcon />} label={<span>RECEIVE</span>} className={classes.tab} />
+                        <Tab {...this._get_tab_props(0)} icon={<AccountBalanceIcon />} label={<span>{t("words.balance", {}, {TUC: true})}</span>} className={classes.tab}/>
+                        <Tab {...this._get_tab_props(1)} icon={<ReceiptIcon />} label={<span>{t("words.transactions", {}, {TUC: true})}</span>} className={classes.tab} />
+                        <Tab {...this._get_tab_props(2)} icon={<BarChartIcon />} label={<span>{t("words.charts", {}, {TUC: true})}</span>} className={classes.tab} />
+                        <Tab {...this._get_tab_props(3)} icon={<CallMadeIcon />} label={<span>{t("words.send", {}, {TUC: true})}</span>} className={classes.tab} />
+                        <Tab {...this._get_tab_props(4)} icon={<CallReceivedIcon />} label={<span>{t("words.receive", {}, {TUC: true})}</span>} className={classes.tab} />
                     </Tabs>
                 </AppBar>
             </div>

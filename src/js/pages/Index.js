@@ -70,7 +70,7 @@ class Index extends React.Component {
             _jamy_state_of_mind: "shocked",
             _history: HISTORY,
             _unlisten: null,
-            _language: document.documentElement.lang,
+            _language: null,
             _logged_account: null,
             _snackbar_open: false,
             _snackbar_message: "",
@@ -224,7 +224,11 @@ class Index extends React.Component {
         const _onboarding_enabled = typeof settings.onboarding !== "undefined" ? settings.onboarding: true;
 
         document.documentElement.lang = _language;
-        this.setState({ _onboarding_enabled, _sfx_enabled, _jamy_enabled, _selected_locales_code, _language, _selected_currency, _panic_mode, _know_the_settings: true });
+        console.log(_language)
+        this.setState({ _onboarding_enabled, _sfx_enabled, _jamy_enabled, _selected_locales_code, _language, _selected_currency, _panic_mode, _know_the_settings: true }, () => {
+
+            this.forceUpdate();
+        });
     };
 
     _update_settings() {
@@ -336,69 +340,69 @@ class Index extends React.Component {
 
         const L = _language;
 
+        if(!L) {
+
+            return null;
+        }
+
         return (
             <div>
-                {_language ?
-
-                    <div className={classes.root}>
-                        <CssBaseline />
-                        <Snackbar
-                            className={classes.snackbar}
-                            open={_snackbar_open}
-                            anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "center",
-                            }}
-                            message={<div>
-                                {_jamy_enabled ? <img src={`/src/images/jamy-${_jamy_state_of_mind}.svg`} style={{height: 24, marginRight: 12, verticalAlign: "middle"}}/>: null}
-                                <span>{_snackbar_message.toString()}</span>
-                            </div>}
-                            autoHideDuration={_snackbar_auto_hide_duration}
-                            onClose={this._close_snackbar}
-                        />
-                        <div>
-                            <AutoRotatingCarousel
-                                label={t(_language, "pages.index.carousel.button_label")}
-                                onClose={this._close_carousel}
-                                onStart={this._accept_close_carousel}
-                                mobile={_width <= 960}
-                                open={_onboarding_enabled}
-                                autoplay={_onboarding_autoplay_enabled}
-                                interval={6000}
-                            >
-                                {t(_language, "pages.index.carousel.slides").map((slide, index) =>
-                                    <Slide
-                                        key={index}
-                                        onClick={this._stop_carousel_autoplay}
-                                        media={<img className={classes.carouselImage} src={slide.img} />}
-                                        mediaBackgroundStyle={{ backgroundColor: "#fff" }}
-                                        style={{ backgroundColor: "#060f23" }}
-                                        title={slide.title}
-                                        subtitle={slide.subtitle}
-                                    />
-                                )}
-                            </AutoRotatingCarousel>
-                        </div>
-                        <AppToolbar
-                            know_if_logged={_know_if_logged}
-                            know_the_settings={_know_the_settings}
-                            logged_account={_logged_account}
-                            pathname={pathname}
-                            panic_mode={_panic_mode}
-                            jamy_enabled={_jamy_enabled}
-                            jamy_state_of_mind={_jamy_state_of_mind}/>
-                        <AppDrawer
-                            pathname={pathname}
-                            logged_account={_logged_account}/>
-                        <main className={classes.content}>
-                            <Toolbar />
-                            {page_tabs_component}
-                            {page_component}
-                        </main>
+                <div className={classes.root}>
+                    <CssBaseline />
+                    <Snackbar
+                        className={classes.snackbar}
+                        open={_snackbar_open}
+                        anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "center",
+                        }}
+                        message={<div>
+                            {_jamy_enabled ? <img src={`/src/images/jamy-${_jamy_state_of_mind}.svg`} style={{height: 24, marginRight: 12, verticalAlign: "middle"}}/>: null}
+                            <span>{_snackbar_message.toString()}</span>
+                        </div>}
+                        autoHideDuration={_snackbar_auto_hide_duration}
+                        onClose={this._close_snackbar}
+                    />
+                    <div>
+                        <AutoRotatingCarousel
+                            label={t( "pages.index.carousel.button_label")}
+                            onClose={this._close_carousel}
+                            onStart={this._accept_close_carousel}
+                            mobile={_width <= 960}
+                            open={_onboarding_enabled}
+                            autoplay={_onboarding_autoplay_enabled}
+                            interval={6000}
+                        >
+                            {t( "pages.index.carousel.slides").map((slide, index) =>
+                                <Slide
+                                    key={index}
+                                    onClick={this._stop_carousel_autoplay}
+                                    media={<img className={classes.carouselImage} src={slide.img} />}
+                                    mediaBackgroundStyle={{ backgroundColor: "#fff" }}
+                                    style={{ backgroundColor: "#060f23" }}
+                                    title={slide.title}
+                                    subtitle={slide.subtitle}
+                                />
+                            )}
+                        </AutoRotatingCarousel>
                     </div>
-
-                    :null
-                }
+                    <AppToolbar
+                        know_if_logged={_know_if_logged}
+                        know_the_settings={_know_the_settings}
+                        logged_account={_logged_account}
+                        pathname={pathname}
+                        panic_mode={_panic_mode}
+                        jamy_enabled={_jamy_enabled}
+                        jamy_state_of_mind={_jamy_state_of_mind}/>
+                    <AppDrawer
+                        pathname={pathname}
+                        logged_account={_logged_account}/>
+                    <main className={classes.content}>
+                        <Toolbar />
+                        {page_tabs_component}
+                        {page_component}
+                    </main>
+                </div>
             </div>
         );
     }

@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Dialog from "@material-ui/core/Dialog";
@@ -70,16 +69,16 @@ class AccountDialogBackup extends React.Component {
                 {Boolean(account) ?
                     <div>
                         <DialogTitle id="backup-account-dialog-title">
-                            {t(L, "components.account_dialog_backup.seed", {account_name: account.name})}
+                            {t( "components.account_dialog_backup.seed", {account_name: account.name})}
                         </DialogTitle>
                         <DialogContent>
                             <DialogContentText id="backup-account-dialog-description">
-                                <p className={classes.red}>{t(L, "components.account_dialog_backup.store", {account_name: account.name})}</p>
+                                <p className={classes.red}>{t( "components.account_dialog_backup.store", {account_name: account.name})}</p>
                                 {
                                     _shown ?
                                         <p>{account.seed}</p>:
                                         <Button color="primary" fullWidth onClick={this._show}>
-                                            {t(L, "words.show" )}
+                                            {t( "words.show" )}
                                         </Button>
                                 }
                             </DialogContentText>
@@ -88,7 +87,7 @@ class AccountDialogBackup extends React.Component {
                 }
                 <DialogActions>
                     <Button onClick={(event) => {this._on_close(event, account)}}  color="primary" autoFocus>
-                        {t(L, "words.close" )}
+                        {t( "words.close" )}
                     </Button>
                 </DialogActions>
             </Dialog>

@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import FlashInfo from "../components/FlashInfo";
@@ -14,9 +13,8 @@ import Fab from "@material-ui/core/Fab";
 import Grow from "@material-ui/core/Grow";
 import actions from "../actions/utils";
 
-const quotes = t(L, "pages.home.quotes");
+const quotes = t( "pages.home.quotes");
 const random_quote_index = Math.floor(Math.random() * quotes.length);
-const quote = quotes[random_quote_index];
 
 const styles = theme => ({
     backgroundImage: {
@@ -70,7 +68,7 @@ class Home extends React.Component {
             classes: props.classes,
             _history: HISTORY,
             _is_share_dialog_open: false,
-            _quote: quote
+            _quote: t( "pages.home.quotes")[random_quote_index]
         };
     };
 
@@ -132,7 +130,7 @@ class Home extends React.Component {
         return (
             <div>
                 <div className={classes.flashInfoContainer}>
-                    <FlashInfo image="/src/images/wallet.svg" text={t(L, "pages.home.ready_to_start_cta")} button={t(L, "words.accounts")} onClick={(event) => this._go_to_url(event, "/accounts")}/>
+                    <FlashInfo image="/src/images/wallet.svg" text={t( "pages.home.ready_to_start_cta")} button={t( "words.accounts")} onClick={(event) => this._go_to_url(event, "/accounts")}/>
                 </div>
                 <div className={classes.backgroundImage}>
                     <div className={classes.quoteContainer}>
@@ -144,7 +142,7 @@ class Home extends React.Component {
                 </div>
                 <Grow in>
                     <Fab className={classes.fab} variant="extended" onClick={this._handle_share_dialog_open}>
-                        <ShareIcon /> Share
+                        <ShareIcon /> {t("words.share")}
                     </Fab>
                 </Grow>
                 <ShareDialog

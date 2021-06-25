@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Card from "@material-ui/core/Card";
@@ -284,7 +283,7 @@ class DashboardLineChart extends React.Component {
     _custom_tooltip = ({ active, payload, label }) => {
 
         if (active && payload && payload.length) {
-            console.log(payload);
+
             return (
                 <Card style={{padding: 12}}>
                     <b>{payload[0].payload.name}</b><span> / {this._date_formatter(label, true)}</span><br />
@@ -353,7 +352,7 @@ class DashboardLineChart extends React.Component {
                 <Fade in>
                     <Card className={classes.performanceCard}>
 
-                        <CardHeader title={t(L, "components.dashboard_line_chart.title")} />
+                        <CardHeader title={t( "components.dashboard_line_chart.title")} />
                             {
                                 loaded === 100 ?
                                     <div>
@@ -390,7 +389,7 @@ class DashboardLineChart extends React.Component {
                                             </CardContent>:
                                             <CardContent className={classes.noTransactionCardContent}>
                                                 <img className={classes.noTransactionImage} src="/src/images/data.svg"/>
-                                                <p>{t(L, "sentences.no transactions maid chart")}</p>
+                                                <p>{t( "sentences.no transactions maid chart")}</p>
                                             </CardContent>
                                         }
                                     </div>:

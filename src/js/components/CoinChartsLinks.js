@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Fade from "@material-ui/core/Fade";
@@ -139,31 +138,31 @@ class CoinChartsLinks extends React.Component {
         const market_info_card = coin_data !== null ?
             <Fade in={true}>
                 <Card className={classes.linksCard}>
-                    <CardHeader title="Links" />
+                    <CardHeader title={t("components.coin_charts_links.title")} />
                     <CardContent>
                         {coin_data.links.homepage.length ?
-                            <Tooltip title={t(L, "words.homepages", {}, {FLC: true})} aria-label={t(L, "words.homepages", {}, {FLC: true})}>
+                            <Tooltip title={t( "words.homepages", {}, {FLC: true})} aria-label={t( "words.homepages", {}, {FLC: true})}>
                                 <IconButton color="primary" className={classes.iconButton} onClick={(event) => this._open_link_dialog(event, "Homepages", coin_data.links.homepage)}>
                                     <HomeIcon fontSize="large" />
                                 </IconButton>
                             </Tooltip>:
                         null}
                         {coin_data.links.blockchain_site.length ?
-                            <Tooltip title={t(L, "words.block explorers", {}, {FLC: true})} aria-label={t(L, "words.block explorers", {}, {FLC: true})}>
+                            <Tooltip title={t( "words.block explorers", {}, {FLC: true})} aria-label={t( "words.block explorers", {}, {FLC: true})}>
                                 <IconButton color="primary" className={classes.iconButton} onClick={(event) => this._open_link_dialog(event, "Block Explorers", coin_data.links.blockchain_site)}>
                                     <ExploreIcon fontSize="large" />
                                 </IconButton>
                             </Tooltip>:
                         null}
                         {coin_data.links.official_forum_url.length ?
-                            <Tooltip title={t(L, "words.forum", {}, {FLC: true})} aria-label={t(L, "words.forum", {}, {FLC: true})}>
+                            <Tooltip title={t( "words.forum", {}, {FLC: true})} aria-label={t( "words.forum", {}, {FLC: true})}>
                                 <IconButton color="primary" className={classes.iconButton} onClick={(event) => this._open_link_dialog(event, "Forum", coin_data.links.official_forum_url)}>
                                     <ForumIcon fontSize="large" />
                                 </IconButton>
                             </Tooltip>:
                         null}
                         {coin_data.links.chat_url.length ?
-                            <Tooltip title={t(L, "words.chat", {}, {FLC: true})} aria-label={t(L, "words.chat", {}, {FLC: true})}>
+                            <Tooltip title={t( "words.chat", {}, {FLC: true})} aria-label={t( "words.chat", {}, {FLC: true})}>
                                 <IconButton color="primary" className={classes.iconButton} onClick={(event) => this._open_link_dialog(event, "Chat", coin_data.links.chat_url)}>
                                     <ChatIcon fontSize="large" />
                                 </IconButton>

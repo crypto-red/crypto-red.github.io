@@ -4,9 +4,6 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Drawer from "@material-ui/core/Drawer";
 import Box from "@material-ui/core/Box";
 
-const L = document.documentElement.lang;
-import { t } from "../utils/t";
-
 import DrawerContent from "../components/DrawerContent";
 
 

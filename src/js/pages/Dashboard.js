@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Grid from "@material-ui/core/Grid";
@@ -192,7 +191,7 @@ class Dashboard extends React.Component {
             });
         }else {
 
-            actions.trigger_snackbar(t(L, "pages.dashboard.crypto_balance_error", {crypto_id}));
+            actions.trigger_snackbar(t( "pages.dashboard.crypto_balance_error", {crypto_id}));
         }
     };
 
@@ -255,7 +254,7 @@ class Dashboard extends React.Component {
             this.setState({_coins_markets: data});
         }else {
 
-            actions.trigger_snackbar(t(L, "pages.dashboard.coin_market_data_error"))
+            actions.trigger_snackbar(t( "pages.dashboard.coin_market_data_error"))
         }
     };
 
@@ -366,7 +365,7 @@ class Dashboard extends React.Component {
                     :null
                 }
                 <div className={classes.flashInfoContainer}>
-                    <FlashInfo image="/src/images/pig-coins.svg" text={t(L, "pages.dashboard.new_to_crypto_cta")} button={t(L, "words.learn")} onClick={(event) => this._go_to_url(event, "/about/wiki/topup")}/>
+                    <FlashInfo image="/src/images/pig-coins.svg" text={t( "pages.dashboard.new_to_crypto_cta")} button={t( "words.learn")} onClick={(event) => this._go_to_url(event, "/about/wiki/topup")}/>
                 </div>
                 {Boolean(_logged_account !== null && _we_know_if_logged) ?
                     <div className={classes.root}>
@@ -382,7 +381,7 @@ class Dashboard extends React.Component {
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
                                         text_content={portfolio !== null ? this._price_formatter(portfolio.total_balance_currency, true): null}
-                                        label_content={t(L, "pages.dashboard.total_balance")}
+                                        label_content={t( "pages.dashboard.total_balance")}
                                         icon_component={<AccountBalanceWalletIcon />}
                                         relevant
                                     />
@@ -390,21 +389,21 @@ class Dashboard extends React.Component {
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
                                         text_content={portfolio !== null ? portfolio.number_of_coins_performed_with_value + " / " + portfolio.number_of_coins_performed: null}
-                                        label_content={t(L, "pages.dashboard.number_of_cryptos")}
+                                        label_content={t( "pages.dashboard.number_of_cryptos")}
                                         icon_component={<AccountBalanceIcon />}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
                                         text_content={portfolio !== null ? ((portfolio.performed_average_percentage_weighted_on_btc * 100) || 0).toFixed(2)+"/100": null}
-                                        label_content={t(L, "pages.dashboard.performed_btc")}
+                                        label_content={t( "pages.dashboard.performed_btc")}
                                         icon_component={portfolio !== null ? portfolio.performed_average_percentage_weighted_on_btc < 1 ? <CloseIcon />: <CheckIcon />: null}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
                                         text_content={portfolio !== null ? ((portfolio.performed_average_percentage_weighted * 100) || 0).toFixed(0) + "%": null}
-                                        label_content={t(L, "pages.dashboard.performed_percent")}
+                                        label_content={t( "pages.dashboard.performed_percent")}
                                         icon_component={portfolio !== null ? portfolio.performed_average_percentage_weighted > 0 ? <TrendingUpIcon />: <TrendingDownIcon />: null}
                                     />
                                 </Grid>

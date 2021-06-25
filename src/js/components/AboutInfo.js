@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import { HISTORY } from "../utils/constants";
@@ -63,7 +62,7 @@ const styles = theme => ({
     }
 });
 
-const VIEWS = t(L, "components.about_info");
+const VIEWS = t( "components.about_info");
 
 let VIEW_NAMES = [];
 
@@ -85,7 +84,7 @@ class AboutInfo extends React.Component {
             _view_name_index: VIEW_NAMES.indexOf(!~props.pathname.split("/")[3] || VIEW_NAMES[0]) ? 0: VIEW_NAMES.indexOf(props.pathname.split("/")[3] || VIEW_NAMES[0]),
             _history: HISTORY,
             _view_names: VIEW_NAMES,
-            _views: VIEWS
+            _views: t( "components.about_info"),
         };
     };
 

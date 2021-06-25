@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Card from "@material-ui/core/Card";
@@ -66,19 +65,19 @@ class DashboardQuickCardMobile extends React.Component {
                             <Table>
                                 <TableBody>
                                     <TableRow>
-                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t(L, "components.dashboard_quick_card_mobile.total"): <Skeleton/>}</TableCell>
+                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t( "components.dashboard_quick_card_mobile.total"): <Skeleton/>}</TableCell>
                                         <TableCell align="right">{portfolio !== null ? this._price_formatter(portfolio.total_balance_currency, true, true): <Skeleton/>}</TableCell>
                                     </TableRow>
                                     <TableRow>
-                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t(L, "components.dashboard_quick_card_mobile.number"): <Skeleton/>}</TableCell>
+                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t( "components.dashboard_quick_card_mobile.number"): <Skeleton/>}</TableCell>
                                         <TableCell align="right">{portfolio !== null ? portfolio.number_of_coins_performed_with_value + " / " + portfolio.number_of_coins_performed: <Skeleton/>}</TableCell>
                                     </TableRow>
                                     <TableRow>
-                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t(L, "components.dashboard_quick_card_mobile.btc_performance"): <Skeleton/>}</TableCell>
+                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t( "components.dashboard_quick_card_mobile.btc_performance"): <Skeleton/>}</TableCell>
                                         <TableCell align="right">{portfolio !== null ? (portfolio.performed_average_percentage_weighted_on_btc || 0).toFixed(2): <Skeleton/>}</TableCell>
                                     </TableRow>
                                     <TableRow>
-                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t(L, "components.dashboard_quick_card_mobile.performance"): <Skeleton/>}</TableCell>
+                                        <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t( "components.dashboard_quick_card_mobile.performance"): <Skeleton/>}</TableCell>
                                         <TableCell align="right">{portfolio !== null ? ((portfolio.performed_average_percentage_weighted * 100) || 0).toFixed(0) + "%": <Skeleton/>}</TableCell>
                                     </TableRow>
                                 </TableBody>

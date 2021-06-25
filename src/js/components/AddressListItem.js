@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from '@material-ui/core/styles'
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import ListItemIcon from "@material-ui/core/ListItemIcon";
@@ -82,18 +81,18 @@ class AddressListItem extends React.Component {
             clipboard.writeText(address).then(
                 function () {
 
-                    actions.trigger_snackbar(t(L, "sentences.address successfully copied"));
+                    actions.trigger_snackbar(t( "sentences.address successfully copied"));
                     actions.trigger_sfx("navigation_forward-selection");
                 },
                 function () {
 
-                    actions.trigger_snackbar(t(L, "sentences.cannot copy this address"));
+                    actions.trigger_snackbar(t( "sentences.cannot copy this address"));
                     actions.trigger_sfx("navigation_backward-selection");
                 }
             );
         }else {
 
-            actions.trigger_snackbar(t(L, "sentences.cannot copy a null address"));
+            actions.trigger_snackbar(t( "sentences.cannot copy a null address"));
             actions.trigger_sfx("navigation_backward-selection");
         }
     }

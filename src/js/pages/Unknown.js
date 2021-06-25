@@ -37,6 +37,8 @@ class Unknown extends React.Component {
 
     render() {
 
+        const { classes } = this.state;
+
         return (
             <div className={classes.root}>
                 <div className={classes.backgroundImage}>

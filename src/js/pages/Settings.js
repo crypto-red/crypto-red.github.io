@@ -77,8 +77,12 @@ class Settings extends React.Component {
 
         const { _language } = this.state;
 
-        actions.trigger_snackbar(t(_language, "pages.settings.settings_changed"));
         actions.trigger_settings_update();
+
+        setTimeout(() => {
+
+            actions.trigger_snackbar(t( "pages.settings.settings_changed"));
+        }, 500);
     }
 
     _handle_locales_changed = (event, value) => {
@@ -207,7 +211,7 @@ class Settings extends React.Component {
                 <Container maxWidth="sm" className={classes.container}>
                     <Fade in timeout={300*1}>
                         <Card>
-                            <CardHeader title={t(_language, "pages.settings.language")} />
+                            <CardHeader title={t( "pages.settings.language")} />
                             <CardContent>
                                 <Autocomplete
                                     fullWidth
@@ -218,14 +222,14 @@ class Settings extends React.Component {
                                     options={_locales}
                                     getOptionLabel={(option) => option.name || option.original.name}
                                     renderOption={(option) => <span dangerouslySetInnerHTML={{ __html: option.string }}></span>}
-                                    renderInput={(params) => <TextField {...params} label={t(_language, "words.locales", {}, {FLC: true})} margin="normal" />}
+                                    renderInput={(params) => <TextField {...params} label={t( "words.locales", {}, {FLC: true})} margin="normal" />}
                                 />
                             </CardContent>
                         </Card>
                     </Fade>
                     <Fade in timeout={300*2}>
                         <Card className={classes.marginTop}>
-                            <CardHeader title={t(_language, "pages.settings.currency")} />
+                            <CardHeader title={t( "pages.settings.currency")} />
                             <CardContent>
                                 <Autocomplete
                                     fullWidth
@@ -236,19 +240,19 @@ class Settings extends React.Component {
                                     options={currencies}
                                     getOptionLabel={(option) => option.original || option}
                                     renderOption={(option) => <span dangerouslySetInnerHTML={{ __html: option.string }}></span>}
-                                    renderInput={(params) => <TextField {...params} label={t(_language, "words.currency", {}, {FLC: true})} margin="normal" />}
+                                    renderInput={(params) => <TextField {...params} label={t( "words.currency", {}, {FLC: true})} margin="normal" />}
                                 />
                             </CardContent>
                         </Card>
                     </Fade>
                     <Fade in timeout={300*3}>
                         <Card className={classes.marginTop}>
-                            <CardHeader title={t(_language, "pages.settings.sound")} />
+                            <CardHeader title={t( "pages.settings.sound")} />
                             <CardContent>
                                 <FormControlLabel
-                                    value={t(_language, "pages.settings.enable_sound_effects")}
+                                    value={t( "pages.settings.enable_sound_effects")}
                                     control={<Switch checked={_sfx_enabled} onChange={this._handle_sfx_enabled_switch_change} color="primary" />}
-                                    label={t(_language, "pages.settings.enable_sound_effects")}
+                                    label={t( "pages.settings.enable_sound_effects")}
                                     labelPlacement="end"
                                 />
                             </CardContent>
@@ -256,26 +260,26 @@ class Settings extends React.Component {
                     </Fade>
                     <Fade in timeout={300*4}>
                         <Card className={classes.marginTop}>
-                            <CardHeader title={t(_language, "pages.settings.superintendent")} />
+                            <CardHeader title={t( "pages.settings.superintendent")} />
                             <CardContent>
                                 <FormControlLabel
-                                    value={t(_language, "pages.settings.enable_the_superintendent")}
+                                    value={t( "pages.settings.enable_the_superintendent")}
                                     control={<Switch checked={_jamy_enabled} onChange={this._handle_jamy_enabled_switch_change} color="primary" />}
-                                    label={t(_language, "pages.settings.make_jamy_active")}
+                                    label={t( "pages.settings.make_jamy_active")}
                                     labelPlacement="end"
                                 />
-                                <p>{t(_language, "pages.settings.description_of_jamy")}</p>
+                                <p>{t( "pages.settings.description_of_jamy")}</p>
                             </CardContent>
                         </Card>
                     </Fade>
                     <Fade in timeout={300*5}>
                         <Card className={classes.marginTop}>
-                            <CardHeader title={t(_language, "pages.settings.security")} />
+                            <CardHeader title={t( "pages.settings.security")} />
                             <CardContent>
                                 <FormControlLabel
-                                    value={t(_language, "pages.settings.enable_reset_option_in_menu")}
+                                    value={t( "pages.settings.enable_reset_option_in_menu")}
                                     control={<Switch checked={_panic_mode} onChange={this._handle_panic_switch_change} color="primary" />}
-                                    label={t(_language, "pages.settings.enable_reset_option_in_menu")}
+                                    label={t( "pages.settings.enable_reset_option_in_menu")}
                                     labelPlacement="end"
                                 />
                             </CardContent>

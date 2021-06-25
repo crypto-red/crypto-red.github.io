@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Fade from "@material-ui/core/Fade";
@@ -182,7 +181,7 @@ class AccountCard extends React.Component {
             this.setState({_balance});
         }else {
 
-            actions.trigger_snackbar(t(L, "account_card.crypto_balance_error", {crypto_id}));
+            actions.trigger_snackbar(t( "account_card.crypto_balance_error", {crypto_id}));
         }
     };
 
@@ -275,7 +274,7 @@ class AccountCard extends React.Component {
                                     horizontal: "right",
                                 }}
                                 variant="dot">
-                                <Avatar aria-label="Acronym" className={classes.avatar} variant="square">
+                                <Avatar className={classes.avatar} variant="square">
                                     <Jdenticon size="48" value={account.name} />
                                 </Avatar>
                             </Badge>
@@ -283,7 +282,7 @@ class AccountCard extends React.Component {
                         action={
                             <div>
                                 <IconButton edge="end"
-                                            aria-label="account"
+                                            aria-label={t("words.account")}
                                             aria-haspopup="true"
                                             color="inherit"
                                             onClick={this._open_account_menu}>
@@ -299,7 +298,7 @@ class AccountCard extends React.Component {
                                         <ListItemIcon>
                                             <DeleteIcon fontSize="small" />
                                         </ListItemIcon>
-                                        <ListItemText primary="Delete"/>
+                                        <ListItemText primary={t("words.delete", {}, {FLC: true})}/>
                                     </MenuItem>
                                     {
                                         current ?
@@ -307,7 +306,7 @@ class AccountCard extends React.Component {
                                                 <ListItemIcon>
                                                     <BackupIcon fontSize="small" />
                                                 </ListItemIcon>
-                                                <ListItemText primary="Backup"/>
+                                                <ListItemText primary={t("words.backup", {}, {FLC: true})}/>
                                             </MenuItem>: null
                                     }
                                     {
@@ -316,7 +315,7 @@ class AccountCard extends React.Component {
                                                 <ListItemIcon>
                                                     <RefreshIcon fontSize="small" />
                                                 </ListItemIcon>
-                                                <ListItemText primary="Refresh"/>
+                                                <ListItemText primary={t("words.refresh", {}, {FLC: true})}/>
                                             </MenuItem>: null
                                     }
 
@@ -334,7 +333,7 @@ class AccountCard extends React.Component {
                                         {Boolean(coins_markets) ?
                                             <Fade timeout={display_after_ms+50} in><span>{_price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span></Fade>
                                             :
-                                            "Loading..."
+                                            t("sentence.loading", {}, {FLC: true})
                                         }
                                     </h2>:
                                     <h2 className={classes.balance}>
@@ -348,7 +347,7 @@ class AccountCard extends React.Component {
                                 className={classes.floatRight}
                                 color="primary"
                                 onClick={(event) => {this.props.onToggle(event, account)}}>
-                            {Boolean(current) ? "Close": "Open"}
+                            {Boolean(current) ? t("words.close"): t("words.open")}
                         </Button>
                     </CardActions>
                 </Card>

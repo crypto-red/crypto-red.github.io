@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Card from "@material-ui/core/Card";
@@ -134,7 +133,7 @@ class CoinChartsConvert extends React.Component {
         const market_convert_card = coin_data !== null ?
             <Fade in={true}>
                 <Card>
-                    <CardHeader title="Price Search" />
+                    <CardHeader title={t( "components.coin_charts_convert.title")} />
                     <CardContent>
                         <TextField className={classes.convertInput}
                                    id="cryptocurrency-input"
@@ -156,7 +155,7 @@ class CoinChartsConvert extends React.Component {
                                 className={classes.noTopMargin}
                                 margin="normal"
                                 id="date-picker-dialog"
-                                label={t(L, "sentences.pick a date")}
+                                label={t( "sentences.pick a date")}
                                 format={date_format}
                                 value={_selected_date}
                                 onChange={this._handle_selected_date_change}
@@ -167,7 +166,7 @@ class CoinChartsConvert extends React.Component {
                                 fullWidth
                                 variant="contained"
                                 color="primary">
-                            BUY {coin_data.name.toUpperCase()}
+                            {t( "components.coin_charts_convert.buy_x", {coin_name: coin_data.name})}
                         </Button>
                     </CardContent>
                 </Card>

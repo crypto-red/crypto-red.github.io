@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import ListItem from "@material-ui/core/ListItem";
@@ -15,7 +14,7 @@ import Skeleton from "@material-ui/lab/Skeleton";
 
 import Jdenticon from "react-jdenticon";
 import price_formatter from "../utils/price-formatter";
-import TimeAgo from "react-timeago";
+import ReactTimeAgo from "react-time-ago";
 import api from "../utils/api";
 
 const styles = theme => ({
@@ -210,11 +209,11 @@ class Transaction extends React.Component {
                         secondary={
                             <div className={classes.spaceBetween}>
                                 <span className={classes.timeAgo}>
-                                    <TimeAgo date={_full_transaction.timestamp} />
+                                    <ReactTimeAgo date={_full_transaction.timestamp} locale={document.documentElement.lang}/>
                                     {
                                         typeof _full_transaction.confirmations !== "undefined"?
                                             _full_transaction.confirmations <= 6 ?
-                                                t(L, "components.transaction.unconfirmed")
+                                                t( "components.transaction.unconfirmed")
                                                 : null
                                             : null
                                     }

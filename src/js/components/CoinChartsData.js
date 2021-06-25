@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Avatar from "@material-ui/core/Avatar";
@@ -87,25 +86,25 @@ class CoinChartsData extends React.Component {
                             <TableBody>
                                 <TableRow>
                                     <TableCell>
-                                        <span>24h: </span>
+                                        <span>{t("components.coin_charts_data.day")}</span>
                                         <span className={coin_data.market_data.price_change_percentage_24h <= 0 ? classes.red: classes.green}>
                                             {coin_data.market_data.price_change_percentage_24h.toFixed(2)}%
                                         </span>
                                     </TableCell>
                                     <TableCell>
-                                        <span>7d: </span>
+                                        <span>{t("components.coin_charts_data.week")}</span>
                                         <span className={coin_data.market_data.price_change_percentage_7d <= 0 ? classes.red: classes.green}>
                                             {coin_data.market_data.price_change_percentage_7d.toFixed(2)}%
                                         </span>
                                     </TableCell>
                                     <TableCell>
-                                        <span>30d: </span>
+                                        <span>{t("components.coin_charts_data.month")}</span>
                                         <span className={coin_data.market_data.price_change_percentage_30d <= 0 ? classes.red: classes.green}>
                                             {coin_data.market_data.price_change_percentage_30d.toFixed(2)}%
                                         </span>
                                     </TableCell>
                                     <TableCell>
-                                        <span>1y: </span>
+                                        <span>{t("components.coin_charts_data.year")}</span>
                                         <span className={coin_data.market_data.price_change_percentage_1y <= 0 ? classes.red: classes.green}>
                                             {coin_data.market_data.price_change_percentage_1y.toFixed(2)}%
                                         </span>
@@ -116,38 +115,38 @@ class CoinChartsData extends React.Component {
                         <Table aria-label="main-info-table">
                             <TableBody>
                                 <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>Price</TableCell>
+                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.price")}</TableCell>
                                     <TableCell align="right" className={classes.price}>{this._price_formatter(coin_data.market_data.current_price[selected_currency.toLowerCase()])}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>Market Cap</TableCell>
+                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.market_cap")}</TableCell>
                                     <TableCell align="right">{this._price_formatter(coin_data.market_data.market_cap[selected_currency.toLowerCase()])}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>Total supply</TableCell>
+                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.total_supply")}</TableCell>
                                     <TableCell align="right">{coin_data.market_data.total_supply}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>Market Cap Rank</TableCell>
+                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.market_cap_rank")}</TableCell>
                                     <TableCell align="right">#{coin_data.market_data.market_cap_rank}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>Alexa Rank</TableCell>
+                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.alexa_rank")}</TableCell>
                                     <TableCell align="right">#{coin_data.public_interest_stats.alexa_rank}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>Today score</TableCell>
+                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.today_score")}</TableCell>
                                     <TableCell align="right">{coin_data.sentiment_votes_up_percentage}%</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>All-Time High</TableCell>
+                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.all_time_high")}</TableCell>
                                     <TableCell align="right">{this._price_formatter(coin_data.market_data.ath[selected_currency.toLowerCase()])}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>All-Time Low</TableCell>
+                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.all_time_low")}</TableCell>
                                     <TableCell align="right">{this._price_formatter(coin_data.market_data.atl[selected_currency.toLowerCase()])}</TableCell>
                                 </TableRow>
-                                <TableRow><p align="left">Data provided by <a href="https://coingecko.com/" target="_blank">CoinGecko</a></p></TableRow>
+                                <TableRow><p align="left">{t("components.coin_charts_data.data_provided_by")} <a href="https://coingecko.com/" target="_blank">CoinGecko</a></p></TableRow>
                             </TableBody>
                         </Table>
                     </CardContent>

@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Button from "@material-ui/core/Button";
@@ -11,13 +10,12 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-import TimeAgo from "react-timeago"
+import ReactTimeAgo from "react-time-ago";
 import actions from "../actions/utils";
 
 const styles = theme => ({
 
 });
-
 
 class AccountDialogClose extends React.Component {
 
@@ -61,21 +59,21 @@ class AccountDialogClose extends React.Component {
                 {Boolean(account) ?
                     <div>
                         <DialogTitle id="close-account-dialog-title">
-                            {t(L, "components.account_dialog_close.close", {account_name: account.name})}
+                            {t( "components.account_dialog_close.close", {account_name: account.name})}
                         </DialogTitle>
                         <DialogContent>
                             <DialogContentText id="close-account-dialog-description">
-                                {t(L, "components.account_dialog_close.opened", {time_ago: ""})} <TimeAgo date={account.timestamp} />
+                                {t( "components.account_dialog_close.opened", {time_ago: ""})} <ReactTimeAgo date={account.timestamp} locale={document.documentElement.lang}/>
                             </DialogContentText>
                         </DialogContent>
                     </div>: null
                 }
                 <DialogActions>
                     <Button onClick={(event) => {this._on_cancel(event, account)}} color="primary">
-                        {t(L, "words.cancel" )}
+                        {t( "words.cancel" )}
                     </Button>
                     <Button onClick={(event) => {this._on_accept(event, account)}} color="primary" autoFocus>
-                        {t(L, "words.close" )}
+                        {t( "words.close" )}
                     </Button>
                 </DialogActions>
             </Dialog>

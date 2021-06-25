@@ -1,7 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
-const L = document.documentElement.lang;
 import { t } from "../utils/t";
 
 import Dialog from "@material-ui/core/Dialog";
@@ -132,16 +131,16 @@ class ShareDialog extends React.Component {
             clipboard.writeText(url).then(
                 function () {
 
-                    actions.trigger_snackbar(t(L, "sentences.url successfully copied"));
+                    actions.trigger_snackbar(t( "sentences.url successfully copied"));
                 },
                 function () {
 
-                    actions.trigger_snackbar(t(L, "sentences.cannot copy this url"));
+                    actions.trigger_snackbar(t( "sentences.cannot copy this url"));
                 }
             );
         }else {
 
-            actions.trigger_snackbar(t(L, "sentences.cannot copy non-existent url"));
+            actions.trigger_snackbar(t( "sentences.cannot copy non-existent url"));
         }
     }
 
@@ -163,7 +162,7 @@ class ShareDialog extends React.Component {
                     onClose={(event) => {this.props.onClose(event)}}
                 >
                     <DialogTitle>
-                        {t(L, "components.share_dialog.title")}
+                        {t( "components.share_dialog.title")}
                         <IconButton aria-label="close" className={classes.closeButton} onClick={(event) => {this.props.onClose(event)}}>
                             <CloseIcon />
                         </IconButton>
@@ -212,7 +211,7 @@ class ShareDialog extends React.Component {
                             </Tooltip>
                         </div>
                         <FormControl fullWidth>
-                            <InputLabel htmlFor="share-dialog-url-input">{t(L, "components.share_dialog.url")}</InputLabel>
+                            <InputLabel htmlFor="share-dialog-url-input">{t( "components.share_dialog.url")}</InputLabel>
                             <Input
                                 value={url}
                                 id="share-dialog-url-input"
@@ -220,7 +219,7 @@ class ShareDialog extends React.Component {
                                 endAdornment={
                                     <InputAdornment position="end">
                                         <IconButton
-                                            aria-label={t(L, "sentences.copy address")}
+                                            aria-label={t( "sentences.copy address")}
                                             onClick={(event) => this._copy_url(event, url)}
                                             edge="end"
                                         >
@@ -231,7 +230,7 @@ class ShareDialog extends React.Component {
                             />
                         </FormControl>
                         <DialogContentText className={classes.fontWeightBold}>
-                            <p>{t(L, "components.share_dialog.thanks_for_sharing")}</p>
+                            <p>{t( "components.share_dialog.thanks_for_sharing")}</p>
                         </DialogContentText>
                     </DialogContent>
                 </Dialog>
