@@ -178,7 +178,7 @@ class Coins extends React.Component {
 
     _process_settings_query_result = (error, settings) => {
 
-        const { _coins_id } = this.state;
+        const { _coins_id, _coins_markets } = this.state;
 
         // Set new settings from query result
         const _selected_locales_code = settings.locales;
@@ -186,6 +186,10 @@ class Coins extends React.Component {
 
         this.setState({ _selected_locales_code, _selected_currency }, function(){
 
+            if(!_coins_markets.length) {
+
+                actions.trigger_loading_update(0);
+            }
             api.get_coins_markets(_coins_id, _selected_currency.toLowerCase(), this._set_coins_markets);
         });
     };
@@ -205,6 +209,8 @@ class Coins extends React.Component {
 
             console.log(error);
         }
+
+        actions.trigger_loading_update(100);
     };
 
     _descending_comparator(a, b, order_by) {

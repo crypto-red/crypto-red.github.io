@@ -130,6 +130,7 @@ class CoinChartsChart extends React.Component {
 
         const { coin_id, selected_currency, _coin_chart_data_time } = this.state;
 
+        actions.trigger_loading_update(0);
         this.setState({_is_coin_chart_data_loading: true, _coin_chart_data_loaded: false, _bitcoin_chart_data_loaded: false}, () => {
 
             api.get_coin_chart_data(coin_id, selected_currency.toLowerCase(), _coin_chart_data_time, (error, response) => {
@@ -212,6 +213,7 @@ class CoinChartsChart extends React.Component {
                         });
 
                     this.setState({_regular_complete_sorted_data, _ticks_array, _regular_formatted_complete_sorted_data});
+                    actions.trigger_loading_update(100);
                 }else {
 
                     this.setState({_regular_complete_sorted_data});
@@ -221,7 +223,10 @@ class CoinChartsChart extends React.Component {
 
         }else {
 
-            this.setState({_is_coin_chart_data_loading: false});
+            this.setState({_is_coin_chart_data_loading: false}, () => {
+
+                actions.trigger_loading_update(100);
+            });
         }
     };
 

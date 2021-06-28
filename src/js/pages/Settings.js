@@ -64,6 +64,8 @@ class Settings extends React.Component {
         const _selected_currency = settings.currency || "USD";
         const _panic_mode = settings.panic || false;
 
+        actions.trigger_loading_update(0);
+        actions.trigger_loading_update(100);
         this.setState({ _sfx_enabled, _jamy_enabled, _selected_locales_code, _language, _selected_currency, _panic_mode });
     };
 
@@ -77,12 +79,10 @@ class Settings extends React.Component {
 
         const { _language } = this.state;
 
+        actions.trigger_loading_update(0);
+        actions.trigger_loading_update(100);
         actions.trigger_settings_update();
-
-        setTimeout(() => {
-
-            actions.trigger_snackbar(t( "pages.settings.settings_changed"));
-        }, 500);
+        actions.trigger_snackbar(t( "pages.settings.settings_changed"));
     }
 
     _handle_locales_changed = (event, value) => {

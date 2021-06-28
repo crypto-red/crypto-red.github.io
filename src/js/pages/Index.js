@@ -85,6 +85,7 @@ class Index extends React.Component {
             _selected_currency: null,
             _panic_mode: false,
             _know_if_logged: false,
+            _loaded_progress_percent: 100,
             _logged_once: false,
             _know_the_settings: false,
             is_online: true,
@@ -177,6 +178,10 @@ class Index extends React.Component {
 
             case "SETTINGS_UPDATE":
                 this._update_settings();
+                break;
+
+            case "LOADING_UPDATE":
+                this.setState({_loaded_progress_percent: event.data.percent});
                 break;
         }
     }
@@ -298,7 +303,7 @@ class Index extends React.Component {
         const { pathname, classes } = this.state;
         const { _snackbar_open, _snackbar_message, _snackbar_auto_hide_duration } = this.state;
         const { _onboarding_enabled, _onboarding_showed_once_in_session, _onboarding_autoplay_enabled, _width, _language } = this.state;
-        const { _logged_account, _panic_mode, _know_if_logged, _know_the_settings, _jamy_state_of_mind, _jamy_enabled } = this.state;
+        const { _logged_account, _panic_mode, _know_if_logged, _loaded_progress_percent, _know_the_settings, _jamy_state_of_mind, _jamy_enabled } = this.state;
 
         // This is the custom router
         let page_component = null;
@@ -385,6 +390,7 @@ class Index extends React.Component {
                         </AutoRotatingCarousel>
                     </div>
                     <AppToolbar
+                        loaded_progress_percent={_loaded_progress_percent}
                         know_if_logged={_know_if_logged}
                         know_the_settings={_know_the_settings}
                         logged_account={_logged_account}

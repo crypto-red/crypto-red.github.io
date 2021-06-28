@@ -8,6 +8,7 @@ import CoinTransactions from "../components/CoinTransactions";
 import CoinCharts from "../components/CoinCharts";
 import CoinSend from "../components/CoinSend";
 import CoinReceive from "../components/CoinReceive";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     root: {
@@ -83,7 +84,7 @@ class Coin extends React.Component {
         api.is_logged(this._process_is_logged_result);
     };
 
-    _process_settings_query_result = (error, settings) => {;
+    _process_settings_query_result = (error, settings) => {
 
         // Set new settings from query result
         const _selected_locales_code = settings.locales;
@@ -103,6 +104,7 @@ class Coin extends React.Component {
     _get_coin_data() {
 
         const { _coin_id } = this.state;
+
         api.get_coin_data(_coin_id, this._set_coin_data);
     }
 

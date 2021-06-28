@@ -4,7 +4,6 @@ import { withStyles } from "@material-ui/core/styles";
 import { t } from "../utils/t";
 
 import Grid from "@material-ui/core/Grid";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import Grow from "@material-ui/core/Grow";
 import Fab from "@material-ui/core/Fab";
 
@@ -136,7 +135,7 @@ class Dashboard extends React.Component {
         this.state = {
             classes: props.classes,
             _balance: {},
-            _transactions: [],
+            _loaded: 0,
             _logged_account: null,
             _we_know_if_logged: false,
             _coins_markets: [],
@@ -154,6 +153,7 @@ class Dashboard extends React.Component {
 
         this.setState({_coins_id: COINS.map(c => c.id)}, () => {
 
+            actions.trigger_loading_update(0);
             this._update_settings();
             this._is_logged();
         });
@@ -332,13 +332,18 @@ class Dashboard extends React.Component {
             number_of_coins_performed_with_value
         };
 
-        this.setState({_portfolio: portfolio})
+        this.setState({_portfolio: portfolio});
     };
 
     _price_formatter = (value, compact) => {
 
         const { _selected_currency, _selected_locales_code } = this.state;
         return price_formatter(value, _selected_currency, _selected_locales_code, compact)
+    };
+
+    _on_transactions_loading_change = (percent) => {
+
+        actions.trigger_loading_update(percent);
     };
 
     render() {
@@ -358,12 +363,6 @@ class Dashboard extends React.Component {
 
         return (
             <div>
-                {Boolean(_logged_account !== null) ?
-                    Boolean(_logged_account.name) ?
-                        <LinearProgress className={coin_loading_percent === 100 ? classes.linearProgressHidden: classes.linearProgressVisible} color="primary" variant="determinate" value={coin_loading_percent}/>
-                        :null
-                    :null
-                }
                 <div className={classes.flashInfoContainer}>
                     <FlashInfo image="/src/images/pig-coins.svg" text={t( "pages.dashboard.new_to_crypto_cta")} button={t( "words.learn")} onClick={(event) => this._go_to_url(event, "/about/wiki/topup")}/>
                 </div>
@@ -412,7 +411,8 @@ class Dashboard extends React.Component {
                                         Boolean(_we_know_if_logged && _logged_account) ?
                                             <DashboardLineChart
                                                 coins_markets={_coins_markets}
-                                                logged_account={_logged_account} />
+                                                logged_account={_logged_account}
+                                                on_loading_change={(percent) => this._on_transactions_loading_change(percent)}/>
                                             : null
                                     }
                                 </Grid>
@@ -431,7 +431,8 @@ class Dashboard extends React.Component {
                                 <Grid item xs={12} lg={6} className={classes.gridItem}>
                                     {
                                         Boolean(_we_know_if_logged && _logged_account) ?
-                                            <DashboardTransactions logged_account={_logged_account}/>: null
+                                            <DashboardTransactions
+                                                logged_account={_logged_account}/>: null
                                     }
                                 </Grid>
                                 <Grid item xs={12} lg={6} className={classes.gridItem}>

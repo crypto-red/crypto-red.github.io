@@ -49,7 +49,7 @@ class CoinTransactions extends React.Component {
             selected_locales_code: props.selected_locales_code,
             _transactions: [],
             _loading: true,
-            _yet_not_any_transactions: false,
+            _not_any_transactions_yet: false,
             _is_transaction_dialog_memo_open: false,
             _selected_transaction: null,
             _history: HISTORY
@@ -92,14 +92,15 @@ class CoinTransactions extends React.Component {
             const new_transactions = result;
             let all_transactions = _transactions.concat(new_transactions);
             all_transactions = remove_duplicate_object_from_array(all_transactions, "id");
-            const _yet_not_any_transactions = (!new_transactions.length && !_transactions.length);
-
-            if(error || !result.length) {
+            const _not_any_transactions_yet = (!new_transactions.length && !_transactions.length);
+            
+            if((error || !new_transactions.length) && !_not_any_transactions_yet) {
 
                 actions.trigger_snackbar(t( "sentences.cannot load more transaction"))
             }
 
-            this.setState({_loading: false, _transactions: all_transactions, _yet_not_any_transactions});
+            this.setState({_loading: false, _transactions: all_transactions, _not_any_transactions_yet});
+            actions.trigger_loading_update(100);
         }else {
 
             actions.trigger_snackbar(error);
@@ -118,10 +119,12 @@ class CoinTransactions extends React.Component {
 
         if(logged_account) {
 
+            actions.trigger_loading_update(0);
             console.log(coin_id);
             api.get_transactions_by_seed(coin_id, logged_account.seed, _transactions, this._handle_load_more_transactions_result);
         }else {
 
+            actions.trigger_loading_update(100);
             this.setState({_loading: false});
         }
     };
@@ -152,7 +155,7 @@ class CoinTransactions extends React.Component {
     render() {
 
         const { classes, selected_currency, selected_locales_code, logged_account } = this.state;
-        const { _is_transaction_dialog_memo_open, _selected_transaction, _yet_not_any_transactions, _loading } = this.state;
+        const { _is_transaction_dialog_memo_open, _selected_transaction, _not_any_transactions_yet, _loading } = this.state;
         const _transactions = this.state._transactions.slice().sort((a, b) => b.timestamp-a.timestamp);
 
         return (
@@ -176,7 +179,7 @@ class CoinTransactions extends React.Component {
                             {
                                 !_loading ?
                                     logged_account ?
-                                        _yet_not_any_transactions ?
+                                        _not_any_transactions_yet ?
                                             <CardContent>
                                                 <img className={classes.noTransactionImage} src="/src/images/transfer.svg"/>
                                                 <p>{t("sentences.no transactions maid")}</p>

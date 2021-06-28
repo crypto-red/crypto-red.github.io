@@ -655,7 +655,7 @@ function get_balance_by_seed(coin_id, seed, callback_function){
 
             _cache_data(
                 query_db,
-                1000,
+                3000,
                 "v-systems-get-balance",
                 get_vsys_account_balance_by_seed,
                 {node: "https://wallet.v.systems/api", seed},
@@ -784,7 +784,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
 
             _cache_data(
                 query_db,
-                1 * 1000,
+                4 * 1000,
                 "v-systems-get-transaction_from-" + all_transactions.length.toString() + "-" + after_transaction_id,
                 get_vsys_account_transactions_by_seed,
                 {node: "https://wallet.v.systems/api", seed, number_of_record: 25, offset_number: all_transactions.length},
@@ -795,7 +795,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
 
             _cache_data(
                 query_db,
-                1 * 1000,
+                4 * 1000,
                 "bitcoin-get-transaction_from-" + after_transaction_id,
                 get_btc_dash_doge_ltc_account_transactions_by_seed,
                 {seed, after_transaction_id, coin_id},
@@ -806,7 +806,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
 
             _cache_data(
                 query_db,
-                1 * 1000,
+                4 * 1000,
                 "bitcoin-get-transaction_from-" + after_transaction_id,
                 get_btc_dash_doge_ltc_account_transactions_by_seed,
                 {seed, after_transaction_id, coin_id},
@@ -817,7 +817,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
 
             _cache_data(
                 query_db,
-                1 * 1000,
+                4 * 1000,
                 "dogecoin-get-transaction_from-" + after_transaction_id,
                 get_btc_dash_doge_ltc_account_transactions_by_seed,
                 {seed, after_transaction_id, coin_id},
@@ -828,7 +828,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
 
             _cache_data(
                 query_db,
-                1 * 1000,
+                4 * 1000,
                 "dash-get-transaction_from-" + after_transaction_id,
                 get_btc_dash_doge_ltc_account_transactions_by_seed,
                 {seed, after_transaction_id, coin_id},

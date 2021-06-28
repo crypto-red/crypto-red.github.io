@@ -64,10 +64,19 @@ function trigger_settings_update() {
     });
 }
 
+function trigger_loading_update(percent) {
+
+    dispatcher.dispatch({
+        type: "LOADING_UPDATE",
+        data: {percent}
+    });
+}
+
 module.exports = {
     jamy_update: jamy_update,
     trigger_sfx: trigger_sfx,
     trigger_snackbar: trigger_snackbar,
     trigger_login_update: trigger_login_update,
-    trigger_settings_update: trigger_settings_update
+    trigger_settings_update: trigger_settings_update,
+    trigger_loading_update: trigger_loading_update,
 };

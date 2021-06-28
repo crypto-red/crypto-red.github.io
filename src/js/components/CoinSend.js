@@ -114,7 +114,7 @@ class CoinSend extends React.Component {
 
         this.setState(new_props, () => {
 
-            if(new_props.logged_account !== null) {
+            if(new_props.logged_account) {
 
                 if(pathname !== new_props.pathname || logged_account !== new_props.logged_account) {
 
@@ -144,12 +144,15 @@ class CoinSend extends React.Component {
 
             console.log(error);
         }
+
+        actions.trigger_loading_update(100);
     };
 
     _get_coin_balance() {
 
         const { coin_id, logged_account } = this.state;
 
+        actions.trigger_loading_update(0);
         if(logged_account) {
 
             api.get_balance_by_seed(coin_id, logged_account.seed, this._handle_get_balance_result);

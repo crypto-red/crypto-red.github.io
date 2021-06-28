@@ -6,6 +6,7 @@ import AboutWiki from "../components/AboutWiki";
 import AboutFaq from "../components/AboutFaq";
 
 import { HISTORY } from "../utils/constants";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     root: {
@@ -34,9 +35,7 @@ class About extends React.Component {
         if(pathname !== new_pathname) {
 
             const _view_name = new_props.pathname.split("/")[2] || "info";
-            this.setState({pathname: new_pathname, _view_name}, function(){
-
-            });
+            this.setState({pathname: new_pathname, _view_name});
         }
     }
 

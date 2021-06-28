@@ -56,7 +56,7 @@ class CoinBalance extends React.Component {
 
         this.setState(new_props, () => {
 
-            if(new_props.logged_account !== null) {
+            if(new_props.logged_account) {
 
                 if (coin_id !== new_props.coin_id || logged_account !== new_props.logged_account) {
 
@@ -83,6 +83,8 @@ class CoinBalance extends React.Component {
 
             actions.trigger_snackbar(error);
         }
+
+        actions.trigger_loading_update(100);
     };
 
 
@@ -94,6 +96,7 @@ class CoinBalance extends React.Component {
 
             this.setState({_coin_balance: null}, () => {
 
+                actions.trigger_loading_update(0);
                 api.get_balance_by_seed(coin_id, logged_account.seed, this._handle_get_balance_result);
             });
         }

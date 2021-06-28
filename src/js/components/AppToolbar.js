@@ -122,6 +122,7 @@ class AppToolbar extends React.Component {
             panic_mode: props.panic_mode,
             logged_account: props.logged_account,
             know_if_logged: props.know_if_logged,
+            loaded_progress_percent: props.loaded_progress_percent,
             know_the_settings: props.know_the_settings,
             jamy_state_of_mind: props.jamy_state_of_mind,
             jamy_enabled: props.jamy_enabled,
@@ -264,7 +265,7 @@ class AppToolbar extends React.Component {
 
     render() {
 
-        const { classes, pathname, know_if_logged, know_the_settings, _swipeable_app_drawer_open, _account_menu_anchor_element, logged_account, panic_mode, jamy_state_of_mind, jamy_enabled } = this.state;
+        const { classes, pathname, know_if_logged, loaded_progress_percent, know_the_settings, _swipeable_app_drawer_open, _account_menu_anchor_element, logged_account, panic_mode, jamy_state_of_mind, jamy_enabled } = this.state;
 
         return (
             <div>
@@ -308,7 +309,7 @@ class AppToolbar extends React.Component {
                                 <span className={classes.appTitle}>WALLET.CRYPTO.RED</span>
                             </div>
                         </Fade>
-                        <InnerToolbar know_if_logged={know_if_logged} logged_account={logged_account} pathname={pathname} />
+                        <InnerToolbar know_if_logged={know_if_logged} logged_account={logged_account} pathname={pathname} loaded_progress_percent={loaded_progress_percent}/>
                         <Fade in={know_if_logged}>
                             {
                                 logged_account ?

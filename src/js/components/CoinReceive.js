@@ -65,9 +65,9 @@ class CoinReceive extends React.Component {
 
         const { coin_id, logged_account } = this.state;
 
-        this.setState({...new_props}, function(){
+        this.setState({...new_props}, () => {
 
-            if(new_props.logged_account !== null) {
+            if(new_props.logged_account) {
 
                 if(coin_id !== new_props.coin_id || logged_account !== new_props.logged_account) {
 
@@ -84,8 +84,12 @@ class CoinReceive extends React.Component {
 
         if(logged_account) {
 
+            actions.trigger_loading_update(0);
             const address = api.get_address_by_seed(coin_id, logged_account.seed);
-            this.setState({_address: address});
+            this.setState({_address: address}, () => {
+
+                actions.trigger_loading_update(100);
+            });
         }
     };
 

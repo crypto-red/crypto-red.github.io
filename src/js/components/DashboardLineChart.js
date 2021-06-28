@@ -178,7 +178,11 @@ class DashboardLineChart extends React.Component {
 
             _full_transactions.push(response);
 
-            this.setState({_full_transactions});
+            this.setState({_full_transactions}, () => {
+
+                const { loaded } = this._get_transactions_data();
+                this.props.on_loading_change(loaded);
+            });
         }
     };
 
@@ -315,7 +319,7 @@ class DashboardLineChart extends React.Component {
             return {
                 data: transactions_data,
                 loaded: loaded_percent
-            }
+            };
         }
 
         let coins_market_object = {};

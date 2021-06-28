@@ -138,6 +138,7 @@ class Accounts extends React.Component {
     _update_settings() {
 
         // Call the api to get results of current settings and send it to a callback function
+        actions.trigger_loading_update(0);
         api.get_settings(this._process_settings_query_result);
     }
 
@@ -145,7 +146,10 @@ class Accounts extends React.Component {
 
         const _accounts = error ? []: result;
         const _no_accounts_db = _accounts.length ? false: true;
-        this.setState({_accounts, _no_accounts_db});
+        this.setState({_accounts, _no_accounts_db}, () => {
+
+            actions.trigger_loading_update(100);
+        });
     };
 
     _process_logout_result = (error, result) => {
