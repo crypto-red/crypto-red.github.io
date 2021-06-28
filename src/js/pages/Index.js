@@ -127,12 +127,12 @@ class Index extends React.Component {
 
         setInterval(() => {
 
-            const { is_online, _language } = this.state;
+            const { is_online } = this.state;
             if(navigator.onLine !== is_online){
 
                 this.setState({is_online: navigator.onLine});
                 actions.trigger_snackbar(
-            navigator.onLine ? t(_language, "sentences.online"): t(_language, "sentences.offline"),
+            navigator.onLine ? t("sentences.online"): t("sentences.offline"),
                     navigator.onLine ? 3500: 10500
                 );
                 actions.jamy_update(navigator.onLine ? "happy": "sad");
@@ -182,16 +182,16 @@ class Index extends React.Component {
 
     _process_is_logged_result = (error, result) => {
 
-        const { _logged_once, _language } = this.state;
+        const { _logged_once } = this.state;
         const _logged_account = error ? {}: result;
 
         if(!_logged_account && !_logged_once){
 
-            actions.trigger_snackbar(t(_language, "pages.index.first_snackbar"), 3000);
+            actions.trigger_snackbar(t( "pages.index.first_snackbar"), 3000);
 
             setTimeout(() => {
 
-                actions.trigger_snackbar(t(_language, "pages.index.second_snackbar"), 4000);
+                actions.trigger_snackbar(t( "pages.index.second_snackbar"), 4000);
             }, 4500);
 
         }
@@ -224,7 +224,6 @@ class Index extends React.Component {
         const _onboarding_enabled = typeof settings.onboarding !== "undefined" ? settings.onboarding: true;
 
         document.documentElement.lang = _language;
-        console.log(_language)
         this.setState({ _onboarding_enabled, _sfx_enabled, _jamy_enabled, _selected_locales_code, _language, _selected_currency, _panic_mode, _know_the_settings: true }, () => {
 
             this.forceUpdate();
@@ -338,9 +337,7 @@ class Index extends React.Component {
                     snack_bar_msg_lwc.includes("success") ? classes.snackbarSuccess:
                     classes.snackbar;
 
-        const L = _language;
-
-        if(!L) {
+        if(!_language) {
 
             return null;
         }

@@ -340,8 +340,8 @@ class CryptDialog extends React.Component {
                             variant="fullWidth"
                             selectionFollowsFocus
                         >
-                            <Tab label="Encrypt" />
-                            <Tab label="Decrypt" />
+                            <Tab label={t("words.encrypt")} />
+                            <Tab label={t("words.decrypt")} />
                         </Tabs>
                         <DialogContent className={classes.dialogBody} dividers>
                             <DialogContentText id="crypto-text-dialog-description">

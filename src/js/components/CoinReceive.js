@@ -67,9 +67,9 @@ class CoinReceive extends React.Component {
 
         this.setState({...new_props}, function(){
 
-            if(logged_account !== null) {
+            if(new_props.logged_account !== null) {
 
-                if(coin_id !== new_props.coin_id || logged_account.name !== new_props.logged_account.name) {
+                if(coin_id !== new_props.coin_id || logged_account !== new_props.logged_account) {
 
                     this._get_address_by_seed();
                 }

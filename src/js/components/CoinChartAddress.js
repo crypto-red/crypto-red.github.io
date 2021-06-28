@@ -1,6 +1,8 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+import { t } from "../utils/t";
+
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -29,6 +31,11 @@ class CoinChartsAddress extends React.Component {
             _selected_coin_id: null
         };
     };
+
+    componentWillReceiveProps(new_props) {
+
+        this.setState(new_props);
+    }
 
     _open_address_and_keys_dialog = (event, coin_id) => {
 
@@ -62,7 +69,7 @@ class CoinChartsAddress extends React.Component {
                     cancel={this._cancel_address_and_keys_dialog}/>
                 <Fade in>
                     <Card>
-                        <CardHeader title="Address" />
+                        <CardHeader title={t("words.address", {}, {FLC: true})} />
                         <CardContent>
                             <AddressListItem
                                 key={coin_id}

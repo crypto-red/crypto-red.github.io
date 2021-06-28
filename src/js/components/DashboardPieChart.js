@@ -193,7 +193,7 @@ class DashboardPieChart extends React.Component {
                                             : Boolean(pie_data.length <= 0) ?
                                                 <div className={classes.noTransactionCardContent}>
                                                     <img className={classes.noTransactionImage} src="/src/images/segment.svg"/>
-                                                    <p>{t( "sentences.no transactions maid portfolio")}</p>
+                                                    <p>{t( "sentences.no transaction maid portfolio")}</p>
                                                 </div>
                                                 :null
                                         }

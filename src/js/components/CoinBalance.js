@@ -56,9 +56,9 @@ class CoinBalance extends React.Component {
 
         this.setState(new_props, () => {
 
-            if(logged_account !== null) {
+            if(new_props.logged_account !== null) {
 
-                if (coin_id !== new_props.coin_id || logged_account.name !== new_props.logged_account.name) {
+                if (coin_id !== new_props.coin_id || logged_account !== new_props.logged_account) {
 
                     this._get_coin_balance();
                 }
@@ -149,7 +149,7 @@ class CoinBalance extends React.Component {
                                                 </div>
 
                                         }
-                                        <Button fullWidth color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/about/wiki/topup")}}>Top Up</Button>
+                                        <Button fullWidth color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/about/wiki/topup")}}>{t( "words.top up")}</Button>
                                     </div>:
                                     <div>
                                         <Button fullWidth color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/accounts")}}>

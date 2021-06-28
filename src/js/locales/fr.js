@@ -38,9 +38,9 @@ module.exports = {
         "share": "partager",
         "reset": "à zéro",
         "24h": "24h",
-        "7d": "7d",
-        "30d": "30d",
-        "1y": "1y",
+        "7d": "7j",
+        "30d": "30j",
+        "1y": "1an",
         "price": "prix",
         "market cap": "Cap. boursière",
         "public key": "clé publique",
@@ -206,11 +206,11 @@ module.exports = {
         about_wiki: {
             topup: {
                 title: "Comment recharger",
-                content_markdown: "Bien que nous ne recevions rien si vous n'utilisez pas Changelly, c'est un service simple et le deuxième recommandé après les guichets automatiques publics pour des raisons de confidentialité.\n\nVous devrez suivre les instructions et à à la fin entrez l'adresse publique de la pièce sélectionnée du compte que vous avez choisi et c'est tout, vous pouvez payer par carte et le faire rapidement et simplement."
+                content_markdown: "Bien que nous ne recevions rien si vous n'utilisez pas Changelly, il s'agit d'un service simple et le deuxième recommandé après les guichets automatiques publics pour des raisons de confidentialité.\n\nVous devrez suivre les instructions et à la fin entrer l'adresse publique de la pièce sélectionnée du compte que vous avez choisi et le tour est joué, vous pouvez payer par carte et le faire rapidement et simplement."
             },
             mixer: {
                 title: "Comment mélanger une crypto-monnaie",
-                content_markdown: "Nous utilisons actuellement Blender.io, cela vous permettra de mélanger votre pièce avec d'autres pièces, ce sera comme si vos pièces disparaissaient d dans le Nether et de sources complètement différentes sont venus (d'autres pièces presque avec le même montant) à une adresse (peut-être une toute nouvelle si vous créez un nouveau compte pour cela) des heures ou même des jours plus tard !\n\nVous venez de devez créer un nouveau compte sur wallet.crypto.red afin de générer une nouvelle et nouvelle adresse et de mettre cette adresse dans le mixeur (vous pouvez diviser le montant envoyé à plusieurs adresses). Ensuite, envoyez simplement le montant que vous souhaitez depuis le compte que vous avez choisi d'utiliser pour envoyer des pièces.\n\nSoyez prudent ! Ne renvoyez pas les pièces que vous avez reçues du mixeur sur la nouvelle adresse que vous venez de créer, cela permettra de savoir que cette adresse est liée à la précédente (capitaine évident)."
+                content_markdown: "Nous utilisons actuellement Blender.io, cela vous permettra de mélanger votre pièce avec d'autres pièces, ce sera comme si vos pièces disparaissaient dans le Nether et provenaient de sources complètement différentes (d'autres pièces presque du même montant) à une adresse (peut-être une complètement nouveau si vous créez un nouveau compte pour cela) des heures ou même des jours plus tard !\n\nIl vous suffit de créer un nouveau compte sur wallet.crypto.red afin de générer une nouvelle et nouvelle adresse et de mettre cette adresse dans le mixeur (vous pouvez diviser le montant envoyé à plusieurs adresses). Ensuite, envoyez simplement le montant que vous souhaitez depuis le compte que vous avez choisi d'utiliser pour envoyer des pièces.\n\nFais attention! Ne renvoyez pas les pièces que vous avez reçues du mixeur sur la nouvelle adresse que vous venez de créer, cela permettra de savoir que cette adresse est liée à la précédente (capitaine évident)."
             },
             swap: {
                 title: "Comment échanger une crypto-monnaie",
@@ -222,7 +222,7 @@ module.exports = {
             },
             contribute: {
                 title: "Comment contribuer",
-                content_markdown: "Vous pouvez contribuer à notre référentiel, c'est ici que notre code et notre application sont hébergés : [https://github.com/crypto-red/crypto-red.github.io](https://github.com/crypto -red/crypto-red.github.io) (tout est transparent sur GitHub). Vous pouvez également nous faire un don afin d'accélérer le développement de ce projet et d'autres projets (puisque nous finançons également d'autres projets que nous utilisons via [OpenCollective](https://opencollective.com/crypto-red)) via l'envoi de bitcoin dans l'adresse indiquée où notre code est hébergé."
+                content_markdown: "Vous pouvez contribuer à notre référentiel, c'est ici que notre code et notre application sont hébergés : [https://github.com/crypto-red/crypto-red.github.io](https://github.com/crypto-red/crypto-red.github.io) (tout est transparent sur GitHub). Vous pouvez également nous faire un don afin d'accélérer le développement de ce projet et d'autres projets (puisque nous finançons également d'autres projets que nous utilisons via [OpenCollective](https://opencollective.com/crypto-red)) via l'envoi de bitcoin dans l'adresse indiquée où notre code est hébergé."
             }
         },
         account_card: {
@@ -288,9 +288,9 @@ module.exports = {
         },
         coin_charts_data: {
             day: "24h: ",
-            week: "7d: ",
-            month: "30d: ",
-            year: "1y: ",
+            week: "7j: ",
+            month: "30j: ",
+            year: "1an: ",
             price: "Prix",
             market_cap: "Cap. Boursière",
             total_supply: "Nombre Émit",
@@ -470,8 +470,8 @@ module.exports = {
             new_to_crypto_cta: "Nouveau dans les crypto-monnaies ? Apprenez à investir !",
             total_balance: "Solde total",
             number_of_cryptos: "Nombre de crypto-monnaie",
-            performed_btc: "Performance sur celle de BTC (1y)",
-            performed_percent: "Performance en % (1y)",
+            performed_btc: "Performance sur celle de BTC (1an)",
+            performed_percent: "Performance en % (1an)",
         },
         home: {
             quotes: [
@@ -490,7 +490,7 @@ module.exports = {
         },
         settings: {
             settings_changed: "Paramètres modifiés",
-            language: "Language",
+            language: "Langue",
             currency: "Devise",
             sound: "Son",
             enable_sound_effects: "Activer les sons",

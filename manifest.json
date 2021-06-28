@@ -14,7 +14,7 @@
   "theme_color": "#060f23",
   "background_color": "#ffffff",
   "browser_action": {
-    "default_icon": "/src/images/manifest/icon-white.png",
+    "default_icon": "/src/images/logo-transparent.png",
     "default_popup": "index.html"
   },
   "icons": [

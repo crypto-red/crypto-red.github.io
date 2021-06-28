@@ -110,17 +110,19 @@ class CoinSend extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        const { pathname } = this.state;
-        const new_pathname = new_props.pathname;
+        const { pathname, logged_account } = this.state;
 
         this.setState(new_props, () => {
 
-            if(pathname !== new_pathname) {
+            if(new_props.logged_account !== null) {
 
-                this._get_address_by_seed();
-                this._get_coin_balance();
-                this._get_send_transaction_info();
-                this._reset_local_props_from_new_pathname();
+                if(pathname !== new_props.pathname || logged_account !== new_props.logged_account) {
+
+                    this._get_address_by_seed();
+                    this._get_coin_balance();
+                    this._get_send_transaction_info();
+                    this._reset_local_props_from_new_pathname();
+                }
             }
         });
     }

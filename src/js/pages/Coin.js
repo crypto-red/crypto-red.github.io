@@ -116,7 +116,7 @@ class Coin extends React.Component {
         const { classes } = this.state;
         const { _coin_id, _view_name, pathname } = this.state;
         const { _selected_locales_code, _selected_currency, _coin_data, _logged_account } = this.state;
-         
+
         const views = {
             balance: <CoinBalance
                 coin_data={_coin_data}
