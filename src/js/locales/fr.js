@@ -428,6 +428,11 @@ module.exports = {
                         subtitle: "Wallet.crypto.red est un logiciel gratuit, anonyme et open-source.",
                     },
                     {
+                        img: "/src/images/security.svg",
+                        title: "Securité",
+                        subtitle: "Des normes de cryptage parmis les plus élevées au monde utilisant des bibliothèques open source de pointe. Plus d'yeux plus en sécurité.",
+                    },
+                    {
                         img: "/src/images/invest.svg",
                         title: "Liberté d'investissement",
                         subtitle: "Investir n'a jamais été aussi simple tout en étant ouvert, il suffit d'acheter de la crypto au guichet automatique, ou facilement avec Changelly ou bien sans frais.",

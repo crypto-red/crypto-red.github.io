@@ -80,6 +80,7 @@ class Index extends React.Component {
             _vocal_enabled: false,
             _onboarding_enabled: false,
             _onboarding_autoplay_enabled: true,
+            _onboarding_showed_once_in_session: false,
             _selected_locales_code: null,
             _selected_currency: null,
             _panic_mode: false,
@@ -277,14 +278,14 @@ class Index extends React.Component {
 
     _accept_close_carousel = () => {
 
-        this.setState({_onboarding_enabled: false});
+        this.setState({_onboarding_enabled: false, _onboarding_showed_once_in_session: true});
         api.set_settings({onboarding: false});
         actions.trigger_settings_update();
     };
 
     _close_carousel = () => {
 
-        this.setState({_onboarding_enabled: false});
+        this.setState({_onboarding_enabled: false, _onboarding_showed_once_in_session: true});
     };
 
     _stop_carousel_autoplay = () => {
@@ -296,7 +297,7 @@ class Index extends React.Component {
 
         const { pathname, classes } = this.state;
         const { _snackbar_open, _snackbar_message, _snackbar_auto_hide_duration } = this.state;
-        const { _onboarding_enabled, _onboarding_autoplay_enabled, _width, _language } = this.state;
+        const { _onboarding_enabled, _onboarding_showed_once_in_session, _onboarding_autoplay_enabled, _width, _language } = this.state;
         const { _logged_account, _panic_mode, _know_if_logged, _know_the_settings, _jamy_state_of_mind, _jamy_enabled } = this.state;
 
         // This is the custom router
@@ -366,7 +367,7 @@ class Index extends React.Component {
                             onClose={this._close_carousel}
                             onStart={this._accept_close_carousel}
                             mobile={_width <= 960}
-                            open={_onboarding_enabled}
+                            open={_onboarding_enabled && !_onboarding_showed_once_in_session}
                             autoplay={_onboarding_autoplay_enabled}
                             interval={6000}
                         >

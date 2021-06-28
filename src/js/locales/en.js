@@ -450,6 +450,11 @@ module.exports = {
                         subtitle: "Wallet.crypto.red is an free, anonymous, and open-source software.",
                     },
                     {
+                        img: "/src/images/security.svg",
+                        title: "Security",
+                        subtitle: "World's highest encryption standards using cutting edge open-source libraries. More eyes more secure.",
+                    },
+                    {
                         img: "/src/images/invest.svg",
                         title: "Investment freedom",
                         subtitle: "Investing has never be so simple while being open, just buy some crypto at ATM, or easily with Changelly or else without fees.",

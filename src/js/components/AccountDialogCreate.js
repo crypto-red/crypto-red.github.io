@@ -2,6 +2,7 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
 import { t } from "../utils/t";
+import TimeAgo from 'javascript-time-ago'
 
 import { green, red } from "@material-ui/core/colors";
 import Button from "@material-ui/core/Button";
@@ -170,8 +171,11 @@ class AccountDialogCreate extends React.Component {
 
                 if(that.state._password_evaluation.score <= 3) {
 
+                    const time_ago = new TimeAgo(document.documentElement.lang);
+                    const time_not_ago = time_ago.format(Date.now() + that.state._password_evaluation.crack_times_seconds.offline_slow_hashing_1e4_per_second * 1000, "mini")
+
                     actions.jamy_update("suspicious", 3000);
-                    actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_warning", {time: that.state._password_evaluation.crack_times_display.offline_slow_hashing_1e4_per_second}), 6000)
+                    actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_warning", {time: time_not_ago}), 6000)
                 }
 
             }, 500);

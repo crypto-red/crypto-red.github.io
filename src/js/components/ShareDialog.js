@@ -105,7 +105,28 @@ const styles = theme => ({
     },
     fontWeightBold: {
         fontWeight: "bold"
-    }
+    },
+    dialogImage: {
+        display: "inline-block",
+        padding: theme.spacing(2),
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center center",
+        backgroundSize: "300% auto",
+        width: 320,
+        transition: "background-size 300ms ease-in-out 0ms",
+        [theme.breakpoints.down("sm")]: {
+            display: "none"
+        }
+    },
+    dialogContent: {
+        display: "inline-block"
+    },
+    dialogInner: {
+        display: "inherit",
+        "& div:first-child": {
+            backgroundSize: "90% auto"
+        }
+    },
 });
 
 
@@ -161,78 +182,83 @@ class ShareDialog extends React.Component {
                     open={open}
                     onClose={(event) => {this.props.onClose(event)}}
                 >
-                    <DialogTitle>
-                        {t( "components.share_dialog.title")}
-                        <IconButton aria-label="close" className={classes.closeButton} onClick={(event) => {this.props.onClose(event)}}>
-                            <CloseIcon />
-                        </IconButton>
-                    </DialogTitle>
-                    <DialogContent>
-                        <div className={classes.shareIconButtonContainer}>
-                            <Tooltip title="WhatsApp" aria-label="WhatsApp">
-                                <IconButton className={classes.shareIconButtonWhatsApp} onClick={(event) => {this._open_url(event, `https://api.whatsapp.com/send/?phone&text=${url}&app_absent=0`)}}>
-                                    <WhatsAppIcon fontSize="large" />
+                    <div className={classes.dialogInner}>
+                        <div className={classes.dialogImage} style={{backgroundImage: `url(/src/images/share.svg)`}}/>
+                        <div className={classes.dialogContent}>
+                            <DialogTitle>
+                                {t( "components.share_dialog.title")}
+                                <IconButton aria-label="close" className={classes.closeButton} onClick={(event) => {this.props.onClose(event)}}>
+                                    <CloseIcon />
                                 </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Facebook" aria-label="Facebook">
-                                <IconButton className={classes.shareIconButtonFacebook} onClick={(event) => {this._open_url(event, `https://www.facebook.com/dialog/share?href=${url}&display=popup`)}}>
-                                    <FacebookIcon fontSize="large" />
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Twitter" aria-label="Twitter">
-                                <IconButton className={classes.shareIconButtonTwitter} onClick={(event) => {this._open_url(event, `https://twitter.com/intent/tweet?url=${url}`)}}>
-                                    <TwitterIcon fontSize="large" />
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Email" aria-label="Email">
-                                <IconButton className={classes.shareIconButtonEmail} onClick={(event) => {this._open_url(event, `mailto:?body=${url}`)}}>
-                                    <EmailIcon fontSize="large" />
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Reddit" aria-label="Reddit">
-                                <IconButton className={classes.shareIconButtonReddit} onClick={(event) => {this._open_url(event, `https://www.reddit.com/submit?url=${url}`)}}>
-                                    <RedditIcon fontSize="large" />
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Pinterest" aria-label="Pinterest">
-                                <IconButton className={classes.shareIconButtonPinterest} onClick={(event) => {this._open_url(event, `https://www.pinterest.com/pin/create/button/?url=${url}`)}}>
-                                    <PinterestIcon fontSize="large" />
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Blogger" aria-label="Blogger">
-                                <IconButton className={classes.shareIconButtonBlogger} onClick={(event) => {this._open_url(event, `https://www.blogger.com/blog-this.g?u=${url}`)}}>
-                                    <BloggerIcon fontSize="large" />
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title="LinkedIn" aria-label="LinkedIn" onClick={(event) => {this._open_url(event, `https://www.linkedin.com/sharing/share-offsite/?url=${url}`)}}>
-                                <IconButton className={classes.shareIconButtonLinkedIn}>
-                                    <LinkedInIcon fontSize="large" />
-                                </IconButton>
-                            </Tooltip>
-                        </div>
-                        <FormControl fullWidth>
-                            <InputLabel htmlFor="share-dialog-url-input">{t( "components.share_dialog.url")}</InputLabel>
-                            <Input
-                                value={url}
-                                id="share-dialog-url-input"
-                                type="text"
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            aria-label={t( "sentences.copy address")}
-                                            onClick={(event) => this._copy_url(event, url)}
-                                            edge="end"
-                                        >
-                                            <FileCopyIcon />
+                            </DialogTitle>
+                            <DialogContent>
+                                <div className={classes.shareIconButtonContainer}>
+                                    <Tooltip title="WhatsApp" aria-label="WhatsApp">
+                                        <IconButton className={classes.shareIconButtonWhatsApp} onClick={(event) => {this._open_url(event, `https://api.whatsapp.com/send/?phone&text=${url}&app_absent=0`)}}>
+                                            <WhatsAppIcon fontSize="large" />
                                         </IconButton>
-                                    </InputAdornment>
-                                }
-                            />
-                        </FormControl>
-                        <DialogContentText className={classes.fontWeightBold}>
-                            <p>{t( "components.share_dialog.thanks_for_sharing")}</p>
-                        </DialogContentText>
-                    </DialogContent>
+                                    </Tooltip>
+                                    <Tooltip title="Facebook" aria-label="Facebook">
+                                        <IconButton className={classes.shareIconButtonFacebook} onClick={(event) => {this._open_url(event, `https://www.facebook.com/dialog/share?href=${url}&display=popup`)}}>
+                                            <FacebookIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Twitter" aria-label="Twitter">
+                                        <IconButton className={classes.shareIconButtonTwitter} onClick={(event) => {this._open_url(event, `https://twitter.com/intent/tweet?url=${url}`)}}>
+                                            <TwitterIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Email" aria-label="Email">
+                                        <IconButton className={classes.shareIconButtonEmail} onClick={(event) => {this._open_url(event, `mailto:?body=${url}`)}}>
+                                            <EmailIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Reddit" aria-label="Reddit">
+                                        <IconButton className={classes.shareIconButtonReddit} onClick={(event) => {this._open_url(event, `https://www.reddit.com/submit?url=${url}`)}}>
+                                            <RedditIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Pinterest" aria-label="Pinterest">
+                                        <IconButton className={classes.shareIconButtonPinterest} onClick={(event) => {this._open_url(event, `https://www.pinterest.com/pin/create/button/?url=${url}`)}}>
+                                            <PinterestIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="Blogger" aria-label="Blogger">
+                                        <IconButton className={classes.shareIconButtonBlogger} onClick={(event) => {this._open_url(event, `https://www.blogger.com/blog-this.g?u=${url}`)}}>
+                                            <BloggerIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
+                                    <Tooltip title="LinkedIn" aria-label="LinkedIn" onClick={(event) => {this._open_url(event, `https://www.linkedin.com/sharing/share-offsite/?url=${url}`)}}>
+                                        <IconButton className={classes.shareIconButtonLinkedIn}>
+                                            <LinkedInIcon fontSize="large" />
+                                        </IconButton>
+                                    </Tooltip>
+                                </div>
+                                <FormControl fullWidth>
+                                    <InputLabel htmlFor="share-dialog-url-input">{t( "components.share_dialog.url")}</InputLabel>
+                                    <Input
+                                        value={url}
+                                        id="share-dialog-url-input"
+                                        type="text"
+                                        endAdornment={
+                                            <InputAdornment position="end">
+                                                <IconButton
+                                                    aria-label={t( "sentences.copy address")}
+                                                    onClick={(event) => this._copy_url(event, url)}
+                                                    edge="end"
+                                                >
+                                                    <FileCopyIcon />
+                                                </IconButton>
+                                            </InputAdornment>
+                                        }
+                                    />
+                                </FormControl>
+                                <DialogContentText className={classes.fontWeightBold}>
+                                    <p>{t( "components.share_dialog.thanks_for_sharing")}</p>
+                                </DialogContentText>
+                            </DialogContent>
+                        </div>
+                    </div>
                 </Dialog>
             </div>
         );
