@@ -34,6 +34,13 @@ const styles = theme => ({
         textAlign: "center",
         padding: theme.spacing(2)
     },
+    underCardButtonContainer: {
+        marginTop: theme.spacing(1),
+        textAlign: "right",
+    },
+    underCardButton: {
+        minWidth: "calc(50% - 8px)",
+    },
 });
 
 
@@ -171,55 +178,55 @@ class CoinTransactions extends React.Component {
                 />
 
                 <Container maxWidth="sm" className={classes.container}>
-                    <Fade in>
-                        <Card>
-                            <CardHeader
-                                title={t( "words.transactions", {}, {FLC: true})}
-                            />
-                            {
-                                !_loading ?
-                                    logged_account ?
-                                        _not_any_transactions_yet ?
-                                            <CardContent>
-                                                <img className={classes.noTransactionImage} src="/src/images/transfer.svg"/>
-                                                <p>{t("sentences.no transactions maid")}</p>
-                                            </CardContent>:
-                                            <CardContent>
-                                                <List>
-                                                    {_transactions.map((transaction, index,array) => {
-
-                                                        return (
-                                                            <Transaction
-                                                            key={transaction.id}
-                                                            logged_account={logged_account}
-                                                            show_crypto_image={false}
-                                                            selected_currency={selected_currency}
-                                                            selected_locales_code={selected_locales_code}
-                                                            transaction={transaction}
-                                                            open={this._open_transaction}
-                                                            />
-                                                        );
-                                                    })}
-                                                </List>
-                                                <Button fullWidth color="primary" variant="contained" onClick={this._load_more_transactions}>
-                                                    {t( "sentences.load more")}
-                                                </Button>
-                                            </CardContent>
-                                        :
-                                        <CardContent>
-                                            <Button fullWidth color="primary" variant="contained" onClick={this._open_accounts_page}>
-                                                {t( "sentences.open an account")}
-                                            </Button>
-                                        </CardContent>
-                                    :
+                    <Card>
+                        <CardHeader
+                            title={t( "words.transactions", {}, {FLC: true})}
+                        />
+                        {
+                            !_loading && logged_account ?
+                                _not_any_transactions_yet ?
                                     <CardContent>
-                                        <div className={classes.circularProgressContainer}>
-                                            <CircularProgress/>
-                                        </div>
+                                        <img className={classes.noTransactionImage} src="/src/images/transfer.svg"/>
+                                        <p>{t("sentences.no transactions maid")}</p>
+                                    </CardContent>:
+                                    <CardContent>
+                                        <List>
+                                            {_transactions.map((transaction, index,array) => {
+
+                                                return (
+                                                    <Transaction
+                                                    key={transaction.id}
+                                                    logged_account={logged_account}
+                                                    show_crypto_image={false}
+                                                    selected_currency={selected_currency}
+                                                    selected_locales_code={selected_locales_code}
+                                                    transaction={transaction}
+                                                    open={this._open_transaction}
+                                                    />
+                                                );
+                                            })}
+                                        </List>
                                     </CardContent>
-                            }
-                        </Card>
-                    </Fade>
+                                :
+                                <CardContent>
+                                    <div className={classes.circularProgressContainer}>
+                                        <CircularProgress/>
+                                    </div>
+                                </CardContent>
+                        }
+                    </Card>
+                    <div className={classes.underCardButtonContainer}>
+                        {
+                            logged_account ?
+                                <Button className={classes.underCardButton} color="primary" variant="contained" onClick={this._load_more_transactions} disabled={_not_any_transactions_yet}>
+                                    {t( "sentences.load more")}
+                                </Button>
+                                :
+                                <Button className={classes.underCardButton} color="primary" variant="contained" onClick={this._open_accounts_page}>
+                                    {t( "sentences.open an account")}
+                                </Button>
+                        }
+                    </div>
                 </Container>
             </div>
         );

@@ -29,6 +29,10 @@ const styles = theme => ({
             width: "100%",
             height: "100%"
         }
+    },
+    title: {
+        fontSize: 21,
+        margin: theme.spacing(1, 0),
     }
 });
 
@@ -61,7 +65,7 @@ class DashboardQuickCard extends React.Component {
                 <Fade in>
                     <Card className={relevant ? classes.relevant: null}>
                         <CardContent className={classes.cardContent}>
-                            <h3>
+                            <h3 className={classes.title}>
                                 {
                                     text_content !== null ?
                                         text_content:

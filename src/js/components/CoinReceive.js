@@ -38,7 +38,14 @@ const styles = theme => ({
         "& path:last-child": {
             fill: theme.palette.primary.main
         }
-    }
+    },
+    underCardButtonContainer: {
+        marginTop: theme.spacing(1),
+        textAlign: "right",
+    },
+    underCardButton: {
+        minWidth: "calc(50% - 8px)",
+    },
 });
 
 
@@ -132,56 +139,59 @@ class CoinReceive extends React.Component {
         return (
             <div>
                 <Container maxWidth="sm" className={classes.container}>
-                    <Fade in>
-                        <Card>
-                            <CardHeader
-                                title={t( "words.receive", {}, {FLC: true})}
-                            />
-                            {
-                                _address ?
-                                    <CardContent>
-                                        <QRCode
-                                            className={classes.qrcode}
-                                            level={"M"}
-                                            style={{width: "100%", height: "100%"}}
-                                            renderAs={"svg"}
+                    <Card>
+                        <CardHeader
+                            title={t( "words.receive", {}, {FLC: true})}
+                        />
+                        {
+                            _address ?
+                                <CardContent>
+                                    <QRCode
+                                        className={classes.qrcode}
+                                        level={"M"}
+                                        style={{width: "100%", height: "100%"}}
+                                        renderAs={"svg"}
+                                        value={_address}
+                                        imageSettings={{
+                                            src: coin_data ? coin_data.image.large: "",
+                                            x: null,
+                                            y: null,
+                                            height: 24,
+                                            width: 24,
+                                            excavate: true,
+                                        }}/>
+                                    <FormControl fullWidth>
+                                        <InputLabel htmlFor="address">Address</InputLabel>
+                                        <Input
                                             value={_address}
-                                            imageSettings={{
-                                                src: coin_data ? coin_data.image.large: "",
-                                                x: null,
-                                                y: null,
-                                                height: 24,
-                                                width: 24,
-                                                excavate: true,
-                                            }}/>
-                                        <FormControl fullWidth>
-                                            <InputLabel htmlFor="address">Address</InputLabel>
-                                            <Input
-                                                value={_address}
-                                                id="address"
-                                                type="text"
-                                                endAdornment={
-                                                    <InputAdornment position="end">
-                                                        <IconButton
-                                                            aria-label={t( "sentences.copy address")}
-                                                            onClick={(event) => this._copy_address(event, _address)}
-                                                            edge="end"
-                                                        >
-                                                            <FileCopyIcon />
-                                                        </IconButton>
-                                                    </InputAdornment>
-                                                }
-                                            />
-                                        </FormControl>
-                                    </CardContent> :
-                                    <CardContent>
-                                        <Button fullWidth color="primary" variant="contained" onClick={this._open_accounts_page}>
-                                            {t( "sentences.open an account")}
-                                        </Button>
-                                    </CardContent>
-                                }
-                        </Card>
-                    </Fade>
+                                            id="address"
+                                            type="text"
+                                            endAdornment={
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        aria-label={t( "sentences.copy address")}
+                                                        onClick={(event) => this._copy_address(event, _address)}
+                                                        edge="end"
+                                                    >
+                                                        <FileCopyIcon />
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            }
+                                        />
+                                    </FormControl>
+                                </CardContent> :
+                                <CardContent>
+                                    <Button fullWidth color="primary" variant="contained" onClick={this._open_accounts_page}>
+                                        {t( "sentences.open an account")}
+                                    </Button>
+                                </CardContent>
+                            }
+                    </Card>
+                    <div className={classes.underCardButtonContainer}>
+                        <Button className={classes.underCardButton} color="primary" variant="contained" onClick={(event) => this._copy_address(event, _address)}>
+                            {t( "sentences.copy address")}
+                        </Button>
+                    </div>
                 </Container>
             </div>
         );

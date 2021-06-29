@@ -394,7 +394,7 @@ class Dashboard extends React.Component {
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
-                                        text_content={portfolio !== null ? ((portfolio.performed_average_percentage_weighted_on_btc * 100) || 0).toFixed(2)+"/100": null}
+                                        text_content={portfolio !== null ? ((portfolio.performed_average_percentage_weighted_on_btc * 100) || 0).toFixed(2)+" / 100": null}
                                         label_content={t( "pages.dashboard.performed_btc")}
                                         icon_component={portfolio !== null ? portfolio.performed_average_percentage_weighted_on_btc < 1 ? <CloseIcon />: <CheckIcon />: null}
                                     />

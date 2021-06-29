@@ -116,7 +116,7 @@ class CoinSendDialog extends React.Component {
                     Boolean(transaction) ?
                         <div>
                             <DialogTitle>{t( "sentences.send this transaction")}</DialogTitle>
-                            <DialogContent>
+                            <DialogContent dividers>
                                 <DialogContentText>
                                     <Table>
                                         <Table>

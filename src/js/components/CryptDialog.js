@@ -304,7 +304,7 @@ class CryptDialog extends React.Component {
                     <DialogTitle id="crypto-text-autofill-dialog-title">
                         {t( "components.crypt_dialog.autofill_dialog.title")}
                     </DialogTitle>
-                    <DialogContent>
+                    <DialogContent dividers>
                         <DialogContentText>
                             {t( "components.crypt_dialog.autofill_dialog.body")}
                         </DialogContentText>

@@ -142,7 +142,7 @@ class TransactionDialog extends React.Component {
                     Boolean(transaction) ?
                         <div className={classes.dialogBody}>
                             <DialogTitle id="show-transaction-memo-dialog-title" className={classes.breakWord}>{t( "components.transaction_dialog.title", {transaction_id: transaction.id})}</DialogTitle>
-                            <DialogContent className={classes.dialogBody}>
+                            <DialogContent className={classes.dialogBody} dividers>
                                 <DialogContentText id="show-transaction-memo-dialog-description">
                                     <Table>
                                         <Table aria-label="main-info-table">

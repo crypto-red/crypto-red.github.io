@@ -1,6 +1,8 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+import { t } from "../utils/t";
+
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -83,7 +85,7 @@ class DashboardAddress extends React.Component {
 
                 <Fade in>
                     <Card className={classes.addressCard}>
-                        <CardHeader title="Address" />
+                        <CardHeader title={t( "components.dashboard_address.title")} />
                         <CardContent className={classes.addressCardContent}>
                             {
                                 _coins_id.map((coin_id) => {

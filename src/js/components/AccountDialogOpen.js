@@ -118,7 +118,7 @@ class AccountDialogOpen extends React.Component {
                     {Boolean(account) ?
                         <div>
                             <DialogTitle id="open-account-dialog-title">Open {account.name}?</DialogTitle>
-                            <DialogContent>
+                            <DialogContent dividers>
                                 <DialogContentText id="open-account-dialog-description">
                                     {t( "components.account_dialog_open.open_account", {account_name: account.name})}
                                     <br />

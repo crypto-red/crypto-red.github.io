@@ -16,7 +16,20 @@ function t(path = "", variables = {}, parameters = {}) {
     }
 
     // Get the object in the last dir
-    const end_dir_name = paths_array[paths_array.length-1];
+    let end_dir_name = "";
+
+    if(parameters.faw || parameters.FAW) { // Format All Words
+
+        end_dir_name = paths_array[paths_array.length-1]
+            .replaceAll("'", "")
+            .replaceAll('"', "")
+            .replaceAll(",", "")
+            .toLowerCase();
+    }else {
+
+        end_dir_name = paths_array[paths_array.length-1];
+    }
+
     const end_path_value = dir[end_dir_name];
 
     // Replace variables with real value(s) in the translate object value chosen

@@ -314,7 +314,7 @@ class DrawerContent extends React.Component {
                                 <div className={classes.dialogImage} style={{backgroundImage: `url(/src/images/${_help_dialogs_data[_current_help_dialog_id].image})`}}/>
                                 <div className={classes.dialogContent}>
                                     <DialogTitle id="help-dialog-title">{_help_dialogs_data[_current_help_dialog_id].title}</DialogTitle>
-                                    <DialogContent>
+                                    <DialogContent dividers>
                                         <DialogContentText id="help-dialog-description">
                                             <span>{_help_dialogs_data[_current_help_dialog_id].body} <NavLink onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true)}} to={_help_dialogs_data[_current_help_dialog_id].help_link}>{_help_dialogs_data[_current_help_dialog_id].help_link_content}</NavLink></span>
                                         </DialogContentText>

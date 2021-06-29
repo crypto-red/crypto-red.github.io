@@ -61,7 +61,7 @@ class AccountDialogClose extends React.Component {
                         <DialogTitle id="close-account-dialog-title">
                             {t( "components.account_dialog_close.close", {account_name: account.name})}
                         </DialogTitle>
-                        <DialogContent>
+                        <DialogContent dividers>
                             <DialogContentText id="close-account-dialog-description">
                                 {t( "components.account_dialog_close.opened", {time_ago: ""})} <ReactTimeAgo date={account.timestamp} locale={document.documentElement.lang}/>
                             </DialogContentText>

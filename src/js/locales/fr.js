@@ -127,6 +127,33 @@ module.exports = {
         "scan an address": "Lire une adresse",
         "online": "Nous sommes en ligne !",
         "offline": "Nous sommes hors ligne !",
+        "use a few words avoid common phrases": "Utilisez quelques mots, évitez les phrases courantes.",
+        "no need for symbols digits or uppercase letters": "Pas besoin de symboles, de chiffres ou de lettres majuscules",
+        "add another word or two uncommon words are better": "Ajoutez un mot ou deux. Les mots peu communs sont meilleurs.",
+        "straight rows of keys are easy to guess": "Les rangées droites de touches sont faciles à deviner.",
+        "short keyboard patterns are easy to guess": "Les modèles typographiques de clavier courts sont faciles à deviner.",
+        "use a longer keyboard pattern with more turns": "Utilisez un motif de clavier plus long avec plus de possibilités.",
+        "repeats like aaa are easy to guess": "Les répétitions comme aaa sont faciles à deviner.",
+        "repeats like abcabcabc are only slightly harder to guess than abc": "Les répétitions comme \"abcabcabc \" ne sont que légèrement plus difficiles à deviner que \"abc\".",
+        "avoid repeated words and characters": "Évitez les mots et les caractères répétés.",
+        "sequences like abc or 6543 are easy to guess": "Des séquences comme \"abc\" ou \"6543\" sont faciles à deviner.",
+        "avoid sequences": "Éviter les séquences.",
+        "recent years are easy to guess": "Les dernières nouvelles années sont faciles à deviner.",
+        "avoid recent years": "Éviter les années recentes.",
+        "avoid years that are associated with you": "Évitez les années qui vous sont associées.",
+        "dates are often easy to guess": "Les dates sont souvent faciles à deviner.",
+        "avoid dates and years that are associated with you": "Évitez les dates et les années qui vous sont associées.",
+        "this is a top-10 common password": "Ceci est un des 10 premiers mots de passe courants.",
+        "this is a top-100 common password": "Ceci est un mot de passe commun du top 100.",
+        "this is a very common password": "C'est un mot de passe très courant.",
+        "this is similar to a commonly used password": "Ceci est similaire à un mot de passe couramment utilisé.",
+        "a word by itself is easy to guess": "Un mot en lui-même est facile à deviner.",
+        "names and surnames by themselves are easy to guess": "Les noms et prénoms par eux-mêmes sont faciles à deviner.",
+        "common names and surnames are easy to guess": "Les noms et prénoms communs sont faciles à deviner.",
+        "capitalization doesnt help very much": "La majuscule n'aide pas beaucoup.",
+        "all-uppercase is almost as easy to guess as all-lowercase": "Tout en majuscule est presque aussi facile à deviner que tout en minuscule.",
+        "reversed words arent much harder to guess": "Les mots inversés ne sont pas beaucoup plus difficiles à deviner.",
+        "predictable substitutions like @ instead of a dont help very much": "Les substitutions prévisibles comme \"@\" au lieu de \"a\" n'aident pas beaucoup.",
     },
     components: {
         about_faq: {
@@ -271,7 +298,7 @@ module.exports = {
         },
         account_dialog_delete: {
             title: "Supprimer {{account_name}} ?",
-            cannot_be_undone: "Cette action NE PEUT PAS être annulée. Cela supprimera définitivement le compte {{account_name}}} et ses portefeuilles.",
+            cannot_be_undone: "Cette action NE PEUT PAS être annulée. Cela supprimera définitivement le compte {{account_name}} et ses portefeuilles.",
             repeat_name: "Veuillez saisir le nom du compte pour confirmer."
         },
         account_dialog_open: {
@@ -327,6 +354,9 @@ module.exports = {
             why_link_text: "Voir pourquoi...",
             autofill_key: "Entrer la clé",
             autofill_keys: "Entrer les clés"
+        },
+        dashboard_address: {
+            title: "Adresses",
         },
         dashboard_bar_chart: {
             title: "Performances sur 1 an",

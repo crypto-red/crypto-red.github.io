@@ -138,7 +138,7 @@ class AddressDialog extends React.Component {
                     (_address && _public_key && _private_key) ?
                         <div className={classes.dialogBody}>
                             <DialogTitle id="show-address-and-keys-dialog-title" className={classes.breakWord}>{t( "components.address_dialog.title", {coin_id})}</DialogTitle>
-                            <DialogContent className={classes.dialogBody}>
+                            <DialogContent className={classes.dialogBody} dividers>
                                 <DialogContentText id="show-address-and-keys-dialog-description">
                                     <Table>
                                         <Table aria-label="main-info-table">

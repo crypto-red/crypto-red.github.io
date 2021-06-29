@@ -63,37 +63,20 @@ const styles = theme => ({
         position: "inherit",
         display: "block"
     },
+    innerToolbarProgress: {
+        position: "inherit",
+        display: "flex",
+    },
     linearProgressVisible: {
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: "rgba(13, 50, 199, 0.64)"
+            backgroundColor: "rgba(13, 50, 199, 0.48)"
         },
-        marginTop: -2,
-        height: 2,
+        marginTop: -4,
+        height: 4,
         opacity: 1,
         backgroundColor: "transparent",
-    },
-    linearProgressHidden: {
-        "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: "rgba(13, 50, 199, 0.64)"
-        },
-        marginTop: -2,
-        height: 2,
-        opacity: 0,
-        backgroundColor: "transparent",
-        animation: "$hide 2.5s",
-        "@global": {
-            "@keyframes hide": {
-                "0%": {
-                    opacity: 1,
-                },
-                "85%": {
-                    opacity: 1,
-                },
-                "100%": {
-                    opacity: 0,
-                },
-            }
-        }
+        width: "50%",
+        display: "flex",
     },
 });
 
@@ -134,17 +117,20 @@ class InnerToolbar extends React.Component {
             }
             
             
-            return element === "" ? null: <Fade in key={index} timeout={index*50}><Link key={index} to={link_to} className={classes.link} >&nbsp;›&nbsp;{element}</Link></Fade>;
+            return element === "" ? null: <Fade in={know_if_logged}  key={index}><Link key={index} to={link_to} className={classes.link} >&nbsp;›&nbsp;{element}</Link></Fade>;
         });
         
         return (
             <div className={classes.innerToolbar}>
                 <span className={classes.innerToolbarTextWrapper}>
                     <span className={classes.innerToolbarText}>
-                        <Fade in={know_if_logged} timeout={0}><Link className={classes.link} to={logged_account ? "/": "/"}>{know_if_logged ? logged_account ? logged_account.name: t( "components.inner_toolbar.guest"): ""} </Link></Fade>
+                        <Fade in={know_if_logged}><Link className={classes.link} to={logged_account ? "/": "/"}>{know_if_logged ? logged_account ? logged_account.name: t( "components.inner_toolbar.guest"): ""} </Link></Fade>
                         {pathame_items}
                     </span>
-                    <LinearProgress key={loaded_progress_percent === 0 ? Math.random(): "1"} color="primary" variant="determinate" className={loaded_progress_percent === 100 ? classes.linearProgressHidden: classes.linearProgressVisible} value={loaded_progress_percent}/>
+                    <div className={classes.innerToolbarProgress}>
+                        <LinearProgress color="primary" variant="determinate" className={classes.linearProgressVisible} value={100 - loaded_progress_percent} style={{transform: "scaleX(-1)"}}/>
+                        <LinearProgress color="primary" variant="determinate" className={classes.linearProgressVisible} value={100 - loaded_progress_percent} />
+                    </div>
                 </span>
             </div>
         );

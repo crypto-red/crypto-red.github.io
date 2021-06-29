@@ -102,7 +102,7 @@ class AccountDialogCreate extends React.Component {
             _password_warning: null,
             _active_view_index: 0,
             _generation_completed: false,
-            _generation_eror: false,
+            _generation_error: false,
             _coins: COINS,
             _coin: null,
             _account_mnemonic_input: [],
@@ -161,24 +161,38 @@ class AccountDialogCreate extends React.Component {
                 that.setState({_active_view_index: 1});
                 actions.trigger_sfx("navigation_transition-right");
                 actions.jamy_update("happy");
+
+                setTimeout(() => {
+
+                    if(that.state._password_evaluation.score <= 3) {
+
+                        const time_ago = new TimeAgo(document.documentElement.lang);
+                        const time_not_ago = time_ago.format(Date.now() + that.state._password_evaluation.crack_times_seconds.offline_slow_hashing_1e4_per_second * 1000, "mini")
+
+                        actions.jamy_update("suspicious", 3000);
+                        actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_warning", {time: time_not_ago}), 6000)
+                    }
+
+                }, 500);
+
+                setTimeout(() => {
+
+                    if(that.state._password_evaluation.score <= 3) {
+
+                        const time_ago = new TimeAgo(document.documentElement.lang);
+                        const time_not_ago = time_ago.format(Date.now() + that.state._password_evaluation.crack_times_seconds.offline_slow_hashing_1e4_per_second * 1000, "mini")
+
+                        actions.jamy_update("suspicious", 3000);
+                        actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_warning", {time: time_not_ago}), 6000)
+                    }
+
+                }, 8000);
+
             }else {
 
                 actions.trigger_sfx("alert_error-01");
                 actions.jamy_update("angry");
             }
-
-            setTimeout(() => {
-
-                if(that.state._password_evaluation.score <= 3) {
-
-                    const time_ago = new TimeAgo(document.documentElement.lang);
-                    const time_not_ago = time_ago.format(Date.now() + that.state._password_evaluation.crack_times_seconds.offline_slow_hashing_1e4_per_second * 1000, "mini")
-
-                    actions.jamy_update("suspicious", 3000);
-                    actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_warning", {time: time_not_ago}), 6000)
-                }
-
-            }, 500);
         }
 
         this._validate_step_1(validate_current_step);
@@ -208,12 +222,16 @@ class AccountDialogCreate extends React.Component {
 
         if(!error) {
 
-            this.setState({_generation_eror: false, _generation_completed: true});
-            this._reset_fields();
-            this.props.onComplete();
+            this.setState({_generation_error: false, _generation_completed: true});
+
+            setTimeout(() => {
+
+                this._reset_fields();
+                this.props.onComplete();
+            }, 1 * 1000);
         }else {
 
-            this.setState({_generation_eror: true, _generation_completed: true});
+            this.setState({_generation_error: true, _generation_completed: true});
             this.props.onError();
         }
 
@@ -232,14 +250,26 @@ class AccountDialogCreate extends React.Component {
 
             const _password_evaluation = _zxcvbn(account_password_input);
 
-            if(_password_evaluation.feedback.warning) {
+            if(_password_evaluation.feedback.warning.length || _password_evaluation.feedback.suggestions.length) {
+
+                let suggestions_and_warning = "";
+
+                suggestions_and_warning += _password_evaluation.feedback.warning.length ? t("sentences." + _password_evaluation.feedback.warning.replaceAll(".", ""), {}, {FAW: true}): "";
+
+                if(_password_evaluation.feedback.suggestions.length) {
+
+                    _password_evaluation.feedback.suggestions.forEach((suggestion) => {
+
+                        suggestions_and_warning += "\n" + t("sentences." + suggestion.replaceAll(".", ""), {}, {FAW: true});
+                    });
+                }
 
                 actions.jamy_update("angry", 3000);
-                actions.trigger_snackbar(_password_evaluation.feedback.warning, 3500);
+                actions.trigger_snackbar(suggestions_and_warning, 10000);
             }else if(account_password_input.length && _password_evaluation.score >= 4){
 
                 actions.jamy_update("happy", 3000);
-                actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_good"), 3500);
+                actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_good"), 5000);
             }
             this.setState({_password_evaluation});
         }
@@ -332,7 +362,7 @@ class AccountDialogCreate extends React.Component {
                 _active_view_index: 0,
                 _configuration_view_auto_focus_index: 0,
                 _generation_completed: false,
-                _generation_eror: false,
+                _generation_error: false,
                 _coin: null,
                 _account_mnemonic_input: []
             };
@@ -373,7 +403,7 @@ class AccountDialogCreate extends React.Component {
         }
     };
 
-    _on_close = () => {
+    _on_close = (event) => {
 
         this.props.onClose(event);
         actions.trigger_sfx("state-change_confirm-down");
@@ -383,7 +413,7 @@ class AccountDialogCreate extends React.Component {
     render() {
 
         const { classes, account, open, _active_view_index, _generation_completed, _coin, _coins,  _account_mnemonic_input, _password_evaluation, _configuration_view_auto_focus_index } = this.state;
-        const { _account_name_input, _account_password_input, _account_conformation_input, _is_account_name_error, _is_account_confirmation_error, _is_account_password_error, _is_account_mnemonic_input_error, _generation_eror } = this.state;
+        const { _account_name_input, _account_password_input, _account_conformation_input, _is_account_name_error, _is_account_confirmation_error, _is_account_password_error, _is_account_mnemonic_input_error, _generation_error } = this.state;
 
         const coin = _coin == null ? COINS[0]: _coin;
 
@@ -451,7 +481,7 @@ class AccountDialogCreate extends React.Component {
 
         const mnemonic_view =
             <div className={classes.dialogBody}>
-                <DialogContent className={classes.dialogBody}>
+                <DialogContent className={classes.dialogBody} dividers>
                     <DialogContentText id="create-account-dialog-description">
                         {t( "components.account_dialog_create.mnemonic_view.description")}
                         <br /><b className={classes.red}>{t( "components.account_dialog_create.mnemonic_view.description_bold")}</b>
@@ -501,7 +531,7 @@ class AccountDialogCreate extends React.Component {
                 <Grow in><CircularProgress /></Grow>
                 <Fade in><p>{t( "components.account_dialog_create.generation_view.generating")}</p></Fade>
             </div>:
-            _generation_eror ?
+            _generation_error ?
             <div>
                 <Grow in>
                     <Fab className={classes.generationFabError}>

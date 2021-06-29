@@ -127,6 +127,33 @@ module.exports = {
         "scan an address": "Scan an address",
         "online": "We're online!",
         "offline": "We're offline!",
+        "use a few words avoid common phrases": "Use a few words, avoid common phrases.",
+        "no need for symbols digits or uppercase letters": "No need for symbols, digits, or uppercase letters.",
+        "add another word or two Uncommon words are better.": "Add another word or two. Uncommon words are better.",
+        "straight rows of keys are easy to guess": "Straight rows of keys are easy to guess.",
+        "short keyboard patterns are easy to guess": "Short keyboard patterns are easy to guess.",
+        "use a longer keyboard pattern with more turns": "Use a longer keyboard pattern with more turns.",
+        "repeats like aaa are easy to guess": "Repeats like \"aaa\" are easy to guess.",
+        "repeats like abcabcabc are only slightly harder to guess than abc": "Repeats like \"abcabcabc\" are only slightly harder to guess than \"abc\".",
+        "avoid repeated words and characters": "Avoid repeated words and characters.",
+        "sequences like abc or 6543 are easy to guess": "Sequences like abc or 6543 are easy to guess.",
+        "avoid sequences": "Avoid sequences.",
+        "recent years are easy to guess": "Recent years are easy to guess.",
+        "avoid recent years": "Avoid recent years",
+        "avoid years that are associated with you": "Avoid years that are associated with you.",
+        "dates are often easy to guess": "Dates are often easy to guess.",
+        "avoid dates and years that are associated with you": "Avoid dates and years that are associated with you.",
+        "this is a top-10 common password": "This is a top-10 common password.",
+        "this is a top-100 common password": "This is a top-100 common password.",
+        "this is a very common password": "This is a very common password.",
+        "this is similar to a commonly used password": "This is similar to a commonly used password.",
+        "a word by itself is easy to guess": "A word by itself is easy to guess.",
+        "names and surnames by themselves are easy to guess": "Names and surnames by themselves are easy to guess.",
+        "common names and surnames are easy to guess": "Common names and surnames are easy to guess.",
+        "capitalization doesnt help very much": "Capitalization doesn't help very much.",
+        "all-uppercase is almost as easy to guess as all-lowercase": "All-uppercase is almost as easy to guess as all-lowercase.",
+        "reversed words arent much harder to guess": "Reversed words aren't much harder to guess.",
+        "predictable substitutions like @ instead of a don't help very much": "Predictable substitutions like '@' instead of 'a' don't help very much.",
     },
     components: {
         about_faq: {
@@ -293,7 +320,7 @@ module.exports = {
         },
         account_dialog_delete: {
             title: "Delete {{account_name}}?",
-            cannot_be_undone: "This action CANNOT be undone. This will delete the {{account_name}}} account and it's wallets permanently.",
+            cannot_be_undone: "This action CANNOT be undone. This will delete the {{account_name}} account and it's wallets permanently.",
             repeat_name: "Please Type in the name of the account to confirm."
         },
         account_dialog_open: {
@@ -349,6 +376,9 @@ module.exports = {
             why_link_text: "See why...",
             autofill_key: "autofill key",
             autofill_keys: "autofill keys"
+        },
+        dashboard_address: {
+            title: "Address",
         },
         dashboard_bar_chart: {
             title: "1 Year performance",
