@@ -40,6 +40,9 @@ const styles = theme => ({
     },
     underCardButton: {
         minWidth: "calc(50% - 8px)",
+        [theme.breakpoints.only("xs")]: {
+            margin: theme.spacing(0, 1, 0, 0)
+        }
     },
 });
 
