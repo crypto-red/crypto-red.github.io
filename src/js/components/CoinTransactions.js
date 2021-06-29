@@ -30,6 +30,10 @@ const styles = theme => ({
         padding: theme.spacing(4),
         width: "100%"
     },
+    noAccountImage: {
+        padding: theme.spacing(4),
+        width: "100%"
+    },
     circularProgressContainer:{
         textAlign: "center",
         padding: theme.spacing(2)
@@ -185,38 +189,45 @@ class CoinTransactions extends React.Component {
                         <CardHeader
                             title={t( "words.transactions", {}, {FLC: true})}
                         />
-                        {
-                            !_loading && logged_account ?
-                                _not_any_transactions_yet ?
-                                    <CardContent>
-                                        <img className={classes.noTransactionImage} src="/src/images/transfer.svg"/>
-                                        <p>{t("sentences.no transactions maid")}</p>
-                                    </CardContent>:
-                                    <CardContent>
-                                        <List>
-                                            {_transactions.map((transaction, index,array) => {
+                        <CardContent>
+                            {
+                                logged_account ?
+                                    !_loading ?
+                                        _not_any_transactions_yet ?
+                                            <div>
+                                                <img className={classes.noTransactionImage} src="/src/images/transfer.svg"/>
+                                                <p>{t("sentences.no transactions maid")}</p>
+                                            </div>:
+                                            <div>
+                                                <List>
+                                                    {_transactions.map((transaction, index,array) => {
 
-                                                return (
-                                                    <Transaction
-                                                    key={transaction.id}
-                                                    logged_account={logged_account}
-                                                    show_crypto_image={false}
-                                                    selected_currency={selected_currency}
-                                                    selected_locales_code={selected_locales_code}
-                                                    transaction={transaction}
-                                                    open={this._open_transaction}
-                                                    />
-                                                );
-                                            })}
-                                        </List>
-                                    </CardContent>
-                                :
-                                <CardContent>
-                                    <div className={classes.circularProgressContainer}>
-                                        <CircularProgress/>
+                                                        return (
+                                                            <Transaction
+                                                                key={transaction.id}
+                                                                logged_account={logged_account}
+                                                                show_crypto_image={false}
+                                                                selected_currency={selected_currency}
+                                                                selected_locales_code={selected_locales_code}
+                                                                transaction={transaction}
+                                                                open={this._open_transaction}
+                                                            />
+                                                        );
+                                                    })}
+                                                </List>
+                                            </div>
+                                        :
+                                        <div>
+                                            <div className={classes.circularProgressContainer}>
+                                                <CircularProgress/>
+                                            </div>
+                                        </div>:
+                                    <div>
+                                        <img className={classes.noAccountImage} src="/src/images/account.svg"/>
+                                        <p>{t("sentences.you must open an account")}</p>
                                     </div>
-                                </CardContent>
-                        }
+                            }
+                        </CardContent>
                     </Card>
                     <div className={classes.underCardButtonContainer}>
                         {

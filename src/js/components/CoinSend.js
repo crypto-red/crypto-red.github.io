@@ -79,6 +79,10 @@ const styles = theme => ({
             margin: theme.spacing(0, 1, 0, 0)
         }
     },
+    noAccountImage: {
+        padding: theme.spacing(4),
+        width: "100%"
+    },
 });
 
 
@@ -162,10 +166,13 @@ class CoinSend extends React.Component {
 
         const { coin_id, logged_account } = this.state;
 
-        actions.trigger_loading_update(0);
         if(logged_account) {
 
+            actions.trigger_loading_update(0);
             api.get_balance_by_seed(coin_id, logged_account.seed, this._handle_get_balance_result);
+        }else {
+
+            actions.trigger_loading_update(100);
         }
     }
 
@@ -395,47 +402,56 @@ class CoinSend extends React.Component {
                             title={t( "words.send", {}, {FLC: true})}
                         />
                             <CardContent>
-                                {_coin_balance !== null ? <p>{t("components.coin_send.title", {balance: _coin_balance})}</p>: <p>{t("sentences.loading")}</p>}
-                                {_send_transaction_info !== null ? <p>{t("components.coin_send.body", {average_transaction_time: _send_transaction_info.average_transaction_time, max_message_length: _send_transaction_info.max_message_length, send_message_input_length: _send_message_input.length})}</p>: null}
-                                { _send_transaction_info ?
-                                    <form className={classes.root} noValidate autoComplete="off">
-                                        <TextField
-                                            autoFocus
-                                            className={classes.textField}
-                                            onChange={this._handle_send_address_input_change}
-                                            value={_send_address_input}
-                                            error={_send_address_input_error}
-                                            helperText={_send_address_input_error ? t( "sentences.incorrect address"): ""}
-                                            id="address"
-                                            label={t( "words.address", {}, {FLC: true})}
-                                            type="text"
-                                            fullWidth
-                                        />
-                                        <TextField
-                                            className={classes.textField}
-                                            onChange={this._handle_send_amount_input_change}
-                                            value={_send_amount_input}
-                                            error={_send_amount_input_error}
-                                            helperText={_send_amount_input_error ? t( "sentences.incorrect amount"): ""}
-                                            id="amount"
-                                            label={t( "words.amount", {}, {FLC: true})}
-                                            type="number"
-                                            fullWidth
-                                        />
-                                        <TextField
-                                            className={classes.textField}
-                                            onChange={this._handle_send_message_input_change}
-                                            value={_send_message_input}
-                                            error={_send_message_input_error}
-                                            helperText={_send_message_input_error ? t( "sentences.incorrect message"): ""}
-                                            disabled={_send_transaction_info.max_message_length === 0}
-                                            id="message"
-                                            label={t( "words.message", {}, {FLC: true})}
-                                            type="text"
-                                            multiline
-                                            fullWidth
-                                        />
-                                    </form>: null
+
+                                {logged_account ?
+                                    <div>
+                                        {_coin_balance !== null ? <p>{t("components.coin_send.title", {balance: _coin_balance})}</p>: <p>{t("sentences.loading")}</p>}
+                                        {_send_transaction_info !== null ? <p>{t("components.coin_send.body", {average_transaction_time: _send_transaction_info.average_transaction_time, max_message_length: _send_transaction_info.max_message_length, send_message_input_length: _send_message_input.length})}</p>: null}
+                                        { _send_transaction_info ?
+                                            <form className={classes.root} noValidate autoComplete="off">
+                                                <TextField
+                                                    autoFocus
+                                                    className={classes.textField}
+                                                    onChange={this._handle_send_address_input_change}
+                                                    value={_send_address_input}
+                                                    error={_send_address_input_error}
+                                                    helperText={_send_address_input_error ? t( "sentences.incorrect address"): ""}
+                                                    id="address"
+                                                    label={t( "words.address", {}, {FLC: true})}
+                                                    type="text"
+                                                    fullWidth
+                                                />
+                                                <TextField
+                                                    className={classes.textField}
+                                                    onChange={this._handle_send_amount_input_change}
+                                                    value={_send_amount_input}
+                                                    error={_send_amount_input_error}
+                                                    helperText={_send_amount_input_error ? t( "sentences.incorrect amount"): ""}
+                                                    id="amount"
+                                                    label={t( "words.amount", {}, {FLC: true})}
+                                                    type="number"
+                                                    fullWidth
+                                                />
+                                                <TextField
+                                                    className={classes.textField}
+                                                    onChange={this._handle_send_message_input_change}
+                                                    value={_send_message_input}
+                                                    error={_send_message_input_error}
+                                                    helperText={_send_message_input_error ? t( "sentences.incorrect message"): ""}
+                                                    disabled={_send_transaction_info.max_message_length === 0}
+                                                    id="message"
+                                                    label={t( "words.message", {}, {FLC: true})}
+                                                    type="text"
+                                                    multiline
+                                                    fullWidth
+                                                />
+                                            </form>: null
+                                        }
+                                    </div>:
+                                    <div>
+                                        <img className={classes.noAccountImage} src="/src/images/account.svg"/>
+                                        <p>{t("sentences.you must open an account")}</p>
+                                    </div>
                                 }
                             </CardContent>
                     </Card>

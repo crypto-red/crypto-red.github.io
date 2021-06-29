@@ -36,6 +36,10 @@ const styles = theme => ({
             margin: theme.spacing(0, 1, 0, 0)
         }
     },
+    noAccountImage: {
+        padding: theme.spacing(4),
+        width: "100%"
+    },
 });
 
 
@@ -109,6 +113,9 @@ class CoinBalance extends React.Component {
                 actions.trigger_loading_update(0);
                 api.get_balance_by_seed(coin_id, logged_account.seed, this._handle_get_balance_result);
             });
+        }else {
+
+            actions.trigger_loading_update(100);
         }
     }
 
@@ -136,31 +143,37 @@ class CoinBalance extends React.Component {
                         />
 
                         <CardContent>
-
-                                <div>
-                                    {
-                                        _coin_balance === null || coin_data === null ?
-                                            <div>
-                                                <div className={classes.center}>
-                                                    <h2><Skeleton /></h2>
-                                                    <h4><Skeleton /></h4>
+                            {
+                                logged_account ?
+                                    <div>
+                                        {
+                                            _coin_balance === null || coin_data === null ?
+                                                <div>
+                                                    <div className={classes.center}>
+                                                        <h2><Skeleton /></h2>
+                                                        <h4><Skeleton /></h4>
+                                                    </div>
+                                                </div>:
+                                                <div>
+                                                    {_coin_balance === 0 ?
+                                                        <div className={classes.center}>
+                                                            <h2>{t( "sentences.you need to add fund to this account")}</h2>
+                                                            <h4>{t( "sentences.just do it trough the link in the menu")}</h4>
+                                                        </div>
+                                                        :
+                                                        <div className={classes.center}>
+                                                            <h2>{price_formatter(parseFloat(balance_fiat), selected_currency, selected_locales_code)}</h2>
+                                                            <h4>{price_formatter(parseFloat(balance_crypto), coin_data_symbol, selected_locales_code)}</h4>
+                                                        </div>
+                                                    }
                                                 </div>
-                                            </div>:
-                                            <div>
-                                                {_coin_balance === 0 ?
-                                                    <div className={classes.center}>
-                                                        <h2>{t( "sentences.you need to add fund to this account")}</h2>
-                                                        <h4>{t( "sentences.just do it trough the link in the menu")}</h4>
-                                                    </div>
-                                                    :
-                                                    <div className={classes.center}>
-                                                        <h2>{price_formatter(parseFloat(balance_fiat), selected_currency, selected_locales_code)}</h2>
-                                                        <h4>{price_formatter(parseFloat(balance_crypto), coin_data_symbol, selected_locales_code)}</h4>
-                                                    </div>
-                                                }
-                                            </div>
-                                    }
-                                </div>
+                                        }
+                                    </div>:
+                                    <div>
+                                        <img className={classes.noAccountImage} src="/src/images/account.svg"/>
+                                        <p>{t("sentences.you must open an account")}</p>
+                                    </div>
+                            }
                         </CardContent>
                     </Card>
                     <div className={classes.underCardButtonContainer}>

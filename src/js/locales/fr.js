@@ -127,6 +127,7 @@ module.exports = {
         "scan an address": "Lire une adresse",
         "online": "Nous sommes en ligne !",
         "offline": "Nous sommes hors ligne !",
+        "you must open an account": "Vous devez ouvir un compte.",
         "use a few words avoid common phrases": "Utilisez quelques mots, évitez les phrases courantes.",
         "no need for symbols digits or uppercase letters": "Pas besoin de symboles, de chiffres ou de lettres majuscules",
         "add another word or two uncommon words are better": "Ajoutez un mot ou deux. Les mots peu communs sont meilleurs.",
