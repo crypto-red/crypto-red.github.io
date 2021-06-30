@@ -66,7 +66,8 @@ const styles = theme => ({
             display: "none"
         },
         marginRight: theme.spacing(1),
-        cursor: "pointer"
+        cursor: "pointer",
+        overflow: "hidden",
     },
     swipeableDrawerToolbar: {
         height: 64,
@@ -104,6 +105,34 @@ const styles = theme => ({
         height: "calc(100% - 36px)",
         marginRight: theme.spacing(1),
         verticalAlign: "middle",
+        animation: "$jamy",
+        animationDuration: "22s",
+        animationIterationCount: "infinite",
+        "@global": {
+            "@keyframes jamy": {
+                "0%": {
+                    transform: "translateY(0px)",
+                },
+                "48%": {
+                    transform: "translateY(0px)",
+                },
+                "49%": {
+                    transform: "translateY(-50px)",
+                },
+                "50%": {
+                    transform: "translateY(-99999999999999999999999px)",
+                },
+                "51%": {
+                    transform: "translateY(50px)",
+                },
+                "52%": {
+                    transform: "translateY(0px)",
+                },
+                "100%": {
+                    transform: "translateY(0px)",
+                },
+            }
+        }
     },
     logo: {
         height: "calc(100% - 36px)",

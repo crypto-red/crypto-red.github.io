@@ -170,23 +170,10 @@ class AccountDialogCreate extends React.Component {
                         const time_not_ago = time_ago.format(Date.now() + that.state._password_evaluation.crack_times_seconds.offline_slow_hashing_1e4_per_second * 1000, "mini")
 
                         actions.jamy_update("suspicious", 3000);
-                        actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_warning", {time: time_not_ago}), 6000)
+                        actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_warning", {time: time_not_ago}), 9000)
                     }
 
-                }, 500);
-
-                setTimeout(() => {
-
-                    if(that.state._password_evaluation.score <= 3) {
-
-                        const time_ago = new TimeAgo(document.documentElement.lang);
-                        const time_not_ago = time_ago.format(Date.now() + that.state._password_evaluation.crack_times_seconds.offline_slow_hashing_1e4_per_second * 1000, "mini")
-
-                        actions.jamy_update("suspicious", 3000);
-                        actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_warning", {time: time_not_ago}), 6000)
-                    }
-
-                }, 8000);
+                }, 0);
 
             }else {
 
@@ -282,7 +269,7 @@ class AccountDialogCreate extends React.Component {
         setTimeout(() => {
 
             this._eval_password_if_state_equals_to_param(_account_password_input);
-        }, 750);
+        }, 2000);
 
         this.setState({_account_password_input, _is_account_confirmation_error: false, _is_account_password_error: false});
     };

@@ -139,7 +139,31 @@ class Index extends React.Component {
                 );
                 actions.jamy_update(navigator.onLine ? "happy": "sad");
             }
-        }, 1000)
+        }, 1000);
+
+        // Make Jamy blink every 32 sec in average.
+        setInterval(() => {
+
+            if(!Math.floor(Math.random() * 32)) {
+
+                const { _jamy_state_of_mind } = this.state;
+
+                this.setState({_jamy_state_of_mind: "suspicious"}, () => {
+
+                    setTimeout(() => {
+
+                        if(this.state._jamy_state_of_mind === "suspicious") {
+
+                            this.setState({_jamy_state_of_mind});
+                        }
+
+                    }, 75);
+
+                });
+
+            }
+
+        }, 1000);
     }
 
     componentWillUnmount() {
@@ -190,17 +214,6 @@ class Index extends React.Component {
 
         const { _logged_once } = this.state;
         const _logged_account = error ? {}: result;
-
-        if(!_logged_account && !_logged_once){
-
-            actions.trigger_snackbar(t( "pages.index.first_snackbar"), 3000);
-
-            setTimeout(() => {
-
-                actions.trigger_snackbar(t( "pages.index.second_snackbar"), 4000);
-            }, 4500);
-
-        }
 
         this.setState({_logged_account, _know_if_logged: true, _logged_once: true});
     };
@@ -266,17 +279,51 @@ class Index extends React.Component {
 
             setTimeout(() => {
 
-                this.setState({_jamy_state_of_mind: "shocked"});
+                this.setState({_jamy_state_of_mind: "shocked"}, () => {
+
+                    setTimeout(() => {
+
+                        this.setState({_jamy_state_of_mind: "suspicious"}, () => {
+
+                            setTimeout(() => {
+
+                                this.setState({_jamy_state_of_mind: "shocked"});
+
+                            }, 75);
+
+                        });
+
+                    }, 750);
+
+                });
             }, duration);
         });
     }
 
     _trigger_snackbar = (_snackbar_message, _snackbar_auto_hide_duration) => {
 
-        this.setState({_snackbar_message, _snackbar_auto_hide_duration, _snackbar_open: true});
+        const { _snackbar_open } = this.state;
+
+        if(_snackbar_open) {
+
+            this.setState({_snackbar_open: false}, () => {
+
+                setTimeout(() => {
+
+                    this.setState({_snackbar_message, _snackbar_auto_hide_duration, _snackbar_open: true});
+                }, 500);
+            });
+        }else {
+
+            this.setState({_snackbar_message, _snackbar_auto_hide_duration, _snackbar_open: true});
+        }
     };
 
-    _close_snackbar = () => {
+    _close_snackbar = (event, reason) => {
+
+        if (reason === "clickaway") {
+            return;
+        }
 
         this.setState({_snackbar_open: false});
     };

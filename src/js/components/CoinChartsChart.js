@@ -410,7 +410,7 @@ class CoinChartsChart extends React.Component {
                                                     <CartesianGrid strokeDasharray="3 3" />
                                                     <XAxis dataKey="date"
                                                            domain={['dataMin', 'dataMax']}
-                                                           interval={0}
+                                                           interval={_coin_chart_data_time === "max" ? "preserveEnd": 0}
                                                            angle={60} height={75} dy={10} textAnchor="start"
                                                            tickFormatter={date => this._date_formatter(date)}
                                                            ticks={_ticks_array}

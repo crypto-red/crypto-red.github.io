@@ -36,15 +36,15 @@ const styles = theme => ({
 
     },
     currencyCryptoAmountPositive: {
-        "& span:first-child": {
-            color: green[700],
+        "& span": {
+            color: green[900],
         },
         "& span:first-child::before": {
             content: "\"\""
         }
     },
     currencyCryptoAmountNegative: {
-        "& span:first-child": {
+        "& span": {
             color: red[700],
         },
         "& span:first-child::before": {
