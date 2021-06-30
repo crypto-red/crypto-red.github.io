@@ -278,7 +278,7 @@ class CryptDialog extends React.Component {
                             t( "components.crypt_dialog.result_dialog.decrypt_title", {length: _result_text.length}):
                             t( "components.crypt_dialog.result_dialog.encrypt_title", {length: _result_text.length})}
                     </DialogTitle>
-                    <DialogContent dividers className={classes.dialogBody}>
+                    <DialogContent className={classes.dialogBody}>
                         <DialogContentText id="crypto-text-result-dialog-description" className={classes.breakAllWords}>
                             {_result_text}
                         </DialogContentText>
@@ -304,7 +304,7 @@ class CryptDialog extends React.Component {
                     <DialogTitle id="crypto-text-autofill-dialog-title">
                         {t( "components.crypt_dialog.autofill_dialog.title")}
                     </DialogTitle>
-                    <DialogContent dividers>
+                    <DialogContent>
                         <DialogContentText>
                             {t( "components.crypt_dialog.autofill_dialog.body")}
                         </DialogContentText>
@@ -343,7 +343,7 @@ class CryptDialog extends React.Component {
                             <Tab label={t("words.encrypt")} />
                             <Tab label={t("words.decrypt")} />
                         </Tabs>
-                        <DialogContent className={classes.dialogBody} dividers>
+                        <DialogContent className={classes.dialogBody} >
                             <DialogContentText id="crypto-text-dialog-description">
                                 {t( "components.crypt_dialog.body")} <Link to={"/about/wiki/crypt"} onClick={(event) => {this._on_close(event)}}>{t( "components.crypt_dialog.why_link_text")}</Link>
                             </DialogContentText>
@@ -384,7 +384,7 @@ class CryptDialog extends React.Component {
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={(event) => {this._on_autofill_fields(event)}} color="primary" disabled={!logged_account} autoFocus>
-                                {_view_name_index ? t( "components.crypt_dialog.autofill_keys"): t( "components.crypt_dialog.autofill_key")}
+                                {_view_name_index ? t( "components.crypt_dialog.autofill_my_keys"): t( "components.crypt_dialog.autofill_my_key")}
                             </Button>
                             <Button onClick={(event) => {this._on_show_result(event)}} color="primary" disabled={_is_message_input_error || _is_public_key_input_error || _is_private_key_input_error}>
                                 {t( "words.show")}

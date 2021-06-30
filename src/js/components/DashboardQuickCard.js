@@ -9,7 +9,11 @@ import Skeleton from "@material-ui/lab/Skeleton";
 const styles = theme => ({
     relevant: {
         backgroundColor: theme.palette.secondary.light,
-        color: theme.palette.primary.contrastText
+        color: theme.palette.primary.contrastText,
+        height: "100%",
+    },
+    basic: {
+        height: "100%",
     },
     cardContainer: {
         width: "100%",
@@ -63,7 +67,7 @@ class DashboardQuickCard extends React.Component {
         return (
             <div className={classes.cardContainer}>
                 <Fade in>
-                    <Card className={relevant ? classes.relevant: null}>
+                    <Card className={relevant ? classes.relevant: classes.basic}>
                         <CardContent className={classes.cardContent}>
                             <h3 className={classes.title}>
                                 {

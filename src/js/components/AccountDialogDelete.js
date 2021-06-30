@@ -84,7 +84,7 @@ class AccountDialogDelete extends React.Component {
                 {Boolean(account) ?
                     <div>
                         <DialogTitle id="delete-account-dialog-title">{t("components.account_dialog_delete.title", {account_name: account.name})}</DialogTitle>
-                        <DialogContent dividers>
+                        <DialogContent>
                             <DialogContentText id="delete-account-dialog-description">
                                 {t("components.account_dialog_delete.cannot_be_undone", {account_name: account.name})}
                                 <br />

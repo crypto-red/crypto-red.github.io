@@ -11,6 +11,7 @@ import Fade from "@material-ui/core/Fade";
 import Button from "@material-ui/core/Button"
 
 import { get_date_format } from "../utils/time";
+import { LOCALE_MAP } from "../utils/constants";
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import api from "../utils/api";
@@ -150,8 +151,11 @@ class CoinChartsConvert extends React.Component {
                             value={_fiat_input_value}
                             onChange={this._handle_fiat_input_value_change}
                         />
-                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                        <MuiPickersUtilsProvider utils={DateFnsUtils} locale={LOCALE_MAP[document.documentElement.lang]}>
                             <KeyboardDatePicker
+                                cancelLabel={t("words.cancel")}
+                                okLabel={t("words.ok")}
+                                invalidDateMessage={t("sentences.invalid date message")}
                                 className={classes.noTopMargin}
                                 margin="normal"
                                 id="date-picker-dialog"

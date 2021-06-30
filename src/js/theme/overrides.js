@@ -19,6 +19,10 @@ const overrides = {
             },
             ".MuiTableSortLabel-root.MuiTableSortLabel-root.MuiTableSortLabel-active": {
                 color: "inherit"
+            },
+            ".MuiDialogActions-root": {
+                borderTop: "1px solid #060f23",
+                backgroundColor: "#f2f2f3",
             }
         },
     },

@@ -71,7 +71,7 @@ class AccountDialogBackup extends React.Component {
                         <DialogTitle id="backup-account-dialog-title">
                             {t( "components.account_dialog_backup.seed", {account_name: account.name})}
                         </DialogTitle>
-                        <DialogContent dividers>
+                        <DialogContent>
                             <DialogContentText id="backup-account-dialog-description">
                                 <p className={classes.red}>{t( "components.account_dialog_backup.store", {account_name: account.name})}</p>
                                 {

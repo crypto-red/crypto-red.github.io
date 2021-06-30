@@ -426,7 +426,7 @@ class AccountDialogCreate extends React.Component {
 
         const configuration_view =
             <div className={classes.dialogBody}>
-                <DialogContent className={classes.dialogBody} dividers>
+                <DialogContent className={classes.dialogBody} >
                     <DialogContentText id="create-account-dialog-description">
                         {t( "components.account_dialog_create.configuration_view.description")}
                     </DialogContentText>
@@ -481,7 +481,7 @@ class AccountDialogCreate extends React.Component {
 
         const mnemonic_view =
             <div className={classes.dialogBody}>
-                <DialogContent className={classes.dialogBody} dividers>
+                <DialogContent className={classes.dialogBody} >
                     <DialogContentText id="create-account-dialog-description">
                         {t( "components.account_dialog_create.mnemonic_view.description")}
                         <br /><b className={classes.red}>{t( "components.account_dialog_create.mnemonic_view.description_bold")}</b>

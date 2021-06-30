@@ -6,6 +6,7 @@ module.exports = {
         }
     },
     words: {
+        "error": "error",
         "ok": "ok",
         "message": "message",
         "account": "account",
@@ -66,6 +67,7 @@ module.exports = {
         "send from public key": "send from public key",
         "send to public key": "send to public key",
         "send to": "send to",
+        "send again": "send again",
         "memo": "memo",
         "amount": "amount",
         "fee": "fee",
@@ -78,6 +80,7 @@ module.exports = {
         "chart": "chart",
     },
     sentences: {
+        "invalid date message": "Invalid date format",
         "new account": "New account",
         "open an account": "Open an account",
         "incorrect address": "Incorrect address",
@@ -105,14 +108,18 @@ module.exports = {
         "address successfully copied": "Address successfully copied",
         "url successfully copied": "Url successfully copied",
         "text successfully copied": "Text successfully copied",
+        "public key successfully copied": "Public key successfully copied",
         "cannot copy this address": "Cannot copy this address",
         "cannot copy this url": "Cannot copy this url",
         "cannot copy this text": "Cannot copy this text",
+        "cannot copy this public key": "Cannot copy this public key",
         "cannot copy non-existent url": "Cannot copy a non-existent url",
         "cannot copy non-existent text": "Cannot copy a non-existent text",
-        "cannot copy a null address": "Cannot copy \"null\" address",
+        "cannot copy a non-existent address": "Cannot copy a non-existent address",
+        "cannot copy a non-existent public key": "Cannot copy a non-existent public key",
         "cannot load more transaction": "Cannot load more transactions...",
         "copy address": "Copy address",
+        "copy public key": "Copy public key",
         "the longer you look the shiner i get": "The longer you look, the shiner I get",
         "take a picture it last longer": "Take a picture, it last longer",
         "stop bitchslapping me": "Stop bitchslapping me!",
@@ -375,8 +382,8 @@ module.exports = {
             title_encrypt: "Encrypt text using NaCl",
             body: "You have to provide either a public key to encrypt a message (Someone else public key) or both the public and private key (Your key pair) to decrypt the message.",
             why_link_text: "See why...",
-            autofill_key: "autofill key",
-            autofill_keys: "autofill keys"
+            autofill_my_key: "autofill my key",
+            autofill_my_keys: "autofill my keys"
         },
         dashboard_address: {
             title: "Address",

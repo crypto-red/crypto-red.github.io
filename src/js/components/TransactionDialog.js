@@ -14,10 +14,16 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import Table from "@material-ui/core/Table";
 
+import FileCopyIcon from "@material-ui/icons/FileCopy";
+import IconButton from "@material-ui/core/IconButton";
+
 import { HISTORY } from "../utils/constants";
 import api from "../utils/api";
 import price_formatter from "../utils/price-formatter";
 import actions from "../actions/utils";
+import api_crypto from "../utils/api-crypto";
+
+import clipboard from "clipboard-polyfill";
 
 const styles = theme => ({
     dialog: {
@@ -41,7 +47,13 @@ const styles = theme => ({
     },
     underline: {
         textDecoration: "underline"
-    }
+    },
+    copyButton: {
+        marginLeft: theme.spacing(1),
+    },
+    displayInlineFlex: {
+        display: "inline-flex",
+    },
 });
 
 
@@ -52,28 +64,40 @@ class TransactionDialog extends React.Component {
         this.state = {
             classes: props.classes,
             transaction: props.transaction,
+            logged_account: props.logged_account,
             selected_locales_code: props.selected_locales_code,
             selected_currency: props.selected_currency,
             open: props.open,
             _address: null,
             _coin_data: null,
+            _nacl_decrypted_memo: null,
             _history: HISTORY
         };
     };
 
     componentWillReceiveProps(new_props) {
 
+        const { logged_account, transaction } = this.state;
+
         this.setState({...new_props}, () => {
 
-            this._get_coin_data();
-            this._get_address_by_seed()
+            if(logged_account !== new_props.logged_account || transaction !== new_props.transaction) {
+
+                this._get_coin_data();
+                this._get_address_by_seed()
+            }
         });
     };
 
     componentDidMount() {
 
-        this._get_coin_data();
-        this._get_address_by_seed()
+        const { logged_account, transaction } = this.state;
+
+        if(logged_account && transaction) {
+
+            this._get_coin_data();
+            this._get_address_by_seed()
+        }
     }
 
     _get_address_by_seed = () => {
@@ -83,9 +107,36 @@ class TransactionDialog extends React.Component {
         if(logged_account && transaction) {
 
             const address = api.get_address_by_seed(transaction.crypto_id, logged_account.seed);
-            this.setState({_address: address});
+            this.setState({_address: address, _nacl_decrypted_memo: null}, () => {
+
+                this._try_decrypt_memo_with_nacl();
+            });
         }
     };
+
+    _handle_decrypt_memo_with_nacl_text_result = (error, result) => {
+
+        if(!error && result) {
+
+            this.setState({_nacl_decrypted_memo: result});
+        }else {
+
+            this.setState({_nacl_decrypted_memo: null});
+        }
+    };
+
+    _try_decrypt_memo_with_nacl = () => {
+
+        const { logged_account, transaction } = this.state;
+
+        if(logged_account && transaction) {
+
+            const public_key = api.get_public_key_by_seed(transaction.crypto_id, logged_account.seed);
+            const private_key = api.get_private_key_by_seed(transaction.crypto_id, logged_account.seed);
+            api_crypto.nacl_decrypt(transaction.memo, public_key, private_key, this._handle_decrypt_memo_with_nacl_text_result);
+        }
+
+    }
 
     _on_close = (event, account) => {
 
@@ -122,10 +173,35 @@ class TransactionDialog extends React.Component {
         _history.push(link);
     };
 
+    _copy_send_from_public_key = (event, send_from_public_key) => {
+
+        if(send_from_public_key !== null) {
+
+            clipboard.writeText(send_from_public_key).then(
+                function () {
+
+                    actions.trigger_snackbar(t( "sentences.public key successfully copied"));
+                    actions.trigger_sfx("navigation_forward-selection");
+                    actions.jamy_update("happy");
+                },
+                function () {
+
+                    actions.trigger_snackbar(t( "sentences.cannot copy this public key"));
+                    actions.trigger_sfx("navigation_backward-selection");
+                    actions.jamy_update("annoyed");
+                }
+            );
+        }else {
+
+            actions.trigger_snackbar(t( "sentences.cannot copy a null public key"));
+            actions.trigger_sfx("navigation_backward-selection");
+            actions.jamy_update("annoyed");
+        }
+    };
 
     render() {
 
-        const { classes, transaction, selected_currency, selected_locales_code, open, _coin_data, _address } = this.state;
+        const { classes, transaction, selected_currency, selected_locales_code, open, _coin_data, _address, _nacl_decrypted_memo } = this.state;
 
         const amount_sent_fiat = _coin_data !== null ? transaction.amount_crypto * _coin_data.market_data.current_price[selected_currency.toLowerCase()]: 0;
         const amount_fee_fiat = _coin_data != null ? transaction.fee * _coin_data.market_data.current_price[selected_currency.toLowerCase()]: 0;
@@ -142,7 +218,7 @@ class TransactionDialog extends React.Component {
                     Boolean(transaction) ?
                         <div className={classes.dialogBody}>
                             <DialogTitle id="show-transaction-memo-dialog-title" className={classes.breakWord}>{t( "components.transaction_dialog.title", {transaction_id: transaction.id})}</DialogTitle>
-                            <DialogContent className={classes.dialogBody} dividers>
+                            <DialogContent className={classes.dialogBody} >
                                 <DialogContentText id="show-transaction-memo-dialog-description">
                                     <Table>
                                         <Table aria-label="main-info-table">
@@ -159,7 +235,22 @@ class TransactionDialog extends React.Component {
                                                     typeof transaction.send_from_public_key !== "undefined" ?
                                                     <TableRow>
                                                         <TableCell align="left" className={classes.tableCellBold}>{t("words.send from public key", {}, {FLC: true})}</TableCell>
-                                                        <TableCell align="right">{transaction.send_from_public_key}</TableCell>
+                                                        <TableCell align="right">
+                                                            <div className={classes.displayInlineFlex}>
+                                                                <span>{transaction.send_from_public_key}</span>
+                                                                {_address === transaction.send_to ?
+                                                                    <IconButton
+                                                                        className={classes.copyButton}
+                                                                        size="small"
+                                                                        aria-label={t( "sentences.copy public key")}
+                                                                        onClick={(event) => this._copy_send_from_public_key(event, transaction.send_from_public_key)}
+                                                                        edge="end"
+                                                                    >
+                                                                        <FileCopyIcon fontSize="inherit" />
+                                                                    </IconButton>: null
+                                                                }
+                                                            </div>
+                                                        </TableCell>
                                                     </TableRow>: null
                                                 }
                                                 <TableRow>
@@ -175,7 +266,13 @@ class TransactionDialog extends React.Component {
                                                 }
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>{t("words.memo", {}, {FLC: true})}</TableCell>
-                                                    <TableCell align="right" className={classes.breakWord}>{transaction.memo}</TableCell>
+                                                    <TableCell align="right" className={classes.breakWord}>
+                                                        {transaction.memo}
+                                                        {_nacl_decrypted_memo ?
+                                                            <span><br/>NaCl: "<b>{_nacl_decrypted_memo}</b>"</span>:
+                                                            <span><br/>NaCl: <b>{t("words.error", {}, {FLC: true})}</b></span>
+                                                        }
+                                                    </TableCell>
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>{t("words.amount", {}, {FLC: true})}</TableCell>
@@ -211,7 +308,7 @@ class TransactionDialog extends React.Component {
                                     {t("words.send back")}
                                 </Button> :
                                 <Button onClick={(event) => {this._open_link(event, `/coins/${transaction.crypto_id}/send/${transaction.send_to}`)}}>
-                                    {t("words.send to")}
+                                    {t("words.send again")}
                                 </Button>
                         : null
                     }

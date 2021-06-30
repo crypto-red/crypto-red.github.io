@@ -1,6 +1,14 @@
 import createHistory from "history/createBrowserHistory";
 const HISTORY = createHistory();
 
+import en_locale from "date-fns/locale/en-US";
+import fr_locale from "date-fns/locale/fr";
+
+const LOCALE_MAP = {
+    en: en_locale,
+    fr: fr_locale
+}
+
 /*
  * The page routes system is working with regex, tabs system (weird) isn't great but it will change
  */
@@ -182,6 +190,7 @@ const CURRENCY_COUNTRIES = {
 };
 
 module.exports = {
+    LOCALE_MAP: LOCALE_MAP,
     HISTORY: HISTORY,
     PAGE_ROUTES: PAGE_ROUTES,
     COINS: COINS,

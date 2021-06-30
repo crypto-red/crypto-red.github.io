@@ -92,7 +92,7 @@ class AddressListItem extends React.Component {
             );
         }else {
 
-            actions.trigger_snackbar(t( "sentences.cannot copy a null address"));
+            actions.trigger_snackbar(t( "sentences.cannot copy a non-existent address"));
             actions.trigger_sfx("navigation_backward-selection");
         }
     }
