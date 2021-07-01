@@ -332,6 +332,7 @@ module.exports = {
             repeat_name: "Please Type in the name of the account to confirm."
         },
         account_dialog_open: {
+            title: "Open {{account_name}}?",
             warning_password_stored_browser: "WARNING: Your password will stored be in your browser.",
             open_account: "Open the {{account_name}} account and it's wallets temporarily.",
             write_password: "Please Type in the password of the account to log in."

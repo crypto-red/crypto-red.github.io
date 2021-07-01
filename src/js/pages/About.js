@@ -27,6 +27,15 @@ class About extends React.Component {
         };
     };
 
+    componentDidMount() {
+
+        actions.trigger_loading_update(0);
+        setTimeout(() => {
+
+            actions.trigger_loading_update(100);
+        }, 300);
+    }
+
     componentWillReceiveProps(new_props) {
 
         const { pathname } = this.state;
@@ -36,6 +45,12 @@ class About extends React.Component {
 
             const _view_name = new_props.pathname.split("/")[2] || "info";
             this.setState({pathname: new_pathname, _view_name});
+
+            actions.trigger_loading_update(0);
+            setTimeout(() => {
+
+                actions.trigger_loading_update(100);
+            }, 300);
         }
     }
 

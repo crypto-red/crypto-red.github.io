@@ -51,6 +51,7 @@ class CoinBalance extends React.Component {
             classes: props.classes,
             coin_id: props.coin_id,
             logged_account: props.logged_account,
+            we_know_if_logged: props.we_know_if_logged,
             selected_locales_code: props.selected_locales_code,
             selected_currency: props.selected_currency,
             coin_data: props.coin_data,
@@ -128,7 +129,7 @@ class CoinBalance extends React.Component {
     render() {
 
         const { classes } = this.state;
-        const { _coin_balance, logged_account, selected_locales_code, selected_currency, coin_data } = this.state;
+        const { _coin_balance, logged_account, selected_locales_code, selected_currency, coin_data, we_know_if_logged } = this.state;
 
         const balance_fiat = coin_data !== null && _coin_balance !== null ?  _coin_balance * coin_data.market_data.current_price[selected_currency.toLowerCase()]: 0;
         const balance_crypto = coin_data !== null && _coin_balance !== null ? _coin_balance: 0;
@@ -136,59 +137,62 @@ class CoinBalance extends React.Component {
 
         return (
             <div>
-                <Container maxWidth="sm" className={classes.container}>
-                    <Card>
-                        <CardHeader
-                            title={t( "words.balance", {}, {FLC: true})}
-                        />
+                {we_know_if_logged ?
+                    <Container maxWidth="sm" className={classes.container}>
+                        <Card>
+                            <CardHeader
+                                title={t( "words.balance", {}, {FLC: true})}
+                            />
 
-                        <CardContent>
+                            <CardContent>
+                                {
+                                    logged_account ?
+                                        <div>
+                                            {
+                                                _coin_balance === null || coin_data === null ?
+                                                    <div>
+                                                        <div className={classes.center}>
+                                                            <h2><Skeleton /></h2>
+                                                            <h4><Skeleton /></h4>
+                                                        </div>
+                                                    </div>:
+                                                    <div>
+                                                        {_coin_balance === 0 ?
+                                                            <div className={classes.center}>
+                                                                <h2>{t( "sentences.you need to add fund to this account")}</h2>
+                                                                <h4>{t( "sentences.just do it trough the link in the menu")}</h4>
+                                                            </div>
+                                                            :
+                                                            <div className={classes.center}>
+                                                                <h2>{price_formatter(parseFloat(balance_fiat), selected_currency, selected_locales_code)}</h2>
+                                                                <h4>{price_formatter(parseFloat(balance_crypto), coin_data_symbol, selected_locales_code)}</h4>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                            }
+                                        </div>:
+                                        <div>
+                                            <img className={classes.noAccountImage} src="/src/images/account.svg"/>
+                                            <p>{t("sentences.you must open an account")}</p>
+                                        </div>
+                                }
+                            </CardContent>
+                        </Card>
+                        <div className={classes.underCardButtonContainer}>
                             {
                                 logged_account ?
-                                    <div>
-                                        {
-                                            _coin_balance === null || coin_data === null ?
-                                                <div>
-                                                    <div className={classes.center}>
-                                                        <h2><Skeleton /></h2>
-                                                        <h4><Skeleton /></h4>
-                                                    </div>
-                                                </div>:
-                                                <div>
-                                                    {_coin_balance === 0 ?
-                                                        <div className={classes.center}>
-                                                            <h2>{t( "sentences.you need to add fund to this account")}</h2>
-                                                            <h4>{t( "sentences.just do it trough the link in the menu")}</h4>
-                                                        </div>
-                                                        :
-                                                        <div className={classes.center}>
-                                                            <h2>{price_formatter(parseFloat(balance_fiat), selected_currency, selected_locales_code)}</h2>
-                                                            <h4>{price_formatter(parseFloat(balance_crypto), coin_data_symbol, selected_locales_code)}</h4>
-                                                        </div>
-                                                    }
-                                                </div>
-                                        }
-                                    </div>:
-                                    <div>
-                                        <img className={classes.noAccountImage} src="/src/images/account.svg"/>
-                                        <p>{t("sentences.you must open an account")}</p>
-                                    </div>
+                                    <Button className={classes.underCardButton} color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/about/wiki/topup")}}>
+                                        {t( "words.top up")}
+                                    </Button>
+                                    :
+                                    <Button className={classes.underCardButton} color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/accounts")}}>
+                                        {t( "sentences.open an account")}
+                                    </Button>
                             }
-                        </CardContent>
-                    </Card>
-                    <div className={classes.underCardButtonContainer}>
-                        {
-                            logged_account ?
-                                <Button className={classes.underCardButton} color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/about/wiki/topup")}}>
-                                    {t( "words.top up")}
-                                </Button>
-                                :
-                                <Button className={classes.underCardButton} color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/accounts")}}>
-                                    {t( "sentences.open an account")}
-                                </Button>
-                        }
-                    </div>
-                </Container>
+                        </div>
+                    </Container>:
+                    null
+                }
             </div>
         );
     }

@@ -23,10 +23,9 @@ import CloseIcon from "@material-ui/icons/Close";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 import TrendingDownIcon from "@material-ui/icons/TrendingDown";
 
-import { HISTORY } from "../utils/constants";
+import { COINS, HISTORY } from "../utils/constants";
 import price_formatter from "../utils/price-formatter";
 import actions from "../actions/utils";
-import { COINS } from "../utils/constants";
 import api from "../utils/api";
 
 const styles = theme => ({
@@ -51,48 +50,12 @@ const styles = theme => ({
         backgroundOrigin: "content-box",
         padding: theme.spacing(4)
     },
-    linearProgressVisible: {
-        position: "fixed",
-        zIndex: "1210",
-        width: "100%",
-        marginTop: -4,
-        opacity: 1,
-        backgroundColor: "#110b5d26",
-        "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.actionLighter
-        }
-    },
-    linearProgressHidden: {
-        position: "fixed",
-        zIndex: "1210",
-        width: "100%",
-        marginTop: -4,
-        opacity: 0,
-        backgroundColor: "#110b5d26",
-            "& .MuiLinearProgress-barColorPrimary": {
-                backgroundColor: theme.palette.primary.actionLighter
-        },
-        animation: "$hide 1.5s",
-        "@global": {
-            "@keyframes hide": {
-                "0%": {
-                    opacity: 1,
-                },
-                "85%": {
-                    opacity: 1,
-                },
-                "100%": {
-                    opacity: 0,
-                },
-            }
-        }
-    },
     fab: {
         position: "fixed",
         backgroundColor: theme.palette.primary.action,
         color: theme.palette.primary.contrastText,
         "&:hover": {
-            backgroundColor: theme.palette.primary.action,
+            backgroundColor: theme.palette.primary.actionLighter,
         },
         bottom: theme.spacing(2),
         right: theme.spacing(2),
@@ -134,6 +97,7 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {
             classes: props.classes,
+            _coins: COINS,
             _balance: {},
             _loaded: 0,
             _logged_account: null,
@@ -161,16 +125,7 @@ class Dashboard extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        const { _logged_account } = this.state;
-        const should_refresh_balance = _logged_account !== new_props._logged_account;
-
-        this.setState(new_props, () => {
-
-            if(should_refresh_balance) {
-
-                this._refresh_balance();
-            }
-        });
+        this.setState(new_props);
     }
 
     _refresh_balance_result = (error, response, crypto_id) => {
@@ -203,9 +158,9 @@ class Dashboard extends React.Component {
 
             if(_logged_account.seed) {
 
-                ["v-systems", "bitcoin", "litecoin", "dogecoin", "dash"].forEach(coin_id => {
+                _coins.forEach(coin => {
 
-                    api.get_balance_by_seed(coin_id, _logged_account.seed, (error, result) => {this._refresh_balance_result(error, result, coin_id)});
+                    api.get_balance_by_seed(coin.id, _logged_account.seed, (error, result) => {this._refresh_balance_result(error, result, coin.id)});
                 });
             }
         }
@@ -213,13 +168,19 @@ class Dashboard extends React.Component {
 
     _process_is_logged_result = (error, result) => {
 
-        const _logged_account = error ? {}: Boolean(result) ? result : {};
+        if(!error && result) {
 
-        this.setState({_logged_account, _we_know_if_logged: true}, () => {
+            this.setState({_logged_account: result, _we_know_if_logged: true}, () => {
 
-            this._refresh_balance();
-        });
+                this._refresh_balance();
+            });
+        }else {
 
+            this.setState({_we_know_if_logged: true}, () => {
+
+                actions.trigger_loading_update(100);
+            });
+        }
     };
 
     _is_logged = () => {
@@ -366,9 +327,9 @@ class Dashboard extends React.Component {
                 <div className={classes.flashInfoContainer}>
                     <FlashInfo image="/src/images/pig-coins.svg" text={t( "pages.dashboard.new_to_crypto_cta")} button={t( "words.learn")} onClick={(event) => this._go_to_url(event, "/about/wiki/topup")}/>
                 </div>
-                {Boolean(_logged_account !== null && _we_know_if_logged) ?
+                {_logged_account !== null || _we_know_if_logged ?
                     <div className={classes.root}>
-                        {Boolean(_logged_account.name) ?
+                        {_logged_account ?
                             <Grid container>
                                 <Grid item xs={12} className={classes.quickDataCardGridMobile}>
                                     <DashboardQuickCardMobile
@@ -445,7 +406,7 @@ class Dashboard extends React.Component {
                             <div className={classes.backgroundImage}>
                                 <Grow in>
                                     <Fab className={classes.fab} variant="extended" onClick={(event) => this._go_to_url(event, "/accounts")}>
-                                        <LockOpenIcon /> Open an account
+                                        <LockOpenIcon /> {t("sentences.open an account")}
                                     </Fab>
                                 </Grow>
                             </div>

@@ -52,6 +52,12 @@ class Settings extends React.Component {
     componentDidMount() {
 
         this._update_settings();
+
+        actions.trigger_loading_update(0);
+        setTimeout(() => {
+
+            actions.trigger_loading_update(100);
+        }, 300);
     }
 
     _process_settings_query_result = (error, settings) => {
@@ -80,7 +86,11 @@ class Settings extends React.Component {
         const { _language } = this.state;
 
         actions.trigger_loading_update(0);
-        actions.trigger_loading_update(100);
+        setTimeout(() => {
+
+            actions.trigger_loading_update(100);
+        }, 300);
+
         actions.trigger_settings_update();
         actions.trigger_snackbar(t( "pages.settings.settings_changed"));
     }

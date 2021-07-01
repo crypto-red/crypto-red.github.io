@@ -31,6 +31,7 @@ class Coin extends React.Component {
             pathname: props.pathname,
             classes: props.classes,
             _logged_account: null,
+            _we_know_if_logged: false,
             _selected_locales_code: null,
             _selected_currency: null,
             _coin_data: null,
@@ -76,7 +77,7 @@ class Coin extends React.Component {
     _process_is_logged_result = (error, result) => {
 
         const _logged_account = error ? null: result;
-        this.setState({_logged_account});
+        this.setState({_logged_account, _we_know_if_logged: true});
     };
 
     _is_logged = () => {
@@ -117,7 +118,7 @@ class Coin extends React.Component {
 
         const { classes } = this.state;
         const { _coin_id, _view_name, pathname } = this.state;
-        const { _selected_locales_code, _selected_currency, _coin_data, _logged_account } = this.state;
+        const { _selected_locales_code, _selected_currency, _coin_data, _logged_account, _we_know_if_logged } = this.state;
 
         const views = {
             balance: <CoinBalance
@@ -125,11 +126,13 @@ class Coin extends React.Component {
                 selected_locales_code={_selected_locales_code}
                 selected_currency={_selected_currency}
                 logged_account={_logged_account}
+                we_know_if_logged={_we_know_if_logged}
                 coin_id={_coin_id} />,
             transactions: <CoinTransactions
                 coin_data={_coin_data}
                 coin_id={_coin_id}
                 logged_account={_logged_account}
+                we_know_if_logged={_we_know_if_logged}
                 selected_locales_code={_selected_locales_code}
                 selected_currency={_selected_currency}/>,
             charts: <CoinCharts
@@ -141,6 +144,7 @@ class Coin extends React.Component {
             send: <CoinSend
                 coin_data={_coin_data}
                 logged_account={_logged_account}
+                we_know_if_logged={_we_know_if_logged}
                 selected_locales_code={_selected_locales_code}
                 selected_currency={_selected_currency}
                 pathname={pathname}
@@ -148,6 +152,7 @@ class Coin extends React.Component {
             receive: <CoinReceive
                 coin_id={_coin_id}
                 logged_account={_logged_account}
+                we_know_if_logged={_we_know_if_logged}
                 coin_data={_coin_data}/>
         };
 

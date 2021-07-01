@@ -96,6 +96,7 @@ class CoinSend extends React.Component {
             coin_data: props.coin_data,
             pathname: props.pathname,
             logged_account: props.logged_account,
+            we_know_if_logged: props.we_know_if_logged,
             selected_currency: props.selected_currency,
             selected_locales_code: props.selected_locales_code,
             _history: HISTORY,
@@ -351,7 +352,7 @@ class CoinSend extends React.Component {
 
     render() {
 
-        const { classes, logged_account, _address, _is_scanner_dialog_open, _is_confirmation_dialog_open, _send_transaction_info } = this.state;
+        const { classes, logged_account, we_know_if_logged, _address, _is_scanner_dialog_open, _is_confirmation_dialog_open, _send_transaction_info } = this.state;
         const { _send_address_input, _send_amount_input, _send_message_input, coin_id, _is_backdrop_shown } = this.state;
         const { _send_address_input_error, _send_amount_input_error, _send_message_input_error, _coin_balance, _fee } = this.state;
         const { selected_locales_code, selected_currency } = this.state;
@@ -396,11 +397,12 @@ class CoinSend extends React.Component {
                         />
                     </DialogContent>
                 </Dialog>
-                <Container maxWidth="sm" className={classes.container}>
-                    <Card>
-                        <CardHeader
-                            title={t( "words.send", {}, {FLC: true})}
-                        />
+                {we_know_if_logged ?
+                    <Container maxWidth="sm" className={classes.container}>
+                        <Card>
+                            <CardHeader
+                                title={t( "words.send", {}, {FLC: true})}
+                            />
                             <CardContent>
 
                                 {logged_account ?
@@ -410,7 +412,6 @@ class CoinSend extends React.Component {
                                         { _send_transaction_info ?
                                             <form className={classes.root} noValidate autoComplete="off">
                                                 <TextField
-                                                    autoFocus
                                                     className={classes.textField}
                                                     onChange={this._handle_send_address_input_change}
                                                     value={_send_address_input}
@@ -454,20 +455,22 @@ class CoinSend extends React.Component {
                                     </div>
                                 }
                             </CardContent>
-                    </Card>
-                    <div className={classes.underCardButtonContainer}>
-                        {
-                            logged_account ?
-                                <Button className={classes.underCardButton} variant="contained" color="primary" onClick={this._confirm_and_open_coin_send_dialog}>
-                                    {t( "words.send")}
-                                </Button>
-                                :
-                                <Button className={classes.underCardButton} color="primary" variant="contained" onClick={this._open_accounts_page}>
-                                    {t( "sentences.open an account")}
-                                </Button>
-                        }
-                    </div>
-                </Container>
+                        </Card>
+                        <div className={classes.underCardButtonContainer}>
+                            {
+                                logged_account ?
+                                    <Button className={classes.underCardButton} variant="contained" color="primary" onClick={this._confirm_and_open_coin_send_dialog}>
+                                        {t( "words.send")}
+                                    </Button>
+                                    :
+                                    <Button className={classes.underCardButton} color="primary" variant="contained" onClick={this._open_accounts_page}>
+                                        {t( "sentences.open an account")}
+                                    </Button>
+                            }
+                        </div>
+                    </Container>:
+                    null
+                }
                 {
                     logged_account ?
                         logged_account.name ?

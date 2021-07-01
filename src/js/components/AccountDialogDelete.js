@@ -93,7 +93,6 @@ class AccountDialogDelete extends React.Component {
                             <TextField
                                 onChange={this._handle_account_name_input_change}
                                 onKeyDown={this._handle_key_down_input}
-                                autoFocus
                                 id="name"
                                 label={t( "words.name", {}, {FLC: true})}
                                 type="text"
@@ -106,7 +105,7 @@ class AccountDialogDelete extends React.Component {
                     <Button onClick={(event) => {this._on_cancel(event, account)}} color="primary">
                         {t("words.cancel")}
                     </Button>
-                    <Button onClick={(event) => {this._on_accept(event, account)}} color="primary" disabled={_is_confirmation_disabled} autoFocus>
+                    <Button onClick={(event) => {this._on_accept(event, account)}} color="primary" disabled={_is_confirmation_disabled}>
                         {t("words.delete")}
                     </Button>
                 </DialogActions>

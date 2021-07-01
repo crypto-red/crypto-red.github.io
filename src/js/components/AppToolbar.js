@@ -27,7 +27,14 @@ import { HISTORY } from "../utils/constants";
 import InnerToolbar from "../components/InnerToolbar";
 import DrawerContent from "../components/DrawerContent";
 import actions from "../actions/utils";
-import LinkedInIcon from "../icons/LinkedIn";
+
+import JamyAngry from "../icons/JamyAngry";
+import JamyAnnoyed from "../icons/JamyAnnoyed";
+import JamyFlirty from "../icons/JamyFlirty";
+import JamyHappy from "../icons/JamyHappy";
+import JamySad from "../icons/JamySad";
+import JamyShocked from "../icons/JamyShocked";
+import JamySuspicious from "../icons/JamySuspicious";
 
 const styles = theme => ({
     appBar: {
@@ -101,12 +108,18 @@ const styles = theme => ({
             display: "inherit"
         }
     },
+    jamyContainer: {
+        display: "initial",
+        height: "calc(100% - 36px)",
+        width: "auto",
+    },
     jamy: {
         height: "calc(100% - 36px)",
+        width: "auto",
         marginRight: theme.spacing(1),
         verticalAlign: "middle",
         animation: "$jamy",
-        animationDuration: "22s",
+        animationDuration: "24s",
         animationIterationCount: "infinite",
         "@global": {
             "@keyframes jamy": {
@@ -296,6 +309,16 @@ class AppToolbar extends React.Component {
 
         const { classes, pathname, know_if_logged, loaded_progress_percent, know_the_settings, _swipeable_app_drawer_open, _account_menu_anchor_element, logged_account, panic_mode, jamy_state_of_mind, jamy_enabled } = this.state;
 
+        const JAMY = {
+            angry: <JamyAngry className={classes.jamy} />,
+            annoyed: <JamyAnnoyed className={classes.jamy} />,
+            flirty: <JamyFlirty className={classes.jamy} />,
+            happy: <JamyHappy className={classes.jamy} />,
+            sad: <JamySad className={classes.jamy} />,
+            shocked: <JamyShocked className={classes.jamy} />,
+            suspicious: <JamySuspicious className={classes.jamy} />,
+        }
+
         return (
             <div>
 
@@ -323,15 +346,18 @@ class AppToolbar extends React.Component {
                                 {
                                     know_the_settings ?
                                         jamy_enabled ?
-                                            <Tooltip
-                                                title={t( "sentences.hey i am jamy")}
-                                                aria-label="Jamy"
+                                            <div className={classes.jamyContainer}
                                                 onMouseEnter={this._handle_jamy_mouse_enter}
                                                 onMouseLeave={this._handle_jamy_mouse_leave}
-                                                onMouseOut={this._handle_jamy_mouse_leave}
                                                 onClick={this._handle_jamy_mouse_click}>
-                                                <img src={`/src/images/jamy-${jamy_state_of_mind}.svg`} className={classes.jamy}/>
-                                            </Tooltip>:
+                                                <Tooltip
+                                                    title={t( "sentences.hey i am jamy")}
+                                                    aria-label="Jamy">
+                                                    <div className={classes.jamyContainer}>
+                                                        {JAMY[jamy_state_of_mind]}
+                                                    </div>
+                                                </Tooltip>
+                                            </div>:
                                             <img src={"/src/images/logo-transparent.png"} className={classes.logo} />
                                         : null
                                 }

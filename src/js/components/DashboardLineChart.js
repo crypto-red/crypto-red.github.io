@@ -106,7 +106,7 @@ class DashboardLineChart extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        if(this.state.logged_account !== new_props.logged_account) {
+        if(new_props.logged_account && this.state.logged_account !== new_props.logged_account) {
 
             this.setState(new_props, () => {
 
@@ -145,15 +145,6 @@ class DashboardLineChart extends React.Component {
 
             _transactions = _transactions.concat(response);
             _coin_id_loaded = _coin_id_loaded.concat([coin_id]);
-
-            // Why we need to remove duplicate ??? TODO: Find out why and correct it
-            function remove_duplicate_object_from_array(array, key) {
-                let check = new Set();
-                return array.filter(obj => !check.has(obj[key]) && check.add(obj[key]));
-            }
-
-            _transactions = remove_duplicate_object_from_array(_transactions, "id");
-
 
             this.setState({_transactions, _coin_id_loaded}, () => {
 
@@ -222,7 +213,7 @@ class DashboardLineChart extends React.Component {
 
         this.setState({_coin_id_loaded: [], _transactions: [], _are_raws_transactions_loaded: false}, () => {
 
-            _coins.map((coin) => {
+            _coins.forEach((coin) => {
 
                 api.get_transactions_by_seed(coin.id, logged_account.seed, [], (error, response) => {this._handle_get_transactions_by_seed_response(error, response, coin.id)});
             });

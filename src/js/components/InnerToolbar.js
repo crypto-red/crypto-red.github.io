@@ -12,10 +12,6 @@ const styles = theme => ({
         "0%": { left: "0%"},
         "100%": { left: "70%"}
     },
-    "@keyframes innerToolbarCrtGlow": {
-        "0%": { backgroundColor: "#000844"},
-        "100%": { backgroundColor: "#010648"}
-    },
     innerToolbar: {
         cursor: "pointer",
         height: 40,
@@ -25,9 +21,6 @@ const styles = theme => ({
         position: "relative",
         width: "100%",
         overflow: "auto",
-        transition: "background-color ease-in-out .3s",
-        /* 71 BPM = .42 || 77 BPM = .384 */
-        /*animation: "$innerToolbarCrtGlow .384s linear alternate infinite",*/
         backgroundColor: theme.palette.secondary.light,
         color: theme.palette.secondary.contrastText,
         "&::before": {
@@ -38,7 +31,7 @@ const styles = theme => ({
             position: "relative",
             height: 40,
             width: "30%",
-            background: "linear-gradient(to right, transparent, rgba(13, 50, 199, 0.27), transparent)",
+            /*background: "linear-gradient(to right, transparent, rgba(13, 50, 199, 0.27), transparent)",*/
             animation: "$innerToolbarCyberPunkAnimation 7.7s linear alternate infinite",
         },
         "&::-webkit-scrollbar": {
@@ -69,11 +62,10 @@ const styles = theme => ({
     },
     linearProgressVisible: {
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: "rgba(13, 50, 199, 0.48)"
+            backgroundColor: theme.palette.primary.action,
         },
         marginTop: -4,
         height: 4,
-        opacity: 1,
         backgroundColor: "transparent",
         width: "50%",
         display: "flex",
@@ -128,7 +120,7 @@ class InnerToolbar extends React.Component {
                         {pathame_items}
                     </span>
                     <div className={classes.innerToolbarProgress}>
-                        <LinearProgress color="primary" variant="determinate" className={classes.linearProgressVisible} value={100 - loaded_progress_percent} style={{transform: "scaleX(-1)"}}/>
+                        <LinearProgress color="primary" variant="determinate" className={classes.linearProgressVisible} value={100 - loaded_progress_percent} style={{transform: "scaleX(-1)", webkitTransform: "scaleX(-1)"}}/>
                         <LinearProgress color="primary" variant="determinate" className={classes.linearProgressVisible} value={100 - loaded_progress_percent} />
                     </div>
                 </span>

@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v12.4";
+var CACHE = "network-or-cache-v12.5";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -10,7 +10,7 @@ self.addEventListener("install", function(evt) {
     cache.addAll([
       "/",
       "/404.html",
-      "/client.min.js?v=12.4",
+      "/client.min.js?v=12.5",
       "src/fonts/Cantarell-Regular.ttf",
       "src/fonts/OpenSans-Regular.ttf",
       "src/fonts/Saira-Regular.ttf",
@@ -37,26 +37,19 @@ self.addEventListener("install", function(evt) {
       "/src/images/analytics.svg",
       "/src/images/account.svg",
       "/src/images/hacker.svg",
-      "/src/images/jamy-annoyed.svg",
-      "/src/images/jamy-shocked.svg",
       "/src/images/wallet-green.svg",
       "/src/images/404-dark.svg",
-      "/src/images/jamy-flirty.svg",
-      "/src/images/jamy-suspicious.svg",
       "/src/images/segment.svg",
       "/src/images/security.svg",
       "/src/images/share.svg",
       "/src/images/transfer.svg",
       "/src/images/wallet.svg",
       "/src/images/data.svg",
-      "/src/images/jamy-happy.svg",
       "/src/images/logo-transparent.png",
       "/src/images/personal-finance.svg",
       "/src/images/statistics.svg",
       "/src/images/card.svg",
       "/src/images/favicon.ico",
-      "/src/images/jamy-angry.svg",
-      "/src/images/jamy-sad.svg",
       "/src/images/pig-coins.svg",
       "/src/images/swap.svg",
       "/src/images/invest.svg",

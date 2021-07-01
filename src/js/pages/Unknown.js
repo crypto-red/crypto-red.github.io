@@ -28,6 +28,12 @@ class Unknown extends React.Component {
     componentDidMount() {
 
         actions.jamy_update("annoyed");
+
+        actions.trigger_loading_update(0);
+        setTimeout(() => {
+
+            actions.trigger_loading_update(100);
+        }, 300);
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {

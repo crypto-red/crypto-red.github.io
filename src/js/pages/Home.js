@@ -11,6 +11,7 @@ import ShareIcon from "@material-ui/icons/Share";
 import ShareDialog from "../components/ShareDialog";
 import Fab from "@material-ui/core/Fab";
 import Grow from "@material-ui/core/Grow";
+
 import actions from "../actions/utils";
 
 const quotes = t( "pages.home.quotes");
@@ -49,7 +50,7 @@ const styles = theme => ({
         backgroundColor: theme.palette.primary.action,
         color: theme.palette.primary.contrastText,
         "&:hover": {
-            backgroundColor: theme.palette.primary.action,
+            backgroundColor: theme.palette.primary.actionLighter,
         },
         bottom: theme.spacing(2),
         right: theme.spacing(2),
@@ -71,6 +72,15 @@ class Home extends React.Component {
             _quote: t( "pages.home.quotes")[random_quote_index]
         };
     };
+
+    componentDidMount() {
+
+        actions.trigger_loading_update(0);
+        setTimeout(() => {
+
+            actions.trigger_loading_update(100);
+        }, 300);
+    }
 
     _go_to_url = (event, url) => {
 

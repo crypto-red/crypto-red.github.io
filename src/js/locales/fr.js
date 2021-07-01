@@ -310,6 +310,7 @@ module.exports = {
             repeat_name: "Veuillez saisir le nom du compte pour confirmer."
         },
         account_dialog_open: {
+            title: "Ouvrir {{account_name}} ?",
             warning_password_stored_browser: "AVERTISSEMENT : Votre mot de passe sera stocké dans votre navigateur.",
             open_account: "Ouvrez le compte {{account_name}} et ses portefeuilles.",
             write_password: "Veuillez saisir le mot de passe du compte pour vous connecter."

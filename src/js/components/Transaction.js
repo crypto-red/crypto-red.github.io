@@ -29,42 +29,19 @@ const styles = theme => ({
     avatar: {
         backgroundColor: "transparent"
     },
-    currencyCrypto: {
-
+    currencyCryptoAmount: {
+        "& span": {
+            color: theme.palette.primary.light,
+        },
     },
     timeAgo: {
 
     },
     currencyCryptoAmountPositive: {
-        "& span": {
-            color: green[900],
-        },
-        "& span:first-child::before": {
-            content: "\"\""
-        }
+        color: green[700],
     },
     currencyCryptoAmountNegative: {
-        "& span": {
-            color: red[700],
-        },
-        "& span:first-child::before": {
-            content: "\"\""
-        }
-    },
-    currencyFiatAmount: {
-        "&::before": {
-            content: "\"= \""
-        }
-    },
-    currencyFiatAmountPositive: {
-        "&::before": {
-            content: "\"+ \""
-        }
-    },
-    currencyFiatAmountNegative: {
-        "&::before": {
-            content: "\"- \""
-        }
+        color: red[700],
     }
 });
 
@@ -200,9 +177,8 @@ class Transaction extends React.Component {
                         primary={
                             <div className={classes.spaceBetween}>
                                 <span className={classes.currencyCrypto}>{_coin_data.name}</span>
-                                <span className={feedback ? null: received ? classes.currencyCryptoAmountPositive: classes.currencyCryptoAmountNegative}>
-                                    <span>{price_formatter(parseFloat(_full_transaction.amount_crypto), _coin_data.symbol, selected_locales_code).split(/\s{1}/)[0]} </span>
-                                    <span>{price_formatter(parseFloat(_full_transaction.amount_crypto), _coin_data.symbol, selected_locales_code).split(/\s{1}/)[1]}</span>
+                                <span className={feedback ? classes.currencyCryptoAmount: received ? classes.currencyCryptoAmountPositive: classes.currencyCryptoAmountNegative}>
+                                    {price_formatter(parseFloat(_full_transaction.amount_crypto), _coin_data.symbol, selected_locales_code)}
                                 </span>
                             </div>
                         }

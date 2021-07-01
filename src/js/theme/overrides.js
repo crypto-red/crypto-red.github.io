@@ -22,8 +22,11 @@ const overrides = {
             },
             ".MuiDialogActions-root": {
                 borderTop: "1px solid #060f23",
-                backgroundColor: "#f2f2f3",
-            }
+                backgroundColor: "#f8f8f9",
+            },
+            ".MuiFab-root.MuiFab-extended": {
+                borderRadius: 4,
+            },
         },
     },
 }

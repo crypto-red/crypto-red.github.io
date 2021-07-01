@@ -65,6 +65,7 @@ class CoinReceive extends React.Component {
             coin_id: props.coin_id,
             coin_data: props.coin_data,
             logged_account: props.logged_account,
+            we_know_if_logged: props.we_know_if_logged,
             _address: null,
             _history: HISTORY
         };
@@ -144,71 +145,74 @@ class CoinReceive extends React.Component {
 
     render() {
 
-        const { classes, coin_data, logged_account, _address } = this.state;
+        const { classes, coin_data, logged_account, _address, we_know_if_logged } = this.state;
 
         return (
             <div>
-                <Container maxWidth="sm" className={classes.container}>
-                    <Card>
-                        <CardHeader
-                            title={t( "words.receive", {}, {FLC: true})}
-                        />
-                        <CardContent>
-                            {_address ?
-                            <div>
-                                <QRCode
-                                    className={classes.qrcode}
-                                    level={"M"}
-                                    style={{width: "100%", height: "100%"}}
-                                    renderAs={"svg"}
-                                    value={_address}
-                                    imageSettings={{
-                                        src: coin_data ? coin_data.image.large: "",
-                                        x: null,
-                                        y: null,
-                                        height: 24,
-                                        width: 24,
-                                        excavate: true,
-                                    }}/>
-                                <FormControl fullWidth>
-                                    <InputLabel htmlFor="address">Address</InputLabel>
-                                    <Input
-                                        value={_address}
-                                        id="address"
-                                        type="text"
-                                        endAdornment={
-                                            <InputAdornment position="end">
-                                                <IconButton
-                                                    aria-label={t( "sentences.copy address")}
-                                                    onClick={(event) => this._copy_address(event, _address)}
-                                                    edge="end"
-                                                >
-                                                    <FileCopyIcon />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        }
-                                    />
-                                </FormControl>
-                            </div> :
-                            <div>
-                                <img className={classes.noAccountImage} src="/src/images/account.svg"/>
-                                <p>{t("sentences.you must open an account")}</p>
-                            </div>}
-                        </CardContent>
-                    </Card>
-                    {logged_account ?
-                        <div className={classes.underCardButtonContainer}>
-                            <Button className={classes.underCardButton} color="primary" variant="contained" onClick={(event) => this._copy_address(event, _address)}>
-                                {t( "sentences.copy address")}
-                            </Button>
-                        </div>:
-                        <div className={classes.underCardButtonContainer}>
-                            <Button className={classes.underCardButton} color="primary" variant="contained" onClick={this._open_accounts_page}>
-                                {t( "sentences.open an account")}
-                            </Button>
-                        </div>
-                    }
-                </Container>
+                {we_know_if_logged ?
+                    <Container maxWidth="sm" className={classes.container}>
+                        <Card>
+                            <CardHeader
+                                title={t( "words.receive", {}, {FLC: true})}
+                            />
+                            <CardContent>
+                                {_address ?
+                                    <div>
+                                        <QRCode
+                                            className={classes.qrcode}
+                                            level={"M"}
+                                            style={{width: "100%", height: "100%"}}
+                                            renderAs={"svg"}
+                                            value={_address}
+                                            imageSettings={{
+                                                src: coin_data ? coin_data.image.large: "",
+                                                x: null,
+                                                y: null,
+                                                height: 24,
+                                                width: 24,
+                                                excavate: true,
+                                            }}/>
+                                        <FormControl fullWidth>
+                                            <InputLabel htmlFor="address">Address</InputLabel>
+                                            <Input
+                                                value={_address}
+                                                id="address"
+                                                type="text"
+                                                endAdornment={
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            aria-label={t( "sentences.copy address")}
+                                                            onClick={(event) => this._copy_address(event, _address)}
+                                                            edge="end"
+                                                        >
+                                                            <FileCopyIcon />
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                }
+                                            />
+                                        </FormControl>
+                                    </div> :
+                                    <div>
+                                        <img className={classes.noAccountImage} src="/src/images/account.svg"/>
+                                        <p>{t("sentences.you must open an account")}</p>
+                                    </div>}
+                            </CardContent>
+                        </Card>
+                        {logged_account ?
+                            <div className={classes.underCardButtonContainer}>
+                                <Button className={classes.underCardButton} color="primary" variant="contained" onClick={(event) => this._copy_address(event, _address)}>
+                                    {t( "sentences.copy address")}
+                                </Button>
+                            </div>:
+                            <div className={classes.underCardButtonContainer}>
+                                <Button className={classes.underCardButton} color="primary" variant="contained" onClick={this._open_accounts_page}>
+                                    {t( "sentences.open an account")}
+                                </Button>
+                            </div>
+                        }
+                    </Container>:
+                    null
+                }
             </div>
         );
     }

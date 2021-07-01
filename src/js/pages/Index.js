@@ -23,6 +23,14 @@ import Coins from "./Coins";
 import Coin from "./Coin";
 import Unknown from "./Unknown";
 
+import JamyAngry from "../icons/JamyAngry";
+import JamyAnnoyed from "../icons/JamyAnnoyed";
+import JamyFlirty from "../icons/JamyFlirty";
+import JamyHappy from "../icons/JamyHappy";
+import JamySad from "../icons/JamySad";
+import JamyShocked from "../icons/JamyShocked";
+import JamySuspicious from "../icons/JamySuspicious";
+
 import api from "../utils/api";
 import sound_api from "../utils/sound-api";
 import { update_meta_title } from "../utils/meta-tags";
@@ -59,6 +67,17 @@ const styles = theme => ({
             backgroundColor: "#230606"
         }
     },
+    jamyContainer: {
+        display: "initial",
+        height: "auto",
+        width: "auto",
+    },
+    jamy: {
+        height: 24,
+        width: "auto",
+        marginRight: 12,
+        verticalAlign: "middle",
+    },
 });
 
 class Index extends React.Component {
@@ -86,7 +105,6 @@ class Index extends React.Component {
             _panic_mode: false,
             _know_if_logged: false,
             _loaded_progress_percent: 100,
-            _logged_once: false,
             _know_the_settings: false,
             is_online: true,
             classes: props.classes,
@@ -212,10 +230,9 @@ class Index extends React.Component {
 
     _process_is_logged_result = (error, result) => {
 
-        const { _logged_once } = this.state;
-        const _logged_account = error ? {}: result;
+        const _logged_account = error ? null: result;
 
-        this.setState({_logged_account, _know_if_logged: true, _logged_once: true});
+        this.setState({_logged_account, _know_if_logged: true});
     };
 
     _is_logged = () => {
@@ -352,6 +369,16 @@ class Index extends React.Component {
         const { _onboarding_enabled, _onboarding_showed_once_in_session, _onboarding_autoplay_enabled, _width, _language } = this.state;
         const { _logged_account, _panic_mode, _know_if_logged, _loaded_progress_percent, _know_the_settings, _jamy_state_of_mind, _jamy_enabled } = this.state;
 
+        const JAMY = {
+            angry: <JamyAngry className={classes.jamy} />,
+            annoyed: <JamyAnnoyed className={classes.jamy} />,
+            flirty: <JamyFlirty className={classes.jamy} />,
+            happy: <JamyHappy className={classes.jamy} />,
+            sad: <JamySad className={classes.jamy} />,
+            shocked: <JamyShocked className={classes.jamy} />,
+            suspicious: <JamySuspicious className={classes.jamy} />,
+        }
+
         // This is the custom router
         let page_component = null;
         let page_name = "";
@@ -407,7 +434,7 @@ class Index extends React.Component {
                             horizontal: "center",
                         }}
                         message={<div>
-                            {_jamy_enabled ? <img src={`/src/images/jamy-${_jamy_state_of_mind}.svg`} style={{height: 24, marginRight: 12, verticalAlign: "middle"}}/>: null}
+                            {_jamy_enabled ? <span className={classes.jamyContainer}>{JAMY[_jamy_state_of_mind]}</span>: null}
                             <span>{_snackbar_message.toString()}</span>
                         </div>}
                         autoHideDuration={_snackbar_auto_hide_duration}

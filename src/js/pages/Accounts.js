@@ -30,7 +30,7 @@ const styles = theme => ({
     },
     accountCards: {
         padding: theme.spacing(1),
-        [theme.breakpoints.down("sm")]: {
+        [theme.breakpoints.down("xs")]: {
             padding: theme.spacing(1, 0)
         }
     },
@@ -39,7 +39,7 @@ const styles = theme => ({
         backgroundColor: theme.palette.primary.action,
         color: theme.palette.primary.contrastText,
         "&:hover": {
-            backgroundColor: theme.palette.primary.action,
+            backgroundColor: theme.palette.primary.actionLighter,
         },
         bottom: theme.spacing(2),
         right: theme.spacing(2),
@@ -49,7 +49,7 @@ const styles = theme => ({
     },
     gridItem: {
         padding: theme.spacing(1),
-        [theme.breakpoints.down("sm")]: {
+        [theme.breakpoints.down("xs")]: {
             padding: theme.spacing(1, 0)
         }
     }
@@ -90,6 +90,12 @@ class Accounts extends React.Component {
         }
 
         this.setState({_coins_id: coins_id}, this._update_settings);
+
+        actions.trigger_loading_update(0);
+        setTimeout(() => {
+
+            actions.trigger_loading_update(100);
+        }, 300);
     }
 
     _process_settings_query_result = (error, settings) => {
@@ -310,7 +316,7 @@ class Accounts extends React.Component {
                 <Grid container className={classes.accountCards}>
                     {
                         _no_accounts_db ?
-                            <Grid item xs={12} lg={3} className={classes.gridItem}>
+                            <Grid item xs={12} sm={6} lg={3} className={classes.gridItem}>
                                 <Fade timeout={300}>
                                     <AccountCardCreate onCreate={this._open_account_dialog_create}/>
                                 </Fade>
@@ -318,7 +324,7 @@ class Accounts extends React.Component {
                     }
                     {_accounts.map((account, index, array) => {
                         return (
-                            <Grid item xs={12} lg={3} className={classes.gridItem} key={account.name}>
+                            <Grid item xs={12} sm={6} lg={3} className={classes.gridItem} key={account.name}>
                                 <AccountCard
                                              onToggle={this._toggle_account}
                                              coins_markets={_coins_markets}

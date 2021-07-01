@@ -315,19 +315,24 @@ function get_btc_dash_doge_ltc_account_transactions_by_seed(parameters, callback
             formatted_error = error;
         }
 
-        let all_a_response = true;
+        let all_received = false;
         let all_current_transactions = [];
 
-        Object.entries(formatted_transactions_object).forEach(entry => {
-            const [key, value] = entry;
-            if(value.query === false){
-                all_a_response = false;
-            }else {
-                all_current_transactions = all_current_transactions.concat(value.transactions);
-            }
-        });
+        if(formatted_transactions_object["received"].query && formatted_transactions_object["sent"].query) {
 
-        if(all_a_response) {
+            all_current_transactions = all_current_transactions.concat(formatted_transactions_object["received"].transactions);
+            all_current_transactions = all_current_transactions.concat(formatted_transactions_object["sent"].transactions);
+            all_received = true;
+        }
+
+        function remove_duplicate_object_from_array(array, key) {
+            let check = new Set();
+            return array.filter(obj => !check.has(obj[key]) && check.add(obj[key]));
+        }
+
+        all_current_transactions = remove_duplicate_object_from_array(all_current_transactions, "id");
+
+        if(all_received) {
 
             if(!formatted_error){
 
@@ -341,8 +346,6 @@ function get_btc_dash_doge_ltc_account_transactions_by_seed(parameters, callback
 
     loadJSON("https://chain.so/api/v2/get_tx_received/" + _get_network_name_by_coin_id(coin_id) + "/" + my_address + "/" + after_transaction_id, (error, response) => {format_get_btc_dash_doge_ltc_transaction_response(error, response, "received")});
     loadJSON("https://chain.so/api/v2/get_tx_spent/" + _get_network_name_by_coin_id(coin_id) + "/" + my_address + "/" + after_transaction_id, (error, response) => {format_get_btc_dash_doge_ltc_transaction_response(error, response, "sent")});
-
-
 }
 
 function get_btc_dash_doge_ltc_transaction_by_id(parameters, callback_function) {

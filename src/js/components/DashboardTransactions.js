@@ -17,34 +17,6 @@ import Transaction from "./Transaction";
 import actions from "../actions/utils";
 
 const styles = theme => ({
-    linearProgressVisible: {
-        "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.actionLighter
-        },
-        opacity: 1,
-        backgroundColor: "#110b5d26",
-    },
-    linearProgressHidden: {
-        "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.actionLighter
-        },
-        opacity: 0,
-        backgroundColor: "#110b5d26",
-        animation: "$hide 1.5s",
-        "@global": {
-            "@keyframes hide": {
-                "0%": {
-                    opacity: 1,
-                },
-                "85%": {
-                    opacity: 1,
-                },
-                "100%": {
-                    opacity: 0,
-                },
-            }
-        }
-    },
     noTransactionCardContent: {
         textAlign: "center",
     },
@@ -134,15 +106,6 @@ class DashboardTransactions extends React.Component {
             _transactions = _transactions.concat(response);
             _coin_id_loaded = _coin_id_loaded.concat([coin_id]);
 
-            // Why we need to remove duplicate ??? TODO: Find out why and correct it
-            function remove_duplicate_object_from_array(array, key) {
-                var check = new Set();
-                return array.filter(obj => !check.has(obj[key]) && check.add(obj[key]));
-            }
-
-            _transactions = remove_duplicate_object_from_array(_transactions, "id");
-
-
             this.setState({_transactions, _coin_id_loaded});
         }else {
 
@@ -156,7 +119,7 @@ class DashboardTransactions extends React.Component {
 
         this.setState({_coin_id_loaded: [], _transactions: []}, () => {
 
-            _coins.map((coin) => {
+            _coins.forEach((coin) => {
 
                 api.get_transactions_by_seed(coin.id, logged_account.seed, [], (error, response) => {this._handle_get_transactions_by_seed_response(error, response, coin.id)});
             });

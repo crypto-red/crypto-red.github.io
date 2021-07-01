@@ -26,7 +26,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import { grey } from "@material-ui/core/colors";
 import CardActionArea from "@material-ui/core/CardActionArea";
 
-import { HISTORY } from "../utils/constants";
+import { COINS, HISTORY } from "../utils/constants";
 import api from "../utils/api";
 import actions from "../actions/utils";
 
@@ -38,14 +38,14 @@ const styles = theme => ({
     },
     linearProgressVisible: {
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.actionLighter
+            backgroundColor: theme.palette.secondary.light
         },
         opacity: 1,
         backgroundColor: "#110b5d26",
     },
     linearProgressHidden: {
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.actionLighter
+            backgroundColor: theme.palette.secondary.light
         },
         opacity: 0,
         backgroundColor: "#110b5d26",
@@ -145,6 +145,7 @@ class AccountCard extends React.Component {
             selected_currency: props.selected_currency,
             coins_markets: props.coins_markets,
             display_after_ms: props.display_after_ms,
+            _coins: COINS,
             _balance: {},
             _full_balance_length: 5,
             _history: HISTORY,
@@ -187,7 +188,7 @@ class AccountCard extends React.Component {
 
     _refresh_balance = () => {
 
-        const { account } = this.state;
+        const { account, _coins } = this.state;
 
         if(account) {
 
@@ -195,9 +196,9 @@ class AccountCard extends React.Component {
 
                 this.setState({_balance: {}}, () => {
 
-                    ["v-systems", "bitcoin", "litecoin", "dogecoin", "dash"].forEach(coin_id => {
+                    _coins.forEach(coin => {
 
-                        api.get_balance_by_seed(coin_id, account.seed, (error, result) => {this._refresh_balance_result(error, result, coin_id)});
+                        api.get_balance_by_seed(coin.id, account.seed, (error, result) => {this._refresh_balance_result(error, result, coin.id)});
                     });
                 });
             }

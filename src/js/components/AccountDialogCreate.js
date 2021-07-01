@@ -90,7 +90,6 @@ class AccountDialogCreate extends React.Component {
             selected_locales_code: props.selected_locales_code,
             _locales: LOCALES,
             _bip39: bip39,
-            _zxcvbn: zxcvbn,
             _account_name_input: "",
             _is_account_name_error: false,
             _account_password_input: "",
@@ -229,49 +228,51 @@ class AccountDialogCreate extends React.Component {
         this.setState({_account_name_input: event.target.value, _is_account_name_error: false});
     };
 
-    _eval_password_if_state_equals_to_param = (account_password_input) => {
+    _eval_password = () => {
 
-        const { _zxcvbn, _account_password_input } = this.state;
+        const { _account_password_input } = this.state;
 
-        if(account_password_input === _account_password_input) {
+        const _password_evaluation = zxcvbn(_account_password_input);
 
-            const _password_evaluation = _zxcvbn(account_password_input);
+        if(_password_evaluation.feedback.warning || _password_evaluation.feedback.suggestions.length) {
 
-            if(_password_evaluation.feedback.warning.length || _password_evaluation.feedback.suggestions.length) {
+            let suggestions_and_warning = "";
 
-                let suggestions_and_warning = "";
+            suggestions_and_warning += _password_evaluation.feedback.warning ? t("sentences." + _password_evaluation.feedback.warning.replaceAll(".", ""), {}, {FAW: true}): "";
 
-                suggestions_and_warning += _password_evaluation.feedback.warning.length ? t("sentences." + _password_evaluation.feedback.warning.replaceAll(".", ""), {}, {FAW: true}): "";
+            if(_password_evaluation.feedback.suggestions.length) {
 
-                if(_password_evaluation.feedback.suggestions.length) {
+                _password_evaluation.feedback.suggestions.forEach((suggestion) => {
 
-                    _password_evaluation.feedback.suggestions.forEach((suggestion) => {
-
-                        suggestions_and_warning += "\n" + t("sentences." + suggestion.replaceAll(".", ""), {}, {FAW: true});
-                    });
-                }
-
-                actions.jamy_update("angry", 3000);
-                actions.trigger_snackbar(suggestions_and_warning, 10000);
-            }else if(account_password_input.length && _password_evaluation.score >= 4){
-
-                actions.jamy_update("happy", 3000);
-                actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_good"), 5000);
+                    suggestions_and_warning += "\n" + t("sentences." + suggestion.replaceAll(".", ""), {}, {FAW: true});
+                });
             }
-            this.setState({_password_evaluation});
+
+            actions.jamy_update("angry", 3000);
+            actions.trigger_snackbar(suggestions_and_warning, 10000);
+        }else if(_account_password_input.length && _password_evaluation.score >= 4){
+
+            actions.jamy_update("happy", 3000);
+            actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_good"), 5000);
         }
+        this.setState({_password_evaluation});
+
     };
 
     _handle_account_password_input_change = (event) => {
 
         const _account_password_input = event.target.value;
 
-        setTimeout(() => {
+        this.setState({_account_password_input, _is_account_confirmation_error: false, _is_account_password_error: false}, () => {
 
-            this._eval_password_if_state_equals_to_param(_account_password_input);
-        }, 2000);
+            setTimeout(() => {
 
-        this.setState({_account_password_input, _is_account_confirmation_error: false, _is_account_password_error: false});
+                if(this.state._account_password_input === _account_password_input) {
+
+                    this._eval_password();
+                }
+            }, 1500);
+        });
     };
 
     _handle_account_confirmation_input_change = (event) => {

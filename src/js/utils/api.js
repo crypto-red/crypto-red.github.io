@@ -432,7 +432,7 @@ function login(name, password, persistent = true, callback_function) {
             if(error) {
 
                 logged_account = null;
-                callback_function("Wrong password", {});
+                callback_function("Wrong password", logged_account);
             }else {
 
                 logged_account = {
@@ -451,7 +451,8 @@ function login(name, password, persistent = true, callback_function) {
 
                     if(error) {
 
-                        callback_function("Cannot put account in db of logged account", {})
+                        logged_account = null;
+                        callback_function("Cannot put account in db of logged account", logged_account)
                     }else {
 
                         callback_function(null, logged_account);
@@ -475,7 +476,8 @@ function login(name, password, persistent = true, callback_function) {
 
                 }).catch(function (err) {
 
-                    callback_function("error db deletion", {});
+                    logged_account = null;
+                    callback_function("error db deletion", logged_account);
                 });
 
             }
@@ -501,12 +503,15 @@ function logout(callback_function) {
                 return row.doc;
             });
 
-            for(let i = 0; i < accounts_docs.length; i++) {
+            const remove_actions = accounts_docs.map(account_doc => {
+                return logged_accounts_db.remove(account_doc);
+            });
 
-                logged_accounts_db.remove(accounts_docs[i]);
-            }
+            Promise.all(remove_actions).then(function (){
 
-            callback_function(null, true);
+                logged_account = null;
+                callback_function(null, true);
+            });
 
         }else {
 
@@ -514,8 +519,6 @@ function logout(callback_function) {
         }
 
     }
-
-    logged_account = null;
 
     logged_accounts_db.allDocs({
         include_docs: true

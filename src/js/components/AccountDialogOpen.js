@@ -117,7 +117,7 @@ class AccountDialogOpen extends React.Component {
                 >
                     {Boolean(account) ?
                         <div>
-                            <DialogTitle id="open-account-dialog-title">Open {account.name}?</DialogTitle>
+                            <DialogTitle id="open-account-dialog-title">{t("components.account_dialog_open.title", {account_name: account.name})}</DialogTitle>
                             <DialogContent>
                                 <DialogContentText id="open-account-dialog-description">
                                     {t( "components.account_dialog_open.open_account", {account_name: account.name})}
@@ -132,7 +132,7 @@ class AccountDialogOpen extends React.Component {
                                     helperText={error ? t( "sentences.wrong password"): ""}
                                     autoFocus
                                     id="password"
-                                    label={t( "words.password", {}, {FLU: true})}
+                                    label={t( "words.password", {}, {FLC: true})}
                                     type="password"
                                     fullWidth
                                 />
