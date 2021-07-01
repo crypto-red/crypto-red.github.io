@@ -152,7 +152,7 @@ class Dashboard extends React.Component {
 
     _refresh_balance = () => {
 
-        const { _logged_account } = this.state;
+        const { _logged_account, _coins } = this.state;
 
         if(_logged_account) {
 
