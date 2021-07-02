@@ -293,7 +293,10 @@ class Dashboard extends React.Component {
             number_of_coins_performed_with_value
         };
 
-        this.setState({_portfolio: portfolio});
+        this.setState({_portfolio: portfolio}, () => {
+
+            actions.trigger_loading_update(100);
+        });
     };
 
     _price_formatter = (value, compact) => {
@@ -304,7 +307,7 @@ class Dashboard extends React.Component {
 
     _on_transactions_loading_change = (percent) => {
 
-        actions.trigger_loading_update(percent);
+        //actions.trigger_loading_update(percent);
     };
 
     render() {

@@ -22,6 +22,7 @@ const styles = theme => ({
     },
     noTransactionImage: {
         maxHeight: 475 - 48,
+        maxWidth: "100%",
         height: "100%",
     },
     gridItem: {
@@ -179,7 +180,7 @@ class DashboardTransactions extends React.Component {
                                                                 <Transaction
                                                                     key={transaction.id}
                                                                     logged_account={logged_account}
-                                                                    show_crypto_image={true}
+                                                                    show_crypto_image={false}
                                                                     selected_currency={_selected_currency}
                                                                     selected_locales_code={_selected_locales_code}
                                                                     transaction={transaction}

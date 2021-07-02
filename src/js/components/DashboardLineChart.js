@@ -26,39 +26,10 @@ import {
     YAxis
 } from "recharts";
 import price_formatter from "../utils/price-formatter";
-import LinearProgress from "@material-ui/core/LinearProgress";
 
 const MAX_TRX_LOADING = 20;
 
 const styles = theme => ({
-    linearProgressVisible: {
-        "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.actionLighter
-        },
-        opacity: 1,
-        backgroundColor: "#110b5d26",
-    },
-    linearProgressHidden: {
-        "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.actionLighter
-        },
-        opacity: 0,
-        backgroundColor: "#110b5d26",
-        animation: "$hide 1.5s",
-        "@global": {
-            "@keyframes hide": {
-                "0%": {
-                    opacity: 1,
-                },
-                "85%": {
-                    opacity: 1,
-                },
-                "100%": {
-                    opacity: 0,
-                },
-            }
-        }
-    },
     cardContainer: {
         height: "100%"
     },
@@ -74,6 +45,7 @@ const styles = theme => ({
     },
     noTransactionImage: {
         maxHeight: 475 - 48,
+        maxWidth: "100%",
         height: "100%",
     },
 });

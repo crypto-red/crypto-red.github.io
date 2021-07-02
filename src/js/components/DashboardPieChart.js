@@ -14,7 +14,6 @@ import Fade from "@material-ui/core/Fade";
 import Skeleton from "@material-ui/lab/Skeleton";
 
 import price_formatter from "../utils/price-formatter";
-import {useAutocomplete} from "@material-ui/lab";
 
 const styles = theme => ({
     cardContainer: {
@@ -32,6 +31,7 @@ const styles = theme => ({
     },
     noTransactionImage: {
         maxHeight: 475 - 48,
+        maxWidth: "100%",
         height: "100%",
     },
     cardContent: {

@@ -27,6 +27,9 @@ const overrides = {
             ".MuiFab-root.MuiFab-extended": {
                 borderRadius: 4,
             },
+            ".MuiButtonBase-root.MuiFab-root": {
+                borderRadius: 4,
+            },
             ".MuiButtonBase-root.MuiChip-root": {
                 borderRadius: 4,
             },

@@ -5,6 +5,7 @@ import { withStyles } from "@material-ui/core/styles";
 import { t } from "../utils/t";
 
 import Fade from "@material-ui/core/Fade";
+import Button from "@material-ui/core/Button";
 import LinearProgress from "@material-ui/core/LinearProgress";
 
 const styles = theme => ({
@@ -21,14 +22,20 @@ const styles = theme => ({
         position: "relative",
         width: "100%",
         overflow: "auto",
+        textTransform: "none",
+        textAlign: "inherit",
+        padding: 0,
         backgroundColor: theme.palette.secondary.light,
+        "&:hover": {
+            backgroundColor: theme.palette.secondary.lighter,
+        },
         color: theme.palette.secondary.contrastText,
         "&::before": {
             display: "flex",
             top: 0,
             left: 0,
             "content": "\"\"",
-            position: "relative",
+            position: "absolute",
             height: 40,
             width: "30%",
             /*background: "linear-gradient(to right, transparent, rgba(13, 50, 199, 0.27), transparent)",*/
@@ -47,7 +54,6 @@ const styles = theme => ({
     },
     innerToolbarTextWrapper: {
         position: "inherit",
-        marginLeft: "-30%",
         width: "100%"
     },
     innerToolbarText: {
@@ -113,7 +119,7 @@ class InnerToolbar extends React.Component {
         });
         
         return (
-            <div className={classes.innerToolbar}>
+            <Button className={classes.innerToolbar}>
                 <span className={classes.innerToolbarTextWrapper}>
                     <span className={classes.innerToolbarText}>
                         <Fade in={know_if_logged}><Link className={classes.link} to={logged_account ? "/": "/"}>{know_if_logged ? logged_account ? logged_account.name: t( "components.inner_toolbar.guest"): ""} </Link></Fade>
@@ -124,7 +130,7 @@ class InnerToolbar extends React.Component {
                         <LinearProgress color="primary" variant="determinate" className={classes.linearProgressVisible} value={100 - loaded_progress_percent} />
                     </div>
                 </span>
-            </div>
+            </Button>
         );
     }
 }
