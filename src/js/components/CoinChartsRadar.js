@@ -78,7 +78,7 @@ class CoinChartsRadar extends React.Component {
         ]: [];
 
         const market_score_card = coin_data !== null ?
-            <Fade in={true}>
+            <Fade in>
                 <Card className={classes.fullHeight}>
                     <CardHeader title={t("components.coin_charts_radar.title")} />
                     <CardContent>

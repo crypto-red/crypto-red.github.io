@@ -27,6 +27,12 @@ const overrides = {
             ".MuiFab-root.MuiFab-extended": {
                 borderRadius: 4,
             },
+            ".MuiButtonBase-root.MuiChip-root": {
+                borderRadius: 4,
+            },
+            ".MuiSvgIcon-root.MuiChip-deleteIcon": {
+                color: "rgba(0, 0, 0, .36)"
+            }
         },
     },
 }

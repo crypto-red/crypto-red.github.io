@@ -3,6 +3,8 @@ import { withStyles } from "@material-ui/core/styles"
 
 import { t } from "../utils/t";
 
+import Skeleton from "@material-ui/lab/Skeleton";
+
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -84,20 +86,15 @@ class TransactionDialog extends React.Component {
             if(logged_account !== new_props.logged_account || transaction !== new_props.transaction) {
 
                 this._get_coin_data();
-                this._get_address_by_seed()
+                this._get_address_by_seed();
             }
         });
     };
 
     componentDidMount() {
 
-        const { logged_account, transaction } = this.state;
-
-        if(logged_account && transaction) {
-
-            this._get_coin_data();
-            this._get_address_by_seed()
-        }
+        this._get_coin_data();
+        this._get_address_by_seed();
     }
 
     _get_address_by_seed = () => {
@@ -163,7 +160,14 @@ class TransactionDialog extends React.Component {
 
     _set_coin_data = (error, data) => {
 
-        this.setState({_coin_data: data});
+        if(!error && data) {
+
+            this.setState({_coin_data: data});
+        }else {
+
+            actions.jamy_update("sad");
+            actions.trigger_snackbar(error);
+        }
     };
 
     _open_link = (event, link) => {
@@ -204,7 +208,7 @@ class TransactionDialog extends React.Component {
         const { classes, transaction, selected_currency, selected_locales_code, open, _coin_data, _address, _nacl_decrypted_memo } = this.state;
 
         const amount_sent_fiat = _coin_data !== null ? transaction.amount_crypto * _coin_data.market_data.current_price[selected_currency.toLowerCase()]: 0;
-        const amount_fee_fiat = _coin_data != null ? transaction.fee * _coin_data.market_data.current_price[selected_currency.toLowerCase()]: 0;
+        const amount_fee_fiat = _coin_data !== null ? transaction.fee * _coin_data.market_data.current_price[selected_currency.toLowerCase()]: 0;
 
         return (
             <Dialog
@@ -269,8 +273,8 @@ class TransactionDialog extends React.Component {
                                                     <TableCell align="right" className={classes.breakWord}>
                                                         {transaction.memo}
                                                         {_nacl_decrypted_memo ?
-                                                            <span><br/>NaCl: "<b>{_nacl_decrypted_memo}</b>"</span>:
-                                                            <span><br/>NaCl: <b>{t("words.error", {}, {FLC: true})}</b></span>
+                                                            <span><br/>NaCl: "<b>{_nacl_decrypted_memo}</b>"</span>
+                                                            : null
                                                         }
                                                     </TableCell>
                                                 </TableRow>
@@ -278,14 +282,14 @@ class TransactionDialog extends React.Component {
                                                     <TableCell align="left" className={classes.tableCellBold}>{t("words.amount", {}, {FLC: true})}</TableCell>
                                                     {_coin_data ?
                                                         <TableCell align="right">{price_formatter(parseFloat(transaction.amount_crypto), _coin_data.symbol, selected_locales_code)} ({price_formatter(amount_sent_fiat, selected_currency, selected_locales_code)})</TableCell>
-                                                        : null
+                                                        : <TableCell align="right"><Skeleton /></TableCell>
                                                     }
                                                 </TableRow>
                                                 <TableRow>
                                                     <TableCell align="left" className={classes.tableCellBold}>{t("words.fee", {}, {FLC: true})}</TableCell>
                                                     {_coin_data ?
                                                         <TableCell align="right">{price_formatter(parseFloat(transaction.fee), _coin_data.symbol, selected_locales_code)} ({price_formatter(amount_fee_fiat, selected_currency, selected_locales_code)})</TableCell>
-                                                        : null
+                                                        : <TableCell align="right"><Skeleton /></TableCell>
                                                     }
                                                 </TableRow>
                                                 <TableRow>

@@ -295,7 +295,7 @@ module.exports = {
                 generating: "Création...",
                 error: "ERREUR : votre compte n'a pas été créé.",
                 success: "Votre compte sera bientôt affiché.",
-                description: "Nous devons créer une adresse pour chaque crypto-monnaie répertoriée. , ces adresses sont anonymes puisqu'elles ne sont pas liées à vous-même. Nous sauvegarderons automatiquement votre compte sur votre ordinateur, si vous modifiez votre mot de passe, remplacez le fichier de sauvegarde et supprimez l'ancien.",
+                description: "Nous devons créer une adresse pour chaque crypto-monnaie répertoriée, ces adresses sont anonymes puisqu'elles ne sont pas liées à vous-même. Nous ne sauvegarderons pas automatiquement votre compte sur votre ordinateur.",
             },
             stepper: {
                 configure: "configurer",

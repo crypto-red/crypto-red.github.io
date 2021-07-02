@@ -136,7 +136,7 @@ class CoinChartsLinks extends React.Component {
         coin_data = this._get_remove_empty_links_from_coin_data(coin_data);
 
         const market_info_card = coin_data !== null ?
-            <Fade in={true}>
+            <Fade in>
                 <Card className={classes.linksCard}>
                     <CardHeader title={t("components.coin_charts_links.title")} />
                     <CardContent>

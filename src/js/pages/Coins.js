@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import { t } from "../utils/t";
 
+import Fade from "@material-ui/core/Fade";
 import Avatar from "@material-ui/core/Avatar";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -14,7 +15,6 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
-import LinearProgress from "@material-ui/core/LinearProgress";
 import lightGreen from "@material-ui/core/colors/lightGreen";
 import green from "@material-ui/core/colors/green";
 import red from "@material-ui/core/colors/red";
@@ -53,10 +53,6 @@ const styles = theme => ({
         position: "absolute",
         top: 20,
         width: 1
-    },
-    tableLinearProgress: {
-        display: "table-caption",
-        marginBottom: -4
     },
     headCell: {
         fontWeight: "bold"
@@ -285,95 +281,98 @@ class Coins extends React.Component {
         ];
         
         return (
-            <div className={classes.tableContainerContainer}>
-                <TableContainer className={classes.paperTable} component={Paper}>
-                    <Table>
-                        {!_coins_markets.length ? <LinearProgress className={classes.tableLinearProgress} />: null}
-                        <TableHead className={classes.tableHead}>
-                            <TableRow>
-                                {head_cells.map((head_cell) => (
-                                    <TableCell
-                                        classes={{head: classes.tableHeadCell}}
-                                        className={classes.headCell}
-                                        key={head_cell.id}
-                                        align={head_cell.numeric ? "right" : "left"}
-                                        padding={head_cell.disablePadding ? "none" : "default"}
-                                        sortDirection={_order_by === head_cell.id ? _order : false}
-                                        onClick={() => this._create_sort_handler(head_cell.id)}
-                                    >
-                                        <Tooltip title={head_cell.tooltip} aria-label={head_cell.tooltip}>
-                                            <TableSortLabel
-                                                classes={{root: classes.tableSortLabelRoot, active: classes.tableSortLabelActive, icon: classes.tableSortLabelIcon}}
-                                                active={_order_by === head_cell.id}
-                                                direction={_order_by === head_cell.id ? _order : "asc"}
+            <div>
+                <Fade in>
+                    <div className={classes.tableContainerContainer}>
+                        <TableContainer className={classes.paperTable} component={Paper}>
+                            <Table>
+                                <TableHead className={classes.tableHead}>
+                                    <TableRow>
+                                        {head_cells.map((head_cell) => (
+                                            <TableCell
+                                                classes={{head: classes.tableHeadCell}}
+                                                className={classes.headCell}
+                                                key={head_cell.id}
+                                                align={head_cell.numeric ? "right" : "left"}
+                                                padding={head_cell.disablePadding ? "none" : "default"}
+                                                sortDirection={_order_by === head_cell.id ? _order : false}
+                                                onClick={() => this._create_sort_handler(head_cell.id)}
                                             >
-                                                {head_cell.label}
-                                                {_order_by === head_cell.id ? (
-                                                    <span className={classes.visuallyHidden}>
+                                                <Tooltip title={head_cell.tooltip} aria-label={head_cell.tooltip}>
+                                                    <TableSortLabel
+                                                        classes={{root: classes.tableSortLabelRoot, active: classes.tableSortLabelActive, icon: classes.tableSortLabelIcon}}
+                                                        active={_order_by === head_cell.id}
+                                                        direction={_order_by === head_cell.id ? _order : "asc"}
+                                                    >
+                                                        {head_cell.label}
+                                                        {_order_by === head_cell.id ? (
+                                                            <span className={classes.visuallyHidden}>
                                                     {_order === "desc" ? "sorted descending" : "sorted ascending"}
                                                 </span>
-                                                ) : null}
-                                            </TableSortLabel>
-                                        </Tooltip>
-                                    </ TableCell>
-                                ))}
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {
-                                _coins_markets.length ?
-                                    this._stable_sort(_coins_markets, this._get_comparator(_order, _order_by)).map((row, index) => (
-                                        <TableRow key={row.name} className={classes.row}>
-                                            <TableCell component="th" scope="row" className={classes.firstCellInARow} onClick={(event) => this._go_to_link(event, `/coins/${row.id}/charts`)}>
-                                                <Avatar className={classes.avatar} src={row.image}></Avatar>
-                                                <Link>{row.name}</Link>
-                                            </TableCell>
-                                            <TableCell align="right">{this._price_formatter(row.current_price)}</TableCell>
-                                            <TableCell align="right">
-                                                <span className={row.price_change_percentage_24h_in_currency >= 0 ? classes.green: classes.red} >{row.price_change_percentage_24h_in_currency.toFixed(2)}%</span>
-                                            </TableCell>
-                                            <TableCell align="right" >
-                                                <span className={row.price_change_percentage_7d_in_currency >= 0 ? classes.green: classes.red}>{row.price_change_percentage_7d_in_currency.toFixed(2)}%</span>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <span className={row.price_change_percentage_30d_in_currency >= 0 ? classes.green: classes.red}>{row.price_change_percentage_30d_in_currency.toFixed(2)}%</span>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <span className={row.price_change_percentage_1y_in_currency >= 0 ? classes.green: classes.red}>{row.price_change_percentage_1y_in_currency.toFixed(2)}%</span>
-                                            </TableCell>
-                                            <TableCell align="right">{this._price_formatter(row.market_cap)}</TableCell>
-                                        </TableRow>
-                                    )):
-                                    _coins_id.map((row, index) => (
-                                        <TableRow key={index}>
-                                            <TableCell component="th" scope="row" className={classes.displayFlex}>
-                                                <Skeleton variant="circle" className={classes.avatar}/>
-                                                <Skeleton className={classes.skeletonFullWidth}/>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <Skeleton className={classes.skeletonFullWidth}/>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <Skeleton className={classes.skeletonBadge}/>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <Skeleton className={classes.skeletonBadge}/>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <Skeleton className={classes.skeletonBadge}/>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <Skeleton className={classes.skeletonBadge}/>
-                                            </TableCell>
-                                            <TableCell align="right">
-                                                <Skeleton className={classes.skeletonFullWidth}/>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                            }
-                        </TableBody>
-                    </Table>
-                </TableContainer>
+                                                        ) : null}
+                                                    </TableSortLabel>
+                                                </Tooltip>
+                                            </ TableCell>
+                                        ))}
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {
+                                        _coins_markets.length ?
+                                            this._stable_sort(_coins_markets, this._get_comparator(_order, _order_by)).map((row, index) => (
+                                                <TableRow key={row.name} className={classes.row}>
+                                                    <TableCell component="th" scope="row" className={classes.firstCellInARow} onClick={(event) => this._go_to_link(event, `/coins/${row.id}/charts`)}>
+                                                        <Avatar className={classes.avatar} src={row.image}></Avatar>
+                                                        <Link>{row.name}</Link>
+                                                    </TableCell>
+                                                    <TableCell align="right">{this._price_formatter(row.current_price)}</TableCell>
+                                                    <TableCell align="right">
+                                                        <span className={row.price_change_percentage_24h_in_currency >= 0 ? classes.green: classes.red} >{row.price_change_percentage_24h_in_currency.toFixed(2)}%</span>
+                                                    </TableCell>
+                                                    <TableCell align="right" >
+                                                        <span className={row.price_change_percentage_7d_in_currency >= 0 ? classes.green: classes.red}>{row.price_change_percentage_7d_in_currency.toFixed(2)}%</span>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <span className={row.price_change_percentage_30d_in_currency >= 0 ? classes.green: classes.red}>{row.price_change_percentage_30d_in_currency.toFixed(2)}%</span>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <span className={row.price_change_percentage_1y_in_currency >= 0 ? classes.green: classes.red}>{row.price_change_percentage_1y_in_currency.toFixed(2)}%</span>
+                                                    </TableCell>
+                                                    <TableCell align="right">{this._price_formatter(row.market_cap)}</TableCell>
+                                                </TableRow>
+                                            )):
+                                            _coins_id.map((row, index) => (
+                                                <TableRow key={index}>
+                                                    <TableCell component="th" scope="row" className={classes.displayFlex}>
+                                                        <Skeleton variant="circle" className={classes.avatar}/>
+                                                        <Skeleton className={classes.skeletonFullWidth}/>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Skeleton className={classes.skeletonFullWidth}/>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Skeleton className={classes.skeletonBadge}/>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Skeleton className={classes.skeletonBadge}/>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Skeleton className={classes.skeletonBadge}/>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Skeleton className={classes.skeletonBadge}/>
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <Skeleton className={classes.skeletonFullWidth}/>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                    }
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </div>
+                </Fade>
             </div>
         );
     }

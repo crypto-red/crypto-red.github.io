@@ -16,6 +16,7 @@ import Jdenticon from "react-jdenticon";
 import price_formatter from "../utils/price-formatter";
 import ReactTimeAgo from "react-time-ago";
 import api from "../utils/api";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     listItem: {
@@ -120,15 +121,26 @@ class Transaction extends React.Component {
     _get_coin_data() {
 
         const { transaction } = this.state;
-        this.setState({_coin_data: null}, () => {
 
-            api.get_coin_data(transaction.crypto_id, this._set_coin_data);
-        });
+        if(transaction) {
+
+            this.setState({_coin_data: null}, () => {
+
+                api.get_coin_data(transaction.crypto_id, this._set_coin_data);
+            });
+        }
     }
 
     _set_coin_data = (error, data) => {
 
-        this.setState({_coin_data: data});
+        if(!error && data) {
+
+            this.setState({_coin_data: data});
+        }else {
+
+            actions.jamy_update("sad");
+            actions.trigger_snackbar(error);
+        }
     };
 
     render() {

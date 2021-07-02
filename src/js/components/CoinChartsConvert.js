@@ -132,7 +132,7 @@ class CoinChartsConvert extends React.Component {
         const date_format = this._get_date_format();
 
         const market_convert_card = coin_data !== null ?
-            <Fade in={true}>
+            <Fade in>
                 <Card>
                     <CardHeader title={t( "components.coin_charts_convert.title")} />
                     <CardContent>

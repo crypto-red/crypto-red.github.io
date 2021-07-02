@@ -317,7 +317,7 @@ module.exports = {
                 generating: "Generating...",
                 error: "ERROR: Your account has not been created.",
                 success: "Your account will be soon displayed.",
-                description: "We need to create one address for each cryptocurrency listed, theses address are anonymous since they aren't linked to yourself. We'll automatically backup your account on your computer, if you change your password replace the backup file and delete the old one.",
+                description: "We need to create one address for each cryptocurrency listed, theses address are anonymous since they aren't linked to yourself. We'll not automatically backup your account on your computer.",
             },
             stepper: {
                 configure: "configure",

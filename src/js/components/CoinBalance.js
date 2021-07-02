@@ -138,59 +138,61 @@ class CoinBalance extends React.Component {
         return (
             <div>
                 {we_know_if_logged ?
-                    <Container maxWidth="sm" className={classes.container}>
-                        <Card>
-                            <CardHeader
-                                title={t( "words.balance", {}, {FLC: true})}
-                            />
+                    <Fade in>
+                        <Container maxWidth="sm" className={classes.container}>
+                            <Card>
+                                <CardHeader
+                                    title={t( "words.balance", {}, {FLC: true})}
+                                />
 
-                            <CardContent>
+                                <CardContent>
+                                    {
+                                        logged_account ?
+                                            <div>
+                                                {
+                                                    _coin_balance === null || coin_data === null ?
+                                                        <div>
+                                                            <div className={classes.center}>
+                                                                <h2><Skeleton /></h2>
+                                                                <h4><Skeleton /></h4>
+                                                            </div>
+                                                        </div>:
+                                                        <div>
+                                                            {_coin_balance === 0 ?
+                                                                <div className={classes.center}>
+                                                                    <h2>{t( "sentences.you need to add fund to this account")}</h2>
+                                                                    <h4>{t( "sentences.just do it trough the link in the menu")}</h4>
+                                                                </div>
+                                                                :
+                                                                <div className={classes.center}>
+                                                                    <h2>{price_formatter(parseFloat(balance_fiat), selected_currency, selected_locales_code)}</h2>
+                                                                    <h4>{price_formatter(parseFloat(balance_crypto), coin_data_symbol, selected_locales_code)}</h4>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                }
+                                            </div>:
+                                            <div>
+                                                <img className={classes.noAccountImage} src="/src/images/account.svg"/>
+                                                <p>{t("sentences.you must open an account")}</p>
+                                            </div>
+                                    }
+                                </CardContent>
+                            </Card>
+                            <div className={classes.underCardButtonContainer}>
                                 {
                                     logged_account ?
-                                        <div>
-                                            {
-                                                _coin_balance === null || coin_data === null ?
-                                                    <div>
-                                                        <div className={classes.center}>
-                                                            <h2><Skeleton /></h2>
-                                                            <h4><Skeleton /></h4>
-                                                        </div>
-                                                    </div>:
-                                                    <div>
-                                                        {_coin_balance === 0 ?
-                                                            <div className={classes.center}>
-                                                                <h2>{t( "sentences.you need to add fund to this account")}</h2>
-                                                                <h4>{t( "sentences.just do it trough the link in the menu")}</h4>
-                                                            </div>
-                                                            :
-                                                            <div className={classes.center}>
-                                                                <h2>{price_formatter(parseFloat(balance_fiat), selected_currency, selected_locales_code)}</h2>
-                                                                <h4>{price_formatter(parseFloat(balance_crypto), coin_data_symbol, selected_locales_code)}</h4>
-                                                            </div>
-                                                        }
-                                                    </div>
-                                            }
-                                        </div>:
-                                        <div>
-                                            <img className={classes.noAccountImage} src="/src/images/account.svg"/>
-                                            <p>{t("sentences.you must open an account")}</p>
-                                        </div>
+                                        <Button className={classes.underCardButton} color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/about/wiki/topup")}}>
+                                            {t( "words.top up")}
+                                        </Button>
+                                        :
+                                        <Button className={classes.underCardButton} color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/accounts")}}>
+                                            {t( "sentences.open an account")}
+                                        </Button>
                                 }
-                            </CardContent>
-                        </Card>
-                        <div className={classes.underCardButtonContainer}>
-                            {
-                                logged_account ?
-                                    <Button className={classes.underCardButton} color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/about/wiki/topup")}}>
-                                        {t( "words.top up")}
-                                    </Button>
-                                    :
-                                    <Button className={classes.underCardButton} color="primary" variant="contained" onClick={(event) => {this._open_link(event, "/accounts")}}>
-                                        {t( "sentences.open an account")}
-                                    </Button>
-                            }
-                        </div>
-                    </Container>:
+                            </div>
+                        </Container>
+                    </Fade>:
                     null
                 }
             </div>

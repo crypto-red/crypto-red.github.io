@@ -3,8 +3,8 @@ import { withStyles } from "@material-ui/core/styles";
 
 import { t } from "../utils/t";
 
-import Container from "@material-ui/core/Container";
 import Fade from "@material-ui/core/Fade";
+import Container from "@material-ui/core/Container";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import TextField from "@material-ui/core/TextField";
@@ -398,77 +398,79 @@ class CoinSend extends React.Component {
                     </DialogContent>
                 </Dialog>
                 {we_know_if_logged ?
-                    <Container maxWidth="sm" className={classes.container}>
-                        <Card>
-                            <CardHeader
-                                title={t( "words.send", {}, {FLC: true})}
-                            />
-                            <CardContent>
+                    <Fade in>
+                        <Container maxWidth="sm" className={classes.container}>
+                            <Card>
+                                <CardHeader
+                                    title={t( "words.send", {}, {FLC: true})}
+                                />
+                                <CardContent>
 
-                                {logged_account ?
-                                    <div>
-                                        {_coin_balance !== null ? <p>{t("components.coin_send.title", {balance: _coin_balance})}</p>: <p>{t("sentences.loading")}</p>}
-                                        {_send_transaction_info !== null ? <p>{t("components.coin_send.body", {average_transaction_time: _send_transaction_info.average_transaction_time, max_message_length: _send_transaction_info.max_message_length, send_message_input_length: _send_message_input.length})}</p>: null}
-                                        { _send_transaction_info ?
-                                            <form className={classes.root} noValidate autoComplete="off">
-                                                <TextField
-                                                    className={classes.textField}
-                                                    onChange={this._handle_send_address_input_change}
-                                                    value={_send_address_input}
-                                                    error={_send_address_input_error}
-                                                    helperText={_send_address_input_error ? t( "sentences.incorrect address"): ""}
-                                                    id="address"
-                                                    label={t( "words.address", {}, {FLC: true})}
-                                                    type="text"
-                                                    fullWidth
-                                                />
-                                                <TextField
-                                                    className={classes.textField}
-                                                    onChange={this._handle_send_amount_input_change}
-                                                    value={_send_amount_input}
-                                                    error={_send_amount_input_error}
-                                                    helperText={_send_amount_input_error ? t( "sentences.incorrect amount"): ""}
-                                                    id="amount"
-                                                    label={t( "words.amount", {}, {FLC: true})}
-                                                    type="number"
-                                                    fullWidth
-                                                />
-                                                <TextField
-                                                    className={classes.textField}
-                                                    onChange={this._handle_send_message_input_change}
-                                                    value={_send_message_input}
-                                                    error={_send_message_input_error}
-                                                    helperText={_send_message_input_error ? t( "sentences.incorrect message"): ""}
-                                                    disabled={_send_transaction_info.max_message_length === 0}
-                                                    id="message"
-                                                    label={t( "words.message", {}, {FLC: true})}
-                                                    type="text"
-                                                    multiline
-                                                    fullWidth
-                                                />
-                                            </form>: null
-                                        }
-                                    </div>:
-                                    <div>
-                                        <img className={classes.noAccountImage} src="/src/images/account.svg"/>
-                                        <p>{t("sentences.you must open an account")}</p>
-                                    </div>
+                                    {logged_account ?
+                                        <div>
+                                            {_coin_balance !== null ? <p>{t("components.coin_send.title", {balance: _coin_balance})}</p>: <p>{t("sentences.loading")}</p>}
+                                            {_send_transaction_info !== null ? <p>{t("components.coin_send.body", {average_transaction_time: _send_transaction_info.average_transaction_time, max_message_length: _send_transaction_info.max_message_length, send_message_input_length: _send_message_input.length})}</p>: null}
+                                            { _send_transaction_info ?
+                                                <form className={classes.root} noValidate autoComplete="off">
+                                                    <TextField
+                                                        className={classes.textField}
+                                                        onChange={this._handle_send_address_input_change}
+                                                        value={_send_address_input}
+                                                        error={_send_address_input_error}
+                                                        helperText={_send_address_input_error ? t( "sentences.incorrect address"): ""}
+                                                        id="address"
+                                                        label={t( "words.address", {}, {FLC: true})}
+                                                        type="text"
+                                                        fullWidth
+                                                    />
+                                                    <TextField
+                                                        className={classes.textField}
+                                                        onChange={this._handle_send_amount_input_change}
+                                                        value={_send_amount_input}
+                                                        error={_send_amount_input_error}
+                                                        helperText={_send_amount_input_error ? t( "sentences.incorrect amount"): ""}
+                                                        id="amount"
+                                                        label={t( "words.amount", {}, {FLC: true})}
+                                                        type="number"
+                                                        fullWidth
+                                                    />
+                                                    <TextField
+                                                        className={classes.textField}
+                                                        onChange={this._handle_send_message_input_change}
+                                                        value={_send_message_input}
+                                                        error={_send_message_input_error}
+                                                        helperText={_send_message_input_error ? t( "sentences.incorrect message"): ""}
+                                                        disabled={_send_transaction_info.max_message_length === 0}
+                                                        id="message"
+                                                        label={t( "words.message", {}, {FLC: true})}
+                                                        type="text"
+                                                        multiline
+                                                        fullWidth
+                                                    />
+                                                </form>: null
+                                            }
+                                        </div>:
+                                        <div>
+                                            <img className={classes.noAccountImage} src="/src/images/account.svg"/>
+                                            <p>{t("sentences.you must open an account")}</p>
+                                        </div>
+                                    }
+                                </CardContent>
+                            </Card>
+                            <div className={classes.underCardButtonContainer}>
+                                {
+                                    logged_account ?
+                                        <Button className={classes.underCardButton} variant="contained" color="primary" onClick={this._confirm_and_open_coin_send_dialog}>
+                                            {t( "words.send")}
+                                        </Button>
+                                        :
+                                        <Button className={classes.underCardButton} color="primary" variant="contained" onClick={this._open_accounts_page}>
+                                            {t( "sentences.open an account")}
+                                        </Button>
                                 }
-                            </CardContent>
-                        </Card>
-                        <div className={classes.underCardButtonContainer}>
-                            {
-                                logged_account ?
-                                    <Button className={classes.underCardButton} variant="contained" color="primary" onClick={this._confirm_and_open_coin_send_dialog}>
-                                        {t( "words.send")}
-                                    </Button>
-                                    :
-                                    <Button className={classes.underCardButton} color="primary" variant="contained" onClick={this._open_accounts_page}>
-                                        {t( "sentences.open an account")}
-                                    </Button>
-                            }
-                        </div>
-                    </Container>:
+                            </div>
+                        </Container>
+                    </Fade>:
                     null
                 }
                 {
