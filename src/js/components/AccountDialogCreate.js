@@ -459,10 +459,10 @@ class AccountDialogCreate extends React.Component {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                        Cancel
+                        {t("words.cancel")}
                     </Button>
                     <Button onClick={this._switch_to_mnemonic_view} color="primary" autoFocus>
-                        Next
+                        {t("words.next")}
                     </Button>
                 </DialogActions>
             </div>;
@@ -546,9 +546,6 @@ class AccountDialogCreate extends React.Component {
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                        {t( "words.cancel")}
-                    </Button>
                     <Button onClick={(event) => {this._on_close(event)}} color="primary" autoFocus>
                         {t( "words.close")}
                     </Button>

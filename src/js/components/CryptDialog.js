@@ -390,7 +390,7 @@ class CryptDialog extends React.Component {
                                 {t( "words.show")}
                             </Button>
                             <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                                {t( "words.cancel")}
+                                {t( "words.close")}
                             </Button>
                         </DialogActions>
                     </div>

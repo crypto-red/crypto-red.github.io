@@ -202,11 +202,11 @@ class DrawerContent extends React.Component {
         actions.trigger_settings_update();
     };
 
-    _on_close_help_dialog = (event, _current_help_dialog_id, _current_help_dialog_checkbox, just_close = false) => {
+    _on_close_help_dialog = (event, _current_help_dialog_id, _current_help_dialog_checkbox, not_open_link = true, set_dont_show_again = false) => {
 
         const { _help_dialogs_data, _should_open_help_dialogs } = this.state;
 
-        if(_current_help_dialog_checkbox && !just_close) {
+        if(_current_help_dialog_checkbox && set_dont_show_again) {
 
             let help = _should_open_help_dialogs;
             help[_current_help_dialog_id] = !_current_help_dialog_checkbox;
@@ -216,7 +216,7 @@ class DrawerContent extends React.Component {
 
         this.setState({_is_help_dialog_open: false}, () => {
 
-            if(!just_close) {
+            if(!not_open_link) {
 
                 const url = _help_dialogs_data[_current_help_dialog_id].url;
                 this._open_link(null, url);
@@ -304,7 +304,7 @@ class DrawerContent extends React.Component {
                     logged_account={logged_account}/>
                 <Dialog
                     open={_is_help_dialog_open}
-                    onClose={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true)}}
+                    onClose={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox)}}
                     aria-labelledby="help-dialog-title"
                     aria-describedby="help-dialog-description"
                 >
@@ -324,8 +324,8 @@ class DrawerContent extends React.Component {
                                         />
                                     </DialogContent>
                                     <DialogActions>
-                                        <Button onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true)}} color="primary">{t( "words.cancel")}</Button>
-                                        <Button onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox)}} color="primary" autoFocus>
+                                        <Button onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true, true)}} color="primary">{t( "words.close")}</Button>
+                                        <Button onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, false, true)}} color="primary" autoFocus>
                                             {t( "components.drawer_content.go")}
                                         </Button>
                                     </DialogActions>
