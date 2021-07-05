@@ -184,7 +184,7 @@ class CoinTransactions extends React.Component {
                         <Container maxWidth="sm" className={classes.container}>
                             <Card>
                                 <CardHeader
-                                    title={t( "words.transactions", {}, {FLC: true})}
+                                    title={t( "words.transactions", {FLC: true})}
                                 />
                                 <CardContent>
                                     {

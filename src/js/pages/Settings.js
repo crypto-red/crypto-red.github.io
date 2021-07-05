@@ -232,7 +232,7 @@ class Settings extends React.Component {
                                     options={_locales}
                                     getOptionLabel={(option) => option.name || option.original.name}
                                     renderOption={(option) => <span dangerouslySetInnerHTML={{ __html: option.string }}></span>}
-                                    renderInput={(params) => <TextField {...params} label={t( "words.locales", {}, {FLC: true})} margin="normal" />}
+                                    renderInput={(params) => <TextField {...params} label={t( "words.locales", {FLC: true})} margin="normal" />}
                                 />
                             </CardContent>
                         </Card>
@@ -250,7 +250,7 @@ class Settings extends React.Component {
                                     options={currencies}
                                     getOptionLabel={(option) => option.original || option}
                                     renderOption={(option) => <span dangerouslySetInnerHTML={{ __html: option.string }}></span>}
-                                    renderInput={(params) => <TextField {...params} label={t( "words.currency", {}, {FLC: true})} margin="normal" />}
+                                    renderInput={(params) => <TextField {...params} label={t( "words.currency", {FLC: true})} margin="normal" />}
                                 />
                             </CardContent>
                         </Card>

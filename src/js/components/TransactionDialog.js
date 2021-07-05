@@ -228,17 +228,17 @@ class TransactionDialog extends React.Component {
                                         <Table aria-label="main-info-table">
                                             <TableBody>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.send at", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{ t( "components.transaction_dialog.send_at")}</TableCell>
                                                     <TableCell align="right">{new Intl.DateTimeFormat(selected_locales_code, {weekday: "long", year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric"}).format(new Date(transaction.timestamp))}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.send from", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{ t( "components.transaction_dialog.send_from")}</TableCell>
                                                     <TableCell align="right">{transaction.send_from}</TableCell>
                                                 </TableRow>
                                                 {
                                                     typeof transaction.send_from_public_key !== "undefined" ?
                                                     <TableRow>
-                                                        <TableCell align="left" className={classes.tableCellBold}>{t("words.send from public key", {}, {FLC: true})}</TableCell>
+                                                        <TableCell align="left" className={classes.tableCellBold}>{ t( "components.transaction_dialog.send_from_public_key")}</TableCell>
                                                         <TableCell align="right">
                                                             <div className={classes.displayInlineFlex}>
                                                                 <span>{transaction.send_from_public_key}</span>
@@ -258,18 +258,18 @@ class TransactionDialog extends React.Component {
                                                     </TableRow>: null
                                                 }
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.send to", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{ t( "components.transaction_dialog.send_to")}</TableCell>
                                                     <TableCell align="right">{transaction.send_to}</TableCell>
                                                 </TableRow>
                                                 {
                                                     typeof transaction.send_to_public_key !== "undefined" ?
                                                     <TableRow>
-                                                        <TableCell align="left" className={classes.tableCellBold}>{t("words.send to public key", {}, {FLC: true})}</TableCell>
+                                                        <TableCell align="left" className={classes.tableCellBold}>{ t( "components.transaction_dialog.send_to_public_key")}</TableCell>
                                                         <TableCell align="right">{transaction.send_to_public_key}</TableCell>
                                                     </TableRow>: null
                                                 }
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.memo", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{ t( "components.transaction_dialog.memo")}</TableCell>
                                                     <TableCell align="right" className={classes.breakWord}>
                                                         {transaction.memo}
                                                         {_nacl_decrypted_memo ?
@@ -279,21 +279,21 @@ class TransactionDialog extends React.Component {
                                                     </TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.amount", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{ t( "components.transaction_dialog.amount")}</TableCell>
                                                     {_coin_data ?
                                                         <TableCell align="right">{price_formatter(parseFloat(transaction.amount_crypto), _coin_data.symbol, selected_locales_code)} ({price_formatter(amount_sent_fiat, selected_currency, selected_locales_code)})</TableCell>
                                                         : <TableCell align="right"><Skeleton /></TableCell>
                                                     }
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.fee", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{ t( "components.transaction_dialog.fees")}</TableCell>
                                                     {_coin_data ?
                                                         <TableCell align="right">{price_formatter(parseFloat(transaction.fee), _coin_data.symbol, selected_locales_code)} ({price_formatter(amount_fee_fiat, selected_currency, selected_locales_code)})</TableCell>
                                                         : <TableCell align="right"><Skeleton /></TableCell>
                                                     }
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.crypto id", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{ t( "components.transaction_dialog.crypto_id")}</TableCell>
                                                     <TableCell align="right" className={classes.underline} onClick={(event) => {this._open_link(event, "/coins/" + transaction.crypto_id + "/transactions")}}>{transaction.crypto_id}</TableCell>
                                                 </TableRow>
                                             </TableBody>

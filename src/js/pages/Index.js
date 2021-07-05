@@ -287,7 +287,7 @@ class Index extends React.Component {
     _set_meta_title = (pathname) => {
 
         pathname = pathname.replace("/", "").replace(/\//g, " > ");
-        update_meta_title("CR-WALLET | "+ pathname);
+        update_meta_title("W.C.R. | "+ pathname);
     };
 
     _update_jamy = (state_of_mind, duration) => {

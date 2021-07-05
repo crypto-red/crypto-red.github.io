@@ -94,7 +94,7 @@ class AccountDialogDelete extends React.Component {
                                 onChange={this._handle_account_name_input_change}
                                 onKeyDown={this._handle_key_down_input}
                                 id="name"
-                                label={t( "words.name", {}, {FLC: true})}
+                                label={t( "words.name", {FLC: true})}
                                 type="text"
                                 fullWidth
                             />

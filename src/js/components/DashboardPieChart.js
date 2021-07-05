@@ -184,7 +184,7 @@ class DashboardPieChart extends React.Component {
                                                         cy="50%"
                                                         innerRadius={75}
                                                         outerRadius={100}
-                                                        fill="#131162"
+                                                        fill="#1c1882"
                                                         dataKey="value"
                                                         onMouseEnter={this._on_pie_enter}
                                                     />

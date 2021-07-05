@@ -45,15 +45,39 @@ function t(path = "", variables = {}, parameters = {}) {
         if(is_value_a_plural) { // {dog: 2}
 
             const start_plural_key = Object.entries(variable_value_to_replace)[0][0]; // dog
-            const plural_number_value = Object.entries(variable_value_to_replace)[0][1]; // 2
-            const need_to_find_string = "%s {{" + variable_name_to_replace + "}}";
 
-            const numbered_plural_var_text = plural_number_value <= 1 ?
-                T[locales]["_plurals"][start_plural_key]["one"].toString():
-                T[locales]["_plurals"][start_plural_key]["many"].toString();
+            if(start_plural_key === variable_name_to_replace) {
 
-            const need_to_replace_string = plural_number_value.toString() + " " + numbered_plural_var_text;
-            value_with_variables = value_with_variables.replaceAll(need_to_find_string, need_to_replace_string);
+                let few_how_much = null;
+                let plenty_how_much = null;
+
+                if (Object.entries(variable_value_to_replace)[1][0] === "_n"){
+
+                    few_how_much = Object.entries(variable_value_to_replace)[1][1]["few"] || null;
+                    plenty_how_much = Object.entries(variable_value_to_replace)[1][1]["plenty"] || null;
+                }
+
+                const plural_number_value = Object.entries(variable_value_to_replace)[0][1]; // 2
+                const need_to_find_string = "%s {{" + start_plural_key + "}}";
+
+                let numbered_plural_var_text = plural_number_value <= 1 ? // Either one or many
+                    T[document.documentElement.lang]["_plurals"][start_plural_key]["one"].toString():
+                    T[document.documentElement.lang]["_plurals"][start_plural_key]["many"].toString();
+
+
+                if(few_how_much && plural_number_value > 1 && plural_number_value < few_how_much){  // From one up to few
+
+                    numbered_plural_var_text =  T[document.documentElement.lang]["_plurals"][start_plural_key]["few"].toString();
+                }
+
+                if(plenty_how_much && plural_number_value >= plenty_how_much) { // From plenty up to infinity
+
+                    numbered_plural_var_text =  T[document.documentElement.lang]["_plurals"][start_plural_key]["plenty"].toString();
+                }
+
+                const need_to_replace_string = plural_number_value.toString() + " " + numbered_plural_var_text;
+                value_with_variables = value_with_variables.replaceAll(need_to_find_string, need_to_replace_string);
+            }
 
         }else { // "dog"
 
@@ -64,6 +88,7 @@ function t(path = "", variables = {}, parameters = {}) {
         }
     });
 
+    parameters = Object.assign(variables, parameters);
     if(parameters.fluc || parameters.FLUC || parameters.flc || parameters.FLC) { // First Letter Upper Case
 
         value_with_variables = value_with_variables.charAt(0).toUpperCase() + value_with_variables.slice(1);
@@ -77,6 +102,11 @@ function t(path = "", variables = {}, parameters = {}) {
     if(parameters.tuc || parameters.TUC) { // To Upper Case
 
         value_with_variables = value_with_variables.toUpperCase();
+    }
+
+    if(parameters.tlc || parameters.TLC) { // To Lower Case
+
+        value_with_variables = value_with_variables.toLowerCase();
     }
 
     if(parameters.aed || parameters.AED) { // Add End Dot

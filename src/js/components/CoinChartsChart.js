@@ -1,6 +1,8 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+import { t } from "../utils/t";
+
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
@@ -12,7 +14,7 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import ChartDot from "../icons/ChartDot";
 
 import { scaleTime } from "d3-scale";
-import {utcHour, utcDay, utcMonth, utcWeek} from "d3-time";
+import {utcHour, utcDay, utcMonth, utcWeek, utcYear} from "d3-time";
 
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import price_formatter from "../utils/price-formatter";
@@ -171,7 +173,7 @@ class CoinChartsChart extends React.Component {
                 });
 
                 _ticks_array = this._get_coin_chart_data_ticks(sorted_graph_data, _coin_chart_data_time);
-                const complete_data = this._get_graph_data_with_ticks(sorted_graph_data, _ticks_array );
+                const complete_data = this._get_graph_data_with_ticks(sorted_graph_data, _ticks_array);
 
                 const sorted_complete_graph_data = complete_data.sort(function(a, b) {
                     return a.date - b.date;
@@ -199,17 +201,13 @@ class CoinChartsChart extends React.Component {
 
                 if( !_is_coin_chart_data_loading ) {
 
-                    const _regular_formatted_complete_sorted_data =
+                    const _regular_formatted_complete_sorted_data = _regular_complete_sorted_data["coin_id"].map((element, i, array) => {
 
-                        _regular_complete_sorted_data["coin_id"].map((element, index, array) => {
-
-                            const new_element = {
+                            return {
                                 date: element.date,
                                 value: element.value,
-                                bitcoin: typeof _regular_complete_sorted_data["bitcoin"][index] === "undefined" ? 0: _regular_complete_sorted_data["bitcoin"][index].value
+                                bitcoin: typeof _regular_complete_sorted_data["bitcoin"][i] === "undefined" ? 0: _regular_complete_sorted_data["bitcoin"][i].value
                             };
-
-                            return new_element;
                         });
 
                     this.setState({_regular_complete_sorted_data, _ticks_array, _regular_formatted_complete_sorted_data});
@@ -279,7 +277,7 @@ class CoinChartsChart extends React.Component {
                 return ticks.map(entry => +entry);
             case "max":
 
-                ticks = scale.ticks(utcMonth, 1);
+                ticks = scale.ticks(utcYear, 1);
                 return ticks.map(entry => +entry);
         }
     };
@@ -376,16 +374,16 @@ class CoinChartsChart extends React.Component {
                     <Card className={classes.fullHeight}>
                         <CardContent className={classes.flowRoot}>
                             <ButtonGroup size="small" aria-label="Price and market cap buttons" className={classes.floatLeft}>
-                                <Button className={_coin_chart_data_type === "prices" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_type("prices")}>price</Button>
-                                <Button className={_coin_chart_data_type === "market_caps" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_type("market_caps")}>cap.</Button>
+                                <Button className={_coin_chart_data_type === "prices" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_type("prices")}>{t("words.price")}</Button>
+                                <Button className={_coin_chart_data_type === "market_caps" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_type("market_caps")}>{t("words.cap", {AED: true})}</Button>
                             </ButtonGroup>
                             <ButtonGroup size="small" aria-label="Chart time range button" className={classes.floatRight}>
-                                <Button className={_coin_chart_data_time === "1" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("1")}>1d</Button>
-                                <Button className={_coin_chart_data_time === "7" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("7")}>7d</Button>
-                                <Button className={_coin_chart_data_time === "30" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("30")}>30d</Button>
-                                <Button className={_coin_chart_data_time === "180" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("180")}>180d</Button>
-                                <Button className={_coin_chart_data_time === "360" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("360")}>1y</Button>
-                                <Button className={_coin_chart_data_time === "max" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("max")}>max</Button>
+                                <Button className={_coin_chart_data_time === "1" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("1")}>{t("words.24h")}</Button>
+                                <Button className={_coin_chart_data_time === "7" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("7")}>{t("words.7d")}</Button>
+                                <Button className={_coin_chart_data_time === "30" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("30")}>{t("words.30d")}</Button>
+                                <Button className={_coin_chart_data_time === "180" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("180")}>{t("words.180d")}</Button>
+                                <Button className={_coin_chart_data_time === "360" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("360")}>{t("words.1y")}</Button>
+                                <Button className={_coin_chart_data_time === "max" ? classes.contrastButton: null} onClick={() => this._set_coin_chart_data_time("max")}>{t("words.max")}</Button>
                             </ButtonGroup>
                         </CardContent>
                         <CardContent className={classes.chartCardContent}>
@@ -399,12 +397,10 @@ class CoinChartsChart extends React.Component {
                                                 >
                                                     <defs>
                                                         <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset={1} stopColor="#131162" stopOpacity="0.2"></stop>
-                                                            <stop offset={1} stopColor="#131162" stopOpacity="0.2"></stop>
+                                                            <stop offset={1} stopColor="#1c1882" stopOpacity="0.2"></stop>
                                                         </linearGradient>
                                                         <linearGradient id="colorBtc" x1="0" y1="0" x2="0" y2="1">
-                                                            <stop offset={1} stopColor="#131162" stopOpacity="0"></stop>
-                                                            <stop offset={1} stopColor="#131162" stopOpacity="0"></stop>
+                                                            <stop offset={1} stopColor="#1c1882" stopOpacity="0"></stop>
                                                         </linearGradient>
                                                     </defs>
                                                     <CartesianGrid strokeDasharray="3 3" />
@@ -423,10 +419,10 @@ class CoinChartsChart extends React.Component {
                                                            orientation="right"
                                                            dataKey="bitcoin"
                                                            type={"number"}
-                                                           tickFormatter={bitcoin => this._price_formatter(bitcoin, true, false)}/>
+                                                           tickFormatter={value => this._price_formatter(value, true, false)}/>
                                                    <Tooltip content={data => this._custom_tooltip(data)}/>
                                                     <Area type="monotone" yAxisId="right" stroke="#c6c6d9" fill="url(#colorBtc)" dataKey="bitcoin" strokeLinecap="round" dot={false} strokeWidth={1.5} activeDot={{ strokeWidth: 0, r: 3 }}/>
-                                                    <Area type="monotone" yAxisId="left" stroke="#131162" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={2.5} activeDot={<ChartDot dotColor={"#131162"}/>}/>
+                                                    <Area type="monotone" yAxisId="left" stroke="#1c1882" fill="url(#colorUv)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={2.5} activeDot={<ChartDot dotColor={"#1c1882"}/>}/>
                                                 </AreaChart>
                                             </ResponsiveContainer>:
                                             <Skeleton className={classes.chart} />

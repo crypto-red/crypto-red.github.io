@@ -144,19 +144,19 @@ class AddressDialog extends React.Component {
                                         <Table aria-label="main-info-table">
                                             <TableBody>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t( "words.address", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t( "words.address", {FLC: true})}</TableCell>
                                                     <TableCell align="right">{_address}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t( "words.public key", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t( "words.public key", {FLC: true})}</TableCell>
                                                     <TableCell align="right">{_public_key}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t( "words.private key", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t( "words.private key", {FLC: true})}</TableCell>
                                                     <TableCell align="right">{_private_key}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t( "words.crypto id", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t( "words.crypto id", {FLC: true})}</TableCell>
                                                     <TableCell align="right" className={classes.underline} onClick={(event) => {this._open_link(event, "/coins/" + coin_id + "/transactions")}}>{coin_id}</TableCell>
                                                 </TableRow>
                                             </TableBody>

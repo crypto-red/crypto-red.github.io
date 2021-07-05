@@ -236,58 +236,50 @@ class Dashboard extends React.Component {
         let total_balance_currency = 0;
         let total_balance_currency_before = 0;
         let performed_average_percentage_array = [];
-        let performed_average_currency_array = [];
-        let total_balance_currency_before_list = [];
 
         Object.entries(_balance).forEach(entry => {
 
             const [key, value] = entry;
 
             let coin_market = null;
+            let performed_average = 0;
 
             for (let i = 0; i < _coins_markets.length; i++) {
 
                 if(_coins_markets[i].id === key) {
 
                     coin_market = _coins_markets[i]
+                    performed_average = coin_market.price_change_percentage_1y_in_currency > 0 ?
+                        (coin_market.price_change_percentage_1y_in_currency / 100) + 1:
+                        1 - (coin_market.price_change_percentage_1y_in_currency / 100);
 
                     if(key === "bitcoin") {
-                        performed_average_percentage_btc = (coin_market.price_change_percentage_1y_in_currency / 100) + 1;
+                        performed_average_percentage_btc = performed_average;
                     }
                 }
             }
 
-            const price_change_1y_in_currency = (coin_market.price_change_percentage_1y_in_currency / 100) + 1;
             const in_currency_value = coin_market.current_price * value;
-            const price_performed_1y_in_currency =  price_change_1y_in_currency;
-            performed_average_percentage_array.push(price_change_1y_in_currency);
-            performed_average_currency_array.push(in_currency_value);
+            performed_average_percentage_array.push(performed_average);
             total_balance_currency += in_currency_value;
             if(value){number_of_coins_performed_with_value++}
-            // (+101% resulting in 2..., is in fact 101%+100% * value_before resulting in 2... therefore 2 / 201%... is value_before) ---> now_value_in_fiat / now_percent + 100% = value_before_IN_FIAT
 
-            const price_performed_iy_ago_in_currency = parseFloat(in_currency_value / price_performed_1y_in_currency);
-            total_balance_currency_before_list.push(price_performed_iy_ago_in_currency);
+            const price_performed_iy_ago_in_currency = in_currency_value * performed_average;
             total_balance_currency_before += price_performed_iy_ago_in_currency;
         });
 
-
-        let performed_average_percentage_total = 0;
-
-        performed_average_percentage_array.forEach(function(value, index, array){
-            performed_average_percentage_total += value;
-        });
-
-        let performed_average_percentage_weighted = parseFloat(total_balance_currency / total_balance_currency_before) - 1;
-
         const number_of_coins_performed = performed_average_percentage_array.length;
-        const performed_average_percentage = performed_average_percentage_total / number_of_coins_performed;
 
-        const performed_average_percentage_weighted_on_btc = (performed_average_percentage_weighted > 0 ? performed_average_percentage_weighted + 1: performed_average_percentage_weighted) / performed_average_percentage_btc;
+        const performed_average_percentage_weighted = total_balance_currency / total_balance_currency_before; // 0.5 || 0.9 || 1.2 || 4
+        const performed_average_percentage_weighted_on_btc = (performed_average_percentage_weighted / performed_average_percentage_btc) < 1 ?
+            (1 / (performed_average_percentage_weighted / performed_average_percentage_btc)) * -1:
+            (performed_average_percentage_weighted / performed_average_percentage_btc);
 
+        const change_average_percentage_weighted = performed_average_percentage_weighted < 0 ? performed_average_percentage_weighted: performed_average_percentage_weighted - 1;
         const portfolio = {
             performed_average_percentage_weighted_on_btc,
             performed_average_percentage_weighted,
+            change_average_percentage_weighted,
             total_balance_currency,
             number_of_coins_performed,
             number_of_coins_performed_with_value
@@ -358,16 +350,16 @@ class Dashboard extends React.Component {
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
-                                        text_content={portfolio !== null ? ((portfolio.performed_average_percentage_weighted_on_btc * 100) || 0).toFixed(2)+" / 100": null}
+                                        text_content={portfolio !== null ? ((portfolio.performed_average_percentage_weighted_on_btc) || 0).toFixed(2): null}
                                         label_content={t( "pages.dashboard.performed_btc")}
-                                        icon_component={portfolio !== null ? portfolio.performed_average_percentage_weighted_on_btc < 1 ? <CloseIcon />: <CheckIcon />: null}
+                                        icon_component={portfolio !== null ? portfolio.performed_average_percentage_weighted_on_btc < 0 ? <CloseIcon />: <CheckIcon />: null}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
-                                        text_content={portfolio !== null ? ((portfolio.performed_average_percentage_weighted * 100) || 0).toFixed(0) + "%": null}
+                                        text_content={portfolio !== null ? ((portfolio.change_average_percentage_weighted * 100) || 0).toFixed(0) + "%": null}
                                         label_content={t( "pages.dashboard.performed_percent")}
-                                        icon_component={portfolio !== null ? portfolio.performed_average_percentage_weighted > 0 ? <TrendingUpIcon />: <TrendingDownIcon />: null}
+                                        icon_component={portfolio !== null ? portfolio.change_average_percentage_weighted > 0 ? <TrendingUpIcon />: <TrendingDownIcon />: null}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={6} xl={8} className={classes.gridItem}>

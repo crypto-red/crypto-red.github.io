@@ -132,7 +132,7 @@ class AccountDialogOpen extends React.Component {
                                     helperText={error ? t( "sentences.wrong password"): ""}
                                     autoFocus
                                     id="password"
-                                    label={t( "words.password", {}, {FLC: true})}
+                                    label={t( "words.password", {FLC: true})}
                                     type="password"
                                     fullWidth
                                 />

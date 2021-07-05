@@ -6,6 +6,7 @@ module.exports = {
         }
     },
     words: {
+        "unknown": "unknown",
         "error": "error",
         "ok": "ok",
         "message": "message",
@@ -41,8 +42,11 @@ module.exports = {
         "24h": "24h",
         "7d": "7d",
         "30d": "30d",
+        "180d": "180d",
+        "max": "max",
         "1y": "1y",
         "price": "price",
+        "cap": "cap",
         "market cap": "market cap",
         "public key": "public key",
         "private key": "private key",
@@ -471,9 +475,20 @@ module.exports = {
         },
         transaction: {
             unconfirmed: "(Unconfirmed)",
+            send_from: "Send from {{address}}",
+            send_to: "Send to {{address}}",
         },
         transaction_dialog: {
             title: "Transaction's ID {{transaction_id}}",
+            send_at: "Send the",
+            send_from: "Send from",
+            send_to_public_key: "Send to public key",
+            send_from_public_key: "Send from public key",
+            send_to: "Send to",
+            memo: "Memo",
+            amount: "Amount",
+            fees: "Fees",
+            crypto_id: "Crypto ID",
         }
     },
     pages: {

@@ -71,10 +71,10 @@ class CoinChartsRadar extends React.Component {
         const { classes, coin_data } = this.state;
 
         const market_radar_card_data = coin_data !== null ? [
-            { domain: t( "words.feelings", {}, {FLC: true}), score: coin_data.sentiment_votes_up_percentage },
-            { domain: t( "words.average score", {}, {FLC: true}), score: coin_data.coingecko_score },
-            { domain: t( "words.development score", {}, {FLC: true}), score: coin_data.developer_score },
-            { domain: t( "words.liquidity", {}, {FLC: true}), score: coin_data.liquidity_score }
+            { domain: t( "words.feelings", {FLC: true}), score: coin_data.sentiment_votes_up_percentage },
+            { domain: t( "words.average score", {FLC: true}), score: coin_data.coingecko_score },
+            { domain: t( "words.development score", {FLC: true}), score: coin_data.developer_score },
+            { domain: t( "words.liquidity", {FLC: true}), score: coin_data.liquidity_score }
         ]: [];
 
         const market_score_card = coin_data !== null ?
@@ -89,7 +89,7 @@ class CoinChartsRadar extends React.Component {
                                         <PolarGrid/>
                                         <PolarAngleAxis dataKey="domain" />
                                         <PolarRadiusAxis angle={90} />
-                                        <Radar name={coin_data.name} dataKey="score" stroke="#131162" fill="#131162"  dot={false} strokeWidth={3} activeDot={<ChartDot dotColor={"#131162"}/>} fillOpacity={0.2} />
+                                        <Radar name={coin_data.name} dataKey="score" stroke="#1c1882" fill="#1c1882"  dot={false} strokeWidth={3} activeDot={<ChartDot dotColor={"#1c1882"}/>} fillOpacity={0.2} />
                                         <Tooltip content={data => this._custom_tooltip(data)}/>
                                     </RadarChart>
                                 </ResponsiveContainer>

@@ -122,33 +122,33 @@ class CoinSendDialog extends React.Component {
                                         <Table>
                                             <TableBody>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.send from", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.send from", {FLC: true})}</TableCell>
                                                     <TableCell align="right" className={classes.breakWord}>{transaction.send_from}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.send to", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.send to", {FLC: true})}</TableCell>
                                                     <TableCell align="right" className={classes.breakWord}>{transaction.send_to}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.memo", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.memo", {FLC: true})}</TableCell>
                                                     <TableCell align="right" className={classes.breakWord}>{transaction.memo}</TableCell>
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.amount", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.amount", {FLC: true})}</TableCell>
                                                     {_coin_data ?
                                                         <TableCell align="right">{price_formatter(parseFloat(transaction.amount_crypto), _coin_data.symbol, selected_locales_code)} ({price_formatter(amount_sent_fiat, selected_currency, selected_locales_code)})</TableCell>
                                                         : null
                                                     }
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.fee", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.fee", {FLC: true})}</TableCell>
                                                     {_coin_data ?
                                                         <TableCell align="right">{price_formatter(parseFloat(transaction.fee_crypto), _coin_data.symbol, selected_locales_code)} ({price_formatter(amount_fee_fiat, selected_currency, selected_locales_code)})</TableCell>
                                                         : null
                                                     }
                                                 </TableRow>
                                                 <TableRow>
-                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.crypto id", {}, {FLC: true})}</TableCell>
+                                                    <TableCell align="left" className={classes.tableCellBold}>{t("words.crypto id", {FLC: true})}</TableCell>
                                                     <TableCell align="right">{transaction.crypto_id}</TableCell>
                                                 </TableRow>
                                             </TableBody>

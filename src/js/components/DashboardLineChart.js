@@ -334,8 +334,8 @@ class DashboardLineChart extends React.Component {
                                                         >
                                                             <defs>
                                                                 <linearGradient id="splitColor" x1="0" y1="0" x2="0" y2="1">
-                                                                    <stop offset={() => this.gradient_offset(data)} stopColor="#131162" stopOpacity={.2} />
-                                                                    <stop offset={() => this.gradient_offset(data)} stopColor="#131162" stopOpacity={.2} />
+                                                                    <stop offset={() => this.gradient_offset(data)} stopColor="#1c1882" stopOpacity={.2} />
+                                                                    <stop offset={() => this.gradient_offset(data)} stopColor="#1c1882" stopOpacity={.2} />
                                                                 </linearGradient>
                                                             </defs>
                                                             <CartesianGrid strokeDasharray="3 3" />
@@ -349,7 +349,7 @@ class DashboardLineChart extends React.Component {
                                                                    type={"number"}
                                                                    tickFormatter={value => this._price_formatter(value, true, true)}/>
                                                             <Tooltip content={data => this._custom_tooltip(data)} />
-                                                            <Area type="monotone" stroke="#131162" fill="url(#splitColor)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3} activeDot={<ChartDot dotColor={"#131162"}/>}/>
+                                                            <Area type="monotone" stroke="#1c1882" fill="url(#splitColor)" dataKey="value" strokeLinecap="round" dot={false} strokeWidth={3} activeDot={<ChartDot dotColor={"#1c1882"}/>}/>
                                                         </AreaChart>
                                                     </ResponsiveContainer>
                                                 </div>

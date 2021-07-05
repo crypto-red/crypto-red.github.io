@@ -354,7 +354,7 @@ class CryptDialog extends React.Component {
                                     error={_is_message_input_error}
                                     helperText={_is_message_input_error ? t( "sentences.something is incorrect"): ""}
                                     id="message"
-                                    label={t( "words.message", {}, {FLC: true})}
+                                    label={t( "words.message", {FLC: true})}
                                     type="text"
                                     fullWidth
                                 />
@@ -364,7 +364,7 @@ class CryptDialog extends React.Component {
                                     error={_is_public_key_input_error}
                                     helperText={_is_public_key_input_error ? t( "sentences.something is incorrect"): ""}
                                     id="public-key"
-                                    label={t( "words.public key", {}, {FLC: true})}
+                                    label={t( "words.public key", {FLC: true})}
                                     type="text"
                                     fullWidth
                                 />
@@ -375,7 +375,7 @@ class CryptDialog extends React.Component {
                                         error={_is_private_key_input_error}
                                         helperText={( _is_private_key_input_error) ? t( "sentences.something is incorrect"): ""}
                                         id="private-key"
-                                        label={t( "words.private key", {}, {FLC: true})}
+                                        label={t( "words.private key", {FLC: true})}
                                         type="password"
                                         fullWidth
                                     />

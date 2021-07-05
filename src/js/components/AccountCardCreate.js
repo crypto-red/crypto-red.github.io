@@ -63,19 +63,19 @@ class AccountCardCreate extends React.Component {
                             <Jdenticon size="48" value="_new" />
                         </Avatar>
                     }
-                    title={t( "sentences.new account", {}, {FLC: true})}
-                    subheader={t( "words.today", {}, {FLC: true})}
+                    title={t( "sentences.new account", {FLC: true})}
+                    subheader={t( "words.today", {FLC: true})}
                 />
                 <CardContent>
                     <h2 className={classes.createNewCardActionArea}>
-                        {t( "sentences.no balance", {}, {FLC: true})}
+                        {t( "sentences.no balance", {FLC: true})}
                     </h2>
                 </CardContent>
                 <CardActions className={classes.cardAction}>
                     <Button startIcon={<AddIcon />}
                             className={classes.floatRight}
                             color="primary">
-                        {t( "words.new", {})}
+                        {t( "words.new")}
                     </Button>
                 </CardActions>
             </Card>

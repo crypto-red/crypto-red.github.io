@@ -69,7 +69,7 @@ class CoinChartsAddress extends React.Component {
                     cancel={this._cancel_address_and_keys_dialog}/>
                 <Fade in>
                     <Card>
-                        <CardHeader title={t("words.address", {}, {FLC: true})} />
+                        <CardHeader title={t("words.address", {FLC: true})} />
                         <CardContent>
                             <AddressListItem
                                 key={coin_id}

@@ -299,7 +299,7 @@ class AccountCard extends React.Component {
                                         <ListItemIcon>
                                             <DeleteIcon fontSize="small" />
                                         </ListItemIcon>
-                                        <ListItemText primary={t("words.delete", {}, {FLC: true})}/>
+                                        <ListItemText primary={t("words.delete", {FLC: true})}/>
                                     </MenuItem>
                                     {
                                         current ?
@@ -307,7 +307,7 @@ class AccountCard extends React.Component {
                                                 <ListItemIcon>
                                                     <BackupIcon fontSize="small" />
                                                 </ListItemIcon>
-                                                <ListItemText primary={t("words.backup", {}, {FLC: true})}/>
+                                                <ListItemText primary={t("words.backup", {FLC: true})}/>
                                             </MenuItem>: null
                                     }
                                     {
@@ -316,7 +316,7 @@ class AccountCard extends React.Component {
                                                 <ListItemIcon>
                                                     <RefreshIcon fontSize="small" />
                                                 </ListItemIcon>
-                                                <ListItemText primary={t("words.refresh", {}, {FLC: true})}/>
+                                                <ListItemText primary={t("words.refresh", {FLC: true})}/>
                                             </MenuItem>: null
                                     }
 
@@ -334,11 +334,11 @@ class AccountCard extends React.Component {
                                         {Boolean(coins_markets) ?
                                             <Fade timeout={display_after_ms+50} in><span>{_price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span></Fade>
                                             :
-                                            t("sentence.loading", {}, {FLC: true})
+                                            t("sentence.loading", {FLC: true})
                                         }
                                     </h2>:
                                     <h2 className={classes.balance}>
-                                        <Fade timeout={display_after_ms+50} in><span>Unknown</span></Fade>
+                                        <Fade timeout={display_after_ms+50} in><span>{t("words.unknown", {TUC: true})}</span></Fade>
                                     </h2>
                             }
                         </CardContent>

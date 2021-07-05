@@ -402,7 +402,7 @@ class CoinSend extends React.Component {
                         <Container maxWidth="sm" className={classes.container}>
                             <Card>
                                 <CardHeader
-                                    title={t( "words.send", {}, {FLC: true})}
+                                    title={t( "words.send", {FLC: true})}
                                 />
                                 <CardContent>
 
@@ -419,7 +419,7 @@ class CoinSend extends React.Component {
                                                         error={_send_address_input_error}
                                                         helperText={_send_address_input_error ? t( "sentences.incorrect address"): ""}
                                                         id="address"
-                                                        label={t( "words.address", {}, {FLC: true})}
+                                                        label={t( "words.address", {FLC: true})}
                                                         type="text"
                                                         fullWidth
                                                     />
@@ -430,7 +430,7 @@ class CoinSend extends React.Component {
                                                         error={_send_amount_input_error}
                                                         helperText={_send_amount_input_error ? t( "sentences.incorrect amount"): ""}
                                                         id="amount"
-                                                        label={t( "words.amount", {}, {FLC: true})}
+                                                        label={t( "words.amount", {FLC: true})}
                                                         type="number"
                                                         fullWidth
                                                     />
@@ -442,7 +442,7 @@ class CoinSend extends React.Component {
                                                         helperText={_send_message_input_error ? t( "sentences.incorrect message"): ""}
                                                         disabled={_send_transaction_info.max_message_length === 0}
                                                         id="message"
-                                                        label={t( "words.message", {}, {FLC: true})}
+                                                        label={t( "words.message", {FLC: true})}
                                                         type="text"
                                                         multiline
                                                         fullWidth

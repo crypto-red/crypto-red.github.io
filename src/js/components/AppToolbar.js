@@ -403,7 +403,7 @@ class AppToolbar extends React.Component {
                                 <ListItemIcon>
                                     <SettingsIcon fontSize="small" />
                                 </ListItemIcon>
-                                <ListItemText primary={t( "words.settings", {}, {FLC: true})}/>
+                                <ListItemText primary={t( "words.settings", {FLC: true})}/>
                             </MenuItem>
                             {
                                 Boolean(panic_mode) ?
@@ -413,7 +413,7 @@ class AppToolbar extends React.Component {
                                         <ListItemIcon>
                                             <SecurityIcon fontSize="small" />
                                         </ListItemIcon>
-                                        <ListItemText primary={t( "words.reset", {}, {TUC: true})}/>
+                                        <ListItemText primary={t( "words.reset", {TUC: true})}/>
                                     </MenuItem>
                                 </div>: null
                             }

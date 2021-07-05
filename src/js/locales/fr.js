@@ -6,6 +6,7 @@ module.exports = {
         }
     },
     words: {
+        "unknown": "inconnu",
         "error": "erreur",
         "ok": "ok",
         "message": "message",
@@ -41,12 +42,15 @@ module.exports = {
         "24h": "24h",
         "7d": "7j",
         "30d": "30j",
+        "180d": "180j",
         "1y": "1an",
+        "max": "max",
         "price": "prix",
+        "cap": "cap",
         "market cap": "Cap. boursière",
         "public key": "clé publique",
         "private key": "clé privée",
-        "crypto id": "ID de cypto",
+        "crypto id": "ID de crypto",
         "total supply": "nombre émit",
         "all-time high": "le plus haut",
         "all-time low": "le plus bas",
@@ -374,12 +378,12 @@ module.exports = {
             title: "Dernières transactions",
         },
         dashboard_pie_chart: {
-            title: "Portefeuille et solde",
+            title: "Répartition des actifs",
         },
         dashboard_quick_card_mobile: {
             total: "Solde total :",
-            number: "Nombre de crypto-monnaies:",
-            btc_performance: "A fait / BTC:",
+            number: "Nombre d'actifs :",
+            btc_performance: "A fait / BTC :",
             performance: "A fait :",
         },
         drawer_content: {
@@ -448,10 +452,21 @@ module.exports = {
             thanks_for_sharing: "Super, merci pour le partage !",
         },
         transaction: {
-            unconfirmed: "(Non confirmé)",
+            unconfirmed: "(Non confirmée)",
+            send_from: "Envoyée de {{address}}",
+            send_to: "Envoyée à {{address}}",
         },
         transaction_dialog: {
             title: "Transaction identifiée par {{transaction_id}}",
+            send_at: "Envoyée le",
+            send_from: "Envoyé de",
+            send_to_public_key: "Envoyée à la clé publique",
+            send_from_public_key: "Envoyée de la clé publique",
+            send_to: "Envoyé à",
+            memo: "Mémo",
+            amount: "Montant",
+            fees: "Frais",
+            crypto_id: "ID de crypto",
         }
     },
     pages: {

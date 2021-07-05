@@ -238,13 +238,13 @@ class AccountDialogCreate extends React.Component {
 
             let suggestions_and_warning = "";
 
-            suggestions_and_warning += _password_evaluation.feedback.warning ? t("sentences." + _password_evaluation.feedback.warning.replaceAll(".", ""), {}, {FAW: true}): "";
+            suggestions_and_warning += _password_evaluation.feedback.warning ? t("sentences." + _password_evaluation.feedback.warning.replaceAll(".", ""), {FAW: true}): "";
 
             if(_password_evaluation.feedback.suggestions.length) {
 
                 _password_evaluation.feedback.suggestions.forEach((suggestion) => {
 
-                    suggestions_and_warning += "\n" + t("sentences." + suggestion.replaceAll(".", ""), {}, {FAW: true});
+                    suggestions_and_warning += "\n" + t("sentences." + suggestion.replaceAll(".", ""), {FAW: true});
                 });
             }
 
@@ -426,7 +426,7 @@ class AccountDialogCreate extends React.Component {
                             helperText={_is_account_name_error ? t( "sentences.account name cannot be empty"): ""}
                             onKeyDown={this._handle_key_down_input_one}
                             id="name"
-                            label={t( "words.name", {}, {FLC: true})}
+                            label={t( "words.name", {FLC: true})}
                             type="text"
                             fullWidth
                         />
@@ -437,7 +437,7 @@ class AccountDialogCreate extends React.Component {
                             helperText={_is_account_password_error ? t( "sentences.wrong password input"): ""}
                             onKeyDown={this._handle_key_down_input_two}
                             id="password"
-                            label={t( "words.password", {}, {FLC: true})}
+                            label={t( "words.password", {FLC: true})}
                             type="password"
                             fullWidth
                         />
@@ -448,7 +448,7 @@ class AccountDialogCreate extends React.Component {
                             helperText={_is_account_confirmation_error ? t( "sentences.wrong password confirmation"): ""}
                             onKeyDown={this._handle_key_down_input_three}
                             id="confirmation"
-                            label={t( "words.confirmation", {}, {FLC: true})}
+                            label={t( "words.confirmation", {FLC: true})}
                             type="password"
                             fullWidth
                         />

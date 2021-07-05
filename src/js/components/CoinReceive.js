@@ -154,7 +154,7 @@ class CoinReceive extends React.Component {
                         <Container maxWidth="sm" className={classes.container}>
                             <Card>
                                 <CardHeader
-                                    title={t( "words.receive", {}, {FLC: true})}
+                                    title={t( "words.receive", {FLC: true})}
                                 />
                                 <CardContent>
                                     {_address ?
@@ -174,7 +174,7 @@ class CoinReceive extends React.Component {
                                                     excavate: true,
                                                 }}/>
                                             <FormControl fullWidth>
-                                                <InputLabel htmlFor="address">Address</InputLabel>
+                                                <InputLabel htmlFor="address">{t("words.address", {FLC: true})}</InputLabel>
                                                 <Input
                                                     value={_address}
                                                     id="address"

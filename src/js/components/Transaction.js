@@ -169,7 +169,7 @@ class Transaction extends React.Component {
             const amount_fiat = _full_transaction.amount_crypto * _coin_data.market_data.current_price[selected_currency.toLowerCase()];
             const feedback = (_full_transaction.send_from === _full_transaction.send_to);
             const important_address = received ? _full_transaction.send_from: _full_transaction.send_to;
-            const important_address_text = received ? "Send from " + important_address: "Send to " + _full_transaction.send_to;
+            const important_address_text = received ? t("components.transaction.send_from", {address: important_address}): t("components.transaction.send_to", {address: important_address});
 
             component =
                 <ListItem onClick={(event) => {this.props.open(event, _full_transaction)}} className={classes.listItem} button>
