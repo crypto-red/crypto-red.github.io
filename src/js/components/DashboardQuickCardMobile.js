@@ -74,11 +74,11 @@ class DashboardQuickCardMobile extends React.Component {
                                     </TableRow>
                                     <TableRow>
                                         <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t( "components.dashboard_quick_card_mobile.btc_performance"): <Skeleton/>}</TableCell>
-                                        <TableCell align="right">{portfolio !== null ? (portfolio.performed_average_percentage_weighted_on_btc || 0).toFixed(2): <Skeleton/>}</TableCell>
+                                        <TableCell align="right">{portfolio !== null ? (portfolio.change_average_percentage_weighted_btc * 100 || 0).toFixed(2) + "%": <Skeleton/>}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t( "components.dashboard_quick_card_mobile.performance"): <Skeleton/>}</TableCell>
-                                        <TableCell align="right">{portfolio !== null ? ((portfolio.performed_average_percentage_weighted * 100) || 0).toFixed(0) + "%": <Skeleton/>}</TableCell>
+                                        <TableCell align="right">{portfolio !== null ? ((portfolio.change_average_percentage_weighted * 100) || 0).toFixed(0) + "%": <Skeleton/>}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>

@@ -251,7 +251,7 @@ class Dashboard extends React.Component {
                     coin_market = _coins_markets[i]
                     performed_average = coin_market.price_change_percentage_1y_in_currency > 0 ?
                         (coin_market.price_change_percentage_1y_in_currency / 100) + 1:
-                        1 - (coin_market.price_change_percentage_1y_in_currency / 100);
+                        1 - (-coin_market.price_change_percentage_1y_in_currency / 100);
 
                     if(key === "bitcoin") {
                         performed_average_percentage_btc = performed_average;
@@ -264,20 +264,30 @@ class Dashboard extends React.Component {
             total_balance_currency += in_currency_value;
             if(value){number_of_coins_performed_with_value++}
 
-            const price_performed_iy_ago_in_currency = in_currency_value * performed_average;
+            const price_performed_iy_ago_in_currency = in_currency_value / performed_average;
             total_balance_currency_before += price_performed_iy_ago_in_currency;
         });
 
         const number_of_coins_performed = performed_average_percentage_array.length;
 
         const performed_average_percentage_weighted = total_balance_currency / total_balance_currency_before; // 0.5 || 0.9 || 1.2 || 4
-        const performed_average_percentage_weighted_on_btc = (performed_average_percentage_weighted / performed_average_percentage_btc) < 1 ?
-            (1 / (performed_average_percentage_weighted / performed_average_percentage_btc)) * -1:
-            (performed_average_percentage_weighted / performed_average_percentage_btc);
 
-        const change_average_percentage_weighted = performed_average_percentage_weighted < 0 ? performed_average_percentage_weighted: performed_average_percentage_weighted - 1;
+        const change_average_percentage_weighted = performed_average_percentage_weighted > 1 ?
+            performed_average_percentage_weighted - 1:
+            -(1 - performed_average_percentage_weighted);
+
+        const change_btc_average_percentage_weighted = performed_average_percentage_btc > 1 ?
+            performed_average_percentage_btc - 1:
+            -(1 - performed_average_percentage_btc);
+
+        const performed_average_percentage_weighted_on_btc = change_average_percentage_weighted / change_btc_average_percentage_weighted;
+        const change_average_percentage_weighted_btc = performed_average_percentage_weighted_on_btc > 1 ?
+            performed_average_percentage_weighted_on_btc - 1:
+            -(1 - performed_average_percentage_weighted_on_btc);
+
         const portfolio = {
             performed_average_percentage_weighted_on_btc,
+            change_average_percentage_weighted_btc,
             performed_average_percentage_weighted,
             change_average_percentage_weighted,
             total_balance_currency,
@@ -350,9 +360,9 @@ class Dashboard extends React.Component {
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
-                                        text_content={portfolio !== null ? ((portfolio.performed_average_percentage_weighted_on_btc) || 0).toFixed(2): null}
+                                        text_content={portfolio !== null ? ((portfolio.change_average_percentage_weighted_btc * 100) || 0).toFixed(2) + "%": null}
                                         label_content={t( "pages.dashboard.performed_btc")}
-                                        icon_component={portfolio !== null ? portfolio.performed_average_percentage_weighted_on_btc < 0 ? <CloseIcon />: <CheckIcon />: null}
+                                        icon_component={portfolio !== null ? portfolio.change_average_percentage_weighted_btc < 0 ? <CloseIcon />: <CheckIcon />: null}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
