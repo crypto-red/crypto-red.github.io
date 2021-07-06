@@ -8,7 +8,7 @@
     "src": "service-worker.js",
     "scope": "/"
   },
-  "short_name": "CR WALLET",
+  "short_name": "W.C.R.",
   "description": "Fast and very simple cryptocurrency wallet.",
   "display": "standalone",
   "theme_color": "#060f23",
@@ -22,6 +22,15 @@
       "src": "/src/images/manifest/icon-white.png",
       "sizes": "2048x2048",
       "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "WALLET.CRYPTO.RED",
+      "short_name": "W.C.R.",
+      "description": "Fast and very simple cryptocurrency wallet.",
+      "url": "/",
+      "icons": [{ "src": "/src/images/logo-transparent.png", "sizes": "640x640" }]
     }
   ]
 }

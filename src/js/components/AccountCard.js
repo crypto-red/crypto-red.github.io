@@ -81,8 +81,12 @@ const styles = theme => ({
     floatRight: {
         float: "right"
     },
-    avatar: {
-        backgroundColor: "transparent"
+    avatarConnected: {
+        backgroundColor: "transparent",
+        cursor: "pointer",
+    },
+    avatarDisconnected: {
+        backgroundColor: "transparent",
     },
     styledBadgeConnected: {
         "& .MuiBadge-badge": {
@@ -275,7 +279,7 @@ class AccountCard extends React.Component {
                                     horizontal: "right",
                                 }}
                                 variant="dot">
-                                <Avatar className={classes.avatar} variant="square">
+                                <Avatar className={current ? classes.avatarConnected: classes.avatarDisconnected} variant="square" onClick={this._open_account_dashboard}>
                                     <Jdenticon size="48" value={account.name} />
                                 </Avatar>
                             </Badge>

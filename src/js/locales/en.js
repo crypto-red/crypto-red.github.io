@@ -165,7 +165,7 @@ module.exports = {
         "capitalization doesnt help very much": "Capitalization doesn't help very much.",
         "all-uppercase is almost as easy to guess as all-lowercase": "All-uppercase is almost as easy to guess as all-lowercase.",
         "reversed words arent much harder to guess": "Reversed words aren't much harder to guess.",
-        "predictable substitutions like @ instead of a don't help very much": "Predictable substitutions like '@' instead of 'a' don't help very much.",
+        "predictable substitutions like @ instead of a dont help very much": "Predictable substitutions like '@' instead of 'a' don't help very much.",
     },
     components: {
         about_faq: {

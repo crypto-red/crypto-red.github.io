@@ -60,7 +60,8 @@ const styles = theme => ({
         },
         [theme.breakpoints.down("sm")]: {
             "& .MuiDialog-container .MuiDialog-paper": {
-                margin: "24px 0px",
+                margin: "0px 0px",
+                maxHeight: "100%",
                 borderRadius: 0,
                 width: "100vw",
             },

@@ -77,19 +77,13 @@ class Accounts extends React.Component {
             _selected_locales_code: null,
             _selected_currency: null,
             _sfx_enabled: true,
+            _coins_id: COINS.map(c => c.id)
         };
     };
 
     componentDidMount() {
 
-        let coins_id = [];
-
-        for (let i = 0; i < COINS.length; i++) {
-
-            coins_id.push(COINS[i].id);
-        }
-
-        this.setState({_coins_id: coins_id}, this._update_settings);
+        this._update_settings();
 
         actions.trigger_loading_update(0);
         setTimeout(() => {
@@ -102,16 +96,19 @@ class Accounts extends React.Component {
 
         const { _coins_id } = this.state;
 
-        // Set new settings from query result
-        const _sfx_enabled = settings.sfx_enabled;
-        const _selected_locales_code = settings.locales;
-        const _selected_currency = settings.currency;
+        if(!error) {
 
-        this.setState({ _sfx_enabled, _selected_locales_code, _selected_currency }, function(){
-            this._get_accounts();
-            this._is_logged();
-            api.get_coins_markets(_coins_id, _selected_currency.toLowerCase(), this._set_coins_markets);
-        });
+            // Set new settings from query result
+            const _selected_locales_code = settings.locales || "en-US";
+            const _selected_currency = settings.currency || "USD";
+
+            this.setState({  _selected_locales_code, _selected_currency }, () => {
+
+                this._get_accounts();
+                this._is_logged();
+                api.get_coins_markets(_coins_id, _selected_currency.toLowerCase(), this._set_coins_markets);
+            });
+        }
     };
 
     _set_coins_markets = (error, data) => {
@@ -151,7 +148,7 @@ class Accounts extends React.Component {
     _process_get_accounts_result = (error, result) => {
 
         const _accounts = error ? []: result;
-        const _no_accounts_db = _accounts.length ? false: true;
+        const _no_accounts_db = !_accounts.length;
         this.setState({_accounts, _no_accounts_db}, () => {
 
             actions.trigger_loading_update(100);
@@ -326,15 +323,15 @@ class Accounts extends React.Component {
                         return (
                             <Grid item xs={12} sm={6} lg={3} className={classes.gridItem} key={account.name}>
                                 <AccountCard
-                                             onToggle={this._toggle_account}
-                                             coins_markets={_coins_markets}
-                                             current={(logged_account_name === account.name)}
-                                             delete={this._open_delete_account_dialog}
-                                             backup={this._backup_account}
-                                             account={(logged_account_name === account.name) ? _logged_account: account}
-                                             display_after_ms={(index+1)*300}
-                                             selected_locales_code={_selected_locales_code}
-                                             selected_currency={_selected_currency}/>
+                                    onToggle={this._toggle_account}
+                                    coins_markets={_coins_markets}
+                                    current={(logged_account_name === account.name)}
+                                    delete={this._open_delete_account_dialog}
+                                    backup={this._backup_account}
+                                    account={(logged_account_name === account.name) ? _logged_account: account}
+                                    display_after_ms={(index+1)*300}
+                                    selected_locales_code={_selected_locales_code}
+                                    selected_currency={_selected_currency}/>
                             </Grid>
                         )})
                     }

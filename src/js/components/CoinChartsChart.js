@@ -203,10 +203,12 @@ class CoinChartsChart extends React.Component {
 
                     const _regular_formatted_complete_sorted_data = _regular_complete_sorted_data["coin_id"].map((element, i, array) => {
 
+                            const bitcoin_index = (_regular_complete_sorted_data["bitcoin"].length - array.length) + i;
+
                             return {
                                 date: element.date,
                                 value: element.value,
-                                bitcoin: typeof _regular_complete_sorted_data["bitcoin"][i] === "undefined" ? 0: _regular_complete_sorted_data["bitcoin"][i].value
+                                bitcoin: typeof _regular_complete_sorted_data["bitcoin"][bitcoin_index] === "undefined" ? 0: _regular_complete_sorted_data["bitcoin"][bitcoin_index].value
                             };
                         });
 

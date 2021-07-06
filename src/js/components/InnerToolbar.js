@@ -65,11 +65,14 @@ const styles = theme => ({
     innerToolbarProgress: {
         position: "inherit",
         display: "flex",
+        width: "100%",
     },
     linearProgressVisible: {
         "& .MuiLinearProgress-barColorPrimary": {
             backgroundColor: theme.palette.primary.action,
+            zIndex: -1,
         },
+        zIndex: 1,
         marginTop: -4,
         height: 4,
         backgroundColor: "transparent",
@@ -126,7 +129,7 @@ class InnerToolbar extends React.Component {
                         {pathame_items}
                     </span>
                     <div className={classes.innerToolbarProgress}>
-                        <LinearProgress color="primary" variant="determinate" className={classes.linearProgressVisible} value={100 - loaded_progress_percent} style={{transform: "scaleX(-1)", webkitTransform: "scaleX(-1)"}}/>
+                        <LinearProgress color="primary" variant="determinate" className={classes.linearProgressVisible} value={100 - loaded_progress_percent} style={{transform: "rotate(-180deg)", webkitTransform: "rotate(-180deg)"}}/>
                         <LinearProgress color="primary" variant="determinate" className={classes.linearProgressVisible} value={100 - loaded_progress_percent} />
                     </div>
                 </span>

@@ -6,6 +6,8 @@ import { t } from "../utils/t";
 
 import { AutoRotatingCarousel, Slide } from "material-auto-rotating-carousel";
 import Snackbar from "@material-ui/core/Snackbar";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
 import Toolbar from "@material-ui/core/Toolbar";
 
 import AppToolbar from "../components/AppToolbar";
@@ -49,7 +51,7 @@ const styles = theme => ({
     },
     snackbar: {
         "& .MuiSnackbarContent-root	": {
-            backgroundColor: theme.palette.primary.dark
+            backgroundColor: theme.palette.primary.actionDarker
         }
     },
     snackbarSuccess: {
@@ -250,20 +252,20 @@ class Index extends React.Component {
 
     _process_settings_query_result = (error, settings) => {
 
-        // Set new settings from query result
-        const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: true;
-        const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: true;
-        const _selected_locales_code = settings.locales || "en-US";
-        const _language = _selected_locales_code.split("-")[0];
-        const _selected_currency = settings.currency || "USD";
-        const _panic_mode = settings.panic || false;
-        const _onboarding_enabled = typeof settings.onboarding !== "undefined" ? settings.onboarding: true;
+        if(!error) {
 
-        document.documentElement.lang = _language;
-        this.setState({ _onboarding_enabled, _sfx_enabled, _jamy_enabled, _selected_locales_code, _language, _selected_currency, _panic_mode, _know_the_settings: true }, () => {
+            // Set new settings from query result
+            const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: true;
+            const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: true;
+            const _selected_locales_code = settings.locales || "en-US";
+            const _language = _selected_locales_code.split("-")[0];
+            const _selected_currency = settings.currency || "USD";
+            const _panic_mode = settings.panic || false;
+            const _onboarding_enabled = typeof settings.onboarding !== "undefined" ? settings.onboarding: true;
 
-            this.forceUpdate();
-        });
+            document.documentElement.lang = _language;
+            this.setState({ _onboarding_enabled, _sfx_enabled, _jamy_enabled, _selected_locales_code, _language, _selected_currency, _panic_mode, _know_the_settings: true });
+        }
     };
 
     _update_settings() {
@@ -390,7 +392,7 @@ class Index extends React.Component {
             about: <About pathname={pathname}></About>,
             dashboard: <Dashboard></Dashboard>,
             settings: <Settings></Settings>,
-            accounts: <Accounts ></Accounts>,
+            accounts: <Accounts></Accounts>,
             coin: <Coin pathname={pathname}></Coin>,
             coins: <Coins></Coins>
         };
@@ -437,6 +439,11 @@ class Index extends React.Component {
                             {_jamy_enabled ? <span className={classes.jamyContainer}>{JAMY[_jamy_state_of_mind]}</span>: null}
                             <span>{_snackbar_message.toString()}</span>
                         </div>}
+                        action={
+                            <IconButton size="small" aria-label="close" color="inherit" onClick={this._close_snackbar}>
+                                <CloseIcon fontSize="small" />
+                            </IconButton>
+                        }
                         autoHideDuration={_snackbar_auto_hide_duration}
                         onClose={this._close_snackbar}
                     />

@@ -12,6 +12,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 
 import ReactTimeAgo from "react-time-ago";
 import actions from "../actions/utils";
+import TimeAgo from "javascript-time-ago";
 
 const styles = theme => ({
 
@@ -49,6 +50,7 @@ class AccountDialogClose extends React.Component {
 
         const { classes, account, open } = this.state;
 
+
         return (
             <Dialog
                 open={open}
@@ -63,7 +65,7 @@ class AccountDialogClose extends React.Component {
                         </DialogTitle>
                         <DialogContent>
                             <DialogContentText id="close-account-dialog-description">
-                                {t( "components.account_dialog_close.opened", {time_ago: ""})} <ReactTimeAgo date={account.timestamp} locale={document.documentElement.lang}/>
+                                {t( "components.account_dialog_close.opened", {time_ago: new TimeAgo(document.documentElement.lang).format(account.timestamp)})}
                             </DialogContentText>
                         </DialogContent>
                     </div>: null

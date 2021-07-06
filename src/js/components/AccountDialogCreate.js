@@ -39,7 +39,8 @@ const styles = theme => ({
     dialog: {
         [theme.breakpoints.down("sm")]: {
             "& .MuiDialog-container .MuiDialog-paper": {
-                margin: "24px 0px",
+                margin: "0px 0px",
+                maxHeight: "100%",
                 borderRadius: 0
             },
         }
@@ -89,7 +90,6 @@ class AccountDialogCreate extends React.Component {
             open: props.open,
             selected_locales_code: props.selected_locales_code,
             _locales: LOCALES,
-            _bip39: bip39,
             _account_name_input: "",
             _is_account_name_error: false,
             _account_password_input: "",
@@ -116,9 +116,14 @@ class AccountDialogCreate extends React.Component {
 
     componentWillReceiveProps(new_props, nextContext) {
 
+        const { selected_locales_code } = this.state;
+
         this.setState(new_props, () => {
 
-            this._set_default_bip39_language();
+            if(new_props.selected_locales_code !== selected_locales_code) {
+
+                this._set_default_bip39_language();
+            }
         });
 
     }
@@ -128,7 +133,6 @@ class AccountDialogCreate extends React.Component {
         const { _locales, selected_locales_code } = this.state;
 
         let locale_name = _locales[0].name;
-        let { _bip39 } = this.state;
 
         for(let i = 0; i < _locales.length; i++) {
 
@@ -138,15 +142,14 @@ class AccountDialogCreate extends React.Component {
             }
         }
 
+        bip39.setDefaultWordlist("english");
         ["japanese", "spanish", "italian", "french", "korean", "czech", "portuguese"].forEach(function(name){
 
             if(locale_name.toLowerCase().includes(name)) {
 
-                _bip39.setDefaultWordlist(name);
+                bip39.setDefaultWordlist(name);
             }
         });
-
-        this.setState({_bip39});
     };
 
     _switch_to_mnemonic_view = () => {
@@ -331,8 +334,7 @@ class AccountDialogCreate extends React.Component {
 
         if(typeof event !== "undefined") {event.preventDefault()}
 
-        const { _bip39 } = this.state;
-        const mnemonic_words = _bip39.generateMnemonic().split(" ");
+        const mnemonic_words = bip39.generateMnemonic().split(" ");
         actions.trigger_sfx("state-change_confirm-up");
         actions.jamy_update("happy");
         this.setState({ _account_mnemonic_input: mnemonic_words});
@@ -563,7 +565,7 @@ class AccountDialogCreate extends React.Component {
                 className={classes.dialog}
                 open={open}
                 scroll={"paper"}
-                onClose={(event) => {this.props.onClose(event, account)}}
+                onClose={(event) => {this._on_close(event)}}
                 aria-labelledby="create-account-dialog-title"
                 aria-describedby="create-account-dialog-description"
             >
