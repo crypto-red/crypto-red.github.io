@@ -32,6 +32,7 @@ import ChromeReaderModeIcon from "@material-ui/icons/ChromeReaderMode";
 import InfoIcon from "@material-ui/icons/Info";
 import LockIcon from "@material-ui/icons/Lock";
 import AtmIcon from "@material-ui/icons/Atm";
+import FeedbackIcon from "@material-ui/icons/Feedback";
 
 import CryptDialog from "../components/CryptDialog";
 
@@ -411,6 +412,10 @@ class DrawerContent extends React.Component {
                                 <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://opencollective.com/crypto-red")}>
                                     <ListItemIcon><MonetizationOnIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary={t( "components.drawer_content.menu.about.donations")} />
+                                </ListItem>
+                                <ListItem button className={classes.nested} onClick={(event) => {this._open_link(event, "https://forms.gle/iuEXqM2Nx61qwmPJ7")}}>
+                                    <ListItemIcon><FeedbackIcon className={classes.iconColor} /></ListItemIcon>
+                                    <ListItemText primary={t( "components.drawer_content.menu.about.feedback")} />
                                 </ListItem>
                             </List>
                         </Collapse>

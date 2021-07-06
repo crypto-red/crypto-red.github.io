@@ -440,6 +440,7 @@ module.exports = {
                     faq: "F.A.Q.",
                     source_code: "Code Source",
                     donations: "Donations",
+                    feedback: "Avis",
                 }
             }
         },

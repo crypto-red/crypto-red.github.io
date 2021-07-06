@@ -462,6 +462,7 @@ module.exports = {
                     faq: "F.A.Q.",
                     source_code: "Source code",
                     donations: "Donations",
+                    feedback: "Feedback",
                 }
             }
         },
