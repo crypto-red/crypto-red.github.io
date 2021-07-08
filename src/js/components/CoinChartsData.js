@@ -86,27 +86,27 @@ class CoinChartsData extends React.Component {
                                             <TableRow>
                                                 <TableCell>
                                                     <span>{t("components.coin_charts_data.day")}</span>
-                                                    <span className={coin_data.market_data.price_change_percentage_24h <= 0 ? classes.red: classes.green}>
-                                            {this._price_formatter(coin_data.market_data.price_change_percentage_24h, "%%", selected_locales_code, 2)}
-                                        </span>
+                                                    <span className={coin_data.market_data.price_change_percentage_24h_in_currency[selected_locales_code.toLowerCase()] <= 0 ? classes.red: classes.green}>
+                                                        {this._price_formatter(coin_data.market_data.price_change_percentage_24h_in_currency[selected_locales_code.toLowerCase()], "%%", selected_locales_code, 2)}
+                                                    </span>
                                                 </TableCell>
                                                 <TableCell>
                                                     <span>{t("components.coin_charts_data.week")}</span>
-                                                    <span className={coin_data.market_data.price_change_percentage_7d <= 0 ? classes.red: classes.green}>
-                                            {this._price_formatter(coin_data.market_data.price_change_percentage_7d, "%%", selected_locales_code, 2)}
-                                        </span>
+                                                    <span className={coin_data.market_data.price_change_percentage_7d_in_currency[selected_locales_code.toLowerCase()] <= 0 ? classes.red: classes.green}>
+                                                        {this._price_formatter(coin_data.market_data.price_change_percentage_7d_in_currency[selected_locales_code.toLowerCase()], "%%", selected_locales_code, 2)}
+                                                    </span>
                                                 </TableCell>
                                                 <TableCell>
                                                     <span>{t("components.coin_charts_data.month")}</span>
-                                                    <span className={coin_data.market_data.price_change_percentage_30d <= 0 ? classes.red: classes.green}>
-                                            {this._price_formatter(coin_data.market_data.price_change_percentage_30d, "%%", selected_locales_code, 2)}
-                                        </span>
+                                                    <span className={coin_data.market_data.price_change_percentage_30d_in_currency[selected_locales_code.toLowerCase()] <= 0 ? classes.red: classes.green}>
+                                                        {this._price_formatter(coin_data.market_data.price_change_percentage_30d_in_currency[selected_locales_code.toLowerCase()], "%%", selected_locales_code, 2)}
+                                                    </span>
                                                 </TableCell>
                                                 <TableCell>
                                                     <span>{t("components.coin_charts_data.year")}</span>
-                                                    <span className={coin_data.market_data.price_change_percentage_1y <= 0 ? classes.red: classes.green}>
-                                            {this._price_formatter(coin_data.market_data.price_change_percentage_1y, "%%", selected_locales_code, 2)}
-                                        </span>
+                                                    <span className={coin_data.market_data.price_change_percentage_1y_in_currency[selected_locales_code.toLowerCase()] <= 0 ? classes.red: classes.green}>
+                                                        {this._price_formatter(coin_data.market_data.price_change_percentage_1y_in_currency[selected_locales_code.toLowerCase()], "%%", selected_locales_code, 2)}
+                                                    </span>
                                                 </TableCell>
                                             </TableRow>
                                         </TableBody>

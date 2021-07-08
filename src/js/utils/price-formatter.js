@@ -53,6 +53,8 @@ function price_formatter(price = 0, _selected_currency = "usd", _selected_locale
             value = value > 0 ?
                 (value / 100) + 1:
                 1 - (-value / 100);
+
+            value -= 1;
         }
 
         const digit = parseFloat(compact+1-1);

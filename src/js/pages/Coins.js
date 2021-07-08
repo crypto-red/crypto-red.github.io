@@ -329,17 +329,17 @@ class Coins extends React.Component {
                                                         {this._price_formatter(row.current_price, _selected_currency, _selected_locales_code, false)}
                                                     </TableCell>
                                                     <TableCell align="right">
-                                                        <span className={row.price_change_percentage_1y_in_currency >= 0 ? classes.green: classes.red}>
+                                                        <span className={row.price_change_percentage_24h_in_currency >= 0 ? classes.green: classes.red}>
                                                             {this._price_formatter(row.price_change_percentage_24h_in_currency, "%%", _selected_locales_code, 2)}
                                                         </span>
                                                     </TableCell>
                                                     <TableCell align="right" >
-                                                        <span className={row.price_change_percentage_1y_in_currency >= 0 ? classes.green: classes.red}>
+                                                        <span className={row.price_change_percentage_7d_in_currency >= 0 ? classes.green: classes.red}>
                                                             {this._price_formatter(row.price_change_percentage_7d_in_currency, "%%", _selected_locales_code, 2)}
                                                         </span>
                                                     </TableCell>
                                                     <TableCell align="right">
-                                                        <span className={row.price_change_percentage_1y_in_currency >= 0 ? classes.green: classes.red}>
+                                                        <span className={row.price_change_percentage_30d_in_currency >= 0 ? classes.green: classes.red}>
                                                             {this._price_formatter(row.price_change_percentage_30d_in_currency, "%%", _selected_locales_code, 2)}
                                                         </span>
                                                     </TableCell>
