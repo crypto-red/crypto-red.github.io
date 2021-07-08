@@ -60,101 +60,99 @@ class CoinChartsData extends React.Component {
         this.setState(new_props);
     }
 
-    _price_formatter = (price, compact = false, display_currency = true) => {
+    _price_formatter = (price, selected_currency, selected_locales_code, compact) => {
 
-        const { selected_locales_code, selected_currency } = this.state;
-
-        return display_currency ?
-            price_formatter(price, selected_currency, selected_locales_code, compact):
-            price_formatter(price, null, selected_locales_code, compact);
+        return price_formatter(price, selected_currency, selected_locales_code, compact);
     };
 
     render() {
 
-        const { classes, selected_currency, coin_data } = this.state;
-
-        const data = Boolean(coin_data) ?
-            <Fade in>
-                <Card className={classes.fullHeight}>
-                    <CardContent>
-                        <CardHeader
-                            classes={{title: classes.title}}
-                            avatar={<Avatar className={classes.coinImage} src={coin_data.image.large}/>}
-                            title={coin_data.name}
-                        />
-                        <Table>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell>
-                                        <span>{t("components.coin_charts_data.day")}</span>
-                                        <span className={coin_data.market_data.price_change_percentage_24h <= 0 ? classes.red: classes.green}>
-                                            {coin_data.market_data.price_change_percentage_24h.toFixed(2)}%
-                                        </span>
-                                    </TableCell>
-                                    <TableCell>
-                                        <span>{t("components.coin_charts_data.week")}</span>
-                                        <span className={coin_data.market_data.price_change_percentage_7d <= 0 ? classes.red: classes.green}>
-                                            {coin_data.market_data.price_change_percentage_7d.toFixed(2)}%
-                                        </span>
-                                    </TableCell>
-                                    <TableCell>
-                                        <span>{t("components.coin_charts_data.month")}</span>
-                                        <span className={coin_data.market_data.price_change_percentage_30d <= 0 ? classes.red: classes.green}>
-                                            {coin_data.market_data.price_change_percentage_30d.toFixed(2)}%
-                                        </span>
-                                    </TableCell>
-                                    <TableCell>
-                                        <span>{t("components.coin_charts_data.year")}</span>
-                                        <span className={coin_data.market_data.price_change_percentage_1y <= 0 ? classes.red: classes.green}>
-                                            {coin_data.market_data.price_change_percentage_1y.toFixed(2)}%
-                                        </span>
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                        <Table aria-label="main-info-table">
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.price")}</TableCell>
-                                    <TableCell align="right" className={classes.price}>{this._price_formatter(coin_data.market_data.current_price[selected_currency.toLowerCase()])}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.market_cap")}</TableCell>
-                                    <TableCell align="right">{this._price_formatter(coin_data.market_data.market_cap[selected_currency.toLowerCase()])}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.total_supply")}</TableCell>
-                                    <TableCell align="right">{coin_data.market_data.total_supply}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.market_cap_rank")}</TableCell>
-                                    <TableCell align="right">#{coin_data.market_data.market_cap_rank}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.alexa_rank")}</TableCell>
-                                    <TableCell align="right">#{coin_data.public_interest_stats.alexa_rank}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.today_score")}</TableCell>
-                                    <TableCell align="right">{coin_data.sentiment_votes_up_percentage}%</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.all_time_high")}</TableCell>
-                                    <TableCell align="right">{this._price_formatter(coin_data.market_data.ath[selected_currency.toLowerCase()])}</TableCell>
-                                </TableRow>
-                                <TableRow>
-                                    <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.all_time_low")}</TableCell>
-                                    <TableCell align="right">{this._price_formatter(coin_data.market_data.atl[selected_currency.toLowerCase()])}</TableCell>
-                                </TableRow>
-                                <TableRow><p align="left">{t("components.coin_charts_data.data_provided_by")} <a href="https://coingecko.com/" target="_blank">CoinGecko</a></p></TableRow>
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
-            </Fade>: null;
+        const { classes, selected_currency, selected_locales_code, coin_data } = this.state;
 
         return (
-            <div className={classes.fullHeight}>{data}</div>
+            <div className={classes.fullHeight}>
+                {
+                    Boolean(coin_data) ?
+                        <Fade in={Boolean(coin_data)}>
+                            <Card className={classes.fullHeight}>
+                                <CardContent>
+                                    <CardHeader
+                                        classes={{title: classes.title}}
+                                        avatar={<Avatar className={classes.coinImage} src={coin_data.image.large}/>}
+                                        title={coin_data.name}
+                                    />
+                                    <Table>
+                                        <TableBody>
+                                            <TableRow>
+                                                <TableCell>
+                                                    <span>{t("components.coin_charts_data.day")}</span>
+                                                    <span className={coin_data.market_data.price_change_percentage_24h <= 0 ? classes.red: classes.green}>
+                                            {this._price_formatter(coin_data.market_data.price_change_percentage_24h, "%%", selected_locales_code, 2)}
+                                        </span>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <span>{t("components.coin_charts_data.week")}</span>
+                                                    <span className={coin_data.market_data.price_change_percentage_7d <= 0 ? classes.red: classes.green}>
+                                            {this._price_formatter(coin_data.market_data.price_change_percentage_7d, "%%", selected_locales_code, 2)}
+                                        </span>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <span>{t("components.coin_charts_data.month")}</span>
+                                                    <span className={coin_data.market_data.price_change_percentage_30d <= 0 ? classes.red: classes.green}>
+                                            {this._price_formatter(coin_data.market_data.price_change_percentage_30d, "%%", selected_locales_code, 2)}
+                                        </span>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <span>{t("components.coin_charts_data.year")}</span>
+                                                    <span className={coin_data.market_data.price_change_percentage_1y <= 0 ? classes.red: classes.green}>
+                                            {this._price_formatter(coin_data.market_data.price_change_percentage_1y, "%%", selected_locales_code, 2)}
+                                        </span>
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
+                                    <Table aria-label="main-info-table">
+                                        <TableBody>
+                                            <TableRow>
+                                                <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.price")}</TableCell>
+                                                <TableCell align="right" className={classes.price}>{this._price_formatter(coin_data.market_data.current_price[selected_currency.toLowerCase()], selected_currency, selected_locales_code, false)}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.market_cap")}</TableCell>
+                                                <TableCell align="right">{this._price_formatter(coin_data.market_data.market_cap[selected_currency.toLowerCase()], selected_currency, selected_locales_code, false)}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.total_supply")}</TableCell>
+                                                <TableCell align="right">{coin_data.market_data.total_supply}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.market_cap_rank")}</TableCell>
+                                                <TableCell align="right">#{coin_data.market_data.market_cap_rank}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.alexa_rank")}</TableCell>
+                                                <TableCell align="right">#{coin_data.public_interest_stats.alexa_rank}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.today_score")}</TableCell>
+                                                <TableCell align="right">{coin_data.sentiment_votes_up_percentage}%</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.all_time_high")}</TableCell>
+                                                <TableCell align="right">{this._price_formatter(coin_data.market_data.ath[selected_currency.toLowerCase()], selected_currency, selected_locales_code, false)}</TableCell>
+                                            </TableRow>
+                                            <TableRow>
+                                                <TableCell align="left" className={classes.tableCellBold}>{t("components.coin_charts_data.all_time_low")}</TableCell>
+                                                <TableCell align="right">{this._price_formatter(coin_data.market_data.atl[selected_currency.toLowerCase()], selected_currency, selected_locales_code, false)}</TableCell>
+                                            </TableRow>
+                                            <TableRow><p align="left">{t("components.coin_charts_data.data_provided_by")} <a href="https://coingecko.com/" target="_blank">CoinGecko</a></p></TableRow>
+                                        </TableBody>
+                                    </Table>
+                                </CardContent>
+                            </Card>
+                        </Fade>: null
+                }
+            </div>
         );
     }
 }

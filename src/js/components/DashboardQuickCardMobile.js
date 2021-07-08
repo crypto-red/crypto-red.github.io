@@ -41,21 +41,16 @@ class DashboardQuickCardMobile extends React.Component {
         this.setState(next_props);
     }
 
-    _price_formatter = (price, compact = false, display_currency = true) => {
+    _price_formatter = (price, selected_currency, selected_locales_code, compact ) => {
 
-        const { selected_locales_code, selected_currency } = this.state;
-
-        const amount = display_currency ?
-            price_formatter(price, selected_currency, selected_locales_code, compact):
-            price_formatter(price, null, selected_locales_code, compact);
-
-        return amount;
+        return price_formatter(price, selected_currency, selected_locales_code, compact);
     };
 
     render() {
 
         const { classes } = this.state;
         const { portfolio} = this.state;
+        const { selected_currency, selected_locales_code } = this.state;
 
         return (
             <div className={classes.fullWidth}>
@@ -66,7 +61,7 @@ class DashboardQuickCardMobile extends React.Component {
                                 <TableBody>
                                     <TableRow>
                                         <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t( "components.dashboard_quick_card_mobile.total"): <Skeleton/>}</TableCell>
-                                        <TableCell align="right">{portfolio !== null ? this._price_formatter(portfolio.total_balance_currency, true, true): <Skeleton/>}</TableCell>
+                                        <TableCell align="right">{portfolio !== null ? this._price_formatter(portfolio.total_balance_currency, selected_currency, selected_locales_code, true): <Skeleton/>}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t( "components.dashboard_quick_card_mobile.number"): <Skeleton/>}</TableCell>
@@ -74,11 +69,11 @@ class DashboardQuickCardMobile extends React.Component {
                                     </TableRow>
                                     <TableRow>
                                         <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t( "components.dashboard_quick_card_mobile.btc_performance"): <Skeleton/>}</TableCell>
-                                        <TableCell align="right">{portfolio !== null ? (portfolio.change_average_percentage_weighted_btc * 100 || 0).toFixed(2) + "%": <Skeleton/>}</TableCell>
+                                        <TableCell align="right">{portfolio !== null ? this._price_formatter(portfolio.change_average_percentage_weighted_btc, "%", selected_locales_code, 2): <Skeleton/>}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell align="left" className={classes.tableCellBold}>{portfolio !== null ? t( "components.dashboard_quick_card_mobile.performance"): <Skeleton/>}</TableCell>
-                                        <TableCell align="right">{portfolio !== null ? ((portfolio.change_average_percentage_weighted * 100) || 0).toFixed(0) + "%": <Skeleton/>}</TableCell>
+                                        <TableCell align="right">{portfolio !== null ? this._price_formatter(portfolio.change_average_percentage_weighted, "%", selected_locales_code, 2): <Skeleton/>}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>

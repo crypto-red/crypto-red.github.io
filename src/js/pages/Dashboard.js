@@ -280,7 +280,7 @@ class Dashboard extends React.Component {
             performed_average_percentage_btc - 1:
             -(1 - performed_average_percentage_btc);
 
-        const performed_average_percentage_weighted_on_btc = change_average_percentage_weighted / change_btc_average_percentage_weighted;
+        const performed_average_percentage_weighted_on_btc = performed_average_percentage_weighted / performed_average_percentage_btc;
         const change_average_percentage_weighted_btc = performed_average_percentage_weighted_on_btc > 1 ?
             performed_average_percentage_weighted_on_btc - 1:
             -(1 - performed_average_percentage_weighted_on_btc);
@@ -301,10 +301,9 @@ class Dashboard extends React.Component {
         });
     };
 
-    _price_formatter = (value, compact) => {
+    _price_formatter = (value, selected_currency, selected_locales_code, compact) => {
 
-        const { _selected_currency, _selected_locales_code } = this.state;
-        return price_formatter(value, _selected_currency, _selected_locales_code, compact)
+        return price_formatter(value, selected_currency, selected_locales_code, compact);
     };
 
     _on_transactions_loading_change = (percent) => {
@@ -345,7 +344,7 @@ class Dashboard extends React.Component {
 
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
-                                        text_content={portfolio !== null ? this._price_formatter(portfolio.total_balance_currency, true): null}
+                                        text_content={portfolio !== null ? this._price_formatter(portfolio.total_balance_currency, _selected_currency, _selected_locales_code, true): null}
                                         label_content={t( "pages.dashboard.total_balance")}
                                         icon_component={<AccountBalanceWalletIcon />}
                                         relevant
@@ -360,14 +359,14 @@ class Dashboard extends React.Component {
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
-                                        text_content={portfolio !== null ? ((portfolio.change_average_percentage_weighted_btc * 100) || 0).toFixed(2) + "%": null}
+                                        text_content={portfolio !== null ? this._price_formatter(portfolio.change_average_percentage_weighted_btc, "%", _selected_locales_code, 2): null}
                                         label_content={t( "pages.dashboard.performed_btc")}
                                         icon_component={portfolio !== null ? portfolio.change_average_percentage_weighted_btc < 0 ? <CloseIcon />: <CheckIcon />: null}
                                     />
                                 </Grid>
                                 <Grid item xs={12} lg={3} className={classes.quickDataCardGrid}>
                                     <DashboardQuickCard
-                                        text_content={portfolio !== null ? ((portfolio.change_average_percentage_weighted * 100) || 0).toFixed(0) + "%": null}
+                                        text_content={portfolio !== null ? this._price_formatter(portfolio.change_average_percentage_weighted, "%", _selected_locales_code, 2): null}
                                         label_content={t( "pages.dashboard.performed_percent")}
                                         icon_component={portfolio !== null ? portfolio.change_average_percentage_weighted > 0 ? <TrendingUpIcon />: <TrendingDownIcon />: null}
                                     />

@@ -81,6 +81,9 @@ class DashboardPieChart extends React.Component {
     };
 
     _render_active_shape = (props, total_balance_currency) => {
+
+        const { selected_currency, selected_locales_code } = this.state;
+
         const RADIAN = Math.PI / 180;
         const { cx, cy, midAngle, innerRadius, outerRadius, startAngle, endAngle, fill, payload, percent, value } = props;
         const sin = Math.sin(-RADIAN * midAngle);
@@ -96,10 +99,10 @@ class DashboardPieChart extends React.Component {
         return (
             <g>
                 <text x={cx} y={cy} dy={-10} fontWeight="bold" textAnchor="middle" fontSize={14} fill={"#9e9e9e"}>
-                    {payload.name} {`${(percent * 100).toFixed(0)}%`}
+                    {payload.name} {this._price_formatter(percent, "%", selected_locales_code, 0)}
                 </text>
                 <text x={cx} y={cy} dy={20} fontWeight="bold" textAnchor="middle" fontSize={19} fill={fill}>
-                    {this._price_formatter(value, true, true)}
+                    {this._price_formatter(value, selected_currency, selected_locales_code, true)}
                 </text>
                 <Sector
                     cx={cx}
@@ -123,15 +126,10 @@ class DashboardPieChart extends React.Component {
         );
     };
 
-    _price_formatter = (price, compact = false, display_currency = true, display_percent = false, total = 0) => {
+    _price_formatter = (price, selected_currency, selected_locales_code, compact) => {
 
-        const { selected_locales_code, selected_currency } = this.state;
 
-        const ammount = display_currency ?
-            price_formatter(price, selected_currency, selected_locales_code, compact):
-            price_formatter(price, null, selected_locales_code, compact);
-
-        return display_percent ? ammount + " (" + Math.floor((price/total)*100) + "%)": ammount;
+        return price_formatter(price, selected_currency, selected_locales_code, compact);
     };
 
     render() {

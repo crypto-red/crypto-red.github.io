@@ -42,7 +42,7 @@ function t(path = "", variables = {}, parameters = {}) {
 
         const [key, value] = entry;
 
-        if(key && value) {
+        if(key.length && value.toString()) {
 
             let variable_name_to_replace = key; // dog
             let variable_value_to_replace = value; // "dog" or {dog: 2}

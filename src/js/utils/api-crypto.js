@@ -1,5 +1,6 @@
 import base58 from "bs58";
 import nacl_factory from "js-nacl";
+import { sha512_256 } from "js-sha512";
 
 // https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
 function _ab2str(buf) {
@@ -60,5 +61,6 @@ function nacl_decrypt(encrypted_message, public_key, private_key, callback_funct
 
 module.exports = {
     nacl_encrypt: nacl_encrypt,
-    nacl_decrypt: nacl_decrypt
+    nacl_decrypt: nacl_decrypt,
+    sha512_256: sha512_256,
 };

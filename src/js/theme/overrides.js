@@ -35,7 +35,10 @@ const overrides = {
             },
             ".MuiSvgIcon-root.MuiChip-deleteIcon": {
                 color: "rgba(0, 0, 0, .36)"
-            }
+            },
+            ".MuiTooltip-popper .MuiTooltip-tooltip": {
+                backgroundColor: "#100d4e",
+            },
         },
     },
 }

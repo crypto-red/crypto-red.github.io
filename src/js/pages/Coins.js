@@ -71,10 +71,10 @@ const styles = theme => ({
     },
     row: {
         "&:nth-of-type(odd)": {
-            backgroundColor: theme.palette.action.hover,
+            backgroundColor: "rgba(128, 128, 128, 0.08)",
         },
         "&:hover": {
-            backgroundColor: theme.palette.action.focus,
+            backgroundColor: "rgba(128, 128, 128, 0.16)",
         },
     },
     displayFlex: {
@@ -254,10 +254,9 @@ class Coins extends React.Component {
         actions.jamy_update("happy");
     };
 
-    _price_formatter = (price) => {
+    _price_formatter = (price, selected_currency, selected_locales_code, compact) => {
 
-        const { _selected_locales_code, _selected_currency } = this.state;
-        return price_formatter(price, _selected_currency, _selected_locales_code);
+        return price_formatter(price, selected_currency, selected_locales_code, compact);
     };
 
     _go_to_link = (event, url) => {
@@ -269,6 +268,7 @@ class Coins extends React.Component {
     render() {
 
         const { classes, _coins_markets, _coins_id, _order, _order_by } = this.state;
+        const { _selected_currency, _selected_locales_code } = this.state;
 
         const head_cells = [
             { id: "name", numeric: false, disablePadding: false, label: t( "pages.coins.name"), tooltip: t( "pages.coins.coins_name") },
@@ -325,20 +325,32 @@ class Coins extends React.Component {
                                                         <Avatar className={classes.avatar} src={row.image}></Avatar>
                                                         <Link>{row.name}</Link>
                                                     </TableCell>
-                                                    <TableCell align="right">{this._price_formatter(row.current_price)}</TableCell>
                                                     <TableCell align="right">
-                                                        <span className={row.price_change_percentage_24h_in_currency >= 0 ? classes.green: classes.red} >{row.price_change_percentage_24h_in_currency.toFixed(2)}%</span>
+                                                        {this._price_formatter(row.current_price, _selected_currency, _selected_locales_code, false)}
+                                                    </TableCell>
+                                                    <TableCell align="right">
+                                                        <span className={row.price_change_percentage_1y_in_currency >= 0 ? classes.green: classes.red}>
+                                                            {this._price_formatter(row.price_change_percentage_24h_in_currency, "%%", _selected_locales_code, 2)}
+                                                        </span>
                                                     </TableCell>
                                                     <TableCell align="right" >
-                                                        <span className={row.price_change_percentage_7d_in_currency >= 0 ? classes.green: classes.red}>{row.price_change_percentage_7d_in_currency.toFixed(2)}%</span>
+                                                        <span className={row.price_change_percentage_1y_in_currency >= 0 ? classes.green: classes.red}>
+                                                            {this._price_formatter(row.price_change_percentage_7d_in_currency, "%%", _selected_locales_code, 2)}
+                                                        </span>
                                                     </TableCell>
                                                     <TableCell align="right">
-                                                        <span className={row.price_change_percentage_30d_in_currency >= 0 ? classes.green: classes.red}>{row.price_change_percentage_30d_in_currency.toFixed(2)}%</span>
+                                                        <span className={row.price_change_percentage_1y_in_currency >= 0 ? classes.green: classes.red}>
+                                                            {this._price_formatter(row.price_change_percentage_30d_in_currency, "%%", _selected_locales_code, 2)}
+                                                        </span>
                                                     </TableCell>
                                                     <TableCell align="right">
-                                                        <span className={row.price_change_percentage_1y_in_currency >= 0 ? classes.green: classes.red}>{row.price_change_percentage_1y_in_currency.toFixed(2)}%</span>
+                                                        <span className={row.price_change_percentage_1y_in_currency >= 0 ? classes.green: classes.red}>
+                                                            {this._price_formatter(row.price_change_percentage_1y_in_currency, "%%", _selected_locales_code, 2)}
+                                                        </span>
                                                     </TableCell>
-                                                    <TableCell align="right">{this._price_formatter(row.market_cap)}</TableCell>
+                                                    <TableCell align="right">
+                                                        {this._price_formatter(row.market_cap, _selected_currency, _selected_locales_code, false)}
+                                                    </TableCell>
                                                 </TableRow>
                                             )):
                                             _coins_id.map((row, index) => (
