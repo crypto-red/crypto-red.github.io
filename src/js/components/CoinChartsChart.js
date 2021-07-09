@@ -14,7 +14,9 @@ import Skeleton from "@material-ui/lab/Skeleton";
 import ChartDot from "../icons/ChartDot";
 
 import { scaleTime } from "d3-scale";
-import {utcHour, utcDay, utcMonth, utcWeek, utcYear} from "d3-time";
+import {utcHour, utcDay, utcMonth, utcWeek, utcYear, utcMonday, utcFriday, utcSaturday, utcSunday} from "d3-time";
+
+import { FIRST_WEEK_DAY_BY_COUNTRY } from "../utils/constants";
 
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import price_formatter from "../utils/price-formatter";
@@ -247,7 +249,8 @@ class CoinChartsChart extends React.Component {
 
     _get_coin_chart_data_ticks = (graph_data, coin_chart_data_time) => {
 
-        if (!graph_data || !graph_data.length ) {return [];}
+        const { selected_locales_code } = this.state;
+        if (!graph_data || !graph_data.length || !selected_locales_code) {return [];}
 
         const domain = [new Date(+graph_data[0].date), new Date(+graph_data[graph_data.length - 1].date)];
         const scale = scaleTime().domain(domain).range([0, 1]);
@@ -267,7 +270,25 @@ class CoinChartsChart extends React.Component {
                 return ticks.map(entry => +entry);
             case "30":
 
-                ticks = scale.ticks(utcWeek, 1);
+                let utc_day = utcWeek;
+
+                switch(FIRST_WEEK_DAY_BY_COUNTRY[selected_locales_code.split("-")[1] || "US"]) {
+
+                    case "mon":
+                        utc_day = utcMonday;
+                        break;
+                    case "fri":
+                        utc_day = utcFriday;
+                        break;
+                    case "sat":
+                        utc_day = utcSaturday;
+                        break;
+                    case "sun":
+                        utc_day = utcSunday;
+                        break;
+                }
+
+                ticks = scale.ticks(utc_day, 1);
                 return ticks.map(entry => +entry);
             case "180":
 

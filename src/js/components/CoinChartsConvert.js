@@ -43,6 +43,7 @@ class CoinChartsConvert extends React.Component {
             selected_locales_code: props.selected_locales_code,
             selected_currency: props.selected_currency,
             coin_data: props.coin_data,
+            _min_date: new Date(),
             _selected_date: new Date(),
             _cryptocurrency_input_value: 1,
             _selected_cryptocurrency_price: 0,
@@ -73,6 +74,8 @@ class CoinChartsConvert extends React.Component {
 
         if(!error && results !== null) {
 
+            const _min_date = results.prices[0].date;
+
             for (let i = 0; i < results.prices.length; i++) {
 
                 const result = results.prices[i];
@@ -84,7 +87,7 @@ class CoinChartsConvert extends React.Component {
                 }
             }
 
-            this.setState({_selected_cryptocurrency_price}, () => {this._handle_cryptocurrency_input_value_change(null)});
+            this.setState({_min_date, _selected_cryptocurrency_price}, () => {this._handle_cryptocurrency_input_value_change(null)});
         }
     };
 
@@ -127,7 +130,7 @@ class CoinChartsConvert extends React.Component {
     render() {
 
         const { classes, selected_currency, _selected_date, coin_data, coin_id } = this.state;
-        const { _cryptocurrency_input_value, _fiat_input_value } = this.state;
+        const { _cryptocurrency_input_value, _fiat_input_value, _min_date } = this.state;
 
         const date_format = this._get_date_format();
 
@@ -155,6 +158,9 @@ class CoinChartsConvert extends React.Component {
                             <KeyboardDatePicker
                                 cancelLabel={t("words.cancel")}
                                 okLabel={t("words.ok")}
+                                minDate={_min_date}
+                                maxDate={Date.now()}
+                                disableFuture={true}
                                 invalidDateMessage={t("sentences.invalid date message")}
                                 className={classes.noTopMargin}
                                 margin="normal"
