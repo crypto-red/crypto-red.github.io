@@ -48,7 +48,13 @@ function price_formatter(price = 0, _selected_currency = "usd", _selected_locale
 
     }else {
 
+        let sign_display_props = {};
+
         if(_selected_currency === "%%") {
+
+            sign_display_props = {
+                signDisplay: "exceptZero",
+            };
 
             value = value > 0 ?
                 (value / 100) + 1:
@@ -64,7 +70,7 @@ function price_formatter(price = 0, _selected_currency = "usd", _selected_locale
             maximumFractionDigits: digit
         };
 
-        const percentage_formatted = new Intl.NumberFormat(_selected_locales_code, {...percentage_props}).format(value);
+        const percentage_formatted = new Intl.NumberFormat(_selected_locales_code, {...percentage_props, ...sign_display_props}).format(value);
 
         return percentage_formatted;
     }
