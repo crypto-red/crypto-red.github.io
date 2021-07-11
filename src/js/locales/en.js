@@ -204,7 +204,7 @@ module.exports = {
             usage: {
                 name: "Usage",
                 qa: [
-                    {question: "Should I use it if it can present a risk for my fund?", answer: "You should download a stable version from torrent download if you want to use it with a lot of money on it."}
+                    {question: "Should I use it if it can present a risk for my fund?", answer: "You should download a stable version from the link in the menu if you want to use it with a lot of money on it."}
                 ],
             }
         },
@@ -460,7 +460,11 @@ module.exports = {
                     info: "Info",
                     wiki: "Wiki",
                     faq: "F.A.Q.",
+                },
+                more: {
                     source_code: "Source code",
+                    more: "More",
+                    download: "Download",
                     donations: "Donations",
                     feedback: "Feedback",
                 }

@@ -96,7 +96,7 @@ class Index extends React.Component {
             _snackbar_open: false,
             _snackbar_message: "",
             _snackbar_auto_hide_duration: 1975,
-            _sfx_enabled: true,
+            _sfx_enabled: false,
             _jamy_enabled: true,
             _vocal_enabled: false,
             _onboarding_enabled: false,
@@ -255,7 +255,7 @@ class Index extends React.Component {
         if(!error) {
 
             // Set new settings from query result
-            const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: true;
+            const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: false;
             const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: true;
             const _selected_locales_code = settings.locales || "en-US";
             const _language = _selected_locales_code.split("-")[0];

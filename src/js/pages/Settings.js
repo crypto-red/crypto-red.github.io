@@ -43,7 +43,7 @@ class Settings extends React.Component {
             _selected_locales_code: null,
             _language: document.documentElement.lang,
             _selected_currency: null,
-            _sfx_enabled: true,
+            _sfx_enabled: false,
             _jamy_enabled: true,
             _panic_mode: false
         };
@@ -63,7 +63,7 @@ class Settings extends React.Component {
     _process_settings_query_result = (error, settings) => {
 
         // Set new settings from query result
-        const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: true;
+        const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: false;
         const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: true;
         const _selected_locales_code = settings.locales || "en-US";
         const _language = _selected_locales_code.split("-")[0];

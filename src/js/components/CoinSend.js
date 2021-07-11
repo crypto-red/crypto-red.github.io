@@ -25,6 +25,7 @@ import CoinSendDialog from "./CoinSendDialog";
 import { HISTORY } from "../utils/constants";
 import actions from "../actions/utils";
 import api from "../utils/api";
+import price_formatter from "../utils/price-formatter";
 
 const styles = theme => ({
     container: {
@@ -58,12 +59,11 @@ const styles = theme => ({
         "& .MuiDialog-container .MuiDialog-paper": {
             width: 600,
         },
-        [theme.breakpoints.down("sm")]: {
+        [theme.breakpoints.down("xs")]: {
             "& .MuiDialog-container .MuiDialog-paper": {
                 margin: "0px 0px",
                 maxHeight: "100%",
                 borderRadius: 0,
-                width: "100vw",
             },
         }
     },
@@ -356,7 +356,9 @@ class CoinSend extends React.Component {
         const { classes, logged_account, we_know_if_logged, _address, _is_scanner_dialog_open, _is_confirmation_dialog_open, _send_transaction_info } = this.state;
         const { _send_address_input, _send_amount_input, _send_message_input, coin_id, _is_backdrop_shown } = this.state;
         const { _send_address_input_error, _send_amount_input_error, _send_message_input_error, _coin_balance, _fee } = this.state;
-        const { selected_locales_code, selected_currency } = this.state;
+        const { selected_locales_code, selected_currency, coin_data } = this.state;
+
+        const amount_sent_fiat = coin_data !== null ? _send_amount_input * coin_data.market_data.current_price[selected_currency.toLowerCase()]: 0;
 
         return (
             <div>
@@ -435,6 +437,9 @@ class CoinSend extends React.Component {
                                                         type="number"
                                                         fullWidth
                                                     />
+                                                    <span>
+                                                        {price_formatter(amount_sent_fiat, selected_currency, selected_locales_code)}
+                                                    </span>
                                                     <TextField
                                                         className={classes.textField}
                                                         onChange={this._handle_send_message_input_change}

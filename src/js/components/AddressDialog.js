@@ -19,7 +19,7 @@ import api from "../utils/api";
 
 const styles = theme => ({
     dialog: {
-        [theme.breakpoints.down("sm")]: {
+        [theme.breakpoints.down("xs")]: {
             "& .MuiDialog-container .MuiDialog-paper": {
                 margin: "0px 0px",
                 maxHeight: "100%",

@@ -204,7 +204,7 @@ module.exports = {
             usage: {
                 name: "Usage",
                 qa: [
-                    {question: "Devrais-je l'utiliser s'il peut présenter un risque pour mon fonds ?", answer: "Vous devriez télécharger une version stable à partir du téléchargement torrent si vous voulez l'utiliser avec beaucoup d'argent dessus."}
+                    {question: "Devrais-je l'utiliser s'il peut présenter un risque pour mon fonds ?", answer: "Vous devriez télécharger une version stable à partir du lien dans le menu si vous voulez l'utiliser avec beaucoup d'argent dessus."}
                 ],
             }
         },
@@ -438,10 +438,14 @@ module.exports = {
                     info: "Info",
                     wiki: "Wiki",
                     faq: "F.A.Q.",
+                },
+                more: {
                     source_code: "Code Source",
+                    more: "Plus",
+                    download: "Télécharger",
                     donations: "Donations",
                     feedback: "Avis",
-                }
+                },
             }
         },
         inner_toolbar: {

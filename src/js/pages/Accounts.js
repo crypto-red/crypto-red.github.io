@@ -76,7 +76,6 @@ class Accounts extends React.Component {
             _login_error: false,
             _selected_locales_code: null,
             _selected_currency: null,
-            _sfx_enabled: true,
             _coins_id: COINS.map(c => c.id)
         };
     };
@@ -304,7 +303,7 @@ class Accounts extends React.Component {
     render() {
 
         const { classes, _selected_account, _logged_account, _accounts, _selected_locales_code, _selected_currency, _login_error , _coins_markets, _no_accounts_db } = this.state;
-        const { _sfx_enabled, _is_account_dialog_close_open, _is_account_dialog_open_open, _is_account_dialog_delete_open, _is_account_dialog_create_open, _is_account_dialog_backup_open } = this.state;
+        const { _is_account_dialog_close_open, _is_account_dialog_open_open, _is_account_dialog_delete_open, _is_account_dialog_create_open, _is_account_dialog_backup_open } = this.state;
 
         const logged_account_name = Boolean(_logged_account) ? _logged_account.name: null;
 
@@ -363,7 +362,6 @@ class Accounts extends React.Component {
 
                 <AccountDialogCreate open={_is_account_dialog_create_open}
                                      selected_locales_code={_selected_locales_code}
-                                     sfx_enabled={_sfx_enabled}
                                      onComplete={this._on_account_dialog_create_complete}
                                      onError={this._on_account_dialog_create_error}
                                      onClose={this._close_account_dialog_create}

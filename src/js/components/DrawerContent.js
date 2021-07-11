@@ -30,6 +30,7 @@ import RefreshIcon from "@material-ui/icons/Refresh";
 import HelpIcon from "@material-ui/icons/Help";
 import ChromeReaderModeIcon from "@material-ui/icons/ChromeReaderMode";
 import InfoIcon from "@material-ui/icons/Info";
+import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
 import LockIcon from "@material-ui/icons/Lock";
 import AtmIcon from "@material-ui/icons/Atm";
 import FeedbackIcon from "@material-ui/icons/Feedback";
@@ -405,17 +406,29 @@ class DrawerContent extends React.Component {
                                     <ListItemIcon><HelpIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary={t( "components.drawer_content.menu.about.faq")} />
                                 </ListItem>
+                            </List>
+                        </Collapse>
+                        <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "more")}>
+                            <ListItemText primary={t( "components.drawer_content.menu.more.more")} />
+                            <ExpandMoreIcon  className={_menu_expanded === "more"  ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
+                        </ListItem>
+                        <Collapse in={_menu_expanded === "more"} timeout="auto" unmountOnExit>
+                            <List component="div" disablePadding>
                                 <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://github.com/crypto-red/crypto-red.github.io")}>
                                     <ListItemIcon><CodeIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary={t( "components.drawer_content.menu.about.source_code")} />
+                                    <ListItemText primary={t( "components.drawer_content.menu.more.source_code")} />
+                                </ListItem>
+                                <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://github.com/crypto-red/crypto-red.github.io/releases")}>
+                                    <ListItemIcon><CloudDownloadIcon className={classes.iconColor} /></ListItemIcon>
+                                    <ListItemText primary={t( "components.drawer_content.menu.more.download")} />
                                 </ListItem>
                                 <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://opencollective.com/crypto-red")}>
                                     <ListItemIcon><MonetizationOnIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary={t( "components.drawer_content.menu.about.donations")} />
+                                    <ListItemText primary={t( "components.drawer_content.menu.more.donations")} />
                                 </ListItem>
                                 <ListItem button className={classes.nested} onClick={(event) => {this._open_link(event, "https://forms.gle/iuEXqM2Nx61qwmPJ7")}}>
                                     <ListItemIcon><FeedbackIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary={t( "components.drawer_content.menu.about.feedback")} />
+                                    <ListItemText primary={t( "components.drawer_content.menu.more.feedback")} />
                                 </ListItem>
                             </List>
                         </Collapse>

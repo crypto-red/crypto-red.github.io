@@ -64,7 +64,7 @@ function _get_default_settings() {
     return {
         locales,
         currency: _get_currency_by_locales(locales),
-        sfx_enabled: true,
+        sfx_enabled: false,
         jamy_enabled: true,
         panic: false,
         onboarding: true,
@@ -326,11 +326,7 @@ function create_account(name, password, seed, callback_function) {
                     const account = {
                         name: name,
                         encrypted_seed: buffer.toString('hex'),
-                        timestamp: Date.now(),
-                        balance: {
-                            "v-systems": 0,
-                            "bitcoin": 0,
-                        }
+                        timestamp: Date.now()
                     }
 
 
@@ -439,7 +435,6 @@ function login(name, password, persistent = true, callback_function) {
                 logged_account = {
                     name: unlogged_account.name,
                     seed: buffer.toString(),
-                    balance: unlogged_account.balance,
                     timestamp: Date.now(),
                 };
 
