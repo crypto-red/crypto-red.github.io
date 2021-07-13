@@ -30,6 +30,7 @@ const styles = theme => ({
     },
     accountCards: {
         padding: theme.spacing(1),
+        marginBottom: 80,
         [theme.breakpoints.down("xs")]: {
             padding: theme.spacing(1, 0)
         }

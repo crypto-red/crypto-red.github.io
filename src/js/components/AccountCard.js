@@ -32,6 +32,8 @@ import actions from "../actions/utils";
 
 import price_formatter from "../utils/price-formatter";
 import Jdenticon from "react-jdenticon";
+import TableSortLabel from "@material-ui/core/TableSortLabel";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const styles = theme => ({
     accountCard: {
@@ -348,12 +350,14 @@ class AccountCard extends React.Component {
                         </CardContent>
                     </CardActionArea>
                     <CardActions className={classes.cardAction}>
-                        <Button startIcon={Boolean(current) ? <LockIcon key={"1"}/>: <LockOpenIcon key={"2"}/>}
-                                className={classes.floatRight}
-                                color="primary"
-                                onClick={(event) => {this.props.onToggle(event, account)}}>
-                            {Boolean(current) ? t("words.close"): t("words.open")}
-                        </Button>
+                        <Tooltip title={current ? t("components.account_card.close_account_tooltip"): t("components.account_card.open_account_tooltip")}>
+                            <Button startIcon={current ? <LockIcon key={"1"}/>: <LockOpenIcon key={"2"}/>}
+                                    className={classes.floatRight}
+                                    color="primary"
+                                    onClick={(event) => {this.props.onToggle(event, account)}}>
+                                {current ? t("words.close"): t("words.open")}
+                            </Button>
+                        </Tooltip>
                     </CardActions>
                 </Card>
             </Fade>

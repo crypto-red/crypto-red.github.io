@@ -85,11 +85,6 @@ class AccountDialogDelete extends React.Component {
                     <div>
                         <DialogTitle id="delete-account-dialog-title">{t("components.account_dialog_delete.title", {account_name: account.name})}</DialogTitle>
                         <DialogContent>
-                            <DialogContentText id="delete-account-dialog-description">
-                                {t("components.account_dialog_delete.cannot_be_undone", {account_name: account.name})}
-                                <br />
-                                {t("components.account_dialog_delete.repeat_name")}
-                            </DialogContentText>
                             <TextField
                                 onChange={this._handle_account_name_input_change}
                                 onKeyDown={this._handle_key_down_input}
@@ -98,6 +93,10 @@ class AccountDialogDelete extends React.Component {
                                 type="text"
                                 fullWidth
                             />
+                            <DialogContentText id="delete-account-dialog-description">
+                                <p>{t("components.account_dialog_delete.cannot_be_undone", {account_name: account.name})}</p>
+                                <p>{t("components.account_dialog_delete.repeat_name")}</p>
+                            </DialogContentText>
                         </DialogContent>
                     </div>: null
                 }

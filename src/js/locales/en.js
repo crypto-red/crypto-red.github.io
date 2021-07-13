@@ -82,6 +82,7 @@ module.exports = {
         "currency": "currency",
         "create": "create",
         "chart": "chart",
+        "qr code": "QR code",
     },
     sentences: {
         "invalid date message": "Invalid date format",
@@ -169,6 +170,18 @@ module.exports = {
     },
     components: {
         about_faq: {
+            security: {
+                name: "Security",
+                qa: [
+                    {question: "What are the advantages of downloading this application?", answer: "The versions available for download are stable and are less likely to contain a security vulnerability due to an update."},
+                    {question: "How does my coin are stored?", answer: "Your coin are stored on the behalf of your seed (private key in particular), which can only be used with the access to the blockchain respectively to the wallet in question. Many exchanges keep your coins when you're not withdrawing them, we do not."},
+                    {question: "How does my data are encrypted?", answer: "Your data are encrypted trough Triplesec, see (https://keybase.io/triplesec) to get more information."},
+                    {question: "Where does my data are stored?", answer: "Your seed (you're whole account) can generate all your crypto wallet it is stored in clear on your computer (with PouchDB on your browser) in persistent mode when logged and encrypted in non-persistent mode or when logged out."},
+                    {question: "What if I loose my seed?", answer: "If you loose your seed, (You should write it down on paper) you can only get it back if you're account has not be cleared from your browser, you may need to log in or not."},
+                    {question: "What if I loose my password?", answer: "No worries, only your seed is needed to get back everything."},
+                    {question: "Can I print my password / seed?", answer: "When you're using the persistent mode for connection or if you print / store a document on your computer or printer, it may mostly last forever even if you format your storing device."},
+                ]
+            },
             organization: {
                 name: "Orgnaization",
                 qa: [
@@ -176,17 +189,6 @@ module.exports = {
                     {question: "Who can contribute to this project?", answer: "Anyone, see https://github.com/crypto-red to get involved."},
                     {question: "Who decide what to code?", answer: "Our team which is on GitHub (https://github.com/crypto-red) must agree together, meanwhile, one may duplicate the project for its own need."},
                     {question: "Who have funded this project?", answer: "Anonymous."},
-                ]
-            },
-            security: {
-                name: "Security",
-                qa: [
-                    {question: "How does my coin are stored?", answer: "Your coin are stored on the behalf of your seed (private key in particular), which can only be used with the access to the blockchain respectively to the wallet in question. Many exchanges keep your coins when you're not withdrawing them, we do not."},
-                    {question: "How does my data are encrypted?", answer: "Your data are encrypted trough Triplesec, see (https://keybase.io/triplesec) to get more information."},
-                    {question: "Where does my data are stored?", answer: "Your seed (you're whole account) can generate all your crypto wallet it is stored in clear on your computer (with PouchDB on your browser) in persistent mode when logged and encrypted in non-persistent mode or when logged out."},
-                    {question: "What if I loose my seed?", answer: "If you loose your seed, (You should write it down on paper) you can only get it back if you're account has not be cleared from your browser, you may need to log in or not."},
-                    {question: "What if I loose my password?", answer: "No worries, only your seed is needed to get back everything."},
-                    {question: "Can I print my password / seed?", answer: "When you're using the persistent mode for connection or if you print / store a document on your computer or printer, it may mostly last forever even if you format your storing device."},
                 ]
             },
             privacy: {
@@ -287,7 +289,9 @@ module.exports = {
             }
         },
         account_card: {
-            crypto_balance_error: "{{crypto_id}} balance error"
+            crypto_balance_error: "{{crypto_id}} balance error",
+            close_account_tooltip: "Do you want to close this account?",
+            open_account_tooltip: "Do you want to open this account?",
         },
         account_dialog_backup: {
             seed: "Seed of {{account_name}}",
@@ -371,7 +375,8 @@ module.exports = {
         },
         coin_send: {
             title: "Balance: {{balance}}",
-            body: "The average transaction time is {{average_transaction_time}}, and the message is limited to {{max_message_length}} characters ({{send_message_input_length}}). Fees will be calculated in the next step."
+            body: "The average transaction time is {{average_transaction_time}}, and the message is limited to {{max_message_length}} characters ({{send_message_input_length}}). Fees will be calculated in the next step.",
+            fab_scan: "Scan",
         },
         crypt_dialog: {
             warning_encrypt_to_yourself: "Warning, do you want to encrypt a message to yourself?",
@@ -407,6 +412,9 @@ module.exports = {
             number: "Cryptocurrency numbers:",
             btc_performance: "Performed / BTC:",
             performance: "Performed:",
+        },
+        dashboard_transactions:{
+            title: "Most recent transactions"
         },
         drawer_content: {
             help_dialogs_data: {

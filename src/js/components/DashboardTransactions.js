@@ -169,7 +169,7 @@ class DashboardTransactions extends React.Component {
                             <Fade in>
                                 <Card className={classes.numberCard}>
 
-                                    <CardHeader title="Transactions" />
+                                    <CardHeader title={t("components.dashboard_transactions.title")} />
                                     {
                                         loaded_percent === 100 ?
                                             <div>

@@ -31,7 +31,8 @@ const styles = theme => ({
     container: {
         padding: theme.spacing(2),
         [theme.breakpoints.down("sm")]: {
-            padding: theme.spacing(2, 0)
+            padding: theme.spacing(2, 0),
+            marginBottom: 80,
         }
     },
     backdrop: {
@@ -50,10 +51,13 @@ const styles = theme => ({
         backgroundColor: theme.palette.primary.action,
         color: theme.palette.primary.contrastText,
         "&:hover": {
-            backgroundColor: theme.palette.primary.action,
+            backgroundColor: theme.palette.primary.actionLighter,
         },
         bottom: theme.spacing(2),
         right: theme.spacing(2),
+        "& svg": {
+            marginRight: 4
+        }
     },
     dialog: {
         "& .MuiDialog-container .MuiDialog-paper": {
@@ -411,8 +415,6 @@ class CoinSend extends React.Component {
 
                                     {logged_account ?
                                         <div>
-                                            {_coin_balance !== null ? <p>{t("components.coin_send.title", {balance: _coin_balance})}</p>: <p>{t("sentences.loading")}</p>}
-                                            {_send_transaction_info !== null ? <p>{t("components.coin_send.body", {average_transaction_time: _send_transaction_info.average_transaction_time, max_message_length: _send_transaction_info.max_message_length, send_message_input_length: _send_message_input.length})}</p>: null}
                                             { _send_transaction_info ?
                                                 <form className={classes.root} noValidate autoComplete="off">
                                                     <TextField
@@ -455,6 +457,8 @@ class CoinSend extends React.Component {
                                                     />
                                                 </form>: null
                                             }
+                                            {_coin_balance !== null ? <p>{t("components.coin_send.title", {balance: _coin_balance})}</p>: <p>{t("sentences.loading")}</p>}
+                                            {_send_transaction_info !== null ? <p>{t("components.coin_send.body", {average_transaction_time: _send_transaction_info.average_transaction_time, max_message_length: _send_transaction_info.max_message_length, send_message_input_length: _send_message_input.length})}</p>: null}
                                         </div>:
                                         <div>
                                             <img className={classes.noAccountImage} src="/src/images/account.svg"/>
@@ -483,8 +487,8 @@ class CoinSend extends React.Component {
                     logged_account ?
                         logged_account.name ?
                             <Grow in>
-                                <Fab className={classes.fab} onClick={this._open_scanner_dialog}>
-                                    <QrCodeScanIcon />
+                                <Fab className={classes.fab} variant="extended" onClick={this._open_scanner_dialog}>
+                                    <QrCodeScanIcon /> {t("components.coin_send.fab_scan")}
                                 </Fab>
                             </Grow>: null: null
                 }

@@ -82,6 +82,7 @@ module.exports = {
         "currency": "monnaie",
         "create": "créer",
         "chart": "graphique",
+        "qr code": "Code QR",
     },
     sentences: {
         "invalid date message": "Date invalide",
@@ -169,6 +170,18 @@ module.exports = {
     },
     components: {
         about_faq: {
+            security: {
+                name: "Securité",
+                qa: [
+                    {question: "Quels sont les avantages de télécharger cette application ?", answer: "Les versions disponibles au téléchargement sont stables et sont moins susceptibles de contenir une faille de sécurité en raison d'une mise à jour."},
+                    {question: "Comment est stocké ma monnaie ?", answer: "Vos monnaie sont stockées pour le compte de votre semence (clé privée notamment), qui ne peut être utilisé avec l'accès à la blockchain respectivement au portefeuille en question. De nombreux échanges conservent vos pièces lorsque vous ne les retirez pas, nous ne le faisons pas."},
+                    {question: "Comment mes données sont-elles cryptées ?", answer: "Vos données sont cryptées via Triplesec, voir (https://keybase.io/triplesec) pour obtenir plus d'informations."},
+                    {question: "Où sont stockées mes données ?", answer: "Votre graine (votre compte entier) peut générer tout votre portefeuille crypto qu'il est stocké en clair sur votre ordinateur (avec PouchDB sur votre navigateur) en mode persistant lorsqu'il est connecté et crypté en mode non persistant ou lorsqu'il est déconnecté."},
+                    {question: "Et si je perds ma graine ?", answer: "Si vous perdez votre graine, (vous devriez l'écrire sur papier) vous ne pouvez obtenir que si votre compte n'a pas été effacé de votre navigateur, vous devrez peut-être vous connecter ou non."},
+                    {question: "Et si je perds mon mot de passe ?", answer: "Pas de soucis, seule votre graine est nécessaire pour tout récupérer."},
+                    {question: "Puis-je imprimer mon mot de passe / graine ?", answer: " Lorsque vous utilisez le mode persistant pour la connexion ou si vous imprimez / stockez un document sur votre ordinateur ou votre imprimante, il peut durer pour toujours même si vous formatez votre périphérique de stockage."},
+                ]
+            },
             organization: {
                 name: "Organisation",
                 qa: [
@@ -176,17 +189,6 @@ module.exports = {
                     {question: "Qui peut contribuer à ce projet ?", answer: "Tout le monde, voir https://github.com/crypto-red pour participer."},
                     {question: "Qui décide quoi coder ?", answer: "Notre équipe qui est sur GitHub (https://github.com/crypto-red) doit se mettre d'accord, en attendant, on peut dupliquer le projet pour son propre besoin."},
                     {question: "Qui a financé ce projet ?", answer: "Anonymous."},
-                ]
-            },
-            security: {
-                name: "Securité",
-                qa: [
-                    {question: "Comment est stocké ma monnaie ?", answer: "Vos monnaie sont stockées pour le compte de votre semence (clé privée notamment), qui ne peut être utilisé avec l'accès à la blockchain respectivement au portefeuille en question. De nombreux échanges conservent vos pièces lorsque vous ne les retirez pas, nous ne le faisons pas."},
-                    {question: "Comment mes données sont-elles cryptées ?", answer: "Vos données sont cryptées via Triplesec, voir (https://keybase.io/triplesec) pour obtenir plus d'informations."},
-                    {question: "Où sont stockées mes données ?", answer: "Votre graine (votre compte entier) peut générer tout votre portefeuille crypto qu'il est stocké en clair sur votre ordinateur (avec PouchDB sur votre navigateur) en mode persistant lorsqu'il est connecté et crypté en mode non persistant ou lorsqu'il est déconnecté."},
-                    {question: "Et si je perds ma graine ?", answer: "Si vous perdez votre graine, (vous devriez l'écrire sur papier) vous ne pouvez obtenir que si votre compte n'a pas été effacé de votre navigateur, vous devrez peut-être vous connecter ou non."},
-                    {question: "Et si je perds mon mot de passe ?", answer: "Pas de soucis, seule votre graine est nécessaire pour tout récupérer."},
-                    {question: "Puis-je imprimer mon mot de passe / graine ?", answer: " Lorsque vous utilisez le mode persistant pour la connexion ou si vous imprimez / stockez un document sur votre ordinateur ou votre imprimante, il peut durer pour toujours même si vous formatez votre périphérique de stockage."},
                 ]
             },
             privacy: {
@@ -265,7 +267,9 @@ module.exports = {
             }
         },
         account_card: {
-            crypto_balance_error: "Erreur des fonds pour {{crypto_id}}"
+            crypto_balance_error: "Erreur des fonds pour {{crypto_id}}",
+            close_account_tooltip: "Voulez-vous fermer ce compte ?",
+            open_account_tooltip: "Voulez-vous ouvrir ce compte ?",
         },
         account_dialog_backup: {
             seed: "Graine de {{account_name}}",
@@ -349,7 +353,8 @@ module.exports = {
         },
         coin_send: {
             title: "Solde: {{balance}}",
-            body: "La durée moyenne de la transaction est de {{average_transaction_time}}, et le message est limité à {{max_message_length}} caractères ({{send_message_input_length}}). Les frais seront calculés à l'étape suivante."
+            body: "La durée moyenne de la transaction est de {{average_transaction_time}}, et le message est limité à {{max_message_length}} caractères ({{send_message_input_length}}). Les frais seront calculés à l'étape suivante.",
+            fab_scan: "Analyser",
         },
         crypt_dialog: {
             warning_encrypt_to_yourself: "Attention, voulez-vous crypter un message à vous-même ?",
@@ -385,6 +390,9 @@ module.exports = {
             number: "Nombre d'actifs :",
             btc_performance: "A fait / BTC :",
             performance: "A fait :",
+        },
+        dashboard_transactions:{
+            title: "Transactions les plus récentes"
         },
         drawer_content: {
             help_dialogs_data: {

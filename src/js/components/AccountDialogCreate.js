@@ -417,9 +417,6 @@ class AccountDialogCreate extends React.Component {
         const configuration_view =
             <div className={classes.dialogBody}>
                 <DialogContent className={classes.dialogBody} >
-                    <DialogContentText id="create-account-dialog-description">
-                        {t( "components.account_dialog_create.configuration_view.description")}
-                    </DialogContentText>
                     <form noValidate autoComplete="off">
                         <TextField
                             onChange={this._handle_account_name_input_change}
@@ -458,6 +455,9 @@ class AccountDialogCreate extends React.Component {
                             {password_feedback}
                         </Collapse>
                     </form>
+                    <DialogContentText id="create-account-dialog-description">
+                        <p>{t( "components.account_dialog_create.configuration_view.description")}</p>
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
@@ -472,10 +472,6 @@ class AccountDialogCreate extends React.Component {
         const mnemonic_view =
             <div className={classes.dialogBody}>
                 <DialogContent className={classes.dialogBody} >
-                    <DialogContentText id="create-account-dialog-description">
-                        {t( "components.account_dialog_create.mnemonic_view.description")}
-                        <br /><b className={classes.red}>{t( "components.account_dialog_create.mnemonic_view.description_bold")}</b>
-                    </DialogContentText>
                     <form noValidate autoComplete="off">
                         <ChipInput
                             value={ _account_mnemonic_input}
@@ -496,6 +492,10 @@ class AccountDialogCreate extends React.Component {
                             </DialogContentText>
                         </Collapse>
                     </form>
+                    <DialogContentText id="create-account-dialog-description">
+                        <p>{t( "components.account_dialog_create.mnemonic_view.description")}</p>
+                        <p><b className={classes.red}>{t( "components.account_dialog_create.mnemonic_view.description_bold")}</b></p>
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
