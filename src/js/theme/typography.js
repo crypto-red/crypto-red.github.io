@@ -38,6 +38,9 @@ const typography = {
     overline: {
         fontFamily: "Open Sans"
     },
+    text: {
+        fontFamily: "Open Sans"
+    },
 }
 
 module.exports = typography;

@@ -1,3 +1,6 @@
+import { clean_json_text } from "../utils/json";
+import svg64 from "svg64";
+
 import en from "../locales/en";
 import fr from "../locales/fr";
 
@@ -38,51 +41,66 @@ function t(path = "", variables = {}, parameters = {}) {
 
     // Replace variables with real value(s) in the translate object value chosen
     let value_with_variables = end_path_value;
+    value_with_variables = clean_json_text(JSON.stringify(value_with_variables));
+
     Object.entries(variables).forEach(entry => {
 
         const [key, value] = entry;
 
-        if(key.length && value.toString()) {
+        if(key.length || value.toString()){
 
-            let variable_name_to_replace = key; // dog
-            let variable_value_to_replace = value; // "dog" or {dog: 2}
+            if(!["fluc", "flc", "fllc", "tuc", "tlc", "aed"].includes(key.toLowerCase())) {
 
-            const is_value_a_plural = typeof variable_value_to_replace === "object" && variable_value_to_replace !== null;
+                let variable_name_to_replace = key; // dog
+                let variable_value_to_replace = value; // "dog" or {dog: 2}
 
-            if(is_value_a_plural) { // {dog: 2}
+                const is_value_a_plural = typeof variable_value_to_replace === "object" && variable_value_to_replace !== null;
 
-                const start_plural_key = Object.entries(variable_value_to_replace)[0][0]; // dog
+                if(is_value_a_plural) { // {dog: 2}
 
-                if(start_plural_key === variable_name_to_replace) {
+                    const start_plural_key = Object.entries(variable_value_to_replace)[0][0]; // dog
 
-                    let few_how_much = null;
-                    let plenty_how_much = null;
+                    if(start_plural_key === variable_name_to_replace) {
 
-                    if (Object.entries(variable_value_to_replace)[1][0] === "_n"){  // {dog: 2, _n: {few: 20, plenty: 100}}
+                        let few_how_much = null;
+                        let plenty_how_much = null;
 
-                        few_how_much = Object.entries(variable_value_to_replace)[1][1]["few"] || null;
-                        plenty_how_much = Object.entries(variable_value_to_replace)[1][1]["plenty"] || null;
+                        if (Object.entries(variable_value_to_replace)[1][0] === "_n"){  // {dog: 2, _n: {few: 20, plenty: 100}}
+
+                            few_how_much = Object.entries(variable_value_to_replace)[1][1]["few"] || null;
+                            plenty_how_much = Object.entries(variable_value_to_replace)[1][1]["plenty"] || null;
+                        }
+
+                        const plural_number_value = Object.entries(variable_value_to_replace)[0][1]; // 2
+                        const need_to_find_string = "%s {{" + start_plural_key + "}}";
+
+                        let numbered_plural_var_text = plural_number_value <= 1 ? // Either one or many
+                            T[document.documentElement.lang]["_plurals"][start_plural_key]["one"].toString():
+                            T[document.documentElement.lang]["_plurals"][start_plural_key]["many"].toString();
+
+
+                        if(few_how_much && plural_number_value > 1 && plural_number_value < few_how_much){  // From one up to few
+
+                            numbered_plural_var_text =  T[document.documentElement.lang]["_plurals"][start_plural_key]["few"].toString();
+                        }
+
+                        if(plenty_how_much && plural_number_value >= plenty_how_much) { // From plenty up to infinity
+
+                            numbered_plural_var_text =  T[document.documentElement.lang]["_plurals"][start_plural_key]["plenty"].toString();
+                        }
+
+                        const need_to_replace_string = plural_number_value.toString() + " " + numbered_plural_var_text;
+
+                        if(value_with_variables.includes(need_to_find_string)) {
+
+                            value_with_variables = value_with_variables.replaceAll(need_to_find_string, need_to_replace_string);
+                        }
                     }
 
-                    const plural_number_value = Object.entries(variable_value_to_replace)[0][1]; // 2
-                    const need_to_find_string = "%s {{" + start_plural_key + "}}";
+                }else { // "dog"
 
-                    let numbered_plural_var_text = plural_number_value <= 1 ? // Either one or many
-                        T[document.documentElement.lang]["_plurals"][start_plural_key]["one"].toString():
-                        T[document.documentElement.lang]["_plurals"][start_plural_key]["many"].toString();
-
-
-                    if(few_how_much && plural_number_value > 1 && plural_number_value < few_how_much){  // From one up to few
-
-                        numbered_plural_var_text =  T[document.documentElement.lang]["_plurals"][start_plural_key]["few"].toString();
-                    }
-
-                    if(plenty_how_much && plural_number_value >= plenty_how_much) { // From plenty up to infinity
-
-                        numbered_plural_var_text =  T[document.documentElement.lang]["_plurals"][start_plural_key]["plenty"].toString();
-                    }
-
-                    const need_to_replace_string = plural_number_value.toString() + " " + numbered_plural_var_text;
+                    const need_to_find_string = "{{" + variable_name_to_replace + "}}";
+                    const need_to_replace_string = variable_value_to_replace === null ? "": variable_value_to_replace.toString();
 
                     if(value_with_variables.includes(need_to_find_string)) {
 
@@ -90,19 +108,36 @@ function t(path = "", variables = {}, parameters = {}) {
                     }
                 }
 
-            }else { // "dog"
-
-                const need_to_find_string = "{{" + variable_name_to_replace + "}}";
-                const need_to_replace_string = variable_value_to_replace === null ? "": variable_value_to_replace.toString();
-
-                if(value_with_variables.includes(need_to_find_string)) {
-
-                    value_with_variables = value_with_variables.replaceAll(need_to_find_string, need_to_replace_string);
-                }
             }
         }
+
     });
 
+    let svg_image_regex = /\{\{\{\!\[(.*?)?(\]\(data\:image\/svg\+xml\;utf8\,(.*?)\))(\}\}\})/gm;
+
+    let svg_image_regex_match;
+    while((svg_image_regex_match = svg_image_regex.exec(value_with_variables)) !== null) {
+
+        if(typeof svg_image_regex_match[3] !== "undefined") {
+
+            let svg_image_string = svg_image_regex_match[3]
+                .replaceAll(/\\\"/g, `"`)
+                .replaceAll(/\\\'/g, `'`);
+
+            value_with_variables = value_with_variables
+                .replace(
+                    svg_image_regex_match[0],
+                    svg_image_regex_match[0]
+                        .replace("data:image/svg+xml;utf8,", "")
+                        .replace(svg_image_regex_match[3], svg64(svg_image_string))
+                        .replace("{{{", " ")
+                        .replace("}}}", " ")
+                );
+
+        }
+    }
+
+    value_with_variables = JSON.parse(value_with_variables);
     parameters = Object.assign(variables, parameters);
     if(parameters.fluc || parameters.FLUC || parameters.flc || parameters.FLC) { // First Letter Upper Case
 

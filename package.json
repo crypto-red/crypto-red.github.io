@@ -46,6 +46,7 @@
     "redux": "^3.7.2",
     "regtest-client": "^0.2.0",
     "remark-gfm": "^1.0.0",
+    "svg64": "^1.1.0",
     "triplesec": "^4.0.3",
     "wif": "^2.0.6",
     "zxcvbn": "^4.4.2"
@@ -120,6 +121,7 @@
       "./src/images/pig-coins.svg",
       "./src/images/swap.svg",
       "./src/images/invest.svg",
+      "/src/images/investment-data.svg",
       "./src/images/open.svg",
       "./src/images/trade.svg"
     ],

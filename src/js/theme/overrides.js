@@ -7,6 +7,9 @@ const overrides = {
             body: {
                 backgroundColor: "#F4F6F8"
             },
+            "p img": {
+                width: "100%",
+            },
             "*::-webkit-scrollbar": {
                 width: "8px"
             },
@@ -39,6 +42,9 @@ const overrides = {
             ".MuiTooltip-popper .MuiTooltip-tooltip": {
                 backgroundColor: "#100d4e",
             },
+            "svg": {
+                fontFamily: "Open Sans !important"
+            }
         },
     },
 }
