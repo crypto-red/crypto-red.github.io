@@ -481,8 +481,8 @@ function login(name, password, persistent = true, callback_function) {
             }
         }
 
-        const match = unlogged_account.encrypted_seed.match(/[0-9A-Fa-f]{6}/g);
-        const is_hex = match && unlogged_account.encrypted_seed === match[0];
+        const match = unlogged_account.encrypted_seed.match(/^[0-9a-f]+$/g);
+        const is_hex = match;
         const format = is_hex ? "hex": "base64";
 
         triplesec.decrypt ({
