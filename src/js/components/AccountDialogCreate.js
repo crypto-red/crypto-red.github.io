@@ -438,7 +438,7 @@ class AccountDialogCreate extends React.Component {
 
                 triplesec_decrypt(text, _account_password_input, (error, result) => {
 
-                    if(!error){
+                    if(!error && result){
 
                         this.setState({ _account_mnemonic_input: result.split(" ")});
                         actions.trigger_sfx("state-change_confirm-up");
@@ -446,7 +446,7 @@ class AccountDialogCreate extends React.Component {
 
                     }else {
 
-                        actions.trigger_snackbar(t("sentences." + error.toLowerCase()));
+                        actions.trigger_snackbar(t("sentences." + error, {FAW: true}));
                     }
 
                     this.setState({_is_account_seed_trying_to_be_decrypted: false});

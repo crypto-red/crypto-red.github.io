@@ -73,7 +73,7 @@ function triplesec_decrypt(encrypted_message, password, callback_function) {
         }
     }
 
-    const match = encrypted_message.match(/[a-z0-9]+/g);
+    const match = encrypted_message.match(/[0-9A-Fa-f]{6}/g);
     const is_hex = match && encrypted_message === match[0];
     const format = is_hex ? "hex": "base64";
 
