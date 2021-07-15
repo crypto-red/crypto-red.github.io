@@ -362,6 +362,8 @@ module.exports = {
         account_dialog_backup: {
             seed: "Seed of {{account_name}}",
             store: "STORE IT ON PAPER, NEVER SHARE THIS SEED TO ANYONE!!!",
+            encrypted_seed_qr: "Download QR encrypted seed",
+            password_qr: "Download QR password",
 
         },
         account_dialog_close: {

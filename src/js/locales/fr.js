@@ -340,6 +340,8 @@ module.exports = {
         account_dialog_backup: {
             seed: "Graine de {{account_name}}",
             store: "STOCKEZ-LA SUR PAPIER, NE PARTAGEZ JAMAIS CETTE GRAINE À PERSONNE!!!",
+            encrypted_seed_qr: "Télécharger la graine chiffré (QR)",
+            password_qr: "Télécharger le MDP (QR)",
 
         },
         account_dialog_close: {

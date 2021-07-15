@@ -16,6 +16,8 @@ import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
 import actions from "../actions/utils";
 
+import QRDialog from "../components/QRDialog";
+
 const styles = theme => ({
     backdrop: {
         color: "#fff",
@@ -33,6 +35,7 @@ class AccountDialogOpen extends React.Component {
             account: props.account,
             open: props.open,
             error: props.error,
+            _is_qr_dialog_open: false,
             _account_password_input: "",
             _loading: false,
             _persistent: false,
@@ -100,15 +103,34 @@ class AccountDialogOpen extends React.Component {
         this.props.cancel(event);
     };
 
+    _handle_qr_dialog_open = (event) => {
+
+        this.setState({_is_qr_dialog_open: true});
+    };
+
+    _handle_qr_dialog_close = (event) => {
+
+        this.setState({_is_qr_dialog_open: false});
+    };
+
+    _set_password = (password) => {
+
+        this.setState({_account_password_input: password});
+    };
+
     render() {
 
-        const { classes, account, open, error, _account_password_input, _loading, _persistent } = this.state;
+        const { classes, account, open, error, _account_password_input, _loading, _persistent, _is_qr_dialog_open } = this.state;
 
         return (
             <div>
                 <Backdrop className={classes.backdrop} open={_loading && !error}>
                     <CircularProgress color="inherit" />
                 </Backdrop>
+                <QRDialog
+                    open={_is_qr_dialog_open}
+                    onClose={this._handle_qr_dialog_close}
+                    on_scan={(password) => this._set_password(password)}/>
                 <Dialog
                     open={open}
                     onClose={(event) => {this.props.onClose(event, account)}}
@@ -146,6 +168,9 @@ class AccountDialogOpen extends React.Component {
                     <DialogActions>
                         <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
                             {t( "words.cancel")}
+                        </Button>
+                        <Button onClick={(event) => {this._handle_qr_dialog_open(event)}} color="primary">
+                            QR
                         </Button>
                         <Button onClick={(event) => {this._on_complete(event)}} color="primary" autoFocus>
                             {t( "words.open")}

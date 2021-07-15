@@ -325,7 +325,7 @@ function create_account(name, password, seed, callback_function) {
 
                     const account = {
                         name: name,
-                        encrypted_seed: buffer.toString('hex'),
+                        encrypted_seed: buffer.toString("base64"),
                         timestamp: Date.now()
                     }
 
@@ -435,6 +435,8 @@ function login(name, password, persistent = true, callback_function) {
                 logged_account = {
                     name: unlogged_account.name,
                     seed: buffer.toString(),
+                    encrypted_seed: unlogged_account.encrypted_seed,
+                    password: password,
                     timestamp: Date.now(),
                 };
 
@@ -479,8 +481,12 @@ function login(name, password, persistent = true, callback_function) {
             }
         }
 
+        const match = unlogged_account.encrypted_seed.match(/[a-z0-9]+/g);
+        const is_hex = match && unlogged_account.encrypted_seed === match[0];
+        const format = is_hex ? "hex": "base64";
+
         triplesec.decrypt ({
-            data: triplesec.Buffer.from(unlogged_account.encrypted_seed, "hex"),
+            data: triplesec.Buffer.from(unlogged_account.encrypted_seed, format),
             key: triplesec.Buffer.from(password)
         }, decrypt_callback);
     }
