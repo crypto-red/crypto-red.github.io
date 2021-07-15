@@ -35,6 +35,8 @@ import { COINS } from "../utils/constants";
 import {Collapse} from "@material-ui/core";
 import actions from "../actions/utils";
 import { download_qr_code_image } from "../utils/download-qr-code-image";
+import { triplesec_decrypt } from "../utils/api-crypto";
+import QRDialog from "./QRDialog";
 
 const styles = theme => ({
     dialog: {
@@ -358,7 +360,9 @@ class AccountDialogCreate extends React.Component {
                 _generation_completed: false,
                 _generation_error: false,
                 _coin: null,
-                _account_mnemonic_input: []
+                _account_mnemonic_input: [],
+                _is_qr_dialog_open: false,
+                _is_qr_dialog_for: "password",
             };
 
             this.setState(state);
@@ -404,10 +408,52 @@ class AccountDialogCreate extends React.Component {
         this._reset_fields();
     };
 
+    _handle_qr_dialog_close = () => {
+
+        this.setState({_is_qr_dialog_open: false});
+    };
+
+    _on_encrypted_seed_qr = () => {
+
+        this.setState({_is_qr_dialog_open: true, _is_qr_dialog_for: "encrypted_seed"});
+    };
+
+    _on_password_qr = () => {
+
+        this.setState({_is_qr_dialog_open: true, _is_qr_dialog_for: "password"});
+    };
+
+    _handle_qr_scan = (text) => {
+
+        const {_is_qr_dialog_for, _account_password_input } = this.state;
+
+        if(_is_qr_dialog_for === "password") {
+
+            this.setState({_account_password_input: text, _account_confirmation_input: text});
+
+        }else if(_is_qr_dialog_for === "encrypted_seed") {
+
+            triplesec_decrypt(text, _account_password_input, (error, result) => {
+
+                if(!error){
+
+                    this.setState({ _account_mnemonic_input: result.split(" ")});
+                    actions.trigger_sfx("state-change_confirm-up");
+                    actions.jamy_update("happy");
+
+                }else {
+
+                    actions.trigger_snackbar(error);
+                }
+            });
+        }
+    }
+
     render() {
 
         const { classes, account, open, _active_view_index, _generation_completed, _coin, _coins,  _account_mnemonic_input, _password_evaluation, _configuration_view_auto_focus_index } = this.state;
         const { _account_name_input, _account_password_input, _account_conformation_input, _is_account_name_error, _is_account_confirmation_error, _is_account_password_error, _is_account_mnemonic_input_error, _generation_error } = this.state;
+        const { _is_qr_dialog_open } = this.state;
 
         const coin = _coin == null ? COINS[0]: _coin;
 
@@ -467,6 +513,9 @@ class AccountDialogCreate extends React.Component {
                     <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
                         {t("words.cancel")}
                     </Button>
+                    <Button onClick={(event) => {this._on_password_qr(event)}} color="primary">
+                        QR
+                    </Button>
                     <Button onClick={this._switch_to_mnemonic_view} color="primary" autoFocus>
                         {t("words.next")}
                     </Button>
@@ -504,6 +553,9 @@ class AccountDialogCreate extends React.Component {
                 <DialogActions>
                     <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
                         {t( "words.cancel")}
+                    </Button>
+                    <Button onClick={(event) => {this._on_encrypted_seed_qr(event)}} color="primary">
+                        QR
                     </Button>
                     <Button onClick={(event) => {this._generate_a_new_mnemonic(event)}}
                             color="primary"
@@ -565,28 +617,34 @@ class AccountDialogCreate extends React.Component {
         ];
 
         return (
-            <Dialog
-                className={classes.dialog}
-                open={open}
-                scroll={"paper"}
-                onClose={(event) => {this._on_close(event)}}
-                aria-labelledby="create-account-dialog-title"
-                aria-describedby="create-account-dialog-description"
-            >
-                <DialogTitle id="create-account-dialog-title">{t( "sentences.create a new account")}</DialogTitle>
-                <Stepper activeStep={_active_view_index} alternativeLabel>
-                    <Step completed={(_active_view_index >= 1)}>
-                        <StepLabel>{t( "components.account_dialog_create.stepper.configure")}</StepLabel>
-                    </Step>
-                    <Step completed={(_active_view_index >= 2)} optional={<span>Optional</span>}>
-                        <StepLabel>{t( "components.account_dialog_create.stepper.import")}</StepLabel>
-                    </Step>
-                    <Step completed={(_active_view_index >= 2 && _generation_completed)}>
-                        <StepLabel>{t( "components.account_dialog_create.stepper.create")}</StepLabel>
-                    </Step>
-                </Stepper>
-                {views[_active_view_index]}
-            </Dialog>
+            <div>
+                <QRDialog
+                    open={_is_qr_dialog_open}
+                    onClose={this._handle_qr_dialog_close}
+                    on_scan={(text) => this._handle_qr_scan(text)}/>
+                <Dialog
+                    className={classes.dialog}
+                    open={open}
+                    scroll={"paper"}
+                    onClose={(event) => {this._on_close(event)}}
+                    aria-labelledby="create-account-dialog-title"
+                    aria-describedby="create-account-dialog-description"
+                >
+                    <DialogTitle id="create-account-dialog-title">{t( "sentences.create a new account")}</DialogTitle>
+                    <Stepper activeStep={_active_view_index} alternativeLabel>
+                        <Step completed={(_active_view_index >= 1)}>
+                            <StepLabel>{t( "components.account_dialog_create.stepper.configure")}</StepLabel>
+                        </Step>
+                        <Step completed={(_active_view_index >= 2)} optional={<span>Optional</span>}>
+                            <StepLabel>{t( "components.account_dialog_create.stepper.import")}</StepLabel>
+                        </Step>
+                        <Step completed={(_active_view_index >= 2 && _generation_completed)}>
+                            <StepLabel>{t( "components.account_dialog_create.stepper.create")}</StepLabel>
+                        </Step>
+                    </Stepper>
+                    {views[_active_view_index]}
+                </Dialog>
+            </div>
         );
     }
 }

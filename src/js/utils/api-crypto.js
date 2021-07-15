@@ -1,6 +1,7 @@
 import base58 from "bs58";
 import nacl_factory from "js-nacl";
 import { sha512_256 } from "js-sha512";
+import triplesec from "triplesec";
 
 // https://developers.google.com/web/updates/2012/06/How-to-convert-ArrayBuffer-to-and-from-String
 function _ab2str(buf) {
@@ -59,8 +60,32 @@ function nacl_decrypt(encrypted_message, public_key, private_key, callback_funct
     });
 }
 
+function triplesec_decrypt(encrypted_message, password, callback_function) {
+
+    function decrypt_callback(error, buffer) {
+
+        if(error) {
+
+            callback_function("Wrong password", null);
+        }else {
+
+            callback_function(null, buffer.toString());
+        }
+    }
+
+    const match = encrypted_message.match(/[a-z0-9]+/g);
+    const is_hex = match && encrypted_message === match[0];
+    const format = is_hex ? "hex": "base64";
+
+    triplesec.decrypt ({
+        data: triplesec.Buffer.from(encrypted_message, format),
+        key: triplesec.Buffer.from(password)
+    }, decrypt_callback);
+}
+
 module.exports = {
     nacl_encrypt: nacl_encrypt,
     nacl_decrypt: nacl_decrypt,
     sha512_256: sha512_256,
+    triplesec_decrypt: triplesec_decrypt,
 };
