@@ -8,6 +8,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 
 import QrReader from "react-qr-reader"
 import actions from "../actions/utils";
+import {DialogTitle} from "@material-ui/core";
 
 const styles = theme => ({
     dialog: {
@@ -71,7 +72,6 @@ class QRDialog extends React.Component {
 
         const { classes, open } = this.state;
 
-
         return (
             <Dialog
                 className={classes.dialog}
@@ -80,6 +80,7 @@ class QRDialog extends React.Component {
                 aria-labelledby="qr-code-scanner-dialog-title"
                 aria-describedby="qr-code-scanner-dialog-description"
             >
+                <DialogTitle>{t("components.qr_dialog.title")}</DialogTitle>
                 <DialogContent className={classes.dialogContent}>
                     <QrReader
                         delay={300}

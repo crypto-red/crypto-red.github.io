@@ -362,9 +362,10 @@ module.exports = {
         account_dialog_backup: {
             seed: "Seed of {{account_name}}",
             store: "STORE IT ON PAPER, NEVER SHARE THIS SEED TO ANYONE!!!",
-            encrypted_seed_qr: "Download QR encrypted seed",
-            password_qr: "Download QR password",
-
+            encrypted_seed_qr: "Download the encrypted seed (QR) in PDF",
+            password_qr: "Download the password (QR) in PDF",
+            download_encrypted_seed: "{{account_name}}'s encrypted seed",
+            download_password: "{{account_name}}'s password",
         },
         account_dialog_close: {
             close: "Close {{account_name}}?",
@@ -548,6 +549,9 @@ module.exports = {
         },
         inner_toolbar: {
             guest: "Guest",
+        },
+        qr_dialog: {
+            title: "Scan a QR code",
         },
         share_dialog: {
             title: "Share",

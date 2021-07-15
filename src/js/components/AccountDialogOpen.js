@@ -14,9 +14,13 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
-import actions from "../actions/utils";
+import IconButton from "@material-ui/core/IconButton";
 
 import QRDialog from "../components/QRDialog";
+
+import QrCodeIcon from "../icons/QrCode";
+
+import actions from "../actions/utils";
 
 const styles = theme => ({
     backdrop: {
@@ -169,9 +173,9 @@ class AccountDialogOpen extends React.Component {
                         <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
                             {t( "words.cancel")}
                         </Button>
-                        <Button onClick={(event) => {this._handle_qr_dialog_open(event)}} color="primary">
-                            QR
-                        </Button>
+                        <IconButton onClick={(event) => {this._handle_qr_dialog_open(event)}} color="primary" component="span">
+                            <QrCodeIcon />
+                        </IconButton>
                         <Button onClick={(event) => {this._on_complete(event)}} color="primary" autoFocus>
                             {t( "words.open")}
                         </Button>

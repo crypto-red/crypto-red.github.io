@@ -340,8 +340,10 @@ module.exports = {
         account_dialog_backup: {
             seed: "Graine de {{account_name}}",
             store: "STOCKEZ-LA SUR PAPIER, NE PARTAGEZ JAMAIS CETTE GRAINE À PERSONNE!!!",
-            encrypted_seed_qr: "Télécharger la graine chiffré (QR)",
-            password_qr: "Télécharger le MDP (QR)",
+            encrypted_seed_qr: "Télécharger la graine chiffré (QR) en PDF",
+            password_qr: "Télécharger le MDP (QR) en PDF",
+            download_encrypted_seed: "Graine chiffrée de {{account_name}}",
+            download_password: "Mot de passe de {{account_name}}",
 
         },
         account_dialog_close: {
@@ -526,6 +528,9 @@ module.exports = {
         },
         inner_toolbar: {
             guest: "Invité",
+        },
+        qr_dialog: {
+            title: "Analysez un code QR",
         },
         share_dialog: {
             title: "Partager",

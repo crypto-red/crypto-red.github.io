@@ -18,6 +18,7 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import IconButton from "@material-ui/core/IconButton";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -30,14 +31,19 @@ import api from "../utils/api";
 
 import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
+import QrCodeIcon from "../icons/QrCode";
 
-import { COINS } from "../utils/constants";
 import {Collapse} from "@material-ui/core";
 import actions from "../actions/utils";
 import { triplesec_decrypt } from "../utils/api-crypto";
 import QRDialog from "./QRDialog";
+import Backdrop from "@material-ui/core/Backdrop";
 
 const styles = theme => ({
+    backdrop: {
+        color: "#fff",
+        zIndex: "1400"
+    },
     dialog: {
         [theme.breakpoints.down("xs")]: {
             "& .MuiDialog-container .MuiDialog-paper": {
@@ -104,10 +110,9 @@ class AccountDialogCreate extends React.Component {
             _active_view_index: 0,
             _generation_completed: false,
             _generation_error: false,
-            _coins: COINS,
-            _coin: null,
             _account_mnemonic_input: [],
-            _is_account_mnemonic_input_error: false
+            _is_account_mnemonic_input_error: false,
+            _is_account_seed_trying_to_be_decrypted: false,
         };
     };
 
@@ -355,10 +360,10 @@ class AccountDialogCreate extends React.Component {
                 _configuration_view_auto_focus_index: 0,
                 _generation_completed: false,
                 _generation_error: false,
-                _coin: null,
                 _account_mnemonic_input: [],
                 _is_qr_dialog_open: false,
                 _is_qr_dialog_for: "password",
+                _is_account_seed_trying_to_be_decrypted: false,
             };
 
             this.setState(state);
@@ -429,29 +434,32 @@ class AccountDialogCreate extends React.Component {
 
         }else if(_is_qr_dialog_for === "encrypted_seed") {
 
-            triplesec_decrypt(text, _account_password_input, (error, result) => {
+            this.setState({_is_account_seed_trying_to_be_decrypted: true}, () => {
 
-                if(!error){
+                triplesec_decrypt(text, _account_password_input, (error, result) => {
 
-                    this.setState({ _account_mnemonic_input: result.split(" ")});
-                    actions.trigger_sfx("state-change_confirm-up");
-                    actions.jamy_update("happy");
+                    if(!error){
 
-                }else {
+                        this.setState({ _account_mnemonic_input: result.split(" ")});
+                        actions.trigger_sfx("state-change_confirm-up");
+                        actions.jamy_update("happy");
 
-                    actions.trigger_snackbar(error);
-                }
+                    }else {
+
+                        actions.trigger_snackbar(t("sentences." + error.toLowerCase()));
+                    }
+
+                    this.setState({_is_account_seed_trying_to_be_decrypted: false});
+                });
             });
         }
     }
 
     render() {
 
-        const { classes, account, open, _active_view_index, _generation_completed, _coin, _coins,  _account_mnemonic_input, _password_evaluation, _configuration_view_auto_focus_index } = this.state;
+        const { classes, open, _active_view_index, _generation_completed,  _account_mnemonic_input, _password_evaluation } = this.state;
         const { _account_name_input, _account_password_input, _account_confirmation_input, _is_account_name_error, _is_account_confirmation_error, _is_account_password_error, _is_account_mnemonic_input_error, _generation_error } = this.state;
-        const { _is_qr_dialog_open } = this.state;
-
-        const coin = _coin == null ? COINS[0]: _coin;
+        const { _is_qr_dialog_open, _is_account_seed_trying_to_be_decrypted } = this.state;
 
         const password_feedback = Boolean(_password_evaluation) ?
                 <DialogContentText id="create-account-dialog-description">
@@ -509,9 +517,9 @@ class AccountDialogCreate extends React.Component {
                     <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
                         {t("words.cancel")}
                     </Button>
-                    <Button onClick={(event) => {this._on_password_qr(event)}} color="primary">
-                        QR
-                    </Button>
+                    <IconButton onClick={(event) => {this._on_password_qr(event)}} color="primary" component="span">
+                        <QrCodeIcon />
+                    </IconButton>
                     <Button onClick={this._switch_to_mnemonic_view} color="primary" autoFocus>
                         {t("words.next")}
                     </Button>
@@ -550,9 +558,9 @@ class AccountDialogCreate extends React.Component {
                     <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
                         {t( "words.cancel")}
                     </Button>
-                    <Button onClick={(event) => {this._on_encrypted_seed_qr(event)}} color="primary">
-                        QR
-                    </Button>
+                    <IconButton onClick={(event) => {this._on_encrypted_seed_qr(event)}} color="primary" component="span">
+                        <QrCodeIcon />
+                    </IconButton>
                     <Button onClick={(event) => {this._generate_a_new_mnemonic(event)}}
                             color="primary"
                             autoFocus={!_account_mnemonic_input.length}>
@@ -614,6 +622,9 @@ class AccountDialogCreate extends React.Component {
 
         return (
             <div>
+                <Backdrop className={classes.backdrop} open={_is_account_seed_trying_to_be_decrypted}>
+                    <CircularProgress color="inherit" />
+                </Backdrop>
                 <QRDialog
                     open={_is_qr_dialog_open}
                     onClose={this._handle_qr_dialog_close}

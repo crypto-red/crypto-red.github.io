@@ -95,7 +95,7 @@ class AccountDialogDelete extends React.Component {
                             />
                             <DialogContentText id="delete-account-dialog-description">
                                 <p>{t("components.account_dialog_delete.cannot_be_undone", {account_name: account.name})}</p>
-                                <p>{t("components.account_dialog_delete.repeat_name")}</p>
+                                <p><b>{t("components.account_dialog_delete.repeat_name")}</b></p>
                             </DialogContentText>
                         </DialogContent>
                     </div>: null
