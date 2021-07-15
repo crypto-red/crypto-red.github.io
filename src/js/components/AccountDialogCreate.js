@@ -98,7 +98,7 @@ class AccountDialogCreate extends React.Component {
             _account_password_input: "",
             _is_account_password_error: false,
             _account_confirmation_input: "",
-            _is_account_confimation_error: false,
+            _is_account_confirmation_error: false,
             _configuration_view_auto_focus_index: 0,
             _password_evaluation: null,
             _password_warning: null,
@@ -452,7 +452,7 @@ class AccountDialogCreate extends React.Component {
     render() {
 
         const { classes, account, open, _active_view_index, _generation_completed, _coin, _coins,  _account_mnemonic_input, _password_evaluation, _configuration_view_auto_focus_index } = this.state;
-        const { _account_name_input, _account_password_input, _account_conformation_input, _is_account_name_error, _is_account_confirmation_error, _is_account_password_error, _is_account_mnemonic_input_error, _generation_error } = this.state;
+        const { _account_name_input, _account_password_input, _account_confirmation_input, _is_account_name_error, _is_account_confirmation_error, _is_account_password_error, _is_account_mnemonic_input_error, _generation_error } = this.state;
         const { _is_qr_dialog_open } = this.state;
 
         const coin = _coin == null ? COINS[0]: _coin;
@@ -492,7 +492,7 @@ class AccountDialogCreate extends React.Component {
                         />
                         <TextField
                             onChange={this._handle_account_confirmation_input_change}
-                            value={_account_conformation_input}
+                            value={_account_confirmation_input}
                             error={_is_account_confirmation_error}
                             helperText={_is_account_confirmation_error ? t( "sentences.wrong password confirmation"): ""}
                             onKeyDown={this._handle_key_down_input_three}
