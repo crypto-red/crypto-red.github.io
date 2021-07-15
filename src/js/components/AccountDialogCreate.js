@@ -34,7 +34,6 @@ import CloseIcon from "@material-ui/icons/Close";
 import { COINS } from "../utils/constants";
 import {Collapse} from "@material-ui/core";
 import actions from "../actions/utils";
-import { download_qr_code_image } from "../utils/download-qr-code-image";
 import { triplesec_decrypt } from "../utils/api-crypto";
 import QRDialog from "./QRDialog";
 
@@ -213,9 +212,6 @@ class AccountDialogCreate extends React.Component {
     _process_create_account_result = (error, account) => {
 
         if(!error) {
-
-            download_qr_code_image(this.state._account_password_input, 512, "H", this.state._account_name_input + "_password" + ".svg");
-            download_qr_code_image(account.encrypted_seed, 512, "H", this.state._account_name_input + "_encrypted_seed" + ".svg");
 
             this.setState({_generation_error: false, _generation_completed: true});
 
