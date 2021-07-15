@@ -44,12 +44,14 @@ class AccountDialogBackup extends React.Component {
 
     _download_QR_encrypted_seed = () => {
 
-        download_qr_code_image(this.state.account.encrypted_seed, 512, "M", t("components.account_dialog_backup.download_encrypted_seed", {account_name: this.state.account.name}));
+        const { account } = this.state;
+        download_qr_code_image(this.state.account.encrypted_seed, 512, "M", t("components.account_dialog_backup.download_encrypted_seed", {account_name: account.name}), account.name);
     }
 
     _download_QR_password = () => {
 
-        download_qr_code_image(this.state.account.password, 512, "M", t("components.account_dialog_backup.download_password", {account_name: this.state.account.name}));
+        const { account } = this.state;
+        download_qr_code_image(this.state.account.password, 512, "M", t("components.account_dialog_backup.download_password", {account_name: account.name}), account.name);
     }
 
     _on_close = (event, account) => {

@@ -2,8 +2,11 @@ import ReactDOMServer from 'react-dom/server'
 import QRCode from "qrcode.react";
 import React from "react";
 import svg64 from "svg64";
+import jdenticon from "jdenticon";
 
-function download_qr_code_image(text_string, size_px = 512, level="M", name = "image.svg") {
+function download_qr_code_image(text_string, size_px = 512, level="M", name = "name", account_name="account_name") {
+
+    const jdenticon_string_base64 = svg64(jdenticon.toSvg(account_name, size_px/12));
 
     const svg_string = ReactDOMServer.renderToString(<QRCode
         level={level}
@@ -14,15 +17,23 @@ function download_qr_code_image(text_string, size_px = 512, level="M", name = "i
         value={text_string}
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
+        imageSettings={{
+            src: jdenticon_string_base64,
+            x: null,
+            y: null,
+            height: size_px/12,
+            width: size_px/12,
+            excavate: true,
+        }}
     />);
 
     const svg_string_base64 = svg64(svg_string);
 
     const margin = 48;
     const padding = 16;
-    const window_size = size_px + margin + margin;
 
-    let my_window = window.open("", name, `top=${margin},left=${margin},scrollbars=no,resizable=no`);
+    let my_window = window.open("", name, `top=${margin},left=${margin},scrollbars=no,resizable=no,`);
+
 
     const html_image =`<img style="position: relative; border: ${margin/8}px solid #3c32f3;border-radius: ${margin/12}px ${margin/12}px 0px 0px;margin:${margin}px;padding:${padding}px;display:block;margin-left:auto;margin-right:auto;width:${size_px}px;height:${size_px};" src="${svg_string_base64}"></img>`;
     const html_string =
@@ -57,14 +68,9 @@ function download_qr_code_image(text_string, size_px = 512, level="M", name = "i
             </body>
         </html>`;
 
-    my_window.document.addEventListener("unload", () => {
-
-        window.focus();
-    });
-
     my_window.document.writeln(html_string);
+    my_window.document.title = `${name}.pdf`;
     my_window.document.close();
-    my_window.focus();
 
     /*let a = document.createElement("a"); //Create <a>
     a.href = svg_string_base64; //Image Base64 Goes here
