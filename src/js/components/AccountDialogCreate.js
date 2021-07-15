@@ -438,7 +438,7 @@ class AccountDialogCreate extends React.Component {
 
                 triplesec_decrypt(text, _account_password_input, (error, result) => {
 
-                    if(!error && result){
+                    if(!error){
 
                         this.setState({ _account_mnemonic_input: result.split(" ")});
                         actions.trigger_sfx("state-change_confirm-up");
