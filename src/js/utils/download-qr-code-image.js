@@ -68,9 +68,15 @@ function download_qr_code_image(text_string, size_px = 512, level="M", name = "n
             </body>
         </html>`;
 
+    my_window.document.addEventListener("unload", () => {
+
+        window.focus();
+    });
+
     my_window.document.writeln(html_string);
     my_window.document.title = `${name}.pdf`;
     my_window.document.close();
+    my_window.focus();
 
     /*let a = document.createElement("a"); //Create <a>
     a.href = svg_string_base64; //Image Base64 Goes here
