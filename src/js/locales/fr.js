@@ -340,10 +340,10 @@ module.exports = {
         account_dialog_backup: {
             seed: "Graine de {{account_name}}",
             store: "STOCKEZ-LA SUR PAPIER, NE PARTAGEZ JAMAIS CETTE GRAINE À PERSONNE!!!",
-            encrypted_seed_qr: "Télécharger la graine chiffré (QR) en PDF",
-            password_qr: "Télécharger le MDP (QR) en PDF",
-            download_encrypted_seed: "Graine chiffrée de {{account_name}}",
-            download_password: "Mot de passe de {{account_name}}",
+            encrypted_seed_qr: "Graine chiffré (QR/PDF)",
+            password_qr: "Mot de passe de la graine (QR/PDF)",
+            download_encrypted_seed: "Graine chiffrée de \"{{account_name}}\"",
+            download_password: "Mot de passe de la graine chiffrée de \"{{account_name}}\"",
 
         },
         account_dialog_close: {

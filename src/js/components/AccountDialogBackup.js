@@ -73,7 +73,7 @@ class AccountDialogBackup extends React.Component {
         return (
             <Dialog
                 open={open}
-                onClose={(event) => {this.props.onClose(event, account)}}
+                onClose={(event) => {this._on_close(event, account)}}
                 aria-labelledby="backup-account-dialog-title"
                 aria-describedby="backup-account-dialog-description"
             >
