@@ -11,7 +11,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Button from "@material-ui/core/Button";
 import { red } from "@material-ui/core/colors";
 import actions from "../actions/utils";
-import {download_qr_code_image} from "../utils/download-qr-code-image";
+import { account_backup_qr_code_image } from "../utils/account-backup-qr-code-image";
 
 const styles = theme => ({
     red: {
@@ -45,13 +45,13 @@ class AccountDialogBackup extends React.Component {
     _download_QR_encrypted_seed = () => {
 
         const { account } = this.state;
-        download_qr_code_image(this.state.account.encrypted_seed, 512, "M", t("components.account_dialog_backup.download_encrypted_seed", {account_name: account.name}), account.name);
+        account_backup_qr_code_image(this.state.account.encrypted_seed, 512, "M", t("components.account_dialog_backup.download_encrypted_seed", {account_name: account.name}), account.name);
     }
 
     _download_QR_password = () => {
 
         const { account } = this.state;
-        download_qr_code_image(this.state.account.password, 512, "M", t("components.account_dialog_backup.download_password", {account_name: account.name}), account.name);
+        account_backup_qr_code_image(this.state.account.password, 512, "M", t("components.account_dialog_backup.download_password", {account_name: account.name}), account.name);
     }
 
     _on_close = (event, account) => {

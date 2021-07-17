@@ -30,7 +30,6 @@
     "material-auto-rotating-carousel": "^3.0.2",
     "material-ui-chip-input": "^2.0.0-beta.2",
     "material-ui-toggle-icon": "^1.1.2",
-    "mdi-material-ui": "^6.22.0",
     "pouchdb": "^7.2.2",
     "qrcode.react": "^1.0.1",
     "raf": "^3.4.1",

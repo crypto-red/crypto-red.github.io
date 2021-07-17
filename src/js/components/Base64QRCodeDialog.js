@@ -5,10 +5,13 @@ import { t } from "../utils/t";
 
 import Dialog from "@material-ui/core/Dialog";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Button from "@material-ui/core/Button";
+import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 
 import Base64QRCode from "../components/Base64QRCode";
-import actions from "../actions/utils";
+
+import download_qr_code_image from "../utils/download-qr-code-image";
 
 const styles = theme => ({
     dialog: {
@@ -61,6 +64,13 @@ class Base64QRCodeDialog extends React.Component {
         this.props.onClose();
     };
 
+    _download_qr_code = () => {
+
+        const { value } = this.state;
+
+        download_qr_code_image(value, 1024, "M", "QR", "PNG", true);
+    };
+
     render() {
 
         const { classes, open, value } = this.state;
@@ -77,6 +87,14 @@ class Base64QRCodeDialog extends React.Component {
                 <DialogContent>
                     <Base64QRCode value={value}/>
                 </DialogContent>
+                <DialogActions>
+                    <Button onClick={(event) => {this._download_qr_code(event)}} color="primary">
+                        {t("words.download")}
+                    </Button>
+                    <Button onClick={(event) => {this._close_dialog(event)}} color="primary">
+                        {t("words.close")}
+                    </Button>
+                </DialogActions>
             </Dialog>
         );
     }

@@ -137,6 +137,7 @@ module.exports = {
         "chart": "graphique",
         "qr code": "code QR",
         "scan": "analyser",
+        "download": "télécharger",
     },
     sentences: {
         "your coins": "Vos pièces",

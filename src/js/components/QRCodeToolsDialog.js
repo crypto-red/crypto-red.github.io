@@ -15,6 +15,9 @@ import Button from "@material-ui/core/Button";
 import DialogActions from "@material-ui/core/DialogActions";
 import QRCodeScanDialog from "../components/QRCodeScanDialog";
 import Base64QRCodeDialog from "../components/Base64QRCodeDialog";
+import clipboard from "clipboard-polyfill";
+import CloseIcon from "@material-ui/icons/Close";
+import IconButton from "@material-ui/core/IconButton";
 
 const styles = theme => ({
     dialog: {
@@ -29,8 +32,11 @@ const styles = theme => ({
             },
         }
     },
-    dialogContent: {
-        padding: theme.spacing(0)
+    closeButton: {
+        position: "absolute",
+        right: theme.spacing(1),
+        top: theme.spacing(1),
+        color: theme.palette.grey[500],
     },
 });
 
@@ -96,6 +102,30 @@ class QRCodeToolsDialog extends React.Component {
         actions.trigger_sfx("state-change_confirm-down");
     };
 
+
+    _handle_result_text_copy = (event, text) => {
+
+        if(text !== null || text !== "") {
+
+            clipboard.writeText(text).then(
+                function () {
+
+                    actions.trigger_snackbar(t( "sentences.text successfully copied"));
+                    actions.trigger_sfx("navigation_forward-selection");
+                },
+                function () {
+
+                    actions.trigger_snackbar(t( "sentences.cannot copy this text"));
+                    actions.trigger_sfx("navigation_backward-selection");
+                }
+            );
+        }else {
+
+            actions.trigger_snackbar(t( "sentences.cannot copy non-existent text"));
+            actions.trigger_sfx("navigation_backward-selection");
+        }
+    };
+
     render() {
 
         const { classes, open, _qr_code_text } = this.state;
@@ -116,11 +146,17 @@ class QRCodeToolsDialog extends React.Component {
                     open={open}
                     onClose={this._on_close}
                 >
-                    <DialogTitle>{t("components.qr_code_tools_dialog.title")}</DialogTitle>
+                    <DialogTitle>
+                        {t("components.qr_code_tools_dialog.title")}
+                        <IconButton aria-label="close" className={classes.closeButton} onClick={(event) => {this._on_close(event)}}>
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
                     <DialogContent>
                         <TextField
                             fullWidth
                             label={t(`components.qr_code_tools_dialog.text_field`)}
+                            variant="outlined"
                             value={_qr_code_text}
                             onChange={this._handle_qr_code_text_change}
                             multiline
@@ -128,14 +164,14 @@ class QRCodeToolsDialog extends React.Component {
                         />
                     </DialogContent>
                     <DialogActions>
+                        <Button onClick={(event) => {this._handle_result_text_copy(event, _qr_code_text)}} color="primary">
+                            {t("words.copy")}
+                        </Button>
                         <Button onClick={(event) => {this._on_qr_code_scan(event)}} color="primary">
                             {t("words.scan")}
                         </Button>
                         <Button onClick={(event) => {this._on_qr_code_create(event)}} color="primary">
                             {t("words.create")}
-                        </Button>
-                        <Button onClick={(event) => {this._on_close(event)}} color="primary">
-                            {t( "words.close")}
                         </Button>
                     </DialogActions>
                 </Dialog>

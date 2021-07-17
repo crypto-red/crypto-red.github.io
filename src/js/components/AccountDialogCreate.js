@@ -53,6 +53,12 @@ const styles = theme => ({
             },
         }
     },
+    closeButton: {
+        position: "absolute",
+        right: theme.spacing(1),
+        top: theme.spacing(1),
+        color: theme.palette.grey[500],
+    },
     dialogBody: {
         overflowY: "auto",
         display: "flex",
@@ -418,7 +424,7 @@ class AccountDialogCreate extends React.Component {
     _handle_qr_dialog_close = () => {
 
         this.setState({_is_qr_dialog_open: false});
-        actions.trigger_sfx("navigation_backward-selection-minimal");
+        actions.trigger_sfx("state-change_confirm-down");
     };
 
     _on_encrypted_seed_qr = () => {
@@ -447,24 +453,33 @@ class AccountDialogCreate extends React.Component {
 
         }else if(_is_qr_dialog_for === "encrypted_seed") {
 
-            this.setState({_is_account_seed_trying_to_be_decrypted: true}, () => {
+            if(text.split(" ").length >= 12) {
 
-                triplesec_decrypt(text, _account_password_input, (error, result) => {
+                this.setState({ _account_mnemonic_input: text.split(" ")});
+                actions.trigger_sfx("state-change_confirm-up");
+                actions.jamy_update("happy");
 
-                    if(!error){
+            }else {
 
-                        this.setState({ _account_mnemonic_input: result.split(" ")});
-                        actions.trigger_sfx("state-change_confirm-up");
-                        actions.jamy_update("happy");
+                this.setState({_is_account_seed_trying_to_be_decrypted: true}, () => {
 
-                    }else {
+                    triplesec_decrypt(text, _account_password_input, (error, result) => {
 
-                        actions.trigger_snackbar(t("sentences." + error, {FAW: true}));
-                    }
+                        if(!error){
 
-                    this.setState({_is_account_seed_trying_to_be_decrypted: false});
+                            this.setState({ _account_mnemonic_input: result.split(" ")});
+                            actions.trigger_sfx("state-change_confirm-up");
+                            actions.jamy_update("happy");
+
+                        }else {
+
+                            actions.trigger_snackbar(t("sentences." + error, {FAW: true}));
+                        }
+
+                        this.setState({_is_account_seed_trying_to_be_decrypted: false});
+                    });
                 });
-            });
+            }
         }
     }
 
@@ -527,9 +542,6 @@ class AccountDialogCreate extends React.Component {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                        {t("words.cancel")}
-                    </Button>
                     <IconButton onClick={(event) => {this._on_password_qr(event)}} color="primary" component="span">
                         <QrCodeIcon />
                     </IconButton>
@@ -568,9 +580,6 @@ class AccountDialogCreate extends React.Component {
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                        {t( "words.cancel")}
-                    </Button>
                     <IconButton onClick={(event) => {this._on_encrypted_seed_qr(event)}} color="primary" component="span">
                         <QrCodeIcon />
                     </IconButton>
@@ -650,7 +659,12 @@ class AccountDialogCreate extends React.Component {
                     aria-labelledby="create-account-dialog-title"
                     aria-describedby="create-account-dialog-description"
                 >
-                    <DialogTitle id="create-account-dialog-title">{t( "sentences.create a new account")}</DialogTitle>
+                    <DialogTitle id="create-account-dialog-title">
+                        {t( "sentences.create a new account")}
+                        <IconButton aria-label="close" className={classes.closeButton} onClick={(event) => {this._on_close(event)}}>
+                            <CloseIcon />
+                        </IconButton>
+                    </DialogTitle>
                     <Stepper activeStep={_active_view_index} alternativeLabel>
                         <Step completed={(_active_view_index >= 1)}>
                             <StepLabel>{t( "components.account_dialog_create.stepper.configure")}</StepLabel>
