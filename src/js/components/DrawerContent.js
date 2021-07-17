@@ -34,8 +34,10 @@ import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
 import LockIcon from "@material-ui/icons/Lock";
 import AtmIcon from "@material-ui/icons/Atm";
 import FeedbackIcon from "@material-ui/icons/Feedback";
+import QrCodeScanIcon from "../icons/QrCodeScan";
 
 import CryptDialog from "../components/CryptDialog";
+import QRCodeToolsDialog from "../components/QRCodeToolsDialog";
 
 import { HISTORY, COINS } from "../utils/constants";
 import api from "../utils/api";
@@ -100,6 +102,7 @@ class DrawerContent extends React.Component {
             _current_help_dialog_id: "topup",
             _is_help_dialog_open: false,
             _is_crypt_dialog_open: false,
+            _is_qr_dialog_open: false,
             _should_open_help_dialogs: {
                 topup: false,
                 mixer: false,
@@ -259,11 +262,18 @@ class DrawerContent extends React.Component {
     _close_crypt_dialog = () => {
 
         this.setState({_is_crypt_dialog_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
+    };
+    
+    _open_qr_dialog = () => {
+
+        this.setState({_is_qr_dialog_open: true});
+        actions.trigger_sfx("alert_high-intensity");
     };
 
-    _cancel_crypt_dialog = () => {
+    _close_qr_dialog = () => {
 
-        this.setState({_is_crypt_dialog_open: false});
+        this.setState({_is_qr_dialog_open: false});
         actions.trigger_sfx("state-change_confirm-down");
     };
 
@@ -283,9 +293,9 @@ class DrawerContent extends React.Component {
 
     render() {
 
-        const { classes, logged_account, _menu_expanded, _is_help_dialog_open, _help_dialogs_data, _current_help_dialog_id, _current_help_dialog_checkbox, _is_crypt_dialog_open } = this.state;
+        const { classes, logged_account, _menu_expanded, _is_help_dialog_open, _help_dialogs_data, _current_help_dialog_id, _current_help_dialog_checkbox, _is_crypt_dialog_open, _is_qr_dialog_open } = this.state;
         
-        const coinListItem = COINS.map((coin, coinIndex, coins) => {
+        const coinListItem = COINS.map((coin) => {
            
             return (
                 <ListItem button className={classes.nested} key={coin.id} onClick={() => {this._open_coin_id(coin.id)}}>
@@ -302,8 +312,11 @@ class DrawerContent extends React.Component {
                 <CryptDialog
                     open={_is_crypt_dialog_open}
                     onClose={this._close_crypt_dialog}
-                    cancel={this._cancel_crypt_dialog}
                     logged_account={logged_account}/>
+                <QRCodeToolsDialog
+                    open={_is_qr_dialog_open}
+                    onClose={this._close_qr_dialog}
+                />
                 <Dialog
                     open={_is_help_dialog_open}
                     onClose={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox)}}
@@ -385,6 +398,10 @@ class DrawerContent extends React.Component {
                                 <ListItem button className={classes.nested} onClick={(event) => {this._open_crypt_dialog(event)}}>
                                     <ListItemIcon><LockIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary={t( "components.drawer_content.menu.tools.crypt")} />
+                                </ListItem>
+                                <ListItem button className={classes.nested} onClick={(event) => {this._open_qr_dialog(event)}}>
+                                    <ListItemIcon><QrCodeScanIcon className={classes.iconColor} /></ListItemIcon>
+                                    <ListItemText primary={t( "components.drawer_content.menu.tools.qr")} />
                                 </ListItem>
                             </List>
                         </Collapse>

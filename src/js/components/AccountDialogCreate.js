@@ -36,7 +36,7 @@ import QrCodeIcon from "../icons/QrCode";
 import {Collapse} from "@material-ui/core";
 import actions from "../actions/utils";
 import { triplesec_decrypt } from "../utils/api-crypto";
-import QRDialog from "./QRDialog";
+import QRCodeScanDialog from "../components/QRCodeScanDialog";
 import Backdrop from "@material-ui/core/Backdrop";
 
 const styles = theme => ({
@@ -409,19 +409,32 @@ class AccountDialogCreate extends React.Component {
         this._reset_fields();
     };
 
+    _handle_qr_dialog_open = (event) => {
+
+        this.setState({_is_qr_dialog_open: true});
+        actions.trigger_sfx("alert_high-intensity");
+    };
+
     _handle_qr_dialog_close = () => {
 
         this.setState({_is_qr_dialog_open: false});
+        actions.trigger_sfx("navigation_backward-selection-minimal");
     };
 
     _on_encrypted_seed_qr = () => {
 
-        this.setState({_is_qr_dialog_open: true, _is_qr_dialog_for: "encrypted_seed"});
+        this.setState({ _is_qr_dialog_for: "encrypted_seed"}, () => {
+
+            this._handle_qr_dialog_open();
+        });
     };
 
     _on_password_qr = () => {
 
-        this.setState({_is_qr_dialog_open: true, _is_qr_dialog_for: "password"});
+        this.setState({_is_qr_dialog_open: true, _is_qr_dialog_for: "password"}, () => {
+
+            this._handle_qr_dialog_open();
+        });
     };
 
     _handle_qr_scan = (text) => {
@@ -625,7 +638,7 @@ class AccountDialogCreate extends React.Component {
                 <Backdrop className={classes.backdrop} open={_is_account_seed_trying_to_be_decrypted}>
                     <CircularProgress color="inherit" />
                 </Backdrop>
-                <QRDialog
+                <QRCodeScanDialog
                     open={_is_qr_dialog_open}
                     onClose={this._handle_qr_dialog_close}
                     on_scan={(text) => this._handle_qr_scan(text)}/>

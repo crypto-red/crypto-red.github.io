@@ -135,7 +135,8 @@ module.exports = {
         "currency": "monnaie",
         "create": "créer",
         "chart": "graphique",
-        "qr code": "Code QR",
+        "qr code": "code QR",
+        "scan": "analyser",
     },
     sentences: {
         "your coins": "Vos pièces",
@@ -396,6 +397,9 @@ module.exports = {
         address_dialog: {
             title: "Monnaie identifiée par {{coin_id}}",
         },
+        base64_qr_code_dialog: {
+            title: "Code QR pour \"{{value}}\"",
+        },
         coin_charts_convert: {
             title: "Recherche de prix",
             buy_x: "Acheter du {{coin_name}}",
@@ -510,6 +514,7 @@ module.exports = {
                 tools: {
                     tools: "Outils",
                     crypt: "Crypter",
+                    qr: "Analyser",
                 },
                 about: {
                     about: "À propos",
@@ -529,8 +534,12 @@ module.exports = {
         inner_toolbar: {
             guest: "Invité",
         },
-        qr_dialog: {
+        qr_code_scan_dialog: {
             title: "Analysez un code QR",
+        },
+        qr_code_tools_dialog: {
+            title: "Outil de code QR",
+            text_field: "Valeur du code QR",
         },
         share_dialog: {
             title: "Partager",

@@ -16,7 +16,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
 
-import QRDialog from "../components/QRDialog";
+import QRCodeScanDialog from "../components/QRCodeScanDialog";
 
 import QrCodeIcon from "../icons/QrCode";
 
@@ -110,11 +110,13 @@ class AccountDialogOpen extends React.Component {
     _handle_qr_dialog_open = (event) => {
 
         this.setState({_is_qr_dialog_open: true});
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     _handle_qr_dialog_close = (event) => {
 
         this.setState({_is_qr_dialog_open: false});
+        actions.trigger_sfx("navigation_backward-selection-minimal");
     };
 
     _set_password = (password) => {
@@ -131,7 +133,7 @@ class AccountDialogOpen extends React.Component {
                 <Backdrop className={classes.backdrop} open={_loading && !error}>
                     <CircularProgress color="inherit" />
                 </Backdrop>
-                <QRDialog
+                <QRCodeScanDialog
                     open={_is_qr_dialog_open}
                     onClose={this._handle_qr_dialog_close}
                     on_scan={(password) => this._set_password(password)}/>

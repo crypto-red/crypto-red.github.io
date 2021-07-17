@@ -136,6 +136,7 @@ module.exports = {
         "create": "create",
         "chart": "chart",
         "qr code": "QR code",
+        "scan": "Scan",
     },
     sentences: {
         "your coins": "Your coins",
@@ -417,6 +418,9 @@ module.exports = {
         address_dialog: {
             title: "Coin's ID {{coin_id}}",
         },
+        base64_qr_code_dialog: {
+            title: "QR code value for \"{{value}}\"",
+        },
         coin_charts_convert: {
             title: "Price search",
             buy_x: "Buy some {{coin_name}}",
@@ -531,6 +535,7 @@ module.exports = {
                 tools: {
                     tools: "Tools",
                     crypt: "Crypt",
+                    qr: "Scan",
                 },
                 about: {
                     about: "About",
@@ -550,8 +555,12 @@ module.exports = {
         inner_toolbar: {
             guest: "Guest",
         },
-        qr_dialog: {
+        qr_code_scan_dialog: {
             title: "Scan a QR code",
+        },
+        qr_code_tools_dialog: {
+            title: "QR code tool",
+            text_field: "QR code value",
         },
         share_dialog: {
             title: "Share",

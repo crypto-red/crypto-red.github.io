@@ -104,12 +104,6 @@ class CryptDialog extends React.Component {
         this.props.onClose(event);
     };
 
-    _on_cancel = (event) => {
-
-        this._reset_state();
-        this.props.cancel(event);
-    };
-
     _on_autofill_fields = (event) => {
 
         this.setState({_is_autofill_dialog_open: true});
@@ -216,7 +210,7 @@ class CryptDialog extends React.Component {
         }
     };
 
-    _handle_view_name_change = (event, _view_name_index) => {
+    _handle_view_index_change = (event, _view_name_index) => {
 
         this.setState({_view_name_index, _message_input: "", _is_message_input_error: false, _public_key_input: "", _is_public_key_input_error: false, _private_key_input: "", _is_private_key_input_error: false});
     };
@@ -335,7 +329,7 @@ class CryptDialog extends React.Component {
                     <div className={classes.dialogBody}>
                         <Tabs
                             value={_view_name_index}
-                            onChange={this._handle_view_name_change}
+                            onChange={this._handle_view_index_change}
                             aria-label="Crypt tabs"
                             indicatorColor="primary"
                             variant="fullWidth"
@@ -390,7 +384,7 @@ class CryptDialog extends React.Component {
                             <Button onClick={(event) => {this._on_show_result(event)}} color="primary" disabled={_is_message_input_error || _is_public_key_input_error || _is_private_key_input_error}>
                                 {t( "words.show")}
                             </Button>
-                            <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
+                            <Button onClick={(event) => {this._on_close(event)}} color="primary">
                                 {t( "words.close")}
                             </Button>
                         </DialogActions>
