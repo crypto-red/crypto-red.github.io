@@ -97,7 +97,7 @@ class Index extends React.Component {
             _snackbar_message: "",
             _snackbar_auto_hide_duration: 1975,
             _sfx_enabled: false,
-            _jamy_enabled: true,
+            _jamy_enabled: false,
             _vocal_enabled: false,
             _onboarding_enabled: false,
             _onboarding_autoplay_enabled: true,
@@ -108,7 +108,7 @@ class Index extends React.Component {
             _know_if_logged: false,
             _loaded_progress_percent: 100,
             _know_the_settings: false,
-            is_online: true,
+            /*is_online: true,*/
             classes: props.classes,
             _width: 0,
             _height: 0
@@ -147,7 +147,7 @@ class Index extends React.Component {
         window.addEventListener("resize", this._update_dimensions.bind(this));
         this._update_dimensions();
 
-        setInterval(() => {
+        /*setInterval(() => {
 
             const { is_online } = this.state;
             if(navigator.onLine !== is_online){
@@ -159,7 +159,7 @@ class Index extends React.Component {
                 );
                 actions.jamy_update(navigator.onLine ? "happy": "sad");
             }
-        }, 1000);
+        }, 1000);*/
 
         // Make Jamy blink every 32 sec in average.
         setInterval(() => {
@@ -256,7 +256,7 @@ class Index extends React.Component {
 
             // Set new settings from query result
             const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: false;
-            const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: true;
+            const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: false;
             const _selected_locales_code = settings.locales || "en-US";
             const _language = _selected_locales_code.split("-")[0];
             const _selected_currency = settings.currency || "USD";

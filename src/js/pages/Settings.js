@@ -44,7 +44,7 @@ class Settings extends React.Component {
             _language: document.documentElement.lang,
             _selected_currency: null,
             _sfx_enabled: false,
-            _jamy_enabled: true,
+            _jamy_enabled: false,
             _panic_mode: false
         };
     };
@@ -57,14 +57,14 @@ class Settings extends React.Component {
         setTimeout(() => {
 
             actions.trigger_loading_update(100);
-        }, 300);
+        }, 250);
     }
 
     _process_settings_query_result = (error, settings) => {
 
         // Set new settings from query result
         const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: false;
-        const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: true;
+        const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: false;
         const _selected_locales_code = settings.locales || "en-US";
         const _language = _selected_locales_code.split("-")[0];
         const _selected_currency = settings.currency || "USD";
@@ -89,7 +89,7 @@ class Settings extends React.Component {
         setTimeout(() => {
 
             actions.trigger_loading_update(100);
-        }, 300);
+        }, 250);
 
         actions.trigger_settings_update();
         actions.trigger_snackbar(t( "pages.settings.settings_changed"));

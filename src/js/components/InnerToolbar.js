@@ -30,7 +30,7 @@ const styles = theme => ({
             backgroundColor: theme.palette.secondary.lighter,
         },
         color: theme.palette.secondary.contrastText,
-        "&::before": {
+        /*"&::before": {
             display: "flex",
             top: 0,
             left: 0,
@@ -38,9 +38,9 @@ const styles = theme => ({
             position: "absolute",
             height: 40,
             width: "30%",
-            /*background: "linear-gradient(to right, transparent, rgba(13, 50, 199, 0.27), transparent)",*/
+            background: "linear-gradient(to right, transparent, rgba(13, 50, 199, 0.27), transparent)",
             animation: "$innerToolbarCyberPunkAnimation 7.7s linear alternate infinite",
-        },
+        },*/
         "&::-webkit-scrollbar": {
             display: "none"
         }
@@ -69,12 +69,24 @@ const styles = theme => ({
     },
     linearProgressVisible: {
         "& .MuiLinearProgress-barColorPrimary": {
-            backgroundColor: theme.palette.primary.action,
+            background: `linear-gradient(90deg, ${theme.palette.primary.actionLighter} 0%, ${theme.palette.primary.action} 100%);`,
             zIndex: -1,
         },
         zIndex: 1,
-        marginTop: -4,
-        height: 4,
+        marginBottom: -3,
+        height: 3,
+        backgroundColor: "transparent",
+        width: "50%",
+        display: "flex",
+    },
+    linearProgressVisibleOffline: {
+        "& .MuiLinearProgress-barColorPrimary": {
+            background: `linear-gradient(90deg, ${theme.palette.primary.actionRedLighter} 0%, ${theme.palette.primary.actionRed} 100%);`,
+            zIndex: -1,
+        },
+        zIndex: 1,
+        marginBottom: -3,
+        height: 3,
         backgroundColor: "transparent",
         width: "50%",
         display: "flex",
@@ -124,14 +136,23 @@ class InnerToolbar extends React.Component {
         return (
             <Button className={classes.innerToolbar}>
                 <span className={classes.innerToolbarTextWrapper}>
+                    <div className={classes.innerToolbarProgress}>
+                        <LinearProgress
+                            color="primary"
+                            variant="determinate"
+                            className={navigator.onLine ? classes.linearProgressVisible: classes.linearProgressVisibleOffline}
+                            value={100 - loaded_progress_percent}
+                            style={{transform: "rotate(-180deg)", webkitTransform: "rotate(-180deg)"}}/>
+                        <LinearProgress
+                            color="primary"
+                            variant="determinate"
+                            className={navigator.onLine ? classes.linearProgressVisible: classes.linearProgressVisibleOffline}
+                            value={100 - loaded_progress_percent} />
+                    </div>
                     <span className={classes.innerToolbarText}>
                         <Fade in={know_if_logged}><Link className={classes.link} to={logged_account ? "/": "/"}>{know_if_logged ? logged_account ? logged_account.name: t( "components.inner_toolbar.guest"): ""} </Link></Fade>
                         {pathame_items}
                     </span>
-                    <div className={classes.innerToolbarProgress}>
-                        <LinearProgress color="primary" variant="determinate" className={classes.linearProgressVisible} value={100 - loaded_progress_percent} style={{transform: "rotate(-180deg)", webkitTransform: "rotate(-180deg)"}}/>
-                        <LinearProgress color="primary" variant="determinate" className={classes.linearProgressVisible} value={100 - loaded_progress_percent} />
-                    </div>
                 </span>
             </Button>
         );

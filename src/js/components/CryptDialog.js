@@ -16,16 +16,14 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Tab from "@material-ui/core/Tab";
-import IconButton from "@material-ui/core/IconButton";
 import Tabs from "@material-ui/core/Tabs";
 import Collapse from "@material-ui/core/Collapse";
-
-import CloseIcon from "@material-ui/icons/Close";
 
 import api_crypto from "../utils/api-crypto";
 import api from "../utils/api";
 import actions from "../actions/utils";
 import clipboard from "clipboard-polyfill";
+import DialogCloseButton from "./DialogCloseButton";
 
 const styles = theme => ({
     dialog: {
@@ -36,12 +34,6 @@ const styles = theme => ({
                 borderRadius: 0
             },
         }
-    },
-    closeButton: {
-        position: "absolute",
-        right: theme.spacing(1),
-        top: theme.spacing(1),
-        color: theme.palette.grey[500],
     },
     dialogBody: {
         overflowY: "auto",
@@ -337,9 +329,7 @@ class CryptDialog extends React.Component {
                 >
                     <DialogTitle id="crypto-text-dialog-title">
                         {_view_name_index ? t( "components.crypt_dialog.title_decrypt"): t( "components.crypt_dialog.title_encrypt")}
-                        <IconButton aria-label="close" className={classes.closeButton} onClick={(event) => {this._on_close(event)}}>
-                            <CloseIcon />
-                        </IconButton>
+                        <DialogCloseButton onClick={(event) => {this._on_close(event)}} />
                     </DialogTitle>
                     <div className={classes.dialogBody}>
                         <Tabs

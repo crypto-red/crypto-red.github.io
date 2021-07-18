@@ -138,6 +138,7 @@ module.exports = {
         "qr code": "code QR",
         "scan": "analyser",
         "download": "télécharger",
+        "yes": "oui",
     },
     sentences: {
         "your coins": "Vos pièces",

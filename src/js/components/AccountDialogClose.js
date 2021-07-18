@@ -10,9 +10,9 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-import ReactTimeAgo from "react-time-ago";
 import actions from "../actions/utils";
 import TimeAgo from "javascript-time-ago";
+import DialogCloseButton from "./DialogCloseButton";
 
 const styles = theme => ({
 
@@ -62,6 +62,7 @@ class AccountDialogClose extends React.Component {
                     <div>
                         <DialogTitle id="close-account-dialog-title">
                             {t( "components.account_dialog_close.close", {account_name: account.name})}
+                            <DialogCloseButton onClick={(event) => {this.props.onClose(event, account)}} />
                         </DialogTitle>
                         <DialogContent>
                             <DialogContentText id="close-account-dialog-description">
@@ -71,9 +72,6 @@ class AccountDialogClose extends React.Component {
                     </div>: null
                 }
                 <DialogActions>
-                    <Button onClick={(event) => {this._on_cancel(event, account)}} color="primary">
-                        {t( "words.cancel" )}
-                    </Button>
                     <Button onClick={(event) => {this._on_accept(event, account)}} color="primary" autoFocus>
                         {t( "words.close" )}
                     </Button>

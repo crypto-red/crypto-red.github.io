@@ -33,7 +33,7 @@ class About extends React.Component {
         setTimeout(() => {
 
             actions.trigger_loading_update(100);
-        }, 300);
+        }, 250);
     }
 
     componentWillReceiveProps(new_props) {

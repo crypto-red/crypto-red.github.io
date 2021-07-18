@@ -11,6 +11,8 @@ import Fab from "@material-ui/core/Fab";
 import Grow from "@material-ui/core/Grow";
 import Fade from "@material-ui/core/Fade";
 
+import Collapse from "@material-ui/core/Collapse";
+import Backdrop from "@material-ui/core/Backdrop";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -33,11 +35,10 @@ import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
 import QrCodeIcon from "../icons/QrCode";
 
-import {Collapse} from "@material-ui/core";
 import actions from "../actions/utils";
 import { triplesec_decrypt } from "../utils/api-crypto";
 import QRCodeScanDialog from "../components/QRCodeScanDialog";
-import Backdrop from "@material-ui/core/Backdrop";
+import DialogCloseButton from "../components/DialogCloseButton";
 
 const styles = theme => ({
     backdrop: {
@@ -52,12 +53,6 @@ const styles = theme => ({
                 borderRadius: 0
             },
         }
-    },
-    closeButton: {
-        position: "absolute",
-        right: theme.spacing(1),
-        top: theme.spacing(1),
-        color: theme.palette.grey[500],
     },
     dialogBody: {
         overflowY: "auto",
@@ -411,7 +406,6 @@ class AccountDialogCreate extends React.Component {
     _on_close = (event) => {
 
         this.props.onClose(event);
-        actions.trigger_sfx("state-change_confirm-down");
         this._reset_fields();
     };
 
@@ -661,9 +655,7 @@ class AccountDialogCreate extends React.Component {
                 >
                     <DialogTitle id="create-account-dialog-title">
                         {t( "sentences.create a new account")}
-                        <IconButton aria-label="close" className={classes.closeButton} onClick={(event) => {this._on_close(event)}}>
-                            <CloseIcon />
-                        </IconButton>
+                        <DialogCloseButton onClick={(event) => {this._on_close(event)}} />
                     </DialogTitle>
                     <Stepper activeStep={_active_view_index} alternativeLabel>
                         <Step completed={(_active_view_index >= 1)}>

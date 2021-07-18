@@ -11,6 +11,9 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 import { red } from "@material-ui/core/colors";
+
+import DialogCloseButton from "../components/DialogCloseButton";
+
 import actions from "../actions/utils";
 
 const styles = theme => ({
@@ -47,12 +50,6 @@ class AccountDialogDelete extends React.Component {
         }
     };
 
-    _on_cancel = (event, account) => {
-
-        actions.trigger_sfx("state-change_confirm-down");
-        this.props.cancel(event, account);
-    };
-
     _handle_account_name_input_change = (event) => {
 
         const _account_name_input = event.target.value;
@@ -83,7 +80,10 @@ class AccountDialogDelete extends React.Component {
             >
                 {Boolean(account) ?
                     <div>
-                        <DialogTitle id="delete-account-dialog-title">{t("components.account_dialog_delete.title", {account_name: account.name})}</DialogTitle>
+                        <DialogTitle id="delete-account-dialog-title">
+                            {t("components.account_dialog_delete.title", {account_name: account.name})}
+                            <DialogCloseButton onClick={(event) => {this.props.onClose(event, account)}} />
+                        </DialogTitle>
                         <DialogContent>
                             <TextField
                                 onChange={this._handle_account_name_input_change}
@@ -101,9 +101,6 @@ class AccountDialogDelete extends React.Component {
                     </div>: null
                 }
                 <DialogActions>
-                    <Button onClick={(event) => {this._on_cancel(event, account)}} color="primary">
-                        {t("words.cancel")}
-                    </Button>
                     <Button onClick={(event) => {this._on_accept(event, account)}} color="primary" disabled={_is_confirmation_disabled}>
                         {t("words.delete")}
                     </Button>

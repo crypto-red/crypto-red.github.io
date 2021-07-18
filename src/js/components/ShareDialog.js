@@ -15,6 +15,8 @@ import FileCopyIcon from "@material-ui/icons/FileCopy";
 import FormControl from "@material-ui/core/FormControl";
 import Tooltip from "@material-ui/core/Tooltip";
 
+import DialogCloseButton from "../components/DialogCloseButton";
+
 import EmailIcon from "@material-ui/icons/Email"
 import CloseIcon from "@material-ui/icons/Close"
 import WhatsAppIcon from "../icons/WhatsApp";
@@ -32,12 +34,6 @@ const styles = theme => ({
     shareIconButtonContainer: {
         maxWidth: 300,
         margin: theme.spacing(2, 0),
-    },
-    closeButton: {
-        position: "absolute",
-        right: theme.spacing(1),
-        top: theme.spacing(1),
-        color: theme.palette.grey[500],
     },
     shareIconButtonWhatsApp: {
         color: "#3fd366",
@@ -187,9 +183,7 @@ class ShareDialog extends React.Component {
                         <div className={classes.dialogContent}>
                             <DialogTitle>
                                 {t( "components.share_dialog.title")}
-                                <IconButton aria-label="close" className={classes.closeButton} onClick={(event) => {this.props.onClose(event)}}>
-                                    <CloseIcon />
-                                </IconButton>
+                                <DialogCloseButton onClick={(event) => {this.props.onClose(event)}} />
                             </DialogTitle>
                             <DialogContent>
                                 <div className={classes.shareIconButtonContainer}>

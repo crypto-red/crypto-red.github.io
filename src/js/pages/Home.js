@@ -49,6 +49,7 @@ const styles = theme => ({
         position: "fixed",
         backgroundColor: theme.palette.primary.action,
         color: theme.palette.primary.contrastText,
+        transition: "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, opacity 204ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 136ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
         "&:hover": {
             backgroundColor: theme.palette.primary.actionLighter,
         },
@@ -79,7 +80,7 @@ class Home extends React.Component {
         setTimeout(() => {
 
             actions.trigger_loading_update(100);
-        }, 300);
+        }, 250);
     }
 
     _go_to_url = (event, url) => {

@@ -65,7 +65,7 @@ function _get_default_settings() {
         locales,
         currency: _get_currency_by_locales(locales),
         sfx_enabled: false,
-        jamy_enabled: true,
+        jamy_enabled: false,
         panic: false,
         onboarding: true,
         help: {

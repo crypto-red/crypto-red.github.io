@@ -137,7 +137,8 @@ module.exports = {
         "chart": "chart",
         "qr code": "QR code",
         "scan": "scan",
-        "download": "download"
+        "download": "download",
+        "yes": "yes",
     },
     sentences: {
         "your coins": "Your coins",

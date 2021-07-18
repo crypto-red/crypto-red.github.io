@@ -17,9 +17,9 @@ import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
 
 import QRCodeScanDialog from "../components/QRCodeScanDialog";
+import DialogCloseButton from "../components/DialogCloseButton";
 
 import QrCodeIcon from "../icons/QrCode";
-
 import actions from "../actions/utils";
 
 const styles = theme => ({
@@ -93,7 +93,6 @@ class AccountDialogOpen extends React.Component {
 
     _on_cancel = (event) => {
 
-        actions.trigger_sfx("state-change_confirm-down");
         setTimeout(() => {
 
             const state = {
@@ -116,7 +115,7 @@ class AccountDialogOpen extends React.Component {
     _handle_qr_dialog_close = (event) => {
 
         this.setState({_is_qr_dialog_open: false});
-        actions.trigger_sfx("navigation_backward-selection-minimal");
+        actions.trigger_sfx("state-change_confirm-down");
     };
 
     _set_password = (password) => {
@@ -146,6 +145,7 @@ class AccountDialogOpen extends React.Component {
                     {Boolean(account) ?
                         <div>
                             <DialogTitle id="open-account-dialog-title">{t("components.account_dialog_open.title", {account_name: account.name})}</DialogTitle>
+                            <DialogCloseButton onClick={(event) => {this.props.onClose(event, account)}} />
                             <DialogContent>
                                 <DialogContentText id="open-account-dialog-description">
                                     {t( "components.account_dialog_open.open_account", {account_name: account.name})}
@@ -172,9 +172,6 @@ class AccountDialogOpen extends React.Component {
                         </div>: null
                     }
                     <DialogActions>
-                        <Button onClick={(event) => {this._on_cancel(event)}} color="primary">
-                            {t( "words.cancel")}
-                        </Button>
                         <IconButton onClick={(event) => {this._handle_qr_dialog_open(event)}} color="primary" component="span">
                             <QrCodeIcon />
                         </IconButton>

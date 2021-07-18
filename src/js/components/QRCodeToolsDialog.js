@@ -7,17 +7,16 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 
 import TextField from "@material-ui/core/TextField";
-import actions from "../actions/utils";
 import {DialogTitle} from "@material-ui/core";
-import Tab from "@material-ui/core/Tab";
-import Tabs from "@material-ui/core/Tabs";
 import Button from "@material-ui/core/Button";
 import DialogActions from "@material-ui/core/DialogActions";
+
 import QRCodeScanDialog from "../components/QRCodeScanDialog";
 import Base64QRCodeDialog from "../components/Base64QRCodeDialog";
+import DialogCloseButton from "../components/DialogCloseButton";
+
+import actions from "../actions/utils";
 import clipboard from "clipboard-polyfill";
-import CloseIcon from "@material-ui/icons/Close";
-import IconButton from "@material-ui/core/IconButton";
 
 const styles = theme => ({
     dialog: {
@@ -31,12 +30,6 @@ const styles = theme => ({
                 borderRadius: 0,
             },
         }
-    },
-    closeButton: {
-        position: "absolute",
-        right: theme.spacing(1),
-        top: theme.spacing(1),
-        color: theme.palette.grey[500],
     },
 });
 
@@ -148,9 +141,7 @@ class QRCodeToolsDialog extends React.Component {
                 >
                     <DialogTitle>
                         {t("components.qr_code_tools_dialog.title")}
-                        <IconButton aria-label="close" className={classes.closeButton} onClick={(event) => {this._on_close(event)}}>
-                            <CloseIcon />
-                        </IconButton>
+                        <DialogCloseButton onClick={(event) => {this._on_close(event)}} />
                     </DialogTitle>
                     <DialogContent>
                         <TextField

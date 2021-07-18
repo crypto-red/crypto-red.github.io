@@ -39,6 +39,7 @@ const styles = theme => ({
         position: "fixed",
         backgroundColor: theme.palette.primary.action,
         color: theme.palette.primary.contrastText,
+        transition: "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, opacity 204ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 136ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
         "&:hover": {
             backgroundColor: theme.palette.primary.actionLighter,
         },
@@ -89,7 +90,7 @@ class Accounts extends React.Component {
         setTimeout(() => {
 
             actions.trigger_loading_update(100);
-        }, 300);
+        }, 250);
     }
 
     _process_settings_query_result = (error, settings) => {
@@ -216,11 +217,13 @@ class Accounts extends React.Component {
     _close_account_dialog_close = () => {
 
         this.setState({_is_account_dialog_close_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
     };
 
     _close_account_dialog_open = () => {
 
         this.setState({_is_account_dialog_open_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
     };
 
     _open_account_dialog_open = (event, account) => {
@@ -233,6 +236,7 @@ class Accounts extends React.Component {
 
         api.logout(this._process_logout_result);
         this.setState({_is_account_dialog_close_open: false, _logged_account: null});
+        actions.trigger_sfx("state-change_confirm-down");
         actions.jamy_update("sad");
     };
 
@@ -251,6 +255,7 @@ class Accounts extends React.Component {
     _close_account_dialog_delete = () => {
 
         this.setState({_is_account_dialog_delete_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
     };
 
     _delete_selected_account = (event, account) => {
@@ -272,11 +277,13 @@ class Accounts extends React.Component {
     _close_account_dialog_backup = () => {
 
         this.setState({_is_account_dialog_backup_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
     };
 
     _close_account_dialog_create = () => {
 
         this.setState({_is_account_dialog_create_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
         actions.jamy_update("flirty");
     };
 
@@ -345,28 +352,24 @@ class Accounts extends React.Component {
                 <AccountDialogClose account={_logged_account}
                                     open={_is_account_dialog_close_open}
                                     onClose={this._close_account_dialog_close}
-                                    cancel={this._close_account_dialog_close}
                                     accept={this._close_selected_account}/>
 
                 <AccountDialogOpen account={_selected_account}
                                    open={_is_account_dialog_open_open}
                                    error={_login_error}
                                    onComplete={this._open_selected_account}
-                                   cancel={this._close_account_dialog_open}
                                    onClose={this._close_account_dialog_open}/>
 
                 <AccountDialogDelete account={_selected_account}
                                      open={_is_account_dialog_delete_open}
                                      onClose={this._close_account_dialog_delete}
-                                     cancel={this._close_account_dialog_delete}
                                      accept={this._delete_selected_account}/>
 
                 <AccountDialogCreate open={_is_account_dialog_create_open}
                                      selected_locales_code={_selected_locales_code}
                                      onComplete={this._on_account_dialog_create_complete}
                                      onError={this._on_account_dialog_create_error}
-                                     onClose={this._close_account_dialog_create}
-                                     cancel={this._close_account_dialog_create}/>
+                                     onClose={this._close_account_dialog_create}/>
 
                 <AccountDialogBackup open={_is_account_dialog_backup_open}
                                      account={_logged_account}
