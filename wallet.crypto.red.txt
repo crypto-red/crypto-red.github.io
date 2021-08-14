@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Terminal=false
+Exec=/{{home}}/{{your}}/{{path}}/{{to}}/{{wallet.crypto.red-0.0.1-linux-x64}}/wallet.crypto.red
+Name=wallet.crypto.red
+Comment=Start from scratch and invest in cryptocurrencies and blockchain technology on a wallet made for free, for everyone, forever.
+Icon=/{{home}}/{{your}}/{{path}}/{{to}}/{{wallet.crypto.red-0.0.1-linux-x64}}/src/images/logo-transparent.png
+Categories=Utility;Application;
