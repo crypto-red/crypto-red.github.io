@@ -13,14 +13,26 @@ function _get_network_by_coin_id(coin_id) {
 
     switch (coin_id) {
         case "bitcoin":
-            NEW_NETWORK = coininfo.bitcoin.test.toBitcoinJS();
+            NEW_NETWORK = coininfo.bitcoin.main.toBitcoinJS();
             break;
         case "dash":
-            NEW_NETWORK = coininfo.dash.test.toBitcoinJS();
+            NEW_NETWORK = coininfo.dash.main.toBitcoinJS();
             break;
         case "dogecoin":
             NEW_NETWORK = {
-                messagePrefix: '\x19Dogecoin Signed Message:\n',
+                messagePrefix: '\x19Dogecoin Signed Message:\n', // Main
+                bip32: {
+                    public: 0x02facafd,
+                    private: 0x02fac398
+                },
+                pubKeyHash: 0x1e,
+                scriptHash: 0x16,
+                wif: 0x9e
+            };
+            break;
+        /*
+        {
+                messagePrefix: '\x19Dogecoin Signed Message:\n', // Test
                 bip32: {
                     public: 0x043587cf,
                     private: 0x04358394
@@ -28,22 +40,10 @@ function _get_network_by_coin_id(coin_id) {
                 pubKeyHash: 0x71,
                 scriptHash: 0xc4,
                 wif: 0xf1
-            };
-            break;
-        /*
-        {
-          messagePrefix: '\x19Dogecoin Signed Message:\n',
-          bip32: {
-            public: 0x02facafd,
-            private: 0x02fac398
-          },
-          pubKeyHash: 0x1e,
-          scriptHash: 0x16,
-          wif: 0x9e
-        }
+            }
         */
         case "litecoin":
-            NEW_NETWORK = coininfo.litecoin.test.toBitcoinJS();
+            NEW_NETWORK = coininfo.litecoin.main.toBitcoinJS();
             break;
     }
 
@@ -63,13 +63,13 @@ function _get_network_name_by_coin_id(coin_id) {
 
     switch (coin_id) {
         case "bitcoin":
-            return "BTCTEST";
+            return "BTC";
         case "dash":
-            return "DASHTEST";
+            return "DASH";
         case "dogecoin":
-            return "DOGETEST";
+            return "DOGE";
         case "litecoin":
-            return "LTCTEST";
+            return "LTC";
     }
 }
 

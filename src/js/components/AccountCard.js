@@ -188,7 +188,7 @@ class AccountCard extends React.Component {
             this.setState({_balance});
         }else {
 
-            actions.trigger_snackbar(t( "account_card.crypto_balance_error", {crypto_id}));
+            actions.trigger_snackbar(t( "components.account_card.crypto_balance_error", {crypto_id}));
         }
     };
 

@@ -1,8 +1,8 @@
 {
   "name": "wallet.crypto.red",
-  "version": "0.0.1",
-  "description": "C-Wallet application",
-  "main": "index.html",
+  "version": "0.0.2",
+  "description": "C.R.W application",
+  "main": "/",
   "dependencies": {
     "@date-io/date-fns": "^1.3.13",
     "@material-ui/core": "^4.11.3",
