@@ -161,7 +161,7 @@ class CoinBalance extends React.Component {
                                                             {_coin_balance === 0 ?
                                                                 <div className={classes.center}>
                                                                     <h2>{t( "sentences.you need to add fund to this account")}</h2>
-                                                                    <h4>{t( "sentences.just do it trough the link in the menu")}</h4>
+                                                                    <h4>{t( "sentences.just do it through the link in the menu")}</h4>
                                                                 </div>
                                                                 :
                                                                 <div className={classes.center}>

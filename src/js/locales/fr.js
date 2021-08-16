@@ -189,7 +189,7 @@ module.exports = {
         "stop bitchslapping me": "Arrête de m'agresser comme une baltringue",
         "hey i am jamy": "Salut, je suis Jamy.",
         "you need to add fund to this account": "Vous devez ajouter des fonds à ce compte",
-        "just do it trough the link in the menu": "Faites-le simplement au travers du lien dans le menu",
+        "just do it through the link in the menu": "Faites-le simplement au travers du lien dans le menu",
         "no transactions maid": "Vous n'avez pas encore fait de transactions, mais elles seront affichées ici.",
         "no transactions maid chart": "Vous n'avez pas encore fait de transactions, mais elles seront affichées ici dans un graphique.",
         "no transaction maid portfolio": "Vous n'avez pas encore fait de transactions, par conséquent, votre portfolio est vide et ne sera donc pas affiché.",
