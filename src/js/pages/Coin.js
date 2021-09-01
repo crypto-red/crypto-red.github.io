@@ -32,6 +32,7 @@ class Coin extends React.Component {
             classes: props.classes,
             _logged_account: null,
             _we_know_if_logged: false,
+            _fees: 1,
             _selected_locales_code: null,
             _selected_currency: null,
             _coin_data: null,
@@ -88,10 +89,11 @@ class Coin extends React.Component {
     _process_settings_query_result = (error, settings) => {
 
         // Set new settings from query result
-        const _selected_locales_code = settings.locales;
-        const _selected_currency = settings.currency;
+        const _fees = typeof settings.fees !== "undefined" ? settings.fees: 1;
+        const _selected_locales_code = settings.locales || "en-US";
+        const _selected_currency = settings.currency || "USD";
 
-        this.setState({ _selected_locales_code, _selected_currency }, function(){
+        this.setState({ _fees, _selected_locales_code, _selected_currency }, function(){
             this._get_coin_data();
         });
     };
@@ -118,7 +120,7 @@ class Coin extends React.Component {
 
         const { classes } = this.state;
         const { _coin_id, _view_name, pathname } = this.state;
-        const { _selected_locales_code, _selected_currency, _coin_data, _logged_account, _we_know_if_logged } = this.state;
+        const { _fees, _selected_locales_code, _selected_currency, _coin_data, _logged_account, _we_know_if_logged } = this.state;
 
         const views = {
             balance: <CoinBalance
@@ -145,6 +147,7 @@ class Coin extends React.Component {
                 coin_data={_coin_data}
                 logged_account={_logged_account}
                 we_know_if_logged={_we_know_if_logged}
+                fees={_fees}
                 selected_locales_code={_selected_locales_code}
                 selected_currency={_selected_currency}
                 pathname={pathname}

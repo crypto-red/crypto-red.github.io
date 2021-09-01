@@ -66,6 +66,7 @@ function _get_default_settings() {
         currency: _get_currency_by_locales(locales),
         sfx_enabled: false,
         jamy_enabled: false,
+        fees: 1,
         panic: false,
         onboarding: true,
         help: {
@@ -719,7 +720,7 @@ function get_balance_by_seed(coin_id, seed, callback_function){
     }
 }
 
-function send_transaction(coin_id, seed, address, amount, memo, callback_function) {
+function send_transaction(coin_id, seed, address, amount, memo, fees, callback_function) {
 
 
     switch (coin_id) {
@@ -730,26 +731,26 @@ function send_transaction(coin_id, seed, address, amount, memo, callback_functio
             break;
         case "bitcoin":
 
-            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, callback_function);
+            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, fees, callback_function);
             break;
         case "litecoin":
 
-            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, callback_function);
+            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, fees, callback_function);
             break;
         case "dogecoin":
 
-            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, callback_function);
+            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, fees, callback_function);
             break;
         case "dash":
 
-            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, callback_function);
+            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, fees, callback_function);
             break;
         default:
             callback_function(null, true);
             break;
     }
 }
-function estimate_transaction_fee(coin_id, seed, address, amount, memo, callback_function) {
+function estimate_transaction_fee(coin_id, seed, address, amount, memo, fees, callback_function) {
 
     const return_fee_instead_of_send = true;
 
@@ -761,19 +762,19 @@ function estimate_transaction_fee(coin_id, seed, address, amount, memo, callback
             break;
         case "bitcoin":
 
-            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, callback_function, return_fee_instead_of_send);
+            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, fees, callback_function, return_fee_instead_of_send);
             break;
         case "litecoin":
 
-            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, callback_function, return_fee_instead_of_send);
+            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, fees, callback_function, return_fee_instead_of_send);
             break;
         case "dogecoin":
 
-            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, callback_function, return_fee_instead_of_send);
+            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, fees, callback_function, return_fee_instead_of_send);
             break;
         case "dash":
 
-            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, callback_function, return_fee_instead_of_send);
+            send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, fees, callback_function, return_fee_instead_of_send);
             break;
         default:
             callback_function(null, 0);

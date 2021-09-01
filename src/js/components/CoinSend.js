@@ -111,6 +111,7 @@ class CoinSend extends React.Component {
             _send_transaction_info: null,
             _is_scanner_dialog_open: false,
             _is_backdrop_shown: false,
+            _send_fees: props.fees,
             _send_address_input: "",
             _send_amount_input: "",
             _send_message_input: "",
@@ -161,9 +162,6 @@ class CoinSend extends React.Component {
         if(!error) {
 
             this.setState({_coin_balance: result});
-        }else {
-
-            console.log(error);
         }
 
         actions.trigger_loading_update(100);
@@ -326,14 +324,14 @@ class CoinSend extends React.Component {
 
     _send_transaction = () => {
 
-        const { coin_id, logged_account, _send_address_input, _send_amount_input, _send_message_input } = this.state;
-        api.send_transaction(coin_id, logged_account.seed, _send_address_input, _send_amount_input, _send_message_input, this._handle_send_transaction_result);
+        const { coin_id, logged_account, _send_address_input, _send_amount_input, _send_message_input, _send_fees } = this.state;
+        api.send_transaction(coin_id, logged_account.seed, _send_address_input, _send_amount_input, _send_message_input, _send_fees, this._handle_send_transaction_result);
     }
 
     _estimate_transacation_fee = () => {
 
-        const { coin_id, logged_account, _send_address_input, _send_amount_input, _send_message_input } = this.state;
-        api.estimate_transaction_fee(coin_id, logged_account.seed, _send_address_input, _send_amount_input, _send_message_input, this._handle_estimate_transacation_fee_result);
+        const { coin_id, logged_account, _send_address_input, _send_amount_input, _send_message_input, _send_fees } = this.state;
+        api.estimate_transaction_fee(coin_id, logged_account.seed, _send_address_input, _send_amount_input, _send_message_input, _send_fees, this._handle_estimate_transacation_fee_result);
     }
 
     _on_coin_send_dialog_confirm = () => {

@@ -1,6 +1,6 @@
 {
   "name": "wallet.crypto.red",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "C.R.W application",
   "main": "/index.html",
   "dependencies": {
@@ -79,6 +79,8 @@
     "files": [
       "./index.html",
       "./client.min.js",
+      "./LINUX_README_TO_INSTALL.txt",
+      "./wallet.crypto.red.txt",
       "./src/fonts/Cantarell-Regular.ttf",
       "./src/fonts/OpenSans-Regular.ttf",
       "./src/fonts/Saira-Regular.ttf",
@@ -121,7 +123,7 @@
       "./src/images/pig-coins.svg",
       "./src/images/swap.svg",
       "./src/images/invest.svg",
-      "/src/images/investment-data.svg",
+      "./src/images/investment-data.svg",
       "./src/images/open.svg",
       "./src/images/trade.svg"
     ],

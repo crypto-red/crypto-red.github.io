@@ -8,6 +8,7 @@ import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+import Slider from "@material-ui/core/Slider";
 import TextField from "@material-ui/core/TextField";
 import Fade from "@material-ui/core/Fade";
 import Autocomplete from "@material-ui/lab/Autocomplete";
@@ -43,6 +44,7 @@ class Settings extends React.Component {
             _selected_locales_code: null,
             _language: document.documentElement.lang,
             _selected_currency: null,
+            _fees: 1,
             _sfx_enabled: false,
             _jamy_enabled: false,
             _panic_mode: false
@@ -63,6 +65,7 @@ class Settings extends React.Component {
     _process_settings_query_result = (error, settings) => {
 
         // Set new settings from query result
+        const _fees = typeof settings.fees !== "undefined" ? settings.fees: 1;
         const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: false;
         const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: false;
         const _selected_locales_code = settings.locales || "en-US";
@@ -72,7 +75,7 @@ class Settings extends React.Component {
 
         actions.trigger_loading_update(0);
         actions.trigger_loading_update(100);
-        this.setState({ _sfx_enabled, _jamy_enabled, _selected_locales_code, _language, _selected_currency, _panic_mode });
+        this.setState({ _fees, _sfx_enabled, _jamy_enabled, _selected_locales_code, _language, _selected_currency, _panic_mode });
     };
 
     _update_settings() {
@@ -176,6 +179,26 @@ class Settings extends React.Component {
         api.set_settings(settings, this._on_settings_changed);
     };
 
+    _handle_input_fees_change = (event, _fees) => {
+
+        this.setState({_fees});
+    };
+
+    _handle_fees_change_committing = (event) => {
+
+        actions.trigger_sfx("ui_lock");
+    };
+
+    _handle_fees_change_committed = (event, _fees) => {
+
+        actions.trigger_sfx("ui_unlock");
+        actions.jamy_update("happy");
+
+        const settings = { fees: _fees };
+        this.setState({_fees});
+        api.set_settings(settings, this._on_settings_changed);
+    };
+
     _fuzzy_filter_locales = (list, input_value) => {
 
         const options = {
@@ -200,7 +223,7 @@ class Settings extends React.Component {
 
     render() {
 
-        const { _locales, _language, _sfx_enabled, _jamy_enabled, _selected_currency, _currency_countries, _selected_locales_code, _panic_mode, classes } = this.state;
+        const { _locales, _language, _fees, _sfx_enabled, _jamy_enabled, _selected_currency, _currency_countries, _selected_locales_code, _panic_mode, classes } = this.state;
 
         let locales = _locales[0];
 
@@ -291,6 +314,25 @@ class Settings extends React.Component {
                                     control={<Switch checked={_panic_mode} onChange={this._handle_panic_switch_change} color="primary" />}
                                     label={t( "pages.settings.enable_reset_option_in_menu")}
                                     labelPlacement="end"
+                                />
+                            </CardContent>
+                        </Card>
+                    </Fade>
+                    <Fade in timeout={300*6}>
+                        <Card className={classes.marginTop}>
+                            <CardHeader title={t( "pages.settings.fees")} />
+                            <CardContent>
+                                <Slider
+                                    value={_fees}
+                                    onMouseDown={this._handle_fees_change_committing}
+                                    onChangeCommitted={this._handle_fees_change_committed}
+                                    onChange={this._handle_input_fees_change}
+                                    defaultValue={_fees}
+                                    valueLabelDisplay="auto"
+                                    step={0.25}
+                                    marks
+                                    min={0.25}
+                                    max={4}
                                 />
                             </CardContent>
                         </Card>

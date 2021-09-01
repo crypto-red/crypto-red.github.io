@@ -108,9 +108,6 @@ class DashboardTransactions extends React.Component {
             _coin_id_loaded = _coin_id_loaded.concat([coin_id]);
 
             this.setState({_transactions, _coin_id_loaded});
-        }else {
-
-            console.log("Do something with this error");
         }
     };
 

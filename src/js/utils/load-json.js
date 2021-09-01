@@ -101,7 +101,6 @@ function postDATA(url, data, callback_function) {
 
     try {
 
-        console.log(data);
         http_request.send(data);
     }catch(e) {
 

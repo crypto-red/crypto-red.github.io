@@ -23,6 +23,7 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
+import PersonIcon from "@material-ui/icons/Person";
 import CodeIcon from "@material-ui/icons/Code";
 import SwapVertIcon from "@material-ui/icons/SwapVert";
 import SwapHorizIcon from "@material-ui/icons/SwapHoriz";
@@ -431,6 +432,10 @@ class DrawerContent extends React.Component {
                         </ListItem>
                         <Collapse in={_menu_expanded === "more"} timeout="auto" unmountOnExit>
                             <List component="div" disablePadding>
+                                <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://github.com/crypto-red/crypto-red.github.io/graphs/contributors")}>
+                                    <ListItemIcon><PersonIcon className={classes.iconColor} /></ListItemIcon>
+                                    <ListItemText primary={t( "components.drawer_content.menu.more.contributors")} />
+                                </ListItem>
                                 <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://github.com/crypto-red/crypto-red.github.io")}>
                                     <ListItemIcon><CodeIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary={t( "components.drawer_content.menu.more.source_code")} />

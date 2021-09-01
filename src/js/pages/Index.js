@@ -140,6 +140,7 @@ class Index extends React.Component {
 
     componentDidMount() {
 
+        this._set_new_pathname_or_redirect(this.state.pathname);
         this._update_settings();
         this._update_login();
         dispatcher.register(this._handle_events.bind(this));
@@ -278,12 +279,19 @@ class Index extends React.Component {
         
         const { pathname, _history, _logged_account } = this.state;
 
-        // Set pathname
-        this.setState({pathname: new_pathname});
+        console.log(new_pathname);
+        if(new_pathname === "/index.html") {
 
-        // set meta title
-        this._set_meta_title(new_pathname);
-        actions.trigger_sfx("navigation_transition-right", .25);
+            _history.push("/");
+        }else {
+
+            // Set pathname
+            this.setState({pathname: new_pathname});
+
+            // set meta title
+            this._set_meta_title(new_pathname);
+            actions.trigger_sfx("navigation_transition-right", .25);
+        }
     };
 
     _set_meta_title = (pathname) => {

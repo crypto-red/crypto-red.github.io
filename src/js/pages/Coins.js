@@ -201,9 +201,6 @@ class Coins extends React.Component {
         if(!error && data !== null)  {
 
             this.setState({_coins_markets: data});
-        }else {
-
-            console.log(error);
         }
 
         actions.trigger_loading_update(100);

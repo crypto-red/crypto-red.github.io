@@ -129,7 +129,7 @@ function _format_btc_dash_doge_ltc_amount(coin_id, amount) {
     return amount * 1;
 }
 
-function send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, callback_function, return_fee_instead_of_send = false) {
+function send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, fees, callback_function, return_fee_instead_of_send = false) {
 
     const my_address = get_btc_dash_doge_ltc_address_by_seed(coin_id, seed);
     const { key_pair } = _get_btc_dash_doge_ltc_account_by_seed(coin_id, seed);
@@ -159,10 +159,10 @@ function send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo
                     if(response.data) {
                         if(response.data.txs) {
 
-                            response.data.txs.forEach(function(uo) {
+                            response.data.txs.forEach(function(uo, uo_index) {
 
-                                tx.addInput(uo.txid, uo.output_no, uo.output_no, uo.script);
-                                balance += Math.round(uo.value * 100000000);
+                                tx.addInput(uo.txid, uo.output_no, uo_index, uo.script);
+                                balance += Math.floor(uo.value * 100000000);
                                 input_count++;
 
                             });
@@ -174,6 +174,8 @@ function send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo
                             if (txSize * fee_per_byte > txfeemin){
                                 txfee = txSize * Math.floor(fee_per_byte);
                             }
+
+                            txfee *= fees;
 
 
                             if(return_fee_instead_of_send) {

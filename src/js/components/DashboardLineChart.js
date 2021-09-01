@@ -125,9 +125,6 @@ class DashboardLineChart extends React.Component {
                     this._get_all_full_transactions();
                 }
             });
-        }else {
-
-            console.log("Do something with this error");
         }
     };
 

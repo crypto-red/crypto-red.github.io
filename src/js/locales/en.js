@@ -524,6 +524,7 @@ module.exports = {
                     "faq": "F.A.Q."
                 },
                 "more": {
+                    "contributors": "Contributors",
                     "source_code": "Source code",
                     "more": "More",
                     "download": "Download",
@@ -684,7 +685,8 @@ module.exports = {
             "make_jamy_active": "Make Jamy active",
             "description_of_jamy": "Jamy is responsible for the surveillance, judgement, and reaction of your actions as a user. He can't tell anyone what you are doing, but he is present if you enable him to be so.",
             "security": "Security",
-            "enable_reset_option_in_menu": "Enable reset option in menu"
+            "enable_reset_option_in_menu": "Enable reset option in menu",
+            "fees": "Transaction fees",
         }
     }
 };

@@ -525,6 +525,7 @@ module.exports = {
                     faq: "F.A.Q.",
                 },
                 more: {
+                    contributors: "Contributeurs",
                     source_code: "Code Source",
                     more: "Plus",
                     download: "Télécharger",
@@ -655,7 +656,8 @@ module.exports = {
             make_jamy_active: "Rendre Jamy actif",
             description_of_jamy: "Jamy est responsable de la surveillance, du jugement et de la réaction de vos actions en tant qu'utilisateur. Il ne peut dire à personne ce que vous faites, mais il est présent si vous le lui autorisez.",
             security: "Securité",
-            enable_reset_option_in_menu: "Activer l'option de réinitialisation dans menu"
+            enable_reset_option_in_menu: "Activer l'option de réinitialisation dans menu",
+            fees: "Frais de transaction"
         }
     },
 };

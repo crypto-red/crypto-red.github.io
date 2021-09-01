@@ -117,9 +117,6 @@ class Accounts extends React.Component {
         if(!error && data)  {
 
             this.setState({_coins_markets: data});
-        }else {
-
-            console.log(error);
         }
     };
 
