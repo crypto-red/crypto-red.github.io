@@ -474,7 +474,7 @@ module.exports = {
             help_dialogs_data: {
                 topup: {
                     id: "topup",
-                    url: "https://changelly.com/",
+                    url: "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
                     image: "card.svg",
                     title: "Savez-vous comment recharger votre compte ?",
                     body: "Pour ajouter des fonds à l'une de vos crypto-monnaies, vous devez passer par un échange.",

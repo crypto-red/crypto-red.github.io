@@ -213,7 +213,13 @@ class Dashboard extends React.Component {
 
         if(!error) {
 
-            this.setState({_coins_markets: data});
+            this.setState({_coins_markets: data}, () => {
+
+                if(this.state._portfolio === null) {
+
+                    this._refresh_portfolio_data();
+                }
+            });
         }else {
 
             actions.trigger_snackbar(t( "pages.dashboard.coin_market_data_error"))
