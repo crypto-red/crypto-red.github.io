@@ -3,8 +3,9 @@ import svg64 from "svg64";
 import svg from "../locales/svg";
 import en from "../locales/en";
 import fr from "../locales/fr";
+import id from "../locales/id";
 
-const T = { svg, en, fr };
+const T = { svg, en, fr, id };
 
 function t(path = "", variables = {}, parameters = {}) {
 
