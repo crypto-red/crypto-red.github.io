@@ -121,7 +121,7 @@ class DrawerContent extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        this.setState(new_props);
+        this.setState({...new_props, _help_dialogs_data: t( "components.drawer_content.help_dialogs_data")});
     }
 
     _process_settings_query_result = (error, settings) => {

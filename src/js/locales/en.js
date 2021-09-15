@@ -41,7 +41,7 @@ module.exports = {
         "buy_crypto": {
             "buy_image": "Buy crypto image",
             "in_the_exchange": "In the Exchange's possession",
-            "in_the_account": "In the account's possession",
+            "in_the_account": "In the Account's possession",
             "exchange_btc_address_l1": "Exchange BTC",
             "exchange_btc_address_l2": "address",
             "exchange_gateway_l1": "Exchange",
@@ -52,7 +52,9 @@ module.exports = {
             "bank": "Bank",
             "credit_card": "Credit Card",
             "wallet_btc_address_l1": "Wallet BTC",
-            "wallet_btc_address_l2": "address"
+            "wallet_btc_address_l2": "address",
+            "liquidity_pool_l1": "Liquidity",
+            "liquidity_pool_l2": "Pool"
         },
         "open_source": {
             "open_source_image": "Open source initiative image"
