@@ -21,7 +21,7 @@ module.exports = {
             "different_key": "Kunci berbeda",
             "decryption": "Dekripsi",
             "original_text": "Teks asli",
-            "scrambled_data": "Data yang tersamar"
+            "scrambled_data": "Data tersamar"
         },
         "swap_crypto_currency": {
             "swap_image": "Gambar tukar",
@@ -99,8 +99,8 @@ module.exports = {
         "max": "maks.",
         "1y": "1t",
         "price": "harga",
-        "cap": "batas",
-        "market cap": "batas pasar",
+        "cap": "kapitalisasi",
+        "market cap": "kapitalisasi pasar",
         "public key": "kunci publik",
         "private key": "kunci pribadi",
         "crypto id": "ID kripto",
@@ -156,7 +156,7 @@ module.exports = {
         "load more": "Muat lebih banyak",
         "pick a date": "Pilih tanggal",
         "stay logged": "Tetap di dalam",
-        "market cap rank": "Peringkat batas pasar",
+        "market cap rank": "Peringkat kapitalisasi pasar",
         "all accounts": "Semua akun",
         "alexa rank": "Peringkat Alexa",
         "today score": "Skor hari ini",
@@ -242,7 +242,7 @@ module.exports = {
                     },
                     {
                         "question": "Bagaimana data saya dienkripsi?",
-                        "answer": "Data Anda dienkripsi melalui Triplesec, kunjungi https://keybase.io/triplesec untuk info lebih lanjut."
+                        "answer": "Data Anda dienkripsi melalui Triplesec. Kunjungi https://keybase.io/triplesec untuk info lebih lanjut."
                     },
                     {
                         "question": "Di mana data saya di simpan?",
@@ -250,7 +250,7 @@ module.exports = {
                     },
                     {
                         "question": "Bagaimana seandainya saya kehilangan kode seed-nya?",
-                        "answer": "Kalau seed Anda hilang, (Anda harus menulisnya di kertas) Anda hanya bisa mendapatkannya kembali jika akun Anda belum dibersihkan dari peramban, Anda mungkin perlu masuk dulu"
+                        "answer": "Kalau seed Anda hilang, (Anda harus menulisnya di kertas) Anda hanya bisa mendapatkannya kembali jika akun Anda belum dibersihkan dari peramban. Anda mungkin perlu masuk dulu"
                     },
                     {
                         "question": "Bagaimana kalau saya lupa sandinya?",
@@ -271,11 +271,11 @@ module.exports = {
                     },
                     {
                         "question": "Siapa yang dapat berkontribusi dalam proyek ini?",
-                        "answer": "Siapa saja, kunjungi https://github.com/crypto-red untuk berpartisipasi."
+                        "answer": "Siapa saja. Kunjungi https://github.com/crypto-red untuk berpartisipasi."
                     },
                     {
                         "question": "Siapa yang memutuskan apa yang akan dituliskan kodenya?",
-                        "answer": "Tim kami yang ada di GitHub (https://github.com/crypto-red) harus bermusyawarah, sementara itu boleh saja kalau ada yang mau menduplikasikan proyek untuk kepentingan pribadi."
+                        "answer": "Tim kami yang ada di GitHub (https://github.com/crypto-red) harus bermusyawarah terlebih dahulu. Sementara itu boleh saja kalau ada yang mau menduplikasikan proyek untuk kepentingan pribadi."
                     },
                     {
                         "question": "Siapa yang mendanai proyek ini?",
@@ -297,7 +297,7 @@ module.exports = {
                 "qa": [
                     {
                         "question": "Berapa biaya pengunaanya?",
-                        "answer": "Tidak perlu biaya. Kami memiliki hubungan afiliasi untuk jual beli mata uang kripto. Para mitra ini memberikan kami kompensasi sebagian dari untung yang mereka dapatkan. Sementara itu mereka membandingkan di mana Anda bisa melakukan jual beli mata uang kripto dengan harga penukaran terbaik tanpa menaikkan biaya operasi untuk Anda."
+                        "answer": "Tidak perlu biaya. Kami memiliki hubungan afiliasi untuk melakukan jual beli mata uang kripto. Para mitra ini memberikan upah kepada kami yang diambil dari sebagian untung yang mereka dapatkan. Sementara itu mereka membandingkan di mana Anda bisa melakukan jual beli mata uang kripto dengan harga penukaran terbaik tanpa menaikkan biaya operasi untuk Anda."
                     }
                 ]
             },
@@ -306,7 +306,7 @@ module.exports = {
                 "qa": [
                     {
                         "question": "Haruskah saya menggunakannya jika itu mengandung risiko untuk dana saya?",
-                        "answer": "Anda harus mengunduh versi stabil dari tautan di menu jika berencana memasukkan banyak uang ke dalamnya."
+                        "answer": "Anda harus mengunduh versi yang stabilnya dari tautan di menu jika berencana memasukkan banyak uang di dalamnya."
                     }
                 ]
             }
@@ -324,23 +324,23 @@ module.exports = {
         "about_wiki": {
             "topup": {
                 "title": "Cara mengisi saldo",
-                "content_markdown": "{{{_svg.buy_crypto}}}Meskipun kami tak menerima apa-apa jika Anda tak menggunakan Changelly, ini adalah layanan sederhana dan ATM yang kedua direkomendasikan setelah ATM publik karena masalah privasi.\n\nAnda harus mengikuti instruksi dan terakhir masukkan alamat publik koin yang yang terpilih dari akun yang sudah Anda pilih. Itu saja langkahnya. Anda bisa membayar pakai kartu melalui proses yang cepat dan sederhana."
+                "content_markdown": "{{{_svg.buy_crypto}}}Meskipun kami tak menerima apa-apa jika Anda tak menggunakan Changelly, ini adalah layanan sederhana dan ATM yang kedua direkomendasikan setelah ATM publik karena masalah privasi.\n\nAnda harus mengikuti instruksi dan pada langkah akhir masukkan alamat publik koin yang terpilih dari akun yang sudah Anda pilih. Itu saja langkahnya. Anda bisa membayar pakai kartu melalui proses yang cepat dan sederhana."
             },
             "swap": {
                 "title": "Cara menukar mata uang kripto",
-                "content_markdown": "{{{_svg.swap_crypto_currency}}}Anda harus ke item konversi menu di bagian kiri laci (menu burger jika di ponsel) dan gunakan layanan \"tukar\". Saat ini kami memakai SwapSpace.co karena itu tidak mengenakan biaya lebih dari penukaran yang ditampilkan yang dibandingkannya untuk Anda. Jadi pastinya Anda membayar lebih sedikit di pasar!\n\nAnda harus memilih jumlahnya dalam mata uang yang ingin Anda kirimkan beserta dengan mata uang yang ingin Anda terima dalam penukaran. Lalu klik tombol \"LIHAT TAWARAN\".\n\nKemudian cukup pilih penukaran yang ingin Anda gunakan untuk konversi yang sedang Anda lakukan. Itu akan menunjukkan tawaran-tawaran dari semua penukaran yang terpercaya. Setelah mengklik tombol \"TUKAR\" cukup masukkan alamat baru mata uang yang akan Anda terima. Anda harus menyalin alamat yang tepat dari akun khusus mata uang kripto yang telah Anda pilih untuk diterima sebagai ganti jumlah yang harus Anda kirimkan.\n\n**Dengan kata lain:**\n\n1.  Masukkan jumlah dan pilih layanan tukar.\n2.  Masukkan alamat penerima.\n3.  Transfer dana Anda ke layanan tukar.\n4.  Tunggu sampai penukarannya diproses."
+                "content_markdown": "{{{_svg.swap_crypto_currency}}}Anda harus memilih item konversi menu di bagian kiri laci (menu burger jika di ponsel) dan gunakan layanan \"tukar\". Saat ini kami memakai SwapSpace.co karena situs ini tidak mengenakan biaya lebih dari penukaran yang ditampilkan yang dibandingkannya untuk Anda. Jadi pastinya Anda membayar lebih sedikit di pasar!\n\nAnda harus memilih jumlahnya dalam mata uang yang ingin Anda kirimkan beserta dengan mata uang yang ingin Anda terima dalam penukaran. Lalu klik tombol \"LIHAT TAWARAN\".\n\nKemudian cukup pilih penukaran yang ingin Anda gunakan untuk konversi yang sedang Anda lakukan. Nanti akan muncul tawaran-tawaran dari semua penukaran yang terpercaya. Setelah mengklik tombol \"TUKAR\" cukup masukkan alamat baru mata uang yang akan Anda terima. Anda harus menyalin alamat yang tepat dari akun khusus mata uang kripto yang telah Anda pilih untuk diterima sebagai ganti jumlah yang harus Anda kirimkan.\n\n**Dengan kata lain:**\n\n1.  Masukkan jumlah dan pilih layanan tukar.\n2.  Masukkan alamat penerima.\n3.  Transfer dana Anda ke layanan tukar.\n4.  Tunggu sampai penukarannya diproses."
             },
             "mixer": {
                 "title": "Cara mencampur mata uang kripto",
-                "content_markdown": "{{{_svg.mix_crypto_currency}}}\nSaat ini kami menggunakan Blender.io, yang bisa membuat koin-koin Anda bercampur dengan koin lainnya, seolah-olah koin Anda menghilang dan dari sumber lain muncullah (koin-koin lain dengan jumlah hampir sama) ke sebuah alamat (bisa saja alamat yang benar-benar baru kalau Anda membuat akun baru untuk itu) beberapa jam atau bahkan beberapa hari kemudian!\n\nAnda harus membuat akun baru di wallet.crypto.red supaya bisa menghasilkan alamat yang betul-betul baru dan menaruh alamatnya dalam pencampur (Anda bisa membagi jumlah yang akan dikirim ke beberapa alamat). Lalu cukup kirimkan sejumlah yang Anda inginkah dari akun yang telah Anda pilih untuk mengirimkan koin-koinnya.\n\nHati-hati! Jangan kirimkan koin-koin yang Anda terima dari pencampur ke alamat yang baru saja Anda buat, supaya tak ada yang mengetahui bahwa alamat ini bertautan dengan yang sebelumnya (pastinya)."
+                "content_markdown": "{{{_svg.mix_crypto_currency}}}\nSaat ini kami menggunakan Blender.io, yang bisa membuat koin-koin Anda bercampur dengan koin lainnya, seolah-olah koin Anda menghilang dan dari sumber lain akan muncul (koin-koin lain dengan jumlah hampir sama) ke sebuah alamat (bisa saja alamat yang benar-benar baru kalau Anda membuat akun baru untuk itu) beberapa jam atau bahkan beberapa hari kemudian!\n\nAnda harus membuat akun baru di wallet.crypto.red supaya bisa menghasilkan alamat yang betul-betul baru dan menaruh alamatnya dalam pencampur (Anda bisa membagi jumlah yang akan dikirim ke beberapa alamat). Lalu cukup kirimkan sejumlah yang Anda inginkan dari akun yang telah Anda pilih untuk mengirimkan koin-koinnya.\n\nHati-hati! Jangan kirimkan koin-koin yang Anda terima dari pencampur ke alamat yang baru saja Anda buat. Hal ini supaya tak ada yang mengetahui bahwa alamat ini bertautan dengan yang sebelumnya (pastinya)."
             },
             "crypt": {
                 "title": "Enkripsi dan dekripsi pesan",
-                "content_markdown": "{{{_svg.asymmetric_encryption}}} \nUntuk mengenkripsikan pesan yang telah dikirimkan kepada Anda, Anda harus tahu bahwa baik kunci pribadi maupun kunci publik yang bertautan dengan pesan, yang merupakan teks yang sudah disamarkan. Karena perangkat lunak itu mengetahuinya, jika Anda ke menu Alat lalu memilih kripto lalu dekripsi lalu memilih kunci-kunci isi otomatis, kunci-kunci itu secara ajaib akan terisi dalam sistem kriptografi kami. Anda tinggal menyalin pesan tersamarkan yang Anda terima tersebut, klik isi otomatis lalu tunjukkan.\n\nJika ingin mengenkripsi pesan untuk seseorang, Anda harus tahu kunci publik si penerima, cukup lihat transaksi dari orang tersebut dan salin kunci publiknya. Lalu masukkan dalam alat kriptografi (Tab Enkripsi) di menu Alat dan pilih kode bersama dengan pesannya. Jika Anda memilih kunci isi otomatis di bagian enkripsi, itu nantinya akan dikirimkan untuk Anda sendiri."
+                "content_markdown": "{{{_svg.asymmetric_encryption}}} \nUntuk mengenkripsikan pesan yang telah dikirimkan kepada Anda, Anda harus mengetahui baik kunci pribadi maupun kunci publik yang bertautan dengan pesan, yang merupakan teks yang sudah disamarkan. Karena perangkat lunak itu mengetahuinya, jika Anda ke menu Alat lalu memilih kripto lalu dekripsi lalu memilih kunci-kunci isi otomatis, kunci-kunci itu secara ajaib akan terisi dalam sistem kriptografi kami. Anda tinggal menyalin pesan tersamarkan yang Anda terima tersebut, klik isi otomatis lalu klik tunjukkan.\n\nJika ingin mengenkripsi pesan untuk seseorang, Anda harus tahu kunci publik si penerima dengan cukup melihat transaksi dari orang tersebut dan salin kunci publiknya. Lalu masukkan dalam alat kriptografi (Tab Enkripsi) di menu Alat dan pilih kode bersama dengan pesannya. Jika Anda memilih kunci isi otomatis di bagian enkripsi, itu nantinya akan dikirimkan untuk Anda sendiri."
             },
             "contribute": {
                 "title": "Cara berkontribusi",
-                "content_markdown": "{{{_svg.open_source}}}Anda bisa berkontribusi untuk repositori kami. Inilah tempat yang menampung kode-kode dan aplikasi kami: [https://github.com/crypto-red/crypto-red.github.io](https://github.com/crypto-red/crypto-red.github.io) (semuanya transparan di GitHub). Anda juga mengirimkan donasi untuk kami untuk mempercepat pengembangan proyek ini dan yang lainnya (karena kami juga mendanai proyek yang kami gunakan melalui [OpenCollective](https://opencollective.com/crypto-red)) dengan cara mengirimkan bitcoin ke alamat yang terdapat di tempat yang menampung kode-kode kami."
+                "content_markdown": "{{{_svg.open_source}}}Anda bisa berkontribusi untuk repositori kami. Inilah tempat yang menampung kode-kode dan aplikasi kami: [https://github.com/crypto-red/crypto-red.github.io](https://github.com/crypto-red/crypto-red.github.io) (semuanya transparan di GitHub). Anda juga bisa mengirimkan donasi kepada kami untuk mempercepat pengembangan proyek ini dan yang lainnya (karena kami juga mendanai proyek yang kami gunakan melalui [OpenCollective](https://opencollective.com/crypto-red)) dengan cara mengirimkan bitcoin ke alamat yang terdapat di tempat yang menampung kode-kode kami."
             }
         },
         "account_card": {
@@ -368,7 +368,7 @@ module.exports = {
                 "description": "Masukkan nama dan SANDI YANG KUAT untuk membuat akun baru.\nSemua yang anda ketik tak akan dikirimkan ke siapa pun dan akan tetap berada di perangkat.\nBegitu nama dan sandi untuk mengenkripsi frasa cadangan Anda telah dibuat, kami akan memungkinkan Anda untuk secara manual membuat atau mengimpor frasa cadangan baru Anda (yang disebut mnemonik)."
             },
             "mnemonic_view": {
-                "description": "Gunakan frasa cadangan lama dari dompet yang lain atau gunakan frasa cadangan acak yang baru.\nFrasa cadangan itu seperti sandi seed yang akan membuat kunci master, yang akan digunakan untuk membuat pasangan kunci turunan untuk setiap mata uang kripto.\nSandi yang yang kamu ketik pada langkah pertama akan memungkinkan kamu untuk masuk menggunakan sandi alaih-alih frasa cadangan ini di setiap waktunya.\n",
+                "description": "Gunakan frasa cadangan lama dari dompet yang lain atau gunakan frasa cadangan acak yang baru.\nFrasa cadangan itu seperti sandi seed yang akan membuat kunci master, yang akan digunakan untuk membuat pasangan kunci turunan untuk setiap mata uang kripto.\nSandi yang kamu ketik pada langkah pertama akan memungkinkan kamu untuk masuk menggunakan sandi alaih-alih frasa cadangan ini di setiap waktunya.\n",
                 "description_bold": "Pastikan tak ada yang melihat sebelum menyelesaikan isian di bawah dan SIMPAN DI KERTAS untuk alasan keamanan.",
                 "usual_seed": "Seed yang biasa dipakai untuk mnemonik bip39 panjangnya 12 kata."
             },
@@ -386,7 +386,7 @@ module.exports = {
         },
         "account_dialog_delete": {
             "title": "Hapus {{account_name}}?",
-            "cannot_be_undone": "Tindakan ini TAK BISA dibatalkan. Ini akan menghapus akun {{account_name}} dan dan semua dompetnya secara permanen.",
+            "cannot_be_undone": "Tindakan ini TAK BISA dibatalkan. Ini akan menghapus akun {{account_name}} dan semua dompetnya secara permanen.",
             "repeat_name": "Harapkan masukkan nama akun untuk konfirmasi."
         },
         "account_dialog_open": {
@@ -411,9 +411,9 @@ module.exports = {
             "month": "30h: ",
             "year": "1t: ",
             "price": "Harga",
-            "market_cap": "Batas Pasar.",
+            "market_cap": "Kapitalisasi Pasar.",
             "total_supply": "Total pasokan",
-            "market_cap_rank": "Batas pasar. Peringkat",
+            "market_cap_rank": "Kapitalisasi pasar. Peringkat",
             "alexa_rank": "Peringkat Alexa",
             "today_score": "Skor hari ini",
             "all_time_high": "Harga Tertinggi yang Pernah Ada",
@@ -444,7 +444,7 @@ module.exports = {
             "title_decrypt": "Dekripsi teks menggunakan NaCl",
             "title_encrypt": "Enkripsi teks menggunakan NaCl",
             "body": "Anda harus menyediakan baik kunci publik untuk mengenkripsi pesan (kunci publik seseorang yang lain) ataupun kedua-dua dari kunci publik dan pribadi (pasangan kunci Anda) untuk mendekripsi pesan.",
-            "why_link_text": "Temukan alasan...",
+            "why_link_text": "Baca alasannya...",
             "autofill_my_key": "isi otomatis kunci saya",
             "autofill_my_keys": "isi otomatis kunci-kunci saya"
         },
@@ -617,7 +617,7 @@ module.exports = {
             "price_change_month": "Perubahan harga dalam 30h",
             "year": "Tahun",
             "price_change_year": "Perubahan harga dalam 1t",
-            "market_capitalization_short": "Batas pasar.",
+            "market_capitalization_short": "Kapitalisasi pasar.",
             "market_capitalization": "Kapitalisasi pasar"
         },
         "dashboard": {
@@ -633,19 +633,19 @@ module.exports = {
             "quotes": [
                 {
                     "author": "Charlie Chaplin",
-                    "text": "Kalian semua punya kekuatan - kekuatan untuk membuat mesin. Kekuatan untuk membuat kebahagiaan! Kalian semua, punya kekuatan untuk membuat bebas dan indah, untuk membuat hidup ini menjadi petualangan yang luar biasa."
+                    "text": "Kalian semua punya kekuatan - kekuatan untuk membuat mesin. Kekuatan untuk membuat kebahagiaan! Kalian semua, punya kekuatan untuk membuat hidup ini bebas dan indah, untuk membuat hidup ini menjadi petualangan yang luar biasa."
                 },
                 {
                     "author": "Anonim",
-                    "text": "Ketahuilah bahwa langit diciptakan dalam bentuk lima wujud dasar. Satu potongan, sebuah cermin bagi yang lainnya. Semuanya sama saja. Sama saja. Setiap potongan yang ada adalah alam semestanya sendiri."
+                    "text": "Ketahuilah bahwa langit diciptakan dalam bentuk lima wujud dasar. Satu potongan, sebuah cermin bagi yang lainnya. Semuanya sama saja. Setiap potongan yang ada adalah alam semestanya sendiri."
                 },
                 {
                     "author": "Nikola Tesla",
-                    "text": "Yang kita perlukan sekarang adalah hubungan yang lebih dekat dan rasa pengertian yang lebih tinggi baik antara perorangan maupun komunitas di seluruh dunia, dan hilangnya egoismen dan rasa gengsi yang selalu cenderung mendatangkan kebiadaban dan perselisihan ke dunia ini... Kedamaian hanya akan hadir jika ada pencerahan di seluruh semesta..."
+                    "text": "Yang kita perlukan sekarang adalah hubungan yang lebih dekat dan tenggang rasa yang lebih kuat baik antara perorangan maupun komunitas di seluruh dunia, dan hilangnya egoisme dan rasa gengsi yang selalu cenderung mendatangkan kebiadaban dan perselisihan ke dunia ini... Kedamaian akan hadir hanya jika ada pencerahan di seluruh semesta..."
                 },
                 {
                     "author": "Eric Schmidt",
-                    "text": "Bitcoin adalah capaian kriptografi yang luar biasa dan kemampuan untuk menciptakan sesuatu yang bukan duplikat di dunia digital memiliki nilai yang sangat besar."
+                    "text": "Bitcoin adalah capaian kriptografi yang hebat dan kemampuan untuk menciptakan sesuatu yang bukan duplikat di dunia digital memiliki nilai yang sangat besar."
                 },
                 {
                     "author": "Oscar Wilde",
@@ -653,7 +653,7 @@ module.exports = {
                 },
                 {
                     "author": "Elon Musk",
-                    "text": "Mampu berbicara dengan orang dari jarak jauh, mengirimkan pesan, terbang, mengakses miliaran data layaknya peramal. Itu semua pasti akan disebut sihir ratusan tahun yang lalu. Jadi bidang perteknikan sama saja dengan bidang sihir. Siapa yang tak mau jadi penyihir?"
+                    "text": "Mampu berbicara dengan orang-orang dari jarak jauh, mengirimkan pesan, terbang, mengakses miliaran data layaknya peramal. Itu semua sudah pasti disebut sihir ratusan tahun yang lalu. Jadi bidang perteknikan sama saja dengan bidang sihir. Siapa yang tak mau jadi penyihir?"
                 },
                 {
                     "author": "Anonim",
@@ -665,11 +665,11 @@ module.exports = {
                 },
                 {
                     "author": "Anonim",
-                    "text": "Ada banyak sebab yang saya rela mati karenanya. Tak ada ada sebab apa pun yang saking ingin saya dapatkan sampai-sampai saya mau melakukan apa pun karenanya."
+                    "text": "Ada banyak sebab yang saya rela mati karenanya. Tak ada satu sebab pun yang saking inginnya saya raih sampai-sampai saya mau melakukan apa pun karenanya."
                 },
                 {
                     "author": "Anonim",
-                    "text": "Tahu tidak, kadang-kadang saya tak tahu apa yang mesti dilakukan di dunia ini supaya orang mau bergerak karena mereka masih saja duduk-duduk. Maksudnya bukan untuk melakukan pemberontakan atau semacamnya. Yang saya maksudkan adalah membangun hubungan. Bersatulah."
+                    "text": "Tahu tidak, kadang-kadang saya tak tahu apa yang mesti dilakukan di dunia ini supaya orang-orang mau bergerak karena mereka masih saja duduk-duduk santai. Maksudnya bukan untuk melakukan pemberontakan atau semacamnya. Yang saya maksudkan adalah membangun hubungan. Bersatulah."
                 }
             ],
             "ready_to_start_cta": "Siap memulai sekarang? Buat dompet anonim baru!"
