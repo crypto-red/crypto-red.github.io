@@ -9,11 +9,13 @@ import en from "javascript-time-ago/locale/en"
 import fr from "javascript-time-ago/locale/fr"
 import pt from "javascript-time-ago/locale/pt"
 import id from "javascript-time-ago/locale/id"
+import it from "javascript-time-ago/locale/it"
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(fr);
 TimeAgo.addLocale(pt);
 TimeAgo.addLocale(id);
+TimeAgo.addLocale(it);
 
 // Pages
 import Index from "./pages/Index";
