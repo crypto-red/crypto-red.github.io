@@ -8,7 +8,7 @@
 
 ## Languages
 
-EN, FR, DE, IT, ID, PT
+EN, FR, DE, IT, ID, PT, JA
 
 Discussions -> [CLICK HERE](https://github.com/crypto-red/crypto-red.github.io/discussions)
 

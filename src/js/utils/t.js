@@ -7,8 +7,9 @@ import id from "../locales/id";
 import pt from "../locales/pt";
 import it from "../locales/pt";
 import de from "../locales/de";
+import ja from "../locales/ja";
 
-const T = { svg, en, fr, id, pt, it, de };
+const T = { svg, en, fr, id, pt, it, de, ja };
 
 function t(path = "", variables = {}, parameters = {}) {
 
