@@ -6,6 +6,10 @@
  * Litecoin [MAINNET]
  * Vsystems [MAINNET]
 
+## Languages
+
+EN, FR, DE, IT, ID, PT
+
 Discussions -> [CLICK HERE](https://github.com/crypto-red/crypto-red.github.io/discussions)
 
 ## Screenshots
