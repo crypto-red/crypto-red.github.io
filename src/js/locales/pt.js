@@ -36,7 +36,9 @@ module.exports = {
             "wallet_btc_address_l1": "Carteira BTC",
             "wallet_btc_address_l2": "endereço",
             "wallet_ltc_address_l1": "Carteira LTC",
-            "wallet_ltc_address_l2": "endereço"
+            "wallet_ltc_address_l2": "endereço",
+            "liquidity_pool_l1": "Piscina de",
+            "liquidity_pool_l2": "liquidez",
         },
         "buy_crypto": {
             "buy_image": "Comprar imagem cripto",
