@@ -7,9 +7,13 @@ import TimeAgo from "javascript-time-ago";
 
 import en from "javascript-time-ago/locale/en"
 import fr from "javascript-time-ago/locale/fr"
+import pt from "javascript-time-ago/locale/pt"
+import id from "javascript-time-ago/locale/id"
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(fr);
+TimeAgo.addLocale(pt);
+TimeAgo.addLocale(id);
 
 // Pages
 import Index from "./pages/Index";
