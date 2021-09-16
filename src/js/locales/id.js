@@ -113,7 +113,7 @@ module.exports = {
         "block explorers": "blokir penjelajah",
         "forum": "forum",
         "chat": "obrolan",
-        "feelings": "perasaan",
+        "feelings": "sentimen",
         "development score": "skor perkembangan",
         "average score": "skor rata-rata",
         "liquidity": "likuiditas",
@@ -193,7 +193,7 @@ module.exports = {
         "you need to add fund to this account": "Anda perlu menambah dana ke akun ini",
         "just do it through the link in the menu": "Lakukan itu lewat tautan di menu",
         "no transactions maid": "Anda belum bertransaksi apa pun, semua transaksi akan muncul di sini",
-        "no transactions maid chart": "Anda belum bertransaksi apa pun, semua transaksi terakhir akan muncul di grafik di sini.",
+        "no transactions maid chart": "Anda belum bertransaksi apa pun. Semua transaksi terakhir akan muncul di grafik di sini.",
         "no transaction maid portfolio": "Anda belum bertransaksi apa pun, karenanya portofolio Anda kosong tapi nanti akan muncul di sini.",
         "cannot load QR code scanner": "Tidak bisa memuat pemindai kode QR",
         "transaction sent": "Transaksi terkirim",
@@ -370,7 +370,7 @@ module.exports = {
                 "description": "Masukkan nama dan SANDI YANG KUAT untuk membuat akun baru.\nSemua yang anda ketik tak akan dikirimkan ke siapa pun dan akan tetap berada di perangkat.\nBegitu nama dan sandi untuk mengenkripsi frasa cadangan Anda telah dibuat, kami akan memungkinkan Anda untuk secara manual membuat atau mengimpor frasa cadangan baru Anda (yang disebut mnemonik)."
             },
             "mnemonic_view": {
-                "description": "Gunakan frasa cadangan lama dari dompet yang lain atau gunakan frasa cadangan acak yang baru.\nFrasa cadangan itu seperti sandi seed yang akan membuat kunci master, yang akan digunakan untuk membuat pasangan kunci turunan untuk setiap mata uang kripto.\nSandi yang kamu ketik pada langkah pertama akan memungkinkan kamu untuk masuk menggunakan sandi alaih-alih frasa cadangan ini di setiap waktunya.\n",
+                "description": "Gunakan frasa cadangan lama dari dompet yang lain atau gunakan frasa cadangan acak yang baru.\nFrasa cadangan itu seperti sandi seed yang akan membuat kunci master, yang akan digunakan untuk membuat pasangan kunci turunan untuk setiap mata uang kripto.\nSandi yang Anda ketik pada langkah pertama akan memungkinkan kamu untuk masuk menggunakan sandi alaih-alih frasa cadangan ini di setiap waktunya.\n",
                 "description_bold": "Pastikan tak ada yang melihat sebelum menyelesaikan isian di bawah dan SIMPAN DI KERTAS untuk alasan keamanan.",
                 "usual_seed": "Seed yang biasa dipakai untuk mnemonik bip39 panjangnya 12 kata."
             },
@@ -413,9 +413,9 @@ module.exports = {
             "month": "30h: ",
             "year": "1t: ",
             "price": "Harga",
-            "market_cap": "Kapitalisasi Pasar.",
+            "market_cap": "Kapitalisasi Pasar",
             "total_supply": "Total pasokan",
-            "market_cap_rank": "Kapitalisasi pasar. Peringkat",
+            "market_cap_rank": "Peringkat kapitalisasi pasar",
             "alexa_rank": "Peringkat Alexa",
             "today_score": "Skor hari ini",
             "all_time_high": "Harga Tertinggi yang Pernah Ada",
