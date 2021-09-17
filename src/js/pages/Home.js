@@ -50,6 +50,20 @@ const styles = theme => ({
         backgroundColor: theme.palette.primary.action,
         color: theme.palette.primary.contrastText,
         transition: "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, opacity 204ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 136ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
+        animation: "$homefab 1.25s infinite",
+        "@global": {
+            "@keyframes homefab": {
+                "0%": {
+                    backgroundColor: theme.palette.primary.action
+                },
+                "50%": {
+                    backgroundColor: theme.palette.primary.actionLighter
+                },
+                "100%": {
+                    backgroundColor: theme.palette.primary.action
+                }
+            }
+        },
         "&:hover": {
             backgroundColor: theme.palette.primary.actionLighter,
         },
