@@ -503,7 +503,7 @@ module.exports = {
                 }
             },
             dont_show_again: "Ne plus l'afficher",
-            go: "go",
+            go: "J'y vais",
             menu: {
                 dashboard: "Tableau de bord",
                 all_coins: "Toutes les cryptos",

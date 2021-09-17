@@ -145,7 +145,7 @@ function get_vsys_send_transaction_info() {
 
     return {
         max_message_length: 160,
-        average_transaction_time: "6x4 seconds"
+        average_transaction_time: 6 * 4 * 1000,
     };
 }
 

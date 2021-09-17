@@ -426,22 +426,22 @@ function get_btc_dash_doge_ltc_send_transaction_info(coin_id) {
         case "bitcoin":
             return {
                 max_message_length: 0,
-                average_transaction_time: "6x10 minutes"
+                average_transaction_time: 6 * 10 * 60 * 1000,
             };
         case "dash":
             return {
                 max_message_length: 0,
-                average_transaction_time: "6x3 minutes"
+                average_transaction_time: 6 * 3 * 60 * 1000,
             };
         case "dogecoin":
             return {
                 max_message_length: 0,
-                average_transaction_time: "6x1 minutes"
+                average_transaction_time: 6 * 1 * 60 * 1000,
             };
         case "litecoin":
             return {
                 max_message_length: 0,
-                average_transaction_time: "6x1.5 minutes"
+                average_transaction_time: 6 * 1.5 * 60 * 1000,
             };
     }
 }

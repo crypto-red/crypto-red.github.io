@@ -26,6 +26,7 @@ import { HISTORY } from "../utils/constants";
 import actions from "../actions/utils";
 import api from "../utils/api";
 import price_formatter from "../utils/price-formatter";
+import TimeAgo from "javascript-time-ago";
 
 const styles = theme => ({
     container: {
@@ -457,7 +458,11 @@ class CoinSend extends React.Component {
                                                 </form>: null
                                             }
                                             {_coin_balance !== null ? <p>{t("components.coin_send.title", {balance: _coin_balance})}</p>: <p>{t("sentences.loading")}</p>}
-                                            {_send_transaction_info !== null ? <p>{t("components.coin_send.body", {average_transaction_time: _send_transaction_info.average_transaction_time, max_message_length: _send_transaction_info.max_message_length, send_message_input_length: _send_message_input.length})}</p>: null}
+                                            {_send_transaction_info !== null ? <p>{t("components.coin_send.body", {
+                                                average_transaction_time: new TimeAgo(document.documentElement.lang).format(Date.now() + _send_transaction_info.average_transaction_time, "mini"),
+                                                max_message_length: _send_transaction_info.max_message_length,
+                                                send_message_input_length: _send_message_input.length
+                                            })}</p>: null}
                                         </div>:
                                         <div>
                                             <img className={classes.noAccountImage} src="/src/images/account.svg"/>

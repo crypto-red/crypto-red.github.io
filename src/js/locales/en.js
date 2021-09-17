@@ -502,7 +502,7 @@ module.exports = {
                 }
             },
             "dont_show_again": "Don't show it again",
-            "go": "go",
+            "go": "Take me there",
             "menu": {
                 "dashboard": "Dashboard",
                 "all_coins": "All coins",
