@@ -36,9 +36,7 @@ module.exports = {
             "wallet_btc_address_l1": "Carteira BTC",
             "wallet_btc_address_l2": "endereço",
             "wallet_ltc_address_l1": "Carteira LTC",
-            "wallet_ltc_address_l2": "endereço",
-            "liquidity_pool_l1": "Piscina de",
-            "liquidity_pool_l2": "liquidez",
+            "wallet_ltc_address_l2": "endereço"
         },
         "buy_crypto": {
             "buy_image": "Comprar imagem cripto",
@@ -47,7 +45,7 @@ module.exports = {
             "exchange_btc_address_l1": "Exchange BTC",
             "exchange_btc_address_l2": "endereço",
             "exchange_gateway_l1": "Exchange",
-            "exchange_gateway_l2": "porta de saíde",
+            "exchange_gateway_l2": "porta de saída",
             "fiat_amount": "Quantidade FIAT",
             "wallet": "Carteira",
             "atm": "Caixa Eletrônico",
@@ -78,7 +76,7 @@ module.exports = {
         "open": "abrir",
         "loading": "carregando",
         "new": "novo",
-        "next": "próxximo",
+        "next": "próximo",
         "refresh": "atualizar",
         "top up": "carregar",
         "random": "aleatório",
@@ -326,7 +324,7 @@ module.exports = {
         "about_wiki": {
             "topup": {
                 "title": "Como realizar depósitos",
-                "content_markdown": "{{{_svg.buy_crypto}}}Apesar de nós não recebermos nada se você não usar Changelly, é um serviço simples e o segundo mais recomendado depois dos caixas eletrônicos públicos em questões de privacidade.\n\nVocê terá que seguir as instruções e no final, inserir o endereço público da moeda selecionada da conta que você escolher e pronto, você pode pagar com cartão em um procedimento simples e rápido."
+                "content_markdown": "{{{_svg.buy_crypto}}}Apesar de nós não recebermos nada se você usar o Changelly, este é um serviço simples e o segundo mais recomendado depois dos caixas eletrônicos públicos em questões de privacidade.\n\nVocê terá que seguir as instruções e no final, inserir o endereço público da moeda selecionada da conta que você escolher e pronto, você pode pagar com cartão em um procedimento simples e rápido."
             },
             "swap": {
                 "title": "Como trocar criptomoedas",
@@ -338,7 +336,7 @@ module.exports = {
             },
             "crypt": {
                 "title": "Criptografar e decriptografar mensagens",
-                "content_markdown": "{{{_svg.asymmetric_encryption}}} \nPara decriptografar uma mensagem que alguém te enviou, você terá que saber tanto a chave pública quanto a privada ligadas à esta mensagem que teve o texto criptografado, pois o software reconhece, se você for em ferramentar e então cripto, e decriptografar, então preencher chaves automaticamente, as chaves serão preenchidas como mágica em nosso sistema de criptografia. Basta copiar a mensagem criptografada que você recebeu, clicar em preencher automaticamente e então em mostrar.\n\nPara enviar uma mensagem criptografada para alguém, você terá que saber a chave pública do destinatário, basta buscar em uma transação desta pessoa e copiar a chave pública, que você terá que inserir na ferramenta de criptografia (aba Criptografia) em ferramentas, então criptogafar junto com a mensagem. Se você clicar em preencher chaves automaticamente na seção criptografia, isso significa que será enviado para você mesmo."
+                "content_markdown": "{{{_svg.asymmetric_encryption}}} \nPara decriptografar uma mensagem que alguém te enviou, você terá que saber tanto a chave pública quanto a privada ligadas à esta mensagem que teve o texto criptografado, pois o software reconhece, se você for em ferramentas e então cripto, e decriptografar, então preencher chaves automaticamente, as chaves serão preenchidas como mágica em nosso sistema de criptografia. Basta copiar a mensagem criptografada que você recebeu, clicar em preencher automaticamente e então em mostrar.\n\nPara enviar uma mensagem criptografada para alguém, você terá que saber a chave pública do destinatário, basta buscar em uma transação desta pessoa e copiar a chave pública, que você terá que inserir na ferramenta de criptografia (aba Criptografia) em ferramentas, então criptogafar junto com a mensagem. Se você clicar em preencher chaves automaticamente na seção criptografia, isso significa que será enviado para você mesmo."
             },
             "contribute": {
                 "title": "Como contribuir",
@@ -502,26 +500,26 @@ module.exports = {
                 }
             },
             "dont_show_again": "Não mostrar novamente",
-            "go": "go",
+            "go": "Ir",
             "menu": {
                 "dashboard": "Painel",
                 "all_coins": "Todas as moedas",
                 "coins": "Moedas",
                 "trade": {
-                    "trade": "Trade",
+                    "trade": "Trading",
                     "top_up": "Depositar",
                     "mixer": "Mixer",
                     "swap": "Swap",
                     "atm": "Caixa eletrônico"
                 },
                 "tools": {
-                    "tools": "Ferramentar",
+                    "tools": "Ferramentas",
                     "crypt": "Criptografia",
                     "qr": "Scannear"
                 },
                 "about": {
                     "about": "Sobre",
-                    "info": "Inforações",
+                    "info": "Informações",
                     "wiki": "Wiki",
                     "faq": "Perguntas Frequentes"
                 },

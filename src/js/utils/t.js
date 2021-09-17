@@ -5,11 +5,12 @@ import en from "../locales/en";
 import fr from "../locales/fr";
 import id from "../locales/id";
 import pt from "../locales/pt";
-import it from "../locales/pt";
+import it from "../locales/it";
 import de from "../locales/de";
 import ja from "../locales/ja";
+import zh from "../locales/zh";
 
-const T = { svg, en, fr, id, pt, it, de, ja };
+const T = { svg, en, fr, id, pt, it, de, ja, zh };
 
 function t(path = "", variables = {}, parameters = {}) {
 
