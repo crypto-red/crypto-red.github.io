@@ -133,7 +133,7 @@ module.exports = {
         "learn": "impara",
         "url": "url",
         "link": "link",
-        "locales": "locali",
+        "locales": "locale",
         "currency": "valuta",
         "create": "crea",
         "chart": "grafico",
@@ -248,7 +248,7 @@ module.exports = {
                     },
                     {
                         "question": "Dove vengono conservati i miei dati?",
-                        "answer": "Il tuo seme (account intero) può generare tutti i dati del tuo criptoportafoglio e viene conservato come non criptato sul tuo computer (con Pouchdb sul tuo browser) in modalità persistente quando sei connesso e criptato in modalità non persistente o quando sei scollegato."
+                        "answer": "Il tuo seme (account intero) può generare tutti i dati del tuo criptoportafoglio e viene conservato come non criptato sul tuo computer (con Pouchdb sul tuo browser) in modalità persistente quando sei connesso e criptato in modalità non persistente quando sei scollegato."
                     },
                     {
                         "question": "Cosa succede se perdo il mio seme?",
@@ -487,7 +487,7 @@ module.exports = {
                     "url": "https://blender.io/",
                     "image": "hacker.svg",
                     "title": "Sai come e perché usare un mixer?",
-                    "body": "Per offuscare la fonde della tua moneta, puoi usare un mixer, che renderà difficile collegare due portafogli insieme.",
+                    "body": "Per offuscare la fonte della tua moneta, puoi usare un mixer, che renderà difficile collegare due portafogli insieme.",
                     "help_link": "/about/wiki/mixer",
                     "help_link_content": "Scopri di più..."
                 },
@@ -684,7 +684,7 @@ module.exports = {
             "enable_sound_effects": "Abilita effetti sonori",
             "superintendent": "Sovrintendente",
             "enable_the_superintendent": "Abilita il sovrintendente",
-            "make_jamy_active": "Make Jamy attivo",
+            "make_jamy_active": "Rendi Jamy attivo",
             "description_of_jamy": "Jamy è responsabile della sorveglianza, del giudizio e della reazione alle tue azioni in qualità di utente. Non può dire a nessuno ciò che stai facendo, ma sarà presente se glielo permetti.",
             "security": "Sicurezza",
             "enable_reset_option_in_menu": "Abilita opzione reset nel menù",
