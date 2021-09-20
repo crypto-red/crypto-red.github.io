@@ -9,8 +9,11 @@ import it from "../locales/it";
 import de from "../locales/de";
 import ja from "../locales/ja";
 import zh from "../locales/zh";
+import ko from "../locales/ko";
+import ru from "../locales/ru";
+import hi from "../locales/hi";
 
-const T = { svg, en, fr, id, pt, it, de, ja, zh };
+const T = { svg, en, fr, id, pt, it, de, ja, zh, ko, ru, hi };
 
 function t(path = "", variables = {}, parameters = {}) {
 

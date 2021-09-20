@@ -13,6 +13,9 @@ import it from "javascript-time-ago/locale/it"
 import de from "javascript-time-ago/locale/de"
 import ja from "javascript-time-ago/locale/ja"
 import zh from "javascript-time-ago/locale/zh"
+import ko from "javascript-time-ago/locale/ko"
+import ru from "javascript-time-ago/locale/ru"
+import hi from "javascript-time-ago/locale/hi"
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(fr);
@@ -22,6 +25,9 @@ TimeAgo.addLocale(it);
 TimeAgo.addLocale(de);
 TimeAgo.addLocale(ja);
 TimeAgo.addLocale(zh);
+TimeAgo.addLocale(ko);
+TimeAgo.addLocale(ru);
+TimeAgo.addLocale(hi);
 
 // Pages
 import Index from "./pages/Index";

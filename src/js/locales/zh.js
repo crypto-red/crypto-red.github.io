@@ -516,7 +516,7 @@ module.exports = {
                 },
                 "tools": {
                     "tools": "工具",
-                    "crypt": "加密解密",
+                    "crypt": "加密",
                     "qr": "扫描"
                 },
                 "about": {
