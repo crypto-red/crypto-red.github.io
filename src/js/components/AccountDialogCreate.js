@@ -151,7 +151,7 @@ class AccountDialogCreate extends React.Component {
         }
 
         bip39.setDefaultWordlist("english");
-        ["japanese", "spanish", "italian", "french", "korean", "czech", "portuguese"].forEach(function(name){
+        ["chinese", "japanese", "spanish", "italian", "french", "korean", "portuguese"].forEach(function(name){
 
             if(locale_name.toLowerCase().includes(name)) {
 
@@ -308,7 +308,7 @@ class AccountDialogCreate extends React.Component {
 
         let {  _account_mnemonic_input } = this.state;
 
-        _account_mnemonic_input = _account_mnemonic_input.concat(chip.split(" "));
+        _account_mnemonic_input = _account_mnemonic_input.concat(chip.replaceAll("　", " ").split(" "));
         this.setState({ _account_mnemonic_input});
     };
     
@@ -342,7 +342,7 @@ class AccountDialogCreate extends React.Component {
 
         if(typeof event !== "undefined") {event.preventDefault()}
 
-        const mnemonic_words = bip39.generateMnemonic().split(" ");
+        const mnemonic_words = bip39.generateMnemonic().replaceAll("　", " ").split(" ");
         actions.trigger_sfx("state-change_confirm-up");
         actions.jamy_update("happy");
         this.setState({ _account_mnemonic_input: mnemonic_words});
@@ -449,7 +449,7 @@ class AccountDialogCreate extends React.Component {
 
             if(text.split(" ").length >= 12) {
 
-                this.setState({ _account_mnemonic_input: text.split(" ")});
+                this.setState({ _account_mnemonic_input: text.replaceAll("　", " ").split(" ")});
                 actions.trigger_sfx("state-change_confirm-up");
                 actions.jamy_update("happy");
 
@@ -461,7 +461,7 @@ class AccountDialogCreate extends React.Component {
 
                         if(!error){
 
-                            this.setState({ _account_mnemonic_input: result.split(" ")});
+                            this.setState({ _account_mnemonic_input: result.replaceAll("　", " ").split(" ")});
                             actions.trigger_sfx("state-change_confirm-up");
                             actions.jamy_update("happy");
 

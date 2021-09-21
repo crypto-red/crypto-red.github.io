@@ -52,7 +52,9 @@ module.exports = {
             "bank": "Bank",
             "credit_card": "Kreditkarte",
             "wallet_btc_address_l1": "BTC",
-            "wallet_btc_address_l2": "Adresse Wallet"
+            "wallet_btc_address_l2": "Adresse Wallet",
+            "liquidity_pool_l1": "Liquiditätspool",
+            "liquidity_pool_l2": ""
         },
         "open_source": {
             "open_source_image": "Open Source Initiative Bild"

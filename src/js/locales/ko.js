@@ -52,7 +52,9 @@ module.exports = {
             "bank": "은행",
             "credit_card": "신용 카드",
             "wallet_btc_address_l1": "BTC 지갑",
-            "wallet_btc_address_l2": "주소"
+            "wallet_btc_address_l2": "주소",
+            "liquidity_pool_l1": "유동성",
+            "liquidity_pool_l2": "풀",
         },
         "open_source": {
             "open_source_image": "소스 이니셔티브 이미지 열기"
