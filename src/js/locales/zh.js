@@ -557,7 +557,7 @@ module.exports = {
         },
         "transaction_dialog": {
             "title": "交易 ID {{transaction_id}}",
-            "send_at": "发送",
+            "send_at": "发送于",
             "send_from": "发自",
             "send_to_public_key": "发送至公开秘钥",
             "send_from_public_key": "发自公开秘钥",
