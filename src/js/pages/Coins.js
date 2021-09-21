@@ -177,8 +177,8 @@ class Coins extends React.Component {
         const { _coins_id, _coins_markets } = this.state;
 
         // Set new settings from query result
-        const _selected_locales_code = settings.locales;
-        const _selected_currency = settings.currency;
+        const _selected_locales_code =  typeof settings.locales !== "undefined" ? settings.locales: "en-US";
+        const _selected_currency = typeof settings.currency !== "undefined" ? settings.currency: "USD";
 
         this.setState({ _selected_locales_code, _selected_currency }, function(){
 

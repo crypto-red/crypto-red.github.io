@@ -90,8 +90,9 @@ class Coin extends React.Component {
 
         // Set new settings from query result
         const _fees = typeof settings.fees !== "undefined" ? settings.fees: 1;
-        const _selected_locales_code = settings.locales || "en-US";
-        const _selected_currency = settings.currency || "USD";
+        const _selected_locales_code =  typeof settings.locales !== "undefined" ? settings.locales: "en-US";
+        const _selected_currency = typeof settings.currency !== "undefined" ? settings.currency: "USD";
+
 
         this.setState({ _fees, _selected_locales_code, _selected_currency }, function(){
             this._get_coin_data();

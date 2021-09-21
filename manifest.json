@@ -9,7 +9,7 @@
     "scope": "/"
   },
   "short_name": "W.C.R.",
-  "description": "Fast and very simple cryptocurrency wallet.",
+  "description": "Fast and very simple cryptocurrency wallet. Invest in various cryptocurrencies anonymously now.",
   "display": "standalone",
   "theme_color": "#060f23",
   "background_color": "#ffffff",
@@ -28,7 +28,7 @@
     {
       "name": "WALLET.CRYPTO.RED",
       "short_name": "W.C.R.",
-      "description": "Fast and very simple cryptocurrency wallet.",
+      "description": "Fast and very simple cryptocurrency wallet. Invest in various cryptocurrencies anonymously now.",
       "url": "/",
       "icons": [{ "src": "/src/images/logo-transparent.png", "sizes": "640x640" }]
     }

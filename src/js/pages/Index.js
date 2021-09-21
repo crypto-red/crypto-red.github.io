@@ -258,10 +258,10 @@ class Index extends React.Component {
             // Set new settings from query result
             const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: false;
             const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: false;
-            const _selected_locales_code = settings.locales || "en-US";
+            const _selected_locales_code =  typeof settings.locales !== "undefined" ? settings.locales: "en-US";
             const _language = _selected_locales_code.split("-")[0];
-            const _selected_currency = settings.currency || "USD";
-            const _panic_mode = settings.panic || false;
+            const _selected_currency = typeof settings.currency !== "undefined" ? settings.currency: "USD";
+            const _panic_mode = typeof settings.panic !== "undefined" ? settings.panic: false;
             const _onboarding_enabled = typeof settings.onboarding !== "undefined" ? settings.onboarding: true;
 
             document.documentElement.lang = _language;
@@ -279,7 +279,6 @@ class Index extends React.Component {
         
         const { pathname, _history, _logged_account } = this.state;
 
-        console.log(new_pathname);
         if(new_pathname === "/index.html") {
 
             _history.push("/");

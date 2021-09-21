@@ -68,13 +68,14 @@ class Settings extends React.Component {
         const _fees = typeof settings.fees !== "undefined" ? settings.fees: 1;
         const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: false;
         const _jamy_enabled = typeof settings.jamy_enabled !== "undefined" ? settings.jamy_enabled: false;
-        const _selected_locales_code = settings.locales || "en-US";
+        const _selected_locales_code =  typeof settings.locales !== "undefined" ? settings.locales: "en-US";
         const _language = _selected_locales_code.split("-")[0];
-        const _selected_currency = settings.currency || "USD";
-        const _panic_mode = settings.panic || false;
+        const _selected_currency = typeof settings.currency !== "undefined" ? settings.currency: "USD";
+        const _panic_mode = typeof settings.panic !== "undefined" ? settings.panic: false;
 
         actions.trigger_loading_update(0);
         actions.trigger_loading_update(100);
+
         this.setState({ _fees, _sfx_enabled, _jamy_enabled, _selected_locales_code, _language, _selected_currency, _panic_mode });
     };
 
