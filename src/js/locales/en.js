@@ -343,24 +343,6 @@ module.exports = {
             "contribute": {
                 "title": "How to contribute",
                 "content_markdown": "{{{_svg.open_source}}}You can contribute to our repository, this is where our code and application is hosted: [https://github.com/crypto-red/crypto-red.github.io](https://github.com/crypto-red/crypto-red.github.io) (everything is transparent on GitHub). You can also donate to us in order to accelerate development of this project and other projects (since we also fund other projects that we use through [OpenCollective](https://opencollective.com/crypto-red)) by sending bitcoin in the address shown where our code is hosted."
-            },
-            "tips": {
-                "title": "Tips about investment",
-                "content_markdown":
-                    "## Tips 1) It isn't far better to hold cash than investments." + "\n" +
-                    "The belief that it is better to put your money under the mattress than in a financial markets is quite fantastic. And we're not talking about the \"inflation\", which increases the end cost of goods and services causing the absolute, unitary value of currency to slowly depreciate over time, meanwhile the interest rate on a savings account does not allow it to earn a return above inflation either." + "\n" +
-                    "Unlike holding cash on a bank account: even if it shows temporarily losses, the return is mostly positive over the long term, at least for a majority of assets in the field of cryptocurrencies. Whoever wishes to protect his fortune and his standard of living has every interest in investing his money in multiples baskets rather than favoring holdings in highly available and highly inflating stocks or currency even if such pool of value can seems more stable due to the regulation of its absolute value trough absolute inflation." + "\n" +
-                    "## Tips 2) Who knows exactly when to invest?" + "\n" +
-                    "Everyone want the maximum return on investment. And we seems to employ a seemingly simple solution to this: invest when the gains are attractive and sell when a threat of loss looms. Because of this theory, in practice the exercise is not so easy. It takes a lifetime to know when to invest best." + "\n" +
-                    "## Tips 3) A long-term investment is often worth it better than a short one." + "\n" +
-                    "Negative events, such as the financial crisis of 2008, take their toll and give the impression that the long-term investments are not worth it because of the risks. However, it is the opposite: if we look at the performance of the MSCI World index from 1971 to the present day, we only count 13 years of negative performance, while 37 are in positive territory." + "\n" +
-                    "An investor should pay more attention to positive years, and even calm ones, because at the end of the day, every periods counts, even calm ones." + "\n" +
-                    "## Tips 4) Who doesn't have a rational investing behavior?" + "\n" +
-                    "The theme of investments is often linked to a strong emotional charge . Few investors manage to stay rational when it comes to their money loss. A rise in prices encourages betting on additional gains. Conversely, some investors have already sold their investment in a movement of panic in the wake of a downturn courses in anticipation of further losses." + "\n" +
-                    "Such emotional decisions are bad. Guided by emotions rather than facts, the investor inevitably lags behind the market: he invests too late and sells when the losses have already crystallized. It also misses the turnaround which, from a purely rational point of view, follows every stock market crash." + "\n" +
-                    "## Tips 5) Most people doesn't invest better than most people." + "\n" +
-                    "Maximum return - this is the aspiration of every investor. However, many people overestimate their skills in this area. They tend to ignore risk recommendations! And they believe they can outperform the market. This approach is rarely a source of success. In most cases, it rather results in a derisory return or even a loss." + "\n" +
-                    "Experience shows that when it comes to investing, you need to invest in line with your own risk and return profile. The combination of experienced financial market specialists and a systematic investment process allows you to optimize returns with the right level of risk. Conversely, investors who ignore the risk-return balance tend to underperform because they mismanage their reasoning of reason at the stake of instinct."
             }
         },
         "account_card": {
