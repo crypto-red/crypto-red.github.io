@@ -14,36 +14,36 @@ module.exports = {
         },
         "asymmetric_encryption": {
             "encryption_image": "Verschlüsselung Bild",
-            "encryption": "Verschlüsselung",
+            "encryption": "Verschl.",
             "asymmetric_encryption": "Asymmetrische Verschlüsselung",
-            "private_key": "Privater Key",
-            "public_key": "Öffentlicher Key",
+            "private_key": "Priv. Key",
+            "public_key": "Öff. Key",
             "different_key": "Anderer Key",
-            "decryption": "Entschlüsselung",
+            "decryption": "Entschl.",
             "original_text": "Originaltext",
-            "scrambled_data": "Verschlüsselte Daten"
+            "scrambled_data": "Verschl. Daten"
         },
         "swap_crypto_currency": {
             "swap_image": "Swap Bild",
             "in_the_exchange": "Im Besitz der Börse",
             "in_the_account": "Im Besitz des Kontos",
             "swap": "SWAP",
-            "exchange_ltc_address_l1": "LTC tauschen",
-            "exchange_ltc_address_l2": "Adresse",
-            "exchange_btc_address_l1": "BTC tauschen",
-            "exchange_btc_address_l2": "Adresse",
+            "exchange_ltc_address_l1": "LTC",
+            "exchange_ltc_address_l2": "Adresse Börse",
+            "exchange_btc_address_l1": "BTC",
+            "exchange_btc_address_l2": "Adresse Börse",
             "wallet": "WALLET ",
-            "wallet_btc_address_l1": "Wallet-BTC",
-            "wallet_btc_address_l2": "Adresse",
-            "wallet_ltc_address_l1": "Wallet-LTC",
-            "wallet_ltc_address_l2": "Adresse"
+            "wallet_btc_address_l1": "BTC",
+            "wallet_btc_address_l2": "Adresse Wallet",
+            "wallet_ltc_address_l1": "LTC",
+            "wallet_ltc_address_l2": "Adresse Wallet"
         },
         "buy_crypto": {
             "buy_image": "Cryptowährung kaufen Bild",
             "in_the_exchange": "Im Besitz der Börse",
             "in_the_account": "Im Besitz des Kontos",
-            "exchange_btc_address_l1": "BTC handeln",
-            "exchange_btc_address_l2": "Adresse",
+            "exchange_btc_address_l1": "BTC",
+            "exchange_btc_address_l2": "Adresse Börse",
             "exchange_gateway_l1": "Börse",
             "exchange_gateway_l2": "Gateway",
             "fiat_amount": "FIAT-Betrag",
@@ -51,10 +51,8 @@ module.exports = {
             "atm": "Geldautomat",
             "bank": "Bank",
             "credit_card": "Kreditkarte",
-            "wallet_btc_address_l1": "Wallet-BTC",
-            "wallet_btc_address_l2": "Adresse",
-            "liquidity_pool_l1": "Liquiditätspool",
-            "liquidity_pool_l2": "",
+            "wallet_btc_address_l1": "BTC",
+            "wallet_btc_address_l2": "Adresse Wallet"
         },
         "open_source": {
             "open_source_image": "Open Source Initiative Bild"
@@ -115,17 +113,17 @@ module.exports = {
         "chat": "Chat",
         "feelings": "Gemüt",
         "development score": "Dev-Bewertung",
-        "average score": "durchschnittliche Bewertung",
+        "average score": "durchsch. Bewertung",
         "liquidity": "Liquidität",
         "confirm": "bestätigen",
         "encrypt": "verschlüsseln",
         "decrypt": "entschlüsseln",
-        "send at": "senden bei",
+        "send at": "gesendet um",
         "send back": "zurücksenden",
-        "send from": "senden von",
-        "send from public key": "von öffentlichem Schlüssel senden",
-        "send to public key": "an öffentlichen Schlüssel senden",
-        "send to": "senden an",
+        "send from": "gesendet von",
+        "send from public key": "an öffentlichem Schlüssel gesendet",
+        "send to public key": "von öffentlichem Schlüssel gesendet",
+        "send to": "gesendet an",
         "send again": "erneut senden",
         "memo": "Memo",
         "amount": "Betrag",
@@ -192,7 +190,7 @@ module.exports = {
         "hey i am jamy": "Hey, mein Name ist Jamy.",
         "you need to add fund to this account": "Sie müssen diesem Konto Mittel hinzufügen",
         "just do it through the link in the menu": "Machen Sie das einfach über dem Link in dem Menü",
-        "no transactions maid": "Sie haben noch keine Transaktionen. Diese werden hier erscheinen",
+        "no transactions maid": "Sie haben noch keine Transaktionen. Diese werden hier erscheinen.",
         "no transactions maid chart": "Sie haben noch keine Transaktionen durchgeführt. Neue Transaktionen erscheinen hier in einer Tabelle.",
         "no transaction maid portfolio": "Sie haben noch keine Transaktionen durchgeführt, daher ist hier Profil leer.",
         "cannot load QR code scanner": "QR-Scanner konnte nicht geladen werden",
@@ -326,7 +324,7 @@ module.exports = {
         "about_wiki": {
             "topup": {
                 "title": "Konto auffüllen",
-                "content_markdown": "{{{_svg.buy_crypto}}}Obwohl wir keine Provision erhalten, wenn Sie Changelly verwenden, ist es ein einfacher Dienst und aus Gründen der Privatsphäre ist es unsere zweite Empfehlung nach Bankautomaten.\n\nSie werden den Anweisungen folgen müssen und am Ende eine öffentliche Adresse für den ausgewählten Coin angeben müssen. Das war es auch dann auch schon. Sie können bequem per Karte zahlen."
+                "content_markdown": "{{{_svg.buy_crypto}}}Obwohl wir keine Provision erhalten, wenn Sie Changelly verwenden, ist es ein einfacher Dienst und aus Gründen der Privatsphäre ist er unsere zweite Empfehlung nach Bankautomaten.\n\nSie werden den Anweisungen folgen müssen und am Ende eine öffentliche Adresse für den ausgewählten Coin angeben müssen. Das war es auch dann auch schon. Sie können bequem per Karte zahlen."
             },
             "swap": {
                 "title": "Cryptowährung umtauschen",
@@ -370,7 +368,7 @@ module.exports = {
                 "description": "Geben Sie einen Namen und eine STARKES PASSWORT an, um ein neues Konto zu erstellen.\n Was Sie eingeben wird nie versandt, sondern bleibt auf Ihrem Gerät.\nSobald ein Name und ein Passwort angegeben wurden, um Ihre Sicherungs-Phrase einzustellen, werden Sie eine neue Sicherungs-Phrase (Gedächtnishilfe genannt) manuell erstellen oder importieren könne."
             },
             "mnemonic_view": {
-                "description": "Nutzen Sie eine Sicherungs-Phrase von einem anderen Wallter oder generieren Sie eine neue Zufällige.\nDie Sicherungs-Phrase ist wie ein Seed-Passwort, dass einen Master-Key erstellt, der verwendet wird, um abgeleitete Key-Paare für jede Cryptowährung zu erstellen.\nDas Passwort, dass Sie im ersten Schritte angegeben haben, wird Ihnen ermöglichen, sich mit dem Passwort anzumelden, anstatt jedes Mal die Sicherungs-Phrase verwenden zu müssen.\n",
+                "description": "Nutzen Sie eine Sicherungs-Phrase von einem anderen Wallet oder generieren Sie eine neue Zufällige.\nDie Sicherungs-Phrase ist wie ein Seed-Passwort, dass einen Master-Key erstellt, der verwendet wird, um abgeleitete Key-Paare für jede Cryptowährung zu erstellen.\nDas Passwort, dass Sie im ersten Schritte angegeben haben, wird Ihnen ermöglichen, sich mit dem Passwort anzumelden, anstatt jedes Mal die Sicherungs-Phrase verwenden zu müssen.\n",
                 "description_bold": "Stellen Sie sicher, dass niemand auf Ihren Bildschirm schaut, wenn Sie das untere Feld ausfüllen und schreiben Sie die Eingabe auf Papier nieder, um die Sicherheit zu stärken.",
                 "usual_seed": "Ein üblicher Seed für eine BIP39-Gedächtnishilfe ist 12 Wörter lang."
             },
@@ -417,7 +415,7 @@ module.exports = {
             "total_supply": "Gesamtangebot",
             "market_cap_rank": "Marktkapitalisierung Rang",
             "alexa_rank": "Alexa-Rang",
-            "today_score": "Heutiger Bewertung",
+            "today_score": "Heutige Bewertung",
             "all_time_high": "Allzeithoch",
             "all_time_low": "Tiefstand",
             "data_provided_by": "Daten von "
@@ -457,7 +455,7 @@ module.exports = {
             "title": "1-Jahres-Leistung"
         },
         "dashboard_line_chart": {
-            "title": "Jüngste Transaktionen"
+            "title": "Letzte Transaktionen"
         },
         "dashboard_pie_chart": {
             "title": "Portfolio und Kontostand"
@@ -469,7 +467,7 @@ module.exports = {
             "performance": "Leistung:"
         },
         "dashboard_transactions": {
-            "title": "Jüngste Transaktionen"
+            "title": "Letzte Transaktionen"
         },
         "drawer_content": {
             "help_dialogs_data": {
@@ -509,7 +507,7 @@ module.exports = {
                 "coins": "Coins",
                 "trade": {
                     "trade": "Handeln",
-                    "top_up": "Auffülen",
+                    "top_up": "Auffüllen",
                     "mixer": "Mixer",
                     "swap": "Swap",
                     "atm": "Geldautomat"
@@ -557,11 +555,11 @@ module.exports = {
         },
         "transaction_dialog": {
             "title": "Transaktions-ID {{transaction_id}}",
-            "send_at": "Senden bei",
-            "send_from": "Senden von",
+            "send_at": "Gesendet um",
+            "send_from": "Gesendet von",
             "send_to_public_key": "An öffentlichen Key senden",
             "send_from_public_key": "Von öffentlichem Key senden",
-            "send_to": "Senden an",
+            "send_to": "Gesendet an",
             "memo": "Memo",
             "amount": "Betrag",
             "fees": "Gebühren",
