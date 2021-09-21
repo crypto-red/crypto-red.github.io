@@ -11,7 +11,7 @@ import Fade from "@material-ui/core/Fade";
 import Button from "@material-ui/core/Button"
 
 import { get_date_format } from "../utils/time";
-import { LOCALE_MAP } from "../utils/constants";
+import { DATE_FNS_LOCALE_MAP } from "../utils/constants";
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
 import DateFnsUtils from "@date-io/date-fns";
 import api from "../utils/api";
@@ -154,7 +154,7 @@ class CoinChartsConvert extends React.Component {
                             value={_fiat_input_value}
                             onChange={this._handle_fiat_input_value_change}
                         />
-                        <MuiPickersUtilsProvider utils={DateFnsUtils} locale={LOCALE_MAP[document.documentElement.lang]}>
+                        <MuiPickersUtilsProvider utils={DateFnsUtils} locale={DATE_FNS_LOCALE_MAP[document.documentElement.lang] || DATE_FNS_LOCALE_MAP["en"]}>
                             <KeyboardDatePicker
                                 cancelLabel={t("words.cancel")}
                                 okLabel={t("words.ok")}

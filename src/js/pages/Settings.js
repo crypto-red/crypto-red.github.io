@@ -13,7 +13,7 @@ import TextField from "@material-ui/core/TextField";
 import Fade from "@material-ui/core/Fade";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
-import { LOCALES, CURRENCY_COUNTRIES } from "../utils/constants";
+import { LANGUAGES, LOCALES, CURRENCY_COUNTRIES } from "../utils/constants";
 import api from "../utils/api";
 import actions from "../actions/utils";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -254,7 +254,12 @@ class Settings extends React.Component {
                                     id="locales-autocomplete"
                                     options={_locales}
                                     getOptionLabel={(option) => option.name || option.original.name}
-                                    renderOption={(option) => <span dangerouslySetInnerHTML={{ __html: option.string }}></span>}
+                                    renderOption={(option) =>
+                                        <span
+                                            style={{color: LANGUAGES.includes(option.original.code.split("-")[0]) ? "#1c1882": "inherit"}}
+                                            dangerouslySetInnerHTML={{ __html: option.string }}>
+                                        </span>
+                                    }
                                     renderInput={(params) => <TextField {...params} label={t( "words.locales", {FLC: true})} margin="normal" />}
                                 />
                             </CardContent>

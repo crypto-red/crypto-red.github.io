@@ -3,10 +3,30 @@ const HISTORY = createHistory();
 
 import en_locale from "date-fns/locale/en-US";
 import fr_locale from "date-fns/locale/fr";
+import id_locale from "date-fns/locale/id";
+import pt_locale from "date-fns/locale/pt";
+import it_locale from "date-fns/locale/it";
+import de_locale from "date-fns/locale/de";
+import ja_locale from "date-fns/locale/ja";
+import zh_locale from "date-fns/locale/zh-CN";
+import ko_locale from "date-fns/locale/ko";
+import ru_locale from "date-fns/locale/ru";
+import hi_locale from "date-fns/locale/hi";
 
-const LOCALE_MAP = {
+const LANGUAGES = ["en", "fr", "id", "pt", "it", "de", "ja", "zh", "ko", "ru", "hi"];
+
+const DATE_FNS_LOCALE_MAP = {
     en: en_locale,
-    fr: fr_locale
+    fr: fr_locale,
+    id: id_locale,
+    pt: pt_locale,
+    it: it_locale,
+    de: de_locale,
+    ja: ja_locale,
+    zh: zh_locale,
+    ko: ko_locale,
+    ru: ru_locale,
+    hi: hi_locale,
 }
 
 /*
@@ -344,7 +364,8 @@ const FIRST_WEEK_DAY_BY_COUNTRY = {
 }
 
 module.exports = {
-    LOCALE_MAP: LOCALE_MAP,
+    LANGUAGES: LANGUAGES,
+    DATE_FNS_LOCALE_MAP: DATE_FNS_LOCALE_MAP,
     HISTORY: HISTORY,
     PAGE_ROUTES: PAGE_ROUTES,
     COINS: COINS,
