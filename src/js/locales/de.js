@@ -311,6 +311,31 @@ module.exports = {
                         "answer": "Sie sollten eine stabile Version von dem Link im Menü herunterladen, wenn Sie es für viel Währung verwenden möchten."
                     }
                 ]
+            },
+            "myths": {
+                "name": "Mythen",
+                "qa": [
+                    {
+                        "question": "Besser Bargeld halten als Investitionen.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Besser Bargeld halten als Investitionen.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Eine langfristige Investition lohnt sich nicht.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Ich habe ein rationales Anlageverhalten.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Ich kann besser investieren als andere.",
+                        "answer": ""
+                    },
+                ]
             }
         },
         "about_info": {

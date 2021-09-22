@@ -311,6 +311,31 @@ module.exports = {
                         "answer": "Anda harus mengunduh versi yang stabilnya dari tautan di menu jika berencana memasukkan banyak uang di dalamnya."
                     }
                 ]
+            },
+            "myths": {
+                "name": "Mitos",
+                "qa": [
+                    {
+                        "question": "Lebih baik menyimpan uang tunai daripada investasi.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Saya tahu persis kapan harus berinvestasi.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Investasi jangka panjang tidak sepadan.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Saya memiliki perilaku investasi yang rasional.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Saya bisa berinvestasi lebih baik dari yang lain.",
+                        "answer": ""
+                    },
+                ]
             }
         },
         "about_info": {

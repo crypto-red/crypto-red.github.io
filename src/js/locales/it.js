@@ -311,6 +311,31 @@ module.exports = {
                         "answer": "Se vuoi investire molti soldi, dovresti scaricare una versione stabile dal link presente nel menù."
                     }
                 ]
+            },
+            "myths": {
+                "name": "Miti",
+                "qa": [
+                    {
+                        "question": "Meglio detenere liquidità che investimenti.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "So esattamente quando investire.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Un investimento a lungo termine non ne vale la pena.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Ho un comportamento di investimento razionale.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Posso investire meglio di altri.",
+                        "answer": ""
+                    },
+                ]
             }
         },
         "about_info": {

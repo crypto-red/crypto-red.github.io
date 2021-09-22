@@ -311,6 +311,31 @@ module.exports = {
                         "answer": "如果您想用其处理大金额的资金，您应该从菜单中给出的链接下载稳定的版本。"
                     }
                 ]
+            },
+            "myths": {
+                "name": "神话",
+                "qa": [
+                    {
+                        "question": "持有现金比投资更好。",
+                        "answer": ""
+                    },
+                    {
+                        "question": "我确切地知道什么时候投资。",
+                        "answer": ""
+                    },
+                    {
+                        "question": "长期投资不值得。",
+                        "answer": ""
+                    },
+                    {
+                        "question": "我有理性的投资行为。",
+                        "answer": ""
+                    },
+                    {
+                        "question": "我可以比别人更好地投资。",
+                        "answer": ""
+                    }
+                ]
             }
         },
         "about_info": {

@@ -269,6 +269,31 @@ module.exports = {
                 qa: [
                     {question: "Devrais-je l'utiliser s'il peut présenter un risque pour mon fonds ?", answer: "Vous devriez télécharger une version stable à partir du lien dans le menu si vous voulez l'utiliser avec beaucoup d'argent dessus."}
                 ],
+            },
+            "myths": {
+                "name": "Mythes",
+                "qa": [
+                    {
+                        "question": "Mieux vaut détenir des liquidités que des investissements.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Je sais exactement quand investir.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Un investissement à long terme n'en vaut pas la peine.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "J'ai un comportement d'investissement rationnel.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Je peux investir mieux que les autres.",
+                        "answer": ""
+                    },
+                ]
             }
         },
         about_info: {

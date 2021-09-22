@@ -311,6 +311,31 @@ module.exports = {
                         "answer": "You should download a stable version from the link in the menu if you want to use it with a lot of money on it."
                     }
                 ]
+            },
+            "myths": {
+                "name": "Myths",
+                "qa": [
+                    {
+                        "question": "Better to hold cash than investments.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "I know exactly when to invest.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "A long-term investment is not worth it.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "I have rational investing behavior.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "I can invest better than others.",
+                        "answer": ""
+                    },
+                ]
             }
         },
         "about_info": {

@@ -311,6 +311,31 @@ module.exports = {
                         "answer": "Você deve fazer o download de uma versão estável no link disponível no menu se você deseja usá-la para armazenar muito dinheiro."
                     }
                 ]
+            },
+            "myths": {
+                "name": "Mitos",
+                "qa": [
+                    {
+                        "question": "Melhor reter dinheiro do que investimentos.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Eu sei exatamente quando investir.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Um investimento de longo prazo não vale a pena.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Tenho um comportamento de investimento racional.",
+                        "answer": ""
+                    },
+                    {
+                        "question": "Posso investir melhor do que os outros.",
+                        "answer": ""
+                    },
+                ]
             }
         },
         "about_info": {
