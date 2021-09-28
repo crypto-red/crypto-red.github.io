@@ -12,8 +12,9 @@ import zh from "../locales/zh";
 import ko from "../locales/ko";
 import ru from "../locales/ru";
 import hi from "../locales/hi";
+import es from "../locales/es";
 
-const T = { svg, en, fr, id, pt, it, de, ja, zh, ko, ru, hi };
+const T = { svg, en, fr, id, pt, it, de, ja, zh, ko, ru, hi, es };
 
 function t(path = "", variables = {}, parameters = {}) {
 

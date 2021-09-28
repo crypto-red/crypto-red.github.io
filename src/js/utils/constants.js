@@ -12,8 +12,9 @@ import zh_locale from "date-fns/locale/zh-CN";
 import ko_locale from "date-fns/locale/ko";
 import ru_locale from "date-fns/locale/ru";
 import hi_locale from "date-fns/locale/hi";
+import es_locale from "date-fns/locale/es";
 
-const LANGUAGES = ["en", "fr", "id", "pt", "it", "de", "ja", "zh", "ko", "ru", "hi"];
+const LANGUAGES = ["en", "fr", "id", "pt", "it", "de", "ja", "zh", "ko", "ru", "hi", "es"];
 
 const DATE_FNS_LOCALE_MAP = {
     en: en_locale,
@@ -27,6 +28,7 @@ const DATE_FNS_LOCALE_MAP = {
     ko: ko_locale,
     ru: ru_locale,
     hi: hi_locale,
+    es: es_locale,
 }
 
 /*
