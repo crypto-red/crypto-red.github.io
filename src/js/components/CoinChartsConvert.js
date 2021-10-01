@@ -124,7 +124,7 @@ class CoinChartsConvert extends React.Component {
 
     _open_buy = () => {
 
-        window.open("https://changelly.com/");
+        window.open("https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu");
     }
 
     render() {

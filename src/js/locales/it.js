@@ -371,6 +371,8 @@ module.exports = {
             }
         },
         "account_card": {
+            "connect_to_hive": "Connetti a \"Hive\"",
+            "connected_to_hive": "Collegato a \"Hive\"",
             "crypto_balance_error": "{{crypto_id}} errore di saldo",
             "close_account_tooltip": "Vuoi chiedere questo account?",
             "open_account_tooltip": "Vuoi aprire questo account?"
@@ -415,6 +417,9 @@ module.exports = {
             "title": "Elimina {{account_name}}?",
             "cannot_be_undone": "Questa azione NON PUÒ essere annullata. Questo eliminerà l'account {{account_name}} e i suoi portafogli in maniera permanente.",
             "repeat_name": "Scrivi il nome dell'account per confermare."
+        },
+        "account_dialog_hive": {
+            "title": "Connetti un account Hive?"
         },
         "account_dialog_open": {
             "title": "Aprire {{account_name}}?",
@@ -500,7 +505,7 @@ module.exports = {
             "help_dialogs_data": {
                 "topup": {
                     "id": "ricarica",
-                    "url": "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
+                    "url": "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     "image": "card.svg",
                     "title": "Sai come effettuare una ricarica?",
                     "body": "Per aggiungere fondi a una delle tue criptovalute, devi passare attraverso uno scambio.",

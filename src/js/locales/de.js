@@ -371,6 +371,8 @@ module.exports = {
             }
         },
         "account_card": {
+            "connect_to_hive": "Mit \"Hive\" verbinden",
+            "connected_to_hive": "Verbunden mit \"Hive\"",
             "crypto_balance_error": "{{crypto_id}} Kontostand Fehler",
             "close_account_tooltip": "Möchten Sie diese Konto schließen?",
             "open_account_tooltip": "Möchten Sie diese Konto öffnen?"
@@ -388,7 +390,7 @@ module.exports = {
             "opened": "Dieses Konto wurde geöffnet vor: {{time_ago}}"
         },
         "account_dialog_create": {
-            "password_evaluation_warning": "WARNuNG: Es dauert nur {{time}}, um Ihr Passwort zu knacken.",
+            "password_evaluation_warning": "WARNUNG: Es dauert nur {{time}}, um Ihr Passwort zu knacken.",
             "password_evaluation_good": "Das ist gut! Ihr Passwort ist stark.",
             "password_strength": "Passwortstärke ist {{score}} / 4",
             "configuration_view": {
@@ -415,6 +417,9 @@ module.exports = {
             "title": "{{account_name}} löschen?",
             "cannot_be_undone": "Dies kann NICHT rückgängig gemacht werden. Dies wird {{account_name}} und alle damit verbundenen Wallets dauerhaft löschen.",
             "repeat_name": "Bitte geben Sie den Namen des Kontos ein, um die Löschung zu bestätigen."
+        },
+        "account_dialog_hive": {
+            "title": "Hive-Konto verbinden?"
         },
         "account_dialog_open": {
             "title": "{{account_name}} öffnen?",
@@ -500,7 +505,7 @@ module.exports = {
             "help_dialogs_data": {
                 "topup": {
                     "id": "topup",
-                    "url": "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
+                    "url": "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     "image": "card.svg",
                     "title": "Wissen Sie, wie Sie Ihren Kontostand affüllen können?",
                     "body": "Um einer Cryptowährung Mittel hinzuzufügen, müssen Sie eine Handelsplattform verwenden.",

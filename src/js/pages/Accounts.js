@@ -17,6 +17,7 @@ import AccountDialogOpen from "../components/AccountDialogOpen";
 import AccountDialogDelete from "../components/AccountDialogDelete";
 import AccountDialogCreate from "../components/AccountDialogCreate";
 import AccountDialogBackup from "../components/AccountDialogBackup";
+import AccountDialogHive from "../components/AccountDialogHive";
 
 import { COINS } from "../utils/constants";
 
@@ -75,6 +76,7 @@ class Accounts extends React.Component {
             _is_account_dialog_delete_open: false,
             _is_account_dialog_create_open: false,
             _is_account_dialog_backup_open: false,
+            _is_hive_dialog_open: false,
             _login_error: false,
             _selected_locales_code: null,
             _selected_currency: null,
@@ -211,6 +213,18 @@ class Accounts extends React.Component {
         actions.trigger_sfx("alert_high-intensity");
     };
 
+    _hive_account = (event, account) => {
+
+        this.setState({_is_hive_dialog_open: true, _selected_account: account});
+        actions.trigger_sfx("alert_high-intensity");
+    };
+
+    _close_hive_dialog = () => {
+
+        this.setState({_is_hive_dialog_open: false});
+        actions.trigger_sfx("state-change_confirm-down");
+    };
+
     _close_account_dialog_close = () => {
 
         this.setState({_is_account_dialog_close_open: false});
@@ -305,10 +319,24 @@ class Accounts extends React.Component {
         actions.jamy_update("angry");
     }
 
+    _on_hive_dialog_error = () => {
+
+        actions.trigger_sfx("alert_error-01");
+        actions.jamy_update("angry");
+    }
+
+    _on_hive_dialog_complete = () => {
+
+        this.setState({_is_hive_dialog_open: false});
+        actions.trigger_login_update();
+        actions.trigger_sfx("hero_decorative-celebration-01");
+        actions.jamy_update("happy");
+    }
+
     render() {
 
         const { classes, _selected_account, _logged_account, _accounts, _selected_locales_code, _selected_currency, _login_error , _coins_markets, _no_accounts_db } = this.state;
-        const { _is_account_dialog_close_open, _is_account_dialog_open_open, _is_account_dialog_delete_open, _is_account_dialog_create_open, _is_account_dialog_backup_open } = this.state;
+        const { _is_account_dialog_close_open, _is_account_dialog_open_open, _is_account_dialog_delete_open, _is_account_dialog_create_open, _is_account_dialog_backup_open, _is_hive_dialog_open } = this.state;
 
         const logged_account_name = Boolean(_logged_account) ? _logged_account.name: null;
 
@@ -332,6 +360,7 @@ class Accounts extends React.Component {
                                     current={(logged_account_name === account.name)}
                                     delete={this._open_delete_account_dialog}
                                     backup={this._backup_account}
+                                    hive={this._hive_account}
                                     account={(logged_account_name === account.name) ? _logged_account: account}
                                     display_after_ms={(index+1)*300}
                                     selected_locales_code={_selected_locales_code}
@@ -371,6 +400,13 @@ class Accounts extends React.Component {
                 <AccountDialogBackup open={_is_account_dialog_backup_open}
                                      account={_logged_account}
                                      onClose={this._close_account_dialog_backup}/>
+
+                <AccountDialogHive open={_is_hive_dialog_open}
+                                     account={_logged_account}
+                                     onClose={this._close_hive_dialog}
+                                     onError={this._on_hive_dialog_error}
+                                     onComplete={this._on_hive_dialog_complete}
+                />
             </div>
         );
     }

@@ -75,6 +75,7 @@ class CoinCharts extends React.Component {
                     <Grid item xs={12} lg={4} className={classes.gridItem}>
                         <div className={classes.cardContainer}>
                             <CoinChartsData
+                                coin_id={coin_id}
                                 coin_data={coin_data}
                                 selected_currency={selected_currency}
                                 selected_locales_code={selected_locales_code}/>

@@ -371,6 +371,8 @@ module.exports = {
             }
         },
         "account_card": {
+            "connect_to_hive": "Подключиться к \"Hive\"",
+            "connected_to_hive": "Подключен к \"Hive\"",
             "crypto_balance_error": "Ошибка баланса {{crypto_id}}",
             "close_account_tooltip": "Вы уверены, что хотите закрыть этот счет?",
             "open_account_tooltip": "Вы уверены, что хотите открыть этот счет?"
@@ -415,6 +417,9 @@ module.exports = {
             "title": "Удалить {{account_name}}?",
             "cannot_be_undone": "Отменить это действие НЕВОЗМОЖНО. Счет {{account_name}} и его кошельки будут удалены навсегда.",
             "repeat_name": "Для подтверждения введите название счета."
+        },
+        "account_dialog_hive": {
+            "title": "Подключить аккаунт Hive?"
         },
         "account_dialog_open": {
             "title": "Открыть {{account_name}}?",
@@ -500,7 +505,7 @@ module.exports = {
             "help_dialogs_data": {
                 "topup": {
                     "id": "пополнение",
-                    "url": "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
+                    "url": "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     "image": "card.svg",
                     "title": "Вы умеете пополнять счет?",
                     "body": "Для пополнения криптовалютного счета  нужно воспользоваться услугами обменного сервиса.",

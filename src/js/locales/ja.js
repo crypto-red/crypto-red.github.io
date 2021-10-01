@@ -371,6 +371,8 @@ module.exports = {
             }
         },
         "account_card": {
+            "connect_to_hive": "「Hive」に接続する",
+            "connected_to_hive": "「Hive」に接続",
             "crypto_balance_error": "{{crypto_id}} 残高エラー",
             "close_account_tooltip": "この口座を閉じますか？",
             "open_account_tooltip": "この口座を開きますか？"
@@ -415,6 +417,9 @@ module.exports = {
             "title": "{{account_name}}を削除しますか？",
             "cannot_be_undone": "この行動は元に戻すことができません。{{account_name}}アカウントとそのウォレットを永久に削除します。",
             "repeat_name": "アカウント名に入力して、ご確認ください。"
+        },
+        "account_dialog_hive": {
+            "title": "Hiveアカウントを接続しますか？"
         },
         "account_dialog_open": {
             "title": "{{account_name}}を開きますか？",
@@ -500,7 +505,7 @@ module.exports = {
             "help_dialogs_data": {
                 "topup": {
                     "id": "補充",
-                    "url": "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
+                    "url": "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     "image": "card.svg",
                     "title": "補充方法を知っていますか？",
                     "body": "仮想通貨のひとつに資金供給をするためには、取引所を通過しなければなりません。",

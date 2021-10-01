@@ -107,12 +107,14 @@ class CoinBalance extends React.Component {
 
         const { coin_id, logged_account } = this.state;
 
-        if(logged_account) {
+        let hive_username = logged_account ? logged_account.hive_username || "": "";
+
+        if(logged_account && !(coin_id.includes("hive") && hive_username === "")) {
 
             this.setState({_coin_balance: null}, () => {
 
                 actions.trigger_loading_update(0);
-                api.get_balance_by_seed(coin_id, logged_account.seed, this._handle_get_balance_result);
+                api.get_balance_by_seed(coin_id, logged_account.seed, this._handle_get_balance_result, hive_username);
             });
         }else {
 

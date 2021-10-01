@@ -49,7 +49,7 @@ class AddressListItem extends React.Component {
 
         if(Boolean(logged_account)) {
 
-            this._get_address_by_seed(coin_id, logged_account.seed);
+            this._get_address_by_seed(coin_id, logged_account.seed, logged_account.hive_username);
         }
     }
 
@@ -60,16 +60,16 @@ class AddressListItem extends React.Component {
 
             if(new_props.logged_account !== this.state.logged_account) {
 
-                this._get_address_by_seed(new_props.coin_id, new_props.logged_account.seed);
+                this._get_address_by_seed(new_props.coin_id, new_props.logged_account.seed, new_props.logged_account.hive_username);
                 this.setState(new_props);
             }
         }
 
     }
 
-    _get_address_by_seed = (coin_id, seed) => {
+    _get_address_by_seed = (coin_id, seed, hive_username) => {
 
-        const address = api.get_address_by_seed(coin_id, seed);
+        const address = api.get_address_by_seed(coin_id, seed, hive_username);
         this.setState({_address: address});
     };
 

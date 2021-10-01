@@ -107,7 +107,7 @@ class Dashboard extends React.Component {
             _coins_id: [],
             _history: HISTORY,
             _pie_chart_active_index: 0,
-            _full_balance_length: 5,
+            _full_balance_length: COINS.length,
             _portfolio: null,
             _selected_locales_code: null,
             _selected_currency: null
@@ -161,7 +161,8 @@ class Dashboard extends React.Component {
 
                 _coins.forEach(coin => {
 
-                    api.get_balance_by_seed(coin.id, _logged_account.seed, (error, result) => {this._refresh_balance_result(error, result, coin.id)});
+                    api.get_balance_by_seed(coin.id, _logged_account.seed, (error, result) => {this._refresh_balance_result(error, result, coin.id)}, _logged_account.hive_username);
+
                 });
             }
         }

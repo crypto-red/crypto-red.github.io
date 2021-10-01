@@ -18,7 +18,7 @@ const T = { svg, en, fr, id, pt, it, de, ja, zh, ko, ru, hi, es };
 
 function t(path = "", variables = {}, parameters = {}) {
 
-    const PARAM_PROPS_NAME = ["faw", "fluc", "flc", "fllc", "tuc", "tlc", "aed"];
+    const PARAM_PROPS_NAME = ["faw", "fluc", "flc", "fllc", "tuc", "tlc", "aed", "ated"];
     const LANG = document.documentElement.lang;
     const LANG_DIR = T[LANG] || T["en"];
 
@@ -232,6 +232,11 @@ function t(path = "", variables = {}, parameters = {}) {
     if(parameters.aed || parameters.AED) { // Add End Dot
 
         value_with_variables = value_with_variables + ".";
+    }
+
+    if(parameters.ated || parameters.ATED) { // Add End Dot
+
+        value_with_variables = value_with_variables + "...";
     }
 
     return value_with_variables;

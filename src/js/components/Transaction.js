@@ -85,7 +85,7 @@ class Transaction extends React.Component {
 
         if(logged_account && transaction) {
 
-            const address = api.get_address_by_seed(transaction.crypto_id, logged_account.seed);
+            const address = api.get_address_by_seed(transaction.crypto_id, logged_account.seed, logged_account.hive_username);
             this.setState({_address: address});
         }
     };

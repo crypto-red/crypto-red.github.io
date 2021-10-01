@@ -90,6 +90,8 @@ class DashboardAddress extends React.Component {
                             {
                                 _coins_id.map((coin_id) => {
 
+                                    if(coin_id.includes("hive") && !(logged_account || {}).hive_username) {return;}
+
                                     return (
                                         <AddressListItem
                                             key={coin_id}

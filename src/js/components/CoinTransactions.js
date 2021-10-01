@@ -129,7 +129,7 @@ class CoinTransactions extends React.Component {
         if(logged_account) {
 
             actions.trigger_loading_update(0);
-            api.get_transactions_by_seed(coin_id, logged_account.seed, _transactions, this._handle_load_more_transactions_result);
+            api.get_transactions_by_seed(coin_id, logged_account.seed, _transactions, this._handle_load_more_transactions_result, logged_account.hive_username);
         }else {
 
             actions.trigger_loading_update(100);

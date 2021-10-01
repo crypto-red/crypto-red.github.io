@@ -3,6 +3,8 @@ import { withStyles } from "@material-ui/core/styles";
 
 import { t } from "../utils/t";
 
+import { COINS_IMAGES } from "../utils/constants";
+
 import Avatar from "@material-ui/core/Avatar";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
@@ -20,6 +22,9 @@ import red from "@material-ui/core/colors/red";
 
 const styles = theme => ({
     coinImage: {
+        "& .MuiAvatar-img": {
+            objectFit: "initial",
+        },
         borderRadius: 0
     },
     tableCellBold: {
@@ -53,6 +58,7 @@ class CoinChartsData extends React.Component {
             selected_locales_code: props.selected_locales_code,
             selected_currency: props.selected_currency,
             coin_data: props.coin_data,
+            coin_id: props.coin_id,
         };
     };
     componentWillReceiveProps(new_props) {
@@ -67,7 +73,7 @@ class CoinChartsData extends React.Component {
 
     render() {
 
-        const { classes, selected_currency, selected_locales_code, coin_data } = this.state;
+        const { classes, coin_id, selected_currency, selected_locales_code, coin_data } = this.state;
 
         return (
             <div className={classes.fullHeight}>
@@ -78,7 +84,7 @@ class CoinChartsData extends React.Component {
                                 <CardContent>
                                     <CardHeader
                                         classes={{title: classes.title}}
-                                        avatar={<Avatar className={classes.coinImage} src={coin_data.image.large}/>}
+                                        avatar={<Avatar className={classes.coinImage} src={COINS_IMAGES[coin_id] || ""}/>}
                                         title={coin_data.name}
                                     />
                                     <Table>

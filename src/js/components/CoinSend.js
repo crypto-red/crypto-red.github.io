@@ -175,7 +175,7 @@ class CoinSend extends React.Component {
         if(logged_account) {
 
             actions.trigger_loading_update(0);
-            api.get_balance_by_seed(coin_id, logged_account.seed, this._handle_get_balance_result);
+            api.get_balance_by_seed(coin_id, logged_account.seed, this._handle_get_balance_result, logged_account.hive_username);
         }else {
 
             actions.trigger_loading_update(100);
@@ -188,7 +188,7 @@ class CoinSend extends React.Component {
 
         if(logged_account) {
 
-            const address = api.get_address_by_seed(coin_id, logged_account.seed);
+            const address = api.get_address_by_seed(coin_id, logged_account.seed, logged_account.hive_username);
             this.setState({_address: address});
         }
     };
@@ -326,13 +326,13 @@ class CoinSend extends React.Component {
     _send_transaction = () => {
 
         const { coin_id, logged_account, _send_address_input, _send_amount_input, _send_message_input, _send_fees } = this.state;
-        api.send_transaction(coin_id, logged_account.seed, _send_address_input, _send_amount_input, _send_message_input, _send_fees, this._handle_send_transaction_result);
+        api.send_transaction(coin_id, logged_account.seed, _send_address_input, _send_amount_input, _send_message_input, _send_fees, this._handle_send_transaction_result, logged_account.hive_username, logged_account.hive_password);
     }
 
     _estimate_transacation_fee = () => {
 
         const { coin_id, logged_account, _send_address_input, _send_amount_input, _send_message_input, _send_fees } = this.state;
-        api.estimate_transaction_fee(coin_id, logged_account.seed, _send_address_input, _send_amount_input, _send_message_input, _send_fees, this._handle_estimate_transacation_fee_result);
+        api.estimate_transaction_fee(coin_id, logged_account.seed, _send_address_input, _send_amount_input, _send_message_input, _send_fees, this._handle_estimate_transacation_fee_result, logged_account.hive_username, logged_account.hive_password);
     }
 
     _on_coin_send_dialog_confirm = () => {

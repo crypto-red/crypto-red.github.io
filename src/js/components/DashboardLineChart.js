@@ -184,7 +184,7 @@ class DashboardLineChart extends React.Component {
 
             _coins.forEach((coin) => {
 
-                api.get_transactions_by_seed(coin.id, logged_account.seed, [], (error, response) => {this._handle_get_transactions_by_seed_response(error, response, coin.id)});
+                api.get_transactions_by_seed(coin.id, logged_account.seed, [], (error, response) => {this._handle_get_transactions_by_seed_response(error, response, coin.id)}, logged_account.hive_username);
             });
         });
     };

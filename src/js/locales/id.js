@@ -371,6 +371,8 @@ module.exports = {
             }
         },
         "account_card": {
+            "connect_to_hive": "Hubungkan ke \"Hive\"",
+            "connected_to_hive": "Terhubung ke \"Hive\"",
             "crypto_balance_error": "{{crypto_id}} galat saldo",
             "close_account_tooltip": "Apakah Anda ingin menutup akun ini?",
             "open_account_tooltip": "Apakah Anda ingin membuka akun ini?"
@@ -415,6 +417,9 @@ module.exports = {
             "title": "Hapus {{account_name}}?",
             "cannot_be_undone": "Tindakan ini TAK BISA dibatalkan. Ini akan menghapus akun {{account_name}} dan semua dompetnya secara permanen.",
             "repeat_name": "Harapkan masukkan nama akun untuk konfirmasi."
+        },
+        "account_dialog_hive": {
+            "title": "Hubungkan akun Hive?"
         },
         "account_dialog_open": {
             "title": "Buka {{account_name}}?",
@@ -500,7 +505,7 @@ module.exports = {
             "help_dialogs_data": {
                 "topup": {
                     "id": "isi saldo",
-                    "url": "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
+                    "url": "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     "image": "card.svg",
                     "title": "Apakah Anda tahu cara mengisi saldo?",
                     "body": "Untuk menambah dana ke salah satu mata uang kripto Anda, Anda harus melewati satu penukaran.",

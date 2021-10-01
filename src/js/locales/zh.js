@@ -371,6 +371,8 @@ module.exports = {
             }
         },
         "account_card": {
+            "connect_to_hive": "连接到“Hive”",
+            "connected_to_hive": "连接到“Hive”",
             "crypto_balance_error": "{{crypto_id}} 余额错误",
             "close_account_tooltip": "您想关闭此账户吗？",
             "open_account_tooltip": "您想打开此账户吗？"
@@ -415,6 +417,9 @@ module.exports = {
             "title": "删除 {{account_name}}？",
             "cannot_be_undone": "此操作不能撤销。这将永久性地删除 {{account_name}} 账户及其钱包。",
             "repeat_name": "请输入此账户用户名以进行确认。"
+        },
+        "account_dialog_hive": {
+            "title": "连接 Hive 帐户？"
         },
         "account_dialog_open": {
             "title": "打开 {{account_name}}？",
@@ -500,7 +505,7 @@ module.exports = {
             "help_dialogs_data": {
                 "topup": {
                     "id": "充值",
-                    "url": "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
+                    "url": "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     "image": "card.svg",
                     "title": "您知道如何充值吗？",
                     "body": "要向您的加密货币充值，您必须通过交易平台。",

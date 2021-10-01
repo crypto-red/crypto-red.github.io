@@ -18,6 +18,7 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import DeleteIcon from "@material-ui/icons/Delete";
+import AccountPlus from "../icons/AccountPlus";
 import BackupIcon from "@material-ui/icons/Backup";
 import LockIcon from "@material-ui/icons/Lock";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
@@ -32,7 +33,6 @@ import actions from "../actions/utils";
 
 import price_formatter from "../utils/price-formatter";
 import Jdenticon from "react-jdenticon";
-import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Tooltip from "@material-ui/core/Tooltip";
 
 const styles = theme => ({
@@ -153,7 +153,7 @@ class AccountCard extends React.Component {
             display_after_ms: props.display_after_ms,
             _coins: COINS,
             _balance: {},
-            _full_balance_length: 5,
+            _full_balance_length: COINS.length,
             _history: HISTORY,
             _account_menu_anchor_element: null,
             _price_formatter: price_formatter
@@ -204,7 +204,8 @@ class AccountCard extends React.Component {
 
                     _coins.forEach(coin => {
 
-                        api.get_balance_by_seed(coin.id, account.seed, (error, result) => {this._refresh_balance_result(error, result, coin.id)});
+                        api.get_balance_by_seed(coin.id, account.seed, (error, result) => {this._refresh_balance_result(error, result, coin.id)}, account.hive_username);
+
                     });
                 });
             }
@@ -314,6 +315,15 @@ class AccountCard extends React.Component {
                                                     <BackupIcon fontSize="small" />
                                                 </ListItemIcon>
                                                 <ListItemText primary={t("words.backup", {FLC: true})}/>
+                                            </MenuItem>: null
+                                    }
+                                    {
+                                        current ?
+                                            <MenuItem onClick={!account.hive_username ? (event) => {this.props.hive(event, account)}: null}>
+                                                <ListItemIcon>
+                                                    <AccountPlus fontSize="small" />
+                                                </ListItemIcon>
+                                                <ListItemText primary={account.hive_username ? t("components.account_card.connected_to_hive"): t("components.account_card.connect_to_hive")}/>
                                             </MenuItem>: null
                                     }
                                     {

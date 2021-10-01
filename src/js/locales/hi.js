@@ -371,6 +371,8 @@ module.exports = {
             }
         },
         "account_card": {
+            "connect_to_hive": "\"Hive\" से कनेक्ट करें",
+            "connected_to_hive": "\"Hive\" से जुड़े",
             "crypto_balance_error": "{{crypto_id}} बैलेन्स एरर",
             "close_account_tooltip": "क्या आप इस अकाउंट को बंद करना चाहते हैं ?",
             "open_account_tooltip": "क्या आप इस अकाउंट को खोलना चाहते हैं ?"
@@ -415,6 +417,9 @@ module.exports = {
             "title": "{{account_name}} डिलीट करें?",
             "cannot_be_undone": "इस गतिविधि को दोहरा कर वापस नहीं किया जा सकता। यह {{account_name}} अकाउंट और इसके वॉलेट्स को स्थायी रूप से डिलीट कर देगी।",
             "repeat_name": "पुष्टि करने के लिए कृपया अकाउंट का नाम टाइप करें।"
+        },
+        "account_dialog_hive": {
+            "title": "हाइव खाता कनेक्ट करें?"
         },
         "account_dialog_open": {
             "title": "{{account_name}} खोलें?",
@@ -500,7 +505,7 @@ module.exports = {
             "help_dialogs_data": {
                 "topup": {
                     "id": "टॉप-अप",
-                    "url": "https://changelly.com/",
+                    "url": "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     "image": "card.svg",
                     "title": "क्या आप जानते हैं कि टॉप अप कैसे करते हैं?",
                     "body": "अपनी क्रिप्टोकरेंसीज में से किसी एक में धनराशि जोड़ने के लिए, आपको एक एक्स्चेंज के माध्यम से लेनदेन करना होगा",

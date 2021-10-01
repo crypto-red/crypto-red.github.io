@@ -371,6 +371,8 @@ module.exports = {
             }
         },
         "account_card": {
+            "connect_to_hive": "\"Hive\"에 연결",
+            "connected_to_hive": "\"Hive\"에 연결됨",
             "crypto_balance_error": "{{crypto_id}} 잔액 에러",
             "close_account_tooltip": "이 계정을 닫겠습니까?",
             "open_account_tooltip": "이 계정을 개설하시겠습니까?"
@@ -415,6 +417,9 @@ module.exports = {
             "title": "{{account_name}}을 삭제하시겠습니까?",
             "cannot_be_undone": "이 작업은 취소할 수 없습니다. 그러면 {{account_name}}의 계정과 지갑이 영구적으로 삭제됩니다.",
             "repeat_name": "확인을 위해 계정 이름을 입력하십시오."
+        },
+        "account_dialog_hive": {
+            "title": "Hive 계정을 연결하시겠습니까?"
         },
         "account_dialog_open": {
             "title": "{{account_name}}을 개설하시겠습니까?",
@@ -500,7 +505,7 @@ module.exports = {
             "help_dialogs_data": {
                 "topup": {
                     "id": "탑업",
-                    "url": "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
+                    "url": "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     "image": "card.svg",
                     "title": "탑업하는 방법을 알고 있습니까?",
                     "body": "암호화폐 중 하나에 자금을 추가하려면 거래소를 거쳐야 합니다.",

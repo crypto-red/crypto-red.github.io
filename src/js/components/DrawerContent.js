@@ -87,6 +87,11 @@ const styles = theme => ({
         "& a": {
             color: "inherit"
         }
+    },
+    coinAvatar: {
+        "& .MuiAvatar-img": {
+            objectFit: "initial",
+        },
     }
 });
 
@@ -297,11 +302,13 @@ class DrawerContent extends React.Component {
         const { classes, logged_account, _menu_expanded, _is_help_dialog_open, _help_dialogs_data, _current_help_dialog_id, _current_help_dialog_checkbox, _is_crypt_dialog_open, _is_qr_dialog_open } = this.state;
         
         const coinListItem = COINS.map((coin) => {
-           
+
+            const disabled = Boolean(coin.id.includes("hive") && !(logged_account || {}).hive_username);
+
             return (
-                <ListItem button className={classes.nested} key={coin.id} onClick={() => {this._open_coin_id(coin.id)}}>
+                <ListItem button disabled={disabled} className={classes.nested} key={coin.id} onClick={!disabled ? () => {this._open_coin_id(coin.id)}: null}>
                     <ListItemAvatar>
-                        <Avatar alt={coin.name} src={coin.image_url} variant="square" />
+                        <Avatar className={classes.coinAvatar} alt={coin.name} src={coin.image_url} variant="square" />
                         </ListItemAvatar>
                     <ListItemText primary={coin.name} />
                 </ListItem>

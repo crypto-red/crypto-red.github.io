@@ -1,4 +1,4 @@
-module.exports = {
+﻿module.exports = {
     "_plurals": {
         "key": {
             "one": "clave",
@@ -27,12 +27,12 @@ module.exports = {
             "swap_image": "Intercambiar la imagen",
             "in_the_exchange": "En posesión de la Bolsa",
             "in_the_account": "En posesión de la Cuenta",
-            "swap": "INTERCAMBIAR",
+            "swap": "INTERCAMBIO",
             "exchange_ltc_address_l1": "Intercambio LTC",
             "exchange_ltc_address_l2": "dirección",
             "exchange_btc_address_l1": "Intercambio BTC",
             "exchange_btc_address_l2": "dirección",
-            "wallet": "WALLET ",
+            "wallet": "CARTERA ",
             "wallet_btc_address_l1": "Cartera BTC",
             "wallet_btc_address_l2": "dirección",
             "wallet_ltc_address_l1": "Cartera LTC",
@@ -45,10 +45,10 @@ module.exports = {
             "exchange_btc_address_l1": "Intercambio BTC",
             "exchange_btc_address_l2": "dirección",
             "exchange_gateway_l1": "Intercambio",
-            "exchange_gateway_l2": "puerta de enlace",
-            "fiat_amount": "Dinero FIAT",
+            "exchange_gateway_l2": "Puerta de enlace",
+            "fiat_amount": "Importe FIAT",
             "wallet": "Cartera",
-            "atm": "CAJERO AUTOMÁTICO",
+            "atm": "CAJERO (ATM)",
             "bank": "Banco",
             "credit_card": "Tarjeta de crédito",
             "wallet_btc_address_l1": "Cartera BTC",
@@ -80,7 +80,7 @@ module.exports = {
         "new": "nuevo",
         "next": "siguiente",
         "refresh": "actualizar",
-        "top up": "completar",
+        "top up": "depositar",
         "random": "aleatorio",
         "backup": "respaldo",
         "delete": "eliminar",
@@ -118,8 +118,8 @@ module.exports = {
         "average score": "puntuación promedio",
         "liquidity": "liquidez",
         "confirm": "confirmar",
-        "encrypt": "codificar",
-        "decrypt": "decodificar",
+        "encrypt": "encriptar",
+        "decrypt": "desencriptar",
         "send at": "enviar a",
         "send back": "devolver",
         "send from": "enviar desde",
@@ -168,7 +168,7 @@ module.exports = {
         "wrong password": "Contraseña incorrecta",
         "wrong password input": "La contraseña ingresada es incorrecta",
         "wrong password confirmation": "Confirmación de contraseña incorrecta",
-        "something is incorrect": "Algo mal está sucediendo",
+        "something is incorrect": "Hay algo incorrecto",
         "bip39 mnemonic": "Mnemotecnia Bip39",
         "create a new account": "Crear una nueva cuenta",
         "address successfully copied": "La dirección ha sido copiada exitosamente",
@@ -252,7 +252,7 @@ module.exports = {
                     },
                     {
                         "question": "¿Que sucede si llego a perder mi semilla?",
-                        "answer": "Si llega a perder su semilla, (lo mejor es que la anotes en un papel) sólo podrás recuperarla si tu cuenta no ha sido borrada de tu navegador, es posible que tengas que conectarte."
+                        "answer": "Si llegas a perder tu semilla, (lo mejor es que la anotes en un papel) sólo podrás recuperarla si tu cuenta no ha sido borrada de tu navegador, es posible que tengas que conectarte."
                     },
                     {
                         "question": "¿Que sucede si llego a perder mi contraseña?",
@@ -268,7 +268,7 @@ module.exports = {
                 "name": "Organización",
                 "qa": [
                     {
-                        "question": "Qué es crypto.red?",
+                        "question": "¿Qué es crypto.red?",
                         "answer": "Crypto.red es un proyecto de código abierto codificado por un único programador desde cero (que era/es un desarrollador y diseñador un poco loco) que se dio cuenta de que una de sus misiones era proporcionar algo que les encantara a los hackers de la vida. También mantiene una buena red de contactos con hackers no peligrosos y ayuda a monetizar otros proyectos de código abierto."
                     },
                     {
@@ -276,7 +276,7 @@ module.exports = {
                         "answer": "Cualquier persona puede, visita la página https://github.com/crypto-red para poder involucrarte."
                     },
                     {
-                        "question": "Quién decide lo que hay que codificar?",
+                        "question": "¿Quién decide lo que hay que encriptar?",
                         "answer": "Nuestro equipo que está en GitHub (https://github.com/crypto-red) debe acordar conjuntamente, mientras que uno puede duplicar el proyecto para su propia necesidad."
                     },
                     {
@@ -316,16 +316,16 @@ module.exports = {
         "about_info": {
             "intellectual": {
                 "title": "Propiedad intelectual",
-                "content_markdown": "Licencia MIT\n\nCopyright (c) 2021 vipertech.ch\n\nCopyright (c) 2021 crypto.red\n\nPor la presente se otorga permiso, de forma gratuita, a cualquier persona que obtenga una copia de esta aplicación y de los archivos de documentación asociados (la \"Aplicación\"), para comerciar con la Aplicación sin restricciones, incluyendo, sin limitación, los derechos de uso, copia, modificación, fusión, publicación, distribución, sublicencia y/o venta de copias de la Aplicación, y para permitir a las personas a las que se les proporcione la Aplicación que lo hagan, sujeto a las siguientes condiciones:\n\nEl aviso de derechos de autor anterior y este aviso de permiso se incluirán en todas las copias o partes sustanciales de Aplicación\n\nLA APLICACIÓN SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍAS DE NINGÚN TIPO, EXPRESAS O IMPLÍCITAS, INCLUYENDO, PERO NO LIMITÁNDOSE A LAS GARANTÍAS DE COMERCIALIZACIÓN, ADECUACIÓN A UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS AUTORES O LOS TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES DE NINGUNA RECLAMACIÓN, DAÑO U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN DEL CONTRATO, DEL AGRAVIO O DE OTRA MANERA, QUE SURJA DE, FUERA DE O EN CONEXIÓN CON EL SOFTWARE O EL USO U OTROS TRATOS CON EL SOFTWARE."
+                "content_markdown": "Licencia MIT\n\nCopyright (c) 2021 vipertech.ch\n\nCopyright (c) 2021 crypto.red\n\nPor la presente se otorga permiso, de forma gratuita, a cualquier persona que obtenga una copia de esta aplicación y de los archivos de documentación asociados (la \"Aplicación\"), para comerciar con la Aplicación sin restricciones, incluyendo, sin limitación, los derechos de uso, copia, modificación, fusión, publicación, distribución, sublicencia y/o venta de copias de la Aplicación, y para permitir a las personas a las que se les proporcione la Aplicación que lo hagan, sujeto a las siguientes condiciones:\n\nEl aviso de derechos de autor anterior y este aviso de permiso se incluirán en todas las copias o partes sustanciales de Aplicación\n\nLA APLICACIÓN SE PROPORCIONA \"TAL CUAL\", SIN GARANTÍAS DE NINGÚN TIPO, EXPRESAS O IMPLÍCITAS, INCLUYENDO, PERO NO LIMITÁNDOSE A LAS GARANTÍAS DE COMERCIALIZACIÓN, ADECUACIÓN A UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN NINGÚN CASO LOS AUTORES O LOS TITULARES DE LOS DERECHOS DE AUTOR SERÁN RESPONSABLES DE NINGUNA RECLAMACIÓN, DAÑO U OTRA RESPONSABILIDAD, YA SEA EN UNA ACCIÓN DEL CONTRATO, DEL AGRAVIO O DE OTRA MANERA, QUE SURJA DE, FUERA DE O EN CONEXIÓN CON LA APLICACIÓN O EL USO U OTROS TRATOS CON LA APLICACIÓN."
             },
             "terms": {
                 "title": "Términos de uso",
-                "content_markdown": "Términos de uso de Wallet.crypto.red\n\nFecha de revisión. 11 de abril de 2021\n\nPor favor, lea atentamente estas Condiciones antes de utilizar este sitio web. Al utilizar este sitio web (el \"Sitio Web\"), el usuario (\"Usted\") ha aceptado estas Condiciones de Uso. Si no acepta estos Términos de Uso, no utilice el Sitio Web. Al utilizar este sitio web, el usuario declara que es mayor de edad para celebrar un contrato vinculante con Crypto.red.\n\nCRYPTO RED (crypto.red y sus subdominios) puede modificar la totalidad o cualquier parte de estas Condiciones de Uso de vez en cuando y puede no proporcionar aviso a usted. Se le anima a comprobar con frecuencia para que usted sea consciente de sus derechos y responsabilidades actuales. El uso continuado de este sitio web después de que se hayan publicado los cambios en los Términos de Uso constituye su aceptación vinculante de los Términos de Uso actualizados. Si en algún momento los Términos de Uso dejan de ser aceptables para Usted, deberá cesar inmediatamente todo uso de este Sitio Web.\n\n1.  Declaración de Propósito. El propósito de Wallet.crypto.red es permitir a los individuos y a las organizaciones acceder al mundo de la criptomoneda a través de un sencillo pero potente aplicación de código abierto, más específicamente llamado aplicación web progresiva (PWA). El sitio está diseñado para permitir comprar, vender, comerciar e interactuar con las criptomonedas. También está diseñado para fomentar la creación de una comunidad de usuarios para hacer de esta vida una maravillosa aventura cuando se trata de criptodivisas en general.\n    \n2.  Registro de usuarios. El registro en wallet.crypto.red es opcional pero recomendable. Si está registrado en wallet.crypto.com, Crypto.red y sus subdominios no podrán ponerse en contacto con usted con la información que haya compartido con esta aplicación. Todo lo que usted ha registrado en este sitio en su lugar permanecerá en su ordenador y nunca será compartido con cualquier red, excepto cuando usted necesita para hacer las transacciones o solicitudes de la red, entonces, sólo la información no privada será compartida, ya que necesita como la dirección pública de su ordenador o la dirección derivada de la criptomoneda. Usted se compromete a no vender o transferir su uso o acceso a este sitio web o permitir que cualquier otra persona cuya cuenta fue suspendida o terminada utilice este sitio web a través de su nombre de usuario o contraseña. Usted es responsable de mantener la confidencialidad de su contraseña y su cuenta y de toda la actividad que ocurra en su cuenta.\n    \n3.  Comisiones en el proveedor de terceros. Las tasas en: el comercio, la compra, la venta, y la retirada entre otras criptodivisas pueden aplicarse, estas tasas no son más altas y en algunos casos más bajas cuando se pasa a través de este sitio web para operar un contrato con un proveedor de servicios de terceros como Changelly o swapspace, las plataformas mencionadas anteriormente cobran tarifas y recompensas crypto.red para los clientes procedentes de esta aplicación, ayuda a financiar este software. Puede utilizar cualquier intercambio de terceros que desee y que no aparezca en este sitio web, nuestros socios deberían, en teoría, tener la mejor oferta para su necesidad, sin embargo.\n    \n4.  LIMITACIÓN DE LA RESPONSABILIDAD. ESTE SITIO WEB Y TODOS LOS CONTENIDOS, MATERIALES, INFORMACIÓN, SOFTWARE, PRODUCTOS Y SERVICIOS SE PROPORCIONAN \"TAL CUAL\" Y \"SEGÚN DISPONIBILIDAD\". EL USO QUE USTED HAGA DE ESTE SITIO WEB ES POR SU CUENTA Y RIESGO. CRYPTO RED RECHAZA TODAS LAS GARANTÍAS, EXPRESAS O IMPLÍCITAS, INCLUYENDO, SIN LIMITACIÓN, LAS GARANTÍAS DE COMERCIABILIDAD, ADECUACIÓN A UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN LA MEDIDA EN QUE LO PERMITA LA LEY, CRYPTO RED NO ES RESPONSABLE DE NINGÚN DAÑO DIRECTO, INDIRECTO, PUNITIVO, ESPECIAL, INCIDENTAL, CONSECUENTE O EJEMPLAR (INCLUYENDO, SIN LIMITACIÓN, LA PÉRDIDA DE NEGOCIO, INGRESOS, BENEFICIOS, FONDO DE COMERCIO, USO, DATOS, PEDIDOS TRANSMITIDOS ELECTRÓNICAMENTE U OTRA VENTAJA ECONÓMICA) QUE SURJAN DE O EN RELACIÓN CON EL SITIO WEB, INCLUSO SI CRYPTO RED HA SIDO PREVIAMENTE ADVERTIDO DE, O RAZONABLEMENTE PODRÍA HABER PREVISTO, LA POSIBILIDAD DE TALES DAÑOS, SEAN LOS QUE SEAN, YA SEA POR INCUMPLIMIENTO DE CONTRATO O POR AGRAVIO (INCLUIDA LA NEGLIGENCIA), INCLUYENDO SIN LIMITACIÓN LOS DAÑOS DEBIDOS A (a) EL USO O LA IMPOSIBILIDAD DE USAR EL SITIO WEB; (b) EL COSTO DE ADQUISICIÓN DE BIENES Y SERVICIOS SUSTITUTIVOS RESULTANTE DE CUALQUIER BIEN, DATOS, INFORMACIÓN O SERVICIO ADQUIRIDO U OBTENIDO O MENSAJES RECIBIDOS O TRANSACCIONES REALIZADAS A TRAVÉS DEL SITIO WEB; (C) LAS DECLARACIONES O EL COMPORTAMIENTO DE CUALQUIER TERCERO EN EL SITIO WEB, INCLUYENDO, SIN LIMITACIÓN, EL ACCESO NO AUTORIZADO O LA ALTERACIÓN DE LAS TRANSMISIONES O LOS DATOS, EL COMPORTAMIENTO MALICIOSO O DELICTIVO, O LAS TRANSACCIONES FALSAS O FRAUDULENTAS, O (D) EL CONTENIDO O LA INFORMACIÓN QUE USTED PUEDA DESCARGAR, UTILIZAR, MODIFICAR O DISTRIBUIR. CRYPTO RED NO GARANTIZA QUE (i) EL SERVICIO SEA ININTERRUMPIDO, OPORTUNO, SEGURO O LIBRE DE ERRORES, (ii) LOS RESULTADOS QUE PUEDAN OBTENERSE DEL USO DEL SERVICIO SEAN PRECISOS O CONFIABLES, (iii) LA CALIDAD DE CUALQUIER PRODUCTO, SERVICIO, CONTENIDO, INFORMACIÓN, O CUALQUIER OTRO MATERIAL OBTENIDO POR USTED A TRAVÉS DEL SERVICIO CUMPLIRÁ CON SUS EXPECTATIVAS, (iv) CUALQUIER ERROR EN LA APLICACIÓN SERÁ CORREGIDO, O QUE ESTE SITIO WEB, SU CONTENIDO, Y EL SERVIDOR EN EL CUAL EL SITIO WEB Y EL CONTENIDO ESTÁN DISPONIBLES ESTÁN LIBRES DE VIRUS U OTROS COMPONENTES DAÑINOS. CUALQUIER MATERIAL (INCLUIDO EL CONTENIDO) QUE SE DESCARGUE U OBTENGA A TRAVÉS DEL USO DE ESTE SITIO WEB SE REALIZA BAJO SU PROPIA RESPONSABILIDAD Y USTED SERÁ EL ÚNICO RESPONSABLE DE CUALQUIER DAÑO QUE SE PRODUZCA EN SU SISTEMA INFORMÁTICO O DE LA PÉRDIDA DE DATOS QUE RESULTE DE LA DESCARGA DE CUALQUIER MATERIAL. LA INFORMACIÓN CREADA POR TERCEROS A LA QUE PUEDA ACCEDER EN ESTE SITIO WEB O A TRAVÉS DE LOS ENLACES NO ES APROBADA, ADOPTADA NI RESPALDADA POR CRYPTO RED Y SIGUE SIENDO RESPONSABILIDAD DEL TERCERO. EN LA MEDIDA EN QUE ALGUNA JURISDICCIÓN NO PERMITA LA EXCLUSIÓN O LIMITACIÓN DE LOS DAÑOS DIRECTOS, INCIDENTALES O CONSECUENTES, ES POSIBLE QUE NO SE APLIQUEN PARTES DE LA LIMITACIÓN O EXCLUSIÓN ANTERIOR."
+                "content_markdown": "Términos de uso de Wallet.crypto.red\n\nFecha de revisión. 11 de abril de 2021\n\nPor favor, lea atentamente estas Condiciones antes de utilizar este sitio web. Al utilizar este sitio web (el \"Sitio Web\"), el usuario (\"Usted\") ha aceptado estas Condiciones de Uso. Si no acepta estos Términos de Uso, no utilice el Sitio Web. Al utilizar este sitio web, el usuario declara que es mayor de edad para celebrar un contrato vinculante con Crypto.red.\n\nCRYPTO RED (crypto.red y sus subdominios) puede modificar la totalidad o cualquier parte de estas Condiciones de Uso de vez en cuando y puede no proporcionar aviso a usted. Se le anima a comprobar con frecuencia para que usted sea consciente de sus derechos y responsabilidades actuales. El uso continuado de este sitio web después de que se hayan publicado los cambios en los Términos de Uso constituye su aceptación vinculante de los Términos de Uso actualizados. Si en algún momento los Términos de Uso dejan de ser aceptables para Usted, deberá cesar inmediatamente todo uso de este Sitio Web.\n\n1.  Declaración de Propósito. El propósito de Wallet.crypto.red es permitir a los individuos y a las organizaciones acceder al mundo de la criptomoneda a través de un sencillo pero potente aplicación de código abierto, más específicamente llamado aplicación web progresiva (PWA). El sitio está diseñado para permitir comprar, vender, comerciar e interactuar con las criptomonedas. También está diseñado para fomentar la creación de una comunidad de usuarios para hacer de esta vida una maravillosa aventura cuando se trata de criptodivisas en general.\n    \n2.  Registro de usuarios. El registro en wallet.crypto.red es opcional pero recomendable. Si está registrado en wallet.crypto.com, Crypto.red y sus subdominios no podrán ponerse en contacto con usted con la información que haya compartido con esta aplicación. Todo lo que usted ha registrado en este sitio en su lugar permanecerá en su ordenador y nunca será compartido con cualquier red, excepto cuando usted necesita para hacer las transacciones o solicitudes de la red, entonces, sólo la información no privada será compartida, ya que necesita como la dirección pública de su ordenador o la dirección derivada de la criptomoneda. Usted se compromete a no vender o transferir su uso o acceso a este sitio web o permitir que cualquier otra persona cuya cuenta fue suspendida o terminada utilice este sitio web a través de su nombre de usuario o contraseña. Usted es responsable de mantener la confidencialidad de su contraseña y su cuenta y de toda la actividad que ocurra en su cuenta.\n    \n3.  Comisiones en el proveedor de terceros. Las tarifas en: el comercio, la compra, la venta, y la retirada entre otras criptodivisas pueden aplicarse, estas tarifas no son más altas y en algunos casos más bajas cuando se pasa a través de este sitio web para operar un contrato con un proveedor de servicios de terceros como Changelly o swapspace, las plataformas mencionadas anteriormente cobran tarifas y recompensas crypto.red para los clientes procedentes de esta aplicación, ayuda a financiar este software. Puede utilizar cualquier intercambio de terceros que desee y que no aparezca en este sitio web, nuestros socios deberían, en teoría, tener la mejor oferta para su necesidad, sin embargo.\n    \n4.  LIMITACIÓN DE LA RESPONSABILIDAD. ESTE SITIO WEB Y TODOS LOS CONTENIDOS, MATERIALES, INFORMACIÓN, SOFTWARE, PRODUCTOS Y SERVICIOS SE PROPORCIONAN \"TAL CUAL\" Y \"SEGÚN DISPONIBILIDAD\". EL USO QUE USTED HAGA DE ESTE SITIO WEB ES POR SU CUENTA Y RIESGO. CRYPTO RED RECHAZA TODAS LAS GARANTÍAS, EXPRESAS O IMPLÍCITAS, INCLUYENDO, SIN LIMITACIÓN, LAS GARANTÍAS DE COMERCIABILIDAD, ADECUACIÓN A UN PROPÓSITO PARTICULAR Y NO INFRACCIÓN. EN LA MEDIDA EN QUE LO PERMITA LA LEY, CRYPTO RED NO ES RESPONSABLE DE NINGÚN DAÑO DIRECTO, INDIRECTO, PUNITIVO, ESPECIAL, INCIDENTAL, CONSECUENTE O EJEMPLAR (INCLUYENDO, SIN LIMITACIÓN, LA PÉRDIDA DE NEGOCIO, INGRESOS, BENEFICIOS, FONDO DE COMERCIO, USO, DATOS, PEDIDOS TRANSMITIDOS ELECTRÓNICAMENTE U OTRA VENTAJA ECONÓMICA) QUE SURJAN DE O EN RELACIÓN CON EL SITIO WEB, INCLUSO SI CRYPTO RED HA SIDO PREVIAMENTE ADVERTIDO DE, O RAZONABLEMENTE PODRÍA HABER PREVISTO, LA POSIBILIDAD DE TALES DAÑOS, SEAN LOS QUE SEAN, YA SEA POR INCUMPLIMIENTO DE CONTRATO O POR AGRAVIO (INCLUIDA LA NEGLIGENCIA), INCLUYENDO SIN LIMITACIÓN LOS DAÑOS DEBIDOS A (a) EL USO O LA IMPOSIBILIDAD DE USAR EL SITIO WEB; (b) EL COSTO DE ADQUISICIÓN DE BIENES Y SERVICIOS SUSTITUTIVOS RESULTANTE DE CUALQUIER BIEN, DATOS, INFORMACIÓN O SERVICIO ADQUIRIDO U OBTENIDO O MENSAJES RECIBIDOS O TRANSACCIONES REALIZADAS A TRAVÉS DEL SITIO WEB; (C) LAS DECLARACIONES O EL COMPORTAMIENTO DE CUALQUIER TERCERO EN EL SITIO WEB, INCLUYENDO, SIN LIMITACIÓN, EL ACCESO NO AUTORIZADO O LA ALTERACIÓN DE LAS TRANSMISIONES O LOS DATOS, EL COMPORTAMIENTO MALICIOSO O DELICTIVO, O LAS TRANSACCIONES FALSAS O FRAUDULENTAS, O (D) EL CONTENIDO O LA INFORMACIÓN QUE USTED PUEDA DESCARGAR, UTILIZAR, MODIFICAR O DISTRIBUIR. CRYPTO RED NO GARANTIZA QUE (i) EL SERVICIO SEA ININTERRUMPIDO, OPORTUNO, SEGURO O LIBRE DE ERRORES, (ii) LOS RESULTADOS QUE PUEDAN OBTENERSE DEL USO DEL SERVICIO SEAN PRECISOS O CONFIABLES, (iii) LA CALIDAD DE CUALQUIER PRODUCTO, SERVICIO, CONTENIDO, INFORMACIÓN, O CUALQUIER OTRO MATERIAL OBTENIDO POR USTED A TRAVÉS DEL SERVICIO CUMPLIRÁ CON SUS EXPECTATIVAS, (iv) CUALQUIER ERROR EN LA APLICACIÓN SERÁ CORREGIDO, O QUE ESTE SITIO WEB, SU CONTENIDO, Y EL SERVIDOR EN EL CUAL EL SITIO WEB Y EL CONTENIDO ESTÁN DISPONIBLES ESTÁN LIBRES DE VIRUS U OTROS COMPONENTES DAÑINOS. CUALQUIER MATERIAL (INCLUIDO EL CONTENIDO) QUE SE DESCARGUE U OBTENGA A TRAVÉS DEL USO DE ESTE SITIO WEB SE REALIZA BAJO SU PROPIA RESPONSABILIDAD Y USTED SERÁ EL ÚNICO RESPONSABLE DE CUALQUIER DAÑO QUE SE PRODUZCA EN SU SISTEMA INFORMÁTICO O DE LA PÉRDIDA DE DATOS QUE RESULTE DE LA DESCARGA DE CUALQUIER MATERIAL. LA INFORMACIÓN CREADA POR TERCEROS A LA QUE PUEDA ACCEDER EN ESTE SITIO WEB O A TRAVÉS DE LOS ENLACES NO ES APROBADA, ADOPTADA NI RESPALDADA POR CRYPTO RED Y SIGUE SIENDO RESPONSABILIDAD DEL TERCERO. EN LA MEDIDA EN QUE ALGUNA JURISDICCIÓN NO PERMITA LA EXCLUSIÓN O LIMITACIÓN DE LOS DAÑOS DIRECTOS, INCIDENTALES O CONSECUENTES, ES POSIBLE QUE NO SE APLIQUEN PARTES DE LA LIMITACIÓN O EXCLUSIÓN ANTERIOR."
             }
         },
         "about_wiki": {
             "topup": {
-                "title": "Cómo recargar",
+                "title": "Cómo depositar fondos",
                 "content_markdown": "{{{_svg.buy_crypto}}}A pesar de que no recibimos nada si no usas Changelly, es un servicio sencillo y el segundo recomendado después de los cajeros públicos por cuestiones de privacidad.\n\nTendrás que seguir las instrucciones y al final introducir la dirección pública de la moneda seleccionada de la cuenta que hayas elegido y ya está, puedes pagar con tarjeta y hacerlo de forma rápida y sencilla."
             },
             "swap": {
@@ -346,6 +346,8 @@ module.exports = {
             }
         },
         "account_card": {
+            "connect_to_hive": "Conectarse a \"Hive\"",
+            "connected_to_hive": "Conectado a \"Hive\"",
             "crypto_balance_error": "{{crypto_id}} error de saldo",
             "close_account_tooltip": "¿Deseas cerrar esta cuenta?",
             "open_account_tooltip": "¿Deseas abrir esta cuenta?"
@@ -390,6 +392,9 @@ module.exports = {
             "title": "Eliminar {{account_name}}?",
             "cannot_be_undone": "NO es posible deshacer esta acción. Esto eliminará la cuenta {{account_name}} y sus carteras de forma permanente",
             "repeat_name": "Por favor, escriba el nombre de la cuenta para confirmar."
+        },
+        "account_dialog_hive": {
+            "title": "¿Conectar una cuenta de Hive?"
         },
         "account_dialog_open": {
             "title": "Abrir {{account_name}}?",
@@ -465,8 +470,8 @@ module.exports = {
         "dashboard_quick_card_mobile": {
             "total": "Saldo Total:",
             "number": "Números de criptodivisas:",
-            "btc_performance": "Desempeñado / BTC:",
-            "performance": "Desempeñado:"
+            "btc_performance": "Rendimiento / BTC:",
+            "performance": "Rendimiento:"
         },
         "dashboard_transactions": {
             "title": "Transacciones más recientes"
@@ -474,10 +479,10 @@ module.exports = {
         "drawer_content": {
             "help_dialogs_data": {
                 "topup": {
-                    "id": "recarga",
-                    "url": "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
+                    "id": "depositar",
+                    "url": "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     "image": "card.svg",
-                    "title": "¿Deseas saber cómo recargar?",
+                    "title": "¿Deseas saber cómo depositar fondos?",
                     "body": "Para agregar fondos a una de tus criptomonedas, tienes que pasar por un intercambio.",
                     "help_link": "/about/wiki/topup",
                     "help_link_content": "Saber más..."
@@ -509,10 +514,10 @@ module.exports = {
                 "coins": "Monedas",
                 "trade": {
                     "trade": "Trade",
-                    "top_up": "Recarga",
+                    "top_up": "Depositar Fondos",
                     "mixer": "Mezclador",
                     "swap": "Intercambiar",
-                    "atm": "CAJERO AUTOMATICO"
+                    "atm": "CAJERO (ATM)"
                 },
                 "tools": {
                     "tools": "Herramientas",
@@ -529,7 +534,7 @@ module.exports = {
                     "contributors": "Contribuyentes",
                     "source_code": "Código fuente",
                     "more": "Más",
-                    "download": "Descargar",
+                    "download": "Descargas",
                     "donations": "Donaciones",
                     "feedback": "Retroalimentación"
                 }

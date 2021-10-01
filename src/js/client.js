@@ -16,7 +16,6 @@ import zh from "javascript-time-ago/locale/zh"
 import ko from "javascript-time-ago/locale/ko"
 import ru from "javascript-time-ago/locale/ru"
 import hi from "javascript-time-ago/locale/hi"
-import es from "javascript-time-ago/locale/es"
 
 TimeAgo.addDefaultLocale(en);
 TimeAgo.addLocale(fr);
@@ -29,7 +28,6 @@ TimeAgo.addLocale(zh);
 TimeAgo.addLocale(ko);
 TimeAgo.addLocale(ru);
 TimeAgo.addLocale(hi);
-TimeAgo.addLocale(es);
 
 // Pages
 import Index from "./pages/Index";

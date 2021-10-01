@@ -19,7 +19,7 @@ import FileCopyIcon from "@material-ui/icons/FileCopy";
 
 import api from "../utils/api";
 import actions from "../actions/utils";
-import { HISTORY } from "../utils/constants";
+import { HISTORY, COINS_IMAGES } from "../utils/constants";
 import clipboard from "clipboard-polyfill";
 import QRCode from "qrcode.react";
 
@@ -99,8 +99,10 @@ class CoinReceive extends React.Component {
 
         if(logged_account) {
 
+            const hive_username = logged_account.hive_username || "";
+
             actions.trigger_loading_update(0);
-            const address = api.get_address_by_seed(coin_id, logged_account.seed);
+            const address = api.get_address_by_seed(coin_id, logged_account.seed, hive_username);
             this.setState({_address: address}, () => {
 
                 actions.trigger_loading_update(100);
@@ -145,7 +147,7 @@ class CoinReceive extends React.Component {
 
     render() {
 
-        const { classes, coin_data, logged_account, _address, we_know_if_logged } = this.state;
+        const { classes, coin_id, coin_data, logged_account, _address, we_know_if_logged } = this.state;
 
         return (
             <div>
@@ -166,7 +168,7 @@ class CoinReceive extends React.Component {
                                                 renderAs={"svg"}
                                                 value={_address}
                                                 imageSettings={{
-                                                    src: coin_data ? coin_data.image.large: "",
+                                                    src: COINS_IMAGES[coin_id] || "",
                                                     x: null,
                                                     y: null,
                                                     height: 24,

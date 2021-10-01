@@ -371,6 +371,8 @@ module.exports = {
             }
         },
         "account_card": {
+            "connect_to_hive": "Conecte-se ao \"Hive\"",
+            "connected_to_hive": "Conectado ao \"Hive\"",
             "crypto_balance_error": "{{crypto_id}} Erro de saldo",
             "close_account_tooltip": "Você deseja encerrar esta conta?",
             "open_account_tooltip": "Você deseja abrir esta conta?"
@@ -415,6 +417,9 @@ module.exports = {
             "title": "Deletar {{account_name}}?",
             "cannot_be_undone": "Estão ação NÃO PODE ser desfeita. Isso irá deletar a conta {{account_name}} e suas carteiras permanentemente.",
             "repeat_name": "Por favor digite o nome da conta para confirmar."
+        },
+        "account_dialog_hive": {
+            "title": "Conectar uma conta Hive?"
         },
         "account_dialog_open": {
             "title": "Abrir {{account_name}}?",
@@ -500,7 +505,7 @@ module.exports = {
             "help_dialogs_data": {
                 "topup": {
                     "id": "topup",
-                    "url": "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
+                    "url": "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     "image": "card.svg",
                     "title": "Você sabe como fazer depósitos?",
                     "body": "Para adicionar fundos a uma de suas criptomoedas, você tem que passar por uma exchange.",

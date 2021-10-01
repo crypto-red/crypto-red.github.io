@@ -371,6 +371,8 @@ module.exports = {
             }
         },
         "account_card": {
+            "connect_to_hive": "Connect to \"Hive\"",
+            "connected_to_hive": "Connected to \"Hive\"",
             "crypto_balance_error": "{{crypto_id}} balance error",
             "close_account_tooltip": "Do you want to close this account?",
             "open_account_tooltip": "Do you want to open this account?"
@@ -415,6 +417,9 @@ module.exports = {
             "title": "Delete {{account_name}}?",
             "cannot_be_undone": "This action CANNOT be undone. This will delete the {{account_name}} account and its wallets permanently.",
             "repeat_name": "Please Type in the name of the account to confirm."
+        },
+        "account_dialog_hive": {
+            "title": "Connect a Hive account?"
         },
         "account_dialog_open": {
             "title": "Open {{account_name}}?",
@@ -500,7 +505,7 @@ module.exports = {
             "help_dialogs_data": {
                 "topup": {
                     "id": "topup",
-                    "url": "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
+                    "url": "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     "image": "card.svg",
                     "title": "Do you know how to top up?",
                     "body": "To add funds to one of your cryptocurrencies, you have to pass through an exchange.",

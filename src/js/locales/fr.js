@@ -363,6 +363,8 @@ module.exports = {
             }
         },
         account_card: {
+            connect_to_hive: "Se connecter à \"Hive\"",
+            connected_to_hive: "Connecté(e) à \"Hive\"",
             crypto_balance_error: "Erreur des fonds pour {{crypto_id}}",
             close_account_tooltip: "Voulez-vous fermer ce compte ?",
             open_account_tooltip: "Voulez-vous ouvrir ce compte ?",
@@ -416,6 +418,9 @@ module.exports = {
             title: "Supprimer {{account_name}} ?",
             cannot_be_undone: "Cette action NE PEUT PAS être annulée. Cela supprimera définitivement le compte {{account_name}} et ses portefeuilles.",
             repeat_name: "Veuillez saisir le nom du compte pour confirmer."
+        },
+        account_dialog_hive: {
+            title: "Connecter un compte Hive ?"
         },
         account_dialog_open: {
             title: "Ouvrir {{account_name}} ?",
@@ -501,7 +506,7 @@ module.exports = {
             help_dialogs_data: {
                 topup: {
                     id: "topup",
-                    url: "https://changelly.com/buy?ref_id=93blynj6ldi3xnpu",
+                    url: "https://changelly.com/buy?from=usd&to=btc&amount=500&ref_id=93blynj6ldi3xnpu",
                     image: "card.svg",
                     title: "Savez-vous comment recharger votre compte ?",
                     body: "Pour ajouter des fonds à l'une de vos crypto-monnaies, vous devez passer par un échange.",
