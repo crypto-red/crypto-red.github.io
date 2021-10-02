@@ -41,6 +41,9 @@ const typography = {
     text: {
         fontFamily: "Open Sans"
     },
+    label: {
+        fontFamily: "Open Sans"
+    },
 }
 
 module.exports = typography;

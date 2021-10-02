@@ -85,6 +85,8 @@ import MergeIcon from "../icons/Merge";
 import {List, ListSubheader, ListItem, ListItemIcon, ListItemText, ListItemAvatar, Avatar} from "@material-ui/core";
 import Fab from "@material-ui/core/Fab";
 import Grow from "@material-ui/core/Grow";
+import Fade from "@material-ui/core/Fade";
+import DialogCloseButton from "../components/DialogCloseButton";
 
 const styles = theme => ({
     root: {
@@ -106,7 +108,7 @@ const styles = theme => ({
         display: "flex",
         flexGrow: 1,
         position: "relative",
-        backgroundColor: theme.palette.secondary.contrast,
+        backgroundColor: theme.palette.primary.darker,
     },
     contentCanvas: {
         width: "100%",
@@ -119,6 +121,9 @@ const styles = theme => ({
     },
     contentDrawer: {
         display: "flex",
+        [theme.breakpoints.up("lg")]: {
+            display: "none",
+        },
     },
     contentDrawerFixed: {
         [theme.breakpoints.down("md")]: {
@@ -165,13 +170,13 @@ const styles = theme => ({
             flex: "auto",
         },
         "& .MuiTabs-indicator": {
-            backgroundColor: theme.palette.secondary.dark
+            backgroundColor: theme.palette.primary.action
         }
     },
     tab: {
-        color: theme.palette.secondary.light,
+        color: theme.palette.primary.action,
         "&.Mui-selected": {
-            color: theme.palette.secondary.dark,
+            color: theme.palette.primary.action,
         },
     },
     backdrop: {
@@ -194,7 +199,7 @@ const styles = theme => ({
         marginRight: theme.spacing(2),
     },
     layerSelected: {
-        borderLeft: `4px solid ${theme.palette.primary.dark}`,
+        borderLeft: `4px solid ${theme.palette.primary.action}`,
         paddingLeft: 12,
     },
     fab: {
@@ -222,7 +227,10 @@ const styles = theme => ({
         borderRadius: "50%",
         height: 32,
         width: 32,
-        margin: "auto"
+        boxShadow: "rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px",
+    },
+    chromePicker: {
+        fontFamily: "Open Sans !important",
     },
 });
 
@@ -235,6 +243,7 @@ class Pixel extends React.Component {
             classes: props.classes,
             _history: HISTORY,
             _view_name_index: 0,
+            _previous_view_name_index: 0,
             _view_names: ["palette", "image", "layers", "tools", "selection", "effects", "filters"],
             _canvas: null,
             _offset_el: null,
@@ -289,7 +298,7 @@ class Pixel extends React.Component {
         const _view_name = _view_names[view_name_index] || _view_names[0];
         const _view_name_index = _view_names.indexOf(_view_name) === -1 ? 0: _view_names.indexOf(_view_name);
 
-        this.setState({_view_name_index});
+        this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index});
     };
 
     _hsl_to_hex = (h, s, l) => {
@@ -331,11 +340,11 @@ class Pixel extends React.Component {
 
                 case 37:
                     e.preventDefault();
-                    this.setState({_view_name_index: _view_name_index-1 < 0 ? _view_names.length-1: _view_name_index-1});
+                    this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index: _view_name_index-1 < 0 ? _view_names.length-1: _view_name_index-1});
                     break;
                 case 39:
                     e.preventDefault();
-                    this.setState({_view_name_index: _view_name_index+1 > _view_names.length-1 ? 0: _view_name_index+1});
+                    this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index: _view_name_index+1 > _view_names.length-1 ? 0: _view_name_index+1});
                     break;
             }
 
@@ -761,6 +770,7 @@ class Pixel extends React.Component {
             classes,
             _anchor_el,
             _view_name_index,
+            _previous_view_name_index,
             _loading,
             _view_names,
             _layers,
@@ -971,17 +981,16 @@ class Pixel extends React.Component {
 
         const drawer_content = (
             <div style={{display: "contents"}}>
-                <div style={{padding: 21, position: "relative"}}>
+                <div style={{padding: 21, position: "relative", zIndex: -1}}>
                     <Typography id="strength-slider" gutterBottom>
                         Effect strength:
                     </Typography>
                     <Slider
-                        defaultValue={0}
-                        step={1/64}
-                        marks
+                        defaultValue={2/16}
+                        step={1/16}
                         min={0}
                         max={1}
-                        onChange={this._set_value_from_slider}
+                        onChangeCommitted={this._set_value_from_slider}
                         aria-labelledby="strength-slider"
                     />
                     <span>{`X: ${_x}, Y: ${_y}`}</span>
@@ -1005,7 +1014,6 @@ class Pixel extends React.Component {
                 <Divider />
                 <div className={classes.drawerContainer}>
                     <SwipeableViews
-                        style={{}}
                         containerStyle={{overflow: "visible"}}
                         animateHeight={true}
                         index={_view_name_index}
@@ -1013,6 +1021,8 @@ class Pixel extends React.Component {
                     >
                         {
                             Object.entries(actions).map(a => a[1]).map((view, index) => {
+
+                                if(_view_name_index !== index && _previous_view_name_index !== index) { return <List style={{overflow: "visible"}} className={classes.listOfTools} />; }
 
                                 return (
                                     <List style={{overflow: "visible"}} className={classes.listOfTools}>
@@ -1052,7 +1062,8 @@ class Pixel extends React.Component {
                                                         onClose={this._handle_color_menu_close}
                                                         style={{padding: 0}}
                                                     >
-                                                        <ChromePicker color={ _current_color }
+                                                        <ChromePicker className={classes.chromePicker}
+                                                                      color={ _current_color }
                                                                       onChange={ this._handle_current_color_change }
                                                                       disableAlpha />
                                                     </Menu>
@@ -1062,18 +1073,22 @@ class Pixel extends React.Component {
 
                                                     <div style={{padding: 21, position: "relative"}}>
                                                         <Typography id="luminosity-slider" gutterBottom>Luminosity</Typography>
-                                                        <Slider defaultValue={_luminosity} step={10} valueLabelDisplay="auto" marks min={0} max={100} onChange={this._set_luminosity_from_slider} aria-labelledby="luminosity-slider"/>
+                                                        <Slider defaultValue={_luminosity} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_luminosity_from_slider} aria-labelledby="luminosity-slider"/>
 
                                                         <Typography id="saturation-slider" gutterBottom>Saturation</Typography>
-                                                        <Slider defaultValue={_saturation} step={10} valueLabelDisplay="auto" marks min={0} max={100} onChange={this._set_saturation_from_slider} aria-labelledby="strength-slider"
+                                                        <Slider defaultValue={_saturation} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_saturation_from_slider} aria-labelledby="strength-slider"
                                                         />
                                                     </div>
 
 
-                                                    <div style={{ textAlign: "center", margin: 24, display: "inline-flex", flexDirection: "row", justifyContent: "flex-start", alignContent: "stretch", gap: "12px 12px", flexWrap: "wrap"}}>
+                                                    <div style={{ padding: 24, display: "flex", flexDirection: "row", justifyContent: "center", alignContent: "stretch", gap: "12px 12px", flexWrap: "wrap"}}>
                                                         {colors.map((color, index) => {
 
-                                                            return <ButtonBase small key={index} style={{background: color}} className={classes.buttonColor} onClick={() => {this._handle_current_color_change(color)}}/>
+                                                            return (
+                                                                <Fade in timeout={200 + index * 20}>
+                                                                    <ButtonBase small key={index} style={{background: color}} className={classes.buttonColor} onClick={() => {this._handle_current_color_change(color)}}/>
+                                                                </Fade>
+                                                            )
                                                         })}
                                                     </div>
 
@@ -1165,8 +1180,9 @@ class Pixel extends React.Component {
                                     paper: classes.swipeableDrawerPaper
                                 }}
                                 variant="temporary"
-                                anchor="bottom"
+                                anchor="top"
                             >
+                                <DialogCloseButton onClick={this._handle_edit_drawer_close} />
                                 {drawer_content}
                             </SwipeableDrawer>
                             <Drawer
