@@ -145,7 +145,6 @@ const COINS = [
 
 const LOCALES = [
     {code: "ar-SA", name: "Arabic (Saudi Arabia)"},
-    {code: "ar-SA", name: "Arabic (Saudi Arabia)"},
     {code: "bn-BD", name: "Bangla (Bangladesh)"},
     {code: "bn-IN", name: "Bangla (India)"},
     {code: "cs-CZ", name:  "Czech (Czech Republic)"},

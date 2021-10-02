@@ -256,10 +256,13 @@ class Settings extends React.Component {
                                     options={_locales}
                                     getOptionLabel={(option) => option.name || option.original.name}
                                     renderOption={(option) =>
-                                        <span
-                                            style={{color: LANGUAGES.includes(option.original.code.split("-")[0]) ? "#1c1882": "inherit"}}
-                                            dangerouslySetInnerHTML={{ __html: option.string }}>
-                                        </span>
+                                        <div>
+                                            <img src={`https://flagcdn.com/w20/${option.original.code.split("-")[1].toLowerCase()}.png`} style={{marginRight: 8, verticalAlign: "middle"}}/>
+                                            <span
+                                                style={{color: LANGUAGES.includes(option.original.code.split("-")[0]) ? "#1c1882": "inherit"}}
+                                                dangerouslySetInnerHTML={{ __html: option.string }}>
+                                            </span>
+                                        </div>
                                     }
                                     renderInput={(params) => <TextField {...params} label={t( "words.locales", {FLC: true})} margin="normal" />}
                                 />

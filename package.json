@@ -43,6 +43,7 @@
     "react-qr-reader": "2.1.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
+    "react-swipeable-views": "^0.13.3",
     "react-time-ago": "^7.0.0",
     "recharts": "^2.0.8",
     "redux": "^3.7.2",

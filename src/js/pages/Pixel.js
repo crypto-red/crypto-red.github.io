@@ -11,6 +11,7 @@ import Menu from "@material-ui/core/Menu";
 import Divider from "@material-ui/core/Divider";
 import Slider from "@material-ui/core/Slider";
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
+import SwipeableViews from "react-swipeable-views";
 import Drawer from "@material-ui/core/Drawer";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tabs from "@material-ui/core/Tabs";
@@ -71,9 +72,16 @@ import ImageEffectIcon from "../icons/ImageEffect";
 import ImageFilterIcon from "../icons/ImageFilter";
 import EraserIcon from "../icons/Eraser";
 import MirrorIcon from "../icons/Mirror";
+import LayerOutlineIcon from "../icons/LayerOutline";
+import LayerOffOutlineIcon from "../icons/LayerOffOutline";
+import LayerSearchIcon from "../icons/LayerSearch";
+import ImageOffOutlineIcon from "../icons/ImageOffOutline";
+import ImageOutlineIcon from "../icons/ImageOutline";
+import ImageEditIcon from "../icons/ImageEdit";
+import MergeIcon from "../icons/Merge";
+
 import {List, ListSubheader, ListItem, ListItemIcon, ListItemText, ListItemAvatar, Avatar} from "@material-ui/core";
 import Fab from "@material-ui/core/Fab";
-import EditIcon from "@material-ui/icons/Edit";
 import Grow from "@material-ui/core/Grow";
 
 const styles = theme => ({
@@ -96,6 +104,7 @@ const styles = theme => ({
         display: "flex",
         flexGrow: 1,
         position: "relative",
+        backgroundColor: "#5f5f5f",
     },
     contentCanvas: {
         width: "100%",
@@ -123,7 +132,6 @@ const styles = theme => ({
         overflow: "overlay",
     },
     listSubHeader: {
-        background: "#eeeeee",
         color: theme.palette.secondary.dark,
         fontWeight: "bold",
         "& span svg": {
@@ -132,7 +140,11 @@ const styles = theme => ({
             display: "none"
         }
     },
+    listItemIcon: {
+        color: theme.palette.secondary.dark
+    },
     tabs: {
+        backgroundColor: "#eeeeee",
         "& .MuiTab-root": {
             minWidth: "auto",
             flex: "auto",
@@ -140,6 +152,12 @@ const styles = theme => ({
         "& .MuiTabs-indicator": {
             backgroundColor: theme.palette.secondary.dark
         }
+    },
+    tab: {
+        color: theme.palette.secondary.light,
+        "&.Mui-selected": {
+            color: theme.palette.secondary.dark,
+        },
     },
     backdrop: {
         zIndex: 2000,
@@ -151,13 +169,15 @@ const styles = theme => ({
         },
     },
     layerThumbnail: {
-        borderRadius: 0,
+        width: "auto",
+        height: theme.spacing(8),
         "& .MuiAvatar-img": {
             width: "auto",
         },
+        marginRight: theme.spacing(2),
     },
     fab: {
-        [theme.breakpoints.up("md")]: {
+        [theme.breakpoints.up("lg")]: {
             display: "none",
         },
         zIndex: 100,
@@ -270,9 +290,11 @@ class Pixel extends React.Component {
             switch (event.keyCode) {
 
                 case 37:
+                    e.preventDefault();
                     this.setState({_view_name_index: _view_name_index-1 < 0 ? _view_names.length-1: _view_name_index-1});
                     break;
                 case 39:
+                    e.preventDefault();
                     this.setState({_view_name_index: _view_name_index+1 > _view_names.length-1 ? 0: _view_name_index+1});
                     break;
             }
@@ -738,12 +760,21 @@ class Pixel extends React.Component {
             ],
             "layers": [
                 {
+                    icon: <LayerSearchIcon />,
+                    text: `Layer tools`,
+                    tools: [
+                        {icon: _hide_canvas_content ? <LayerOutlineIcon />: <LayerOffOutlineIcon />, text: _hide_canvas_content ? "Show canvas content": "Hide canvas content", on_click: () => {this._show_hide_canvas_content()}},
+                        {icon: _show_original_image_in_background ? <ImageOffOutlineIcon />: <ImageOutlineIcon />, text: _show_original_image_in_background ? "Hide bg img": "Show bg img", on_click: () => {this._show_hide_background_image()}},
+                    ]
+                },
+                {
                     icon: <LayerEditIcon />,
                     text: `Layer actions`,
                     tools: [
-                        {icon: <LayerAddIcon />, text: "New layer", on_click: () => {this._new_layer(_layer_index)}},
+                        {icon: <LayerAddIcon />, text: "New layer", on_click: () => {this._new_layer(_layer_index+1)}},
                         {icon: <LayerDeleteIcon />, text: "Delete layer", on_click: () => {this._delete_layer(_layer_index)}},
                         {icon: <ContentDuplicateIcon />, text: "Duplicate layer", on_click: () => {this._duplicate_layer(_layer_index)}},
+                        {icon: <MergeIcon />, text: "Merge down layer", on_click: () => {this._merge_down_layer(_layer_index)}},
                         {icon: _layers[_layer_index].hidden ? <EyeIcon />: <EyeOffIcon />, text: _layers[_layer_index].hidden ? `Show`: `Hide`, on_click: () => {this._toggle_layer_visibility(_layer_index)}},
                         {icon: <OpacityIcon />, text: `Opacity: ${_layers[_layer_index].opacity} -> ${_slider_value}`, on_click: () => {this._change_layer_opacity(_layer_index)}},
                     ]
@@ -899,87 +930,106 @@ class Pixel extends React.Component {
                       selectionFollowsFocus
                       value={_view_name_index}
                       onChange={this._handle_view_name_change}>
-                    <Tab icon={<PaletteIcon />} />
-                    <Tab icon={<ImageIcon />} />
-                    <Tab icon={<AllLayersIcon />} />
-                    <Tab icon={<ToolsIcon />} />
-                    <Tab icon={<SelectIcon />} />
-                    <Tab icon={<ImageEffectIcon />} />
-                    <Tab icon={<ImageFilterIcon />} />
+                    <Tab className={classes.tab} icon={<PaletteIcon />} />
+                    <Tab className={classes.tab} icon={<ImageIcon />} />
+                    <Tab className={classes.tab} icon={<AllLayersIcon />} />
+                    <Tab className={classes.tab} icon={<ToolsIcon />} />
+                    <Tab className={classes.tab} icon={<SelectIcon />} />
+                    <Tab className={classes.tab} icon={<ImageEffectIcon />} />
+                    <Tab className={classes.tab} icon={<ImageFilterIcon />} />
                 </Tabs>
                 <Divider />
                 <div className={classes.drawerContainer}>
-                    <List className={classes.listOfTools}>
+                    <SwipeableViews
+                        disableLazyLoading={true}
+                        animateHeight={true}
+                        index={_view_name_index}
+                        onChangeIndex={this._handle_view_name_change}
+                    >
                         {
-                            _view_names[_view_name_index] === "layers" ?
-                                <div>
-                                    <ListSubheader className={classes.listSubHeader}>
-                                        <span><AllLayersIcon /></span>
-                                        <span>All layers</span>
-                                    </ListSubheader>
-                                    {_layers.map((layer, index) => {
-                                        return (
-                                            <ListItem button disabled={index === _layer_index} onClick={() => this._change_active_layer(index)}>
-                                                <ListItemAvatar>
-                                                    <Avatar className={classes.layerThumbnail} src={layer.thumbnail} />
-                                                </ListItemAvatar>
-                                                <ListItemText primary={layer.name} />
-                                            </ListItem>
-                                        );
-                                    })}
-                                </div>: null
-                        }
+                            Object.entries(actions).map(a => a[1]).map((view, index) => {
 
-                        {
-                            _view_names[_view_name_index] === "palette" ?
-                                <div>
-                                    <Menu
-                                        className={classes.menu}
-                                        anchorEl={_anchor_el}
-                                        keepMounted
-                                        open={Boolean(_anchor_el)}
-                                        onClose={this._handle_color_menu_close}
-                                        style={{padding: 0}}
-                                    >
-                                        <ChromePicker color={ _current_color }
-                                                      onChange={ this._handle_current_color_change }
-                                                      disableAlpha />
-                                    </Menu>
-                                    <div style={{textAlign: "center", margin: 24}}>
-                                        <div>
-                                            <HexagonalColorPicker
-                                                hue={_hue}
-                                                color={_current_color}
-                                                border={"#ffffffff"}
-                                                onColorChange={this._handle_current_color_change}
-                                                onHueChange={this._handle_hue_change}
-                                                onColorClick={this._handle_color_menu_open}/>
-                                        </div>
-                                    </div>
-                                </div>: null
-                        }
+                                return (
+                                    <List className={classes.listOfTools}>
 
-                        {actions[_view_names[_view_name_index]].map((action_set) => {
-                            return (
-                                <div>
-                                    <ListSubheader className={classes.listSubHeader}>
-                                        <span>{action_set.icon}</span>
-                                        <span>{action_set.text}</span>
-                                    </ListSubheader>
-                                    {action_set.tools.map((tool) => {
-                                        return (
-                                            <ListItem button disabled={tool.disabled || false} onClick={tool.on_click}>
-                                                <ListItemIcon>
-                                                    {tool.icon}
-                                                </ListItemIcon>
-                                                <ListItemText primary={tool.text} />
-                                            </ListItem>
-                                        );
-                                    })}
-                                </div>
-                            );
-                        })}
-                    </List>
+                                        {
+                                            _view_names[index] === "layers" ?
+                                                <div>
+                                                    <ListSubheader className={classes.listSubHeader}>
+                                                        <span><AllLayersIcon /></span>
+                                                        <span>All layers</span>
+                                                    </ListSubheader>
+                                                    {[..._layers].reverse().map((layer, index, array) => {
+                                                        const index_reverse_order = (array.length - 1) - index;
+                                                        return (
+                                                            <ListItem button disabled={_layer_index === index_reverse_order} onClick={() => this._change_active_layer(index_reverse_order)}>
+                                                                <ListItemAvatar>
+                                                                    <Avatar variant="square" className={classes.layerThumbnail} src={layer.thumbnail} />
+                                                                </ListItemAvatar>
+                                                                <ListItemText primary={layer.name} />
+                                                            </ListItem>
+                                                        );
+                                                    })}
+                                                </div>: null
+                                        }
+
+                                        {
+                                            _view_names[index] === "palette" ?
+                                                <div>
+                                                    <Menu
+                                                        className={classes.menu}
+                                                        anchorEl={_anchor_el}
+                                                        keepMounted
+                                                        open={Boolean(_anchor_el)}
+                                                        onClose={this._handle_color_menu_close}
+                                                        style={{padding: 0}}
+                                                    >
+                                                        <ChromePicker color={ _current_color }
+                                                                      onChange={ this._handle_current_color_change }
+                                                                      disableAlpha />
+                                                    </Menu>
+                                                    <div style={{textAlign: "center", margin: 24}}>
+                                                        <div>
+                                                            <HexagonalColorPicker
+                                                                hue={_hue}
+                                                                color={_current_color}
+                                                                border={"#ffffffff"}
+                                                                onColorChange={this._handle_current_color_change}
+                                                                onHueChange={this._handle_hue_change}
+                                                                onColorClick={this._handle_color_menu_open}/>
+                                                        </div>
+                                                    </div>
+                                                </div>: null
+                                        }
+
+                                        {
+                                            view.map((action_set) => {
+                                                return (
+                                                    <div>
+                                                        <ListSubheader className={classes.listSubHeader}>
+                                                            <span>{action_set.icon}</span>
+                                                            <span>{action_set.text}</span>
+                                                        </ListSubheader>
+                                                        {action_set.tools.map((tool) => {
+                                                            return (
+                                                                <ListItem button disabled={tool.disabled || false} onClick={tool.on_click}>
+                                                                    <ListItemIcon className={classes.listItemIcon}>
+                                                                        {tool.icon}
+                                                                    </ListItemIcon>
+                                                                    <ListItemText primary={tool.text} />
+                                                                </ListItem>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                );
+                                            })
+                                        }
+                                    </List>
+                                );
+
+                            })
+                        }
+                    </SwipeableViews>
                 </div>
             </div>
         );
@@ -989,7 +1039,7 @@ class Pixel extends React.Component {
                 <Backdrop className={classes.backdrop} open={_loading} />
                 <Grow in>
                     <Fab className={classes.fab} variant="extended" onClick={this._handle_edit_drawer_open}>
-                        <EditIcon /> Edit
+                        <ImageEditIcon /> Edit
                     </Fab>
                 </Grow>
                 <div className={classes.root}>
@@ -998,7 +1048,6 @@ class Pixel extends React.Component {
                             <CanvasPixels
                                 key={"canvas"}
                                 className={classes.contentCanvas}
-                                style={{width: 1200}}
                                 ref={this._set_canvas_ref}
                                 tool={_tool}
                                 hide_canvas_content={_hide_canvas_content}
