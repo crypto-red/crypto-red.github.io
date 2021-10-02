@@ -1,12 +1,14 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import { ChromePicker } from "react-color";
+import {ChromePicker, CirclePicker, SliderPicker} from "react-color";
 import HexagonalColorPicker from "../components/HexagonalColorPicker";
 import CanvasPixels from "../components/CanvasPixels";
 
 import Typography from "@material-ui/core/Typography";
 import Backdrop from "@material-ui/core/Backdrop";
+import Button from "@material-ui/core/Button";
+import ButtonBase from "@material-ui/core/ButtonBase";
 import Menu from "@material-ui/core/Menu";
 import Divider from "@material-ui/core/Divider";
 import Slider from "@material-ui/core/Slider";
@@ -104,7 +106,7 @@ const styles = theme => ({
         display: "flex",
         flexGrow: 1,
         position: "relative",
-        backgroundColor: "#5f5f5f",
+        backgroundColor: theme.palette.secondary.contrast,
     },
     contentCanvas: {
         width: "100%",
@@ -139,7 +141,7 @@ const styles = theme => ({
         "& div": {
             overflow: "hidden",
         },
-        "& div .react-swipeable-view-container div": {
+        '& div .react-swipeable-view-container div[data-swipeable="true"]': {
             overflow: "visible !important",
             alignItems: "normal",
         }
@@ -215,6 +217,13 @@ const styles = theme => ({
     listOfTools: {
         paddingTop: 0,
     },
+    buttonColor: {
+        padding: 0,
+        borderRadius: 2,
+        height: 32,
+        width: 32,
+        margin: "auto"
+    },
 });
 
 
@@ -233,6 +242,7 @@ class Pixel extends React.Component {
             _can_undo: false,
             _can_redo: false,
             _current_color: "#ffffff",
+            _second_color: "#000000",
             _pxl_current_opacity: 1,
             _width: 32,
             _height: 32,
@@ -252,6 +262,8 @@ class Pixel extends React.Component {
             _layer_index: 0,
             _mine_player_direction: "UP",
             _is_edit_drawer_open: false,
+            _saturation: 60,
+            _luminosity: 60,
         };
     };
 
@@ -278,6 +290,15 @@ class Pixel extends React.Component {
         const _view_name_index = _view_names.indexOf(_view_name) === -1 ? 0: _view_names.indexOf(_view_name);
 
         this.setState({_view_name_index});
+    };
+
+    _hsl_to_hex = (h, s, l) => {
+
+        const { _canvas } = this.state;
+
+        if(!_canvas) { return "#000000" }
+
+        return _canvas._hsl_to_hex(h, s, l);
     };
 
     _handle_keydown = (event) => {
@@ -333,6 +354,12 @@ class Pixel extends React.Component {
     _handle_image_load = () => {
 
         this.setState({_loading: true});
+    };
+
+    _switch_with_second_color = () => {
+
+        const {_current_color, _second_color } = this.state;
+        this.setState({_current_color: _second_color, _second_color: _current_color});
     };
 
     _handle_image_load_complete = () => {
@@ -594,7 +621,16 @@ class Pixel extends React.Component {
     _set_value_from_slider = (event, value) => {
 
         this.setState({_slider_value: value});
+    };
 
+    _set_saturation_from_slider = (event, value) => {
+
+        this.setState({_saturation: value});
+    };
+
+    _set_luminosity_from_slider = (event, value) => {
+
+        this.setState({_luminosity: value});
     };
 
     _set_hue_from_slider = (event, value) => {
@@ -735,6 +771,7 @@ class Pixel extends React.Component {
             _can_undo,
             _can_redo,
             _current_color,
+            _second_color,
             _slider_value,
             _tool,
             _width,
@@ -747,7 +784,9 @@ class Pixel extends React.Component {
             _is_something_selected,
             _mine_player_direction,
             _game_ended,
-            _is_edit_drawer_open
+            _is_edit_drawer_open,
+            _saturation,
+            _luminosity,
         } = this.state;
 
         const actions = {
@@ -924,6 +963,12 @@ class Pixel extends React.Component {
             ],
         };
 
+        let colors = [];
+        for (let i = 1; i <= 70; i++) {
+
+            colors.push(this._hsl_to_hex((i / 70) * 360, _saturation, _luminosity));
+        }
+
         const drawer_content = (
             <div style={{display: "contents"}}>
                 <div style={{padding: 21, position: "relative"}}>
@@ -962,7 +1007,6 @@ class Pixel extends React.Component {
                     <SwipeableViews
                         style={{}}
                         containerStyle={{overflow: "visible"}}
-                        disableLazyLoading={true}
                         animateHeight={true}
                         index={_view_name_index}
                         onChangeIndex={this._handle_view_name_change}
@@ -997,6 +1041,7 @@ class Pixel extends React.Component {
                                         }
 
                                         {
+
                                             _view_names[index] === "palette" ?
                                                 <div>
                                                     <Menu
@@ -1011,17 +1056,27 @@ class Pixel extends React.Component {
                                                                       onChange={ this._handle_current_color_change }
                                                                       disableAlpha />
                                                     </Menu>
-                                                    <div style={{textAlign: "center", margin: 24}}>
-                                                        <div>
-                                                            <HexagonalColorPicker
-                                                                hue={_hue}
-                                                                color={_current_color}
-                                                                border={"#ffffffff"}
-                                                                onColorChange={this._handle_current_color_change}
-                                                                onHueChange={this._handle_hue_change}
-                                                                onColorClick={this._handle_color_menu_open}/>
-                                                        </div>
+
+                                                    <Button variant={"contained"} style={{margin: 24, boxSizing: "content-box", background: _current_color, borderRadius: 2, height: 48, width: 96}} onClick={(event) => {this._handle_color_menu_open(event, _current_color)}}/>
+                                                    <Button variant={"contained"} style={{margin: 24, boxSizing: "content-box", background: _second_color, borderRadius: 2, height: 48, width: 96}} onClick={(event) => {this._switch_with_second_color()}}/>
+
+                                                    <div style={{padding: 21, position: "relative"}}>
+                                                        <Typography id="luminosity-slider" gutterBottom>Luminosity</Typography>
+                                                        <Slider defaultValue={_luminosity} step={10} valueLabelDisplay="auto" marks min={0} max={100} onChange={this._set_luminosity_from_slider} aria-labelledby="luminosity-slider"/>
+
+                                                        <Typography id="saturation-slider" gutterBottom>Saturation</Typography>
+                                                        <Slider defaultValue={_saturation} step={10} valueLabelDisplay="auto" marks min={0} max={100} onChange={this._set_saturation_from_slider} aria-labelledby="strength-slider"
+                                                        />
                                                     </div>
+
+
+                                                    <div style={{ textAlign: "center", margin: 24, display: "inline-flex", flexDirection: "row", justifyContent: "flex-start", alignContent: "stretch", gap: "12px 12px", flexWrap: "wrap"}}>
+                                                        {colors.map((color, index) => {
+
+                                                            return <ButtonBase small key={index} style={{background: color}} classes={classes.buttonColor} onClick={() => {this._handle_current_color_change(color)}}/>
+                                                        })}
+                                                    </div>
+
                                                 </div>: null
                                         }
 
@@ -1102,6 +1157,8 @@ class Pixel extends React.Component {
                                 px_per_px={1}/>
                             <SwipeableDrawer
                                 className={classes.contentDrawer}
+                                hysteresis={0.8}
+                                disableBackdropTransition={true}
                                 open={_is_edit_drawer_open}
                                 onOpen={this._handle_edit_drawer_open}
                                 onClose={this._handle_edit_drawer_close}

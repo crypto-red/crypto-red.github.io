@@ -4,6 +4,7 @@ const palette = {
         light: "#060e23",
         main: "#060e23",
         dark: "#060e23",
+        darker: "#020613",
         action: "#1c1882",
         actionRed: "#440202",
         actionLighter: "#2823ad",

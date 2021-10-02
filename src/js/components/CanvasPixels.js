@@ -4352,6 +4352,13 @@ class CanvasPixels extends React.Component {
         return Math.round(value).toString(16).padStart(2, "0");
     };
 
+    _hsl_to_hex = (h, s, l) => {
+
+        const [r, g, b] = this._hsl_to_rgb(h, s, l);
+        const hex = this._get_hex_color_from_rgba_values(r, g, b, 255);
+        return hex;
+    };
+
     _get_hex_values_from_rgba_values = (r, g, b, a) => {
 
         return [
