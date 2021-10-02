@@ -126,25 +126,38 @@ const styles = theme => ({
         display: "flex",
     },
     drawerPaper: {
+        boxShadow: "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)",
+        border: "none",
         width: 360,
+        overflowX: "overlay",
+    },
+    swipeableDrawerPaper: {
+        maxWidth: "100%",
     },
     drawerContainer: {
         overflow: "overlay",
+        "& div": {
+            overflow: "hidden",
+        },
+        "& div .react-swipeable-view-container div": {
+            overflow: "visible !important",
+            alignItems: "normal",
+        }
     },
     listSubHeader: {
-        color: theme.palette.secondary.dark,
-        fontWeight: "bold",
+        alignSelf: "flex-start",
+        color: theme.palette.secondary.light,
+        backgroundColor: "#eeeeee",
         "& span svg": {
             verticalAlign: "sub",
             marginRight: theme.spacing(1),
-            display: "none"
+            display: "none",
         }
     },
     listItemIcon: {
         color: theme.palette.secondary.dark
     },
     tabs: {
-        backgroundColor: "#eeeeee",
         "& .MuiTab-root": {
             minWidth: "auto",
             flex: "auto",
@@ -173,8 +186,14 @@ const styles = theme => ({
         height: theme.spacing(8),
         "& .MuiAvatar-img": {
             width: "auto",
+            borderRadius: 2,
+            background: "repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / 8px 8px",
         },
         marginRight: theme.spacing(2),
+    },
+    layerSelected: {
+        borderLeft: `4px solid ${theme.palette.primary.dark}`,
+        paddingLeft: 12,
     },
     fab: {
         [theme.breakpoints.up("lg")]: {
@@ -941,6 +960,8 @@ class Pixel extends React.Component {
                 <Divider />
                 <div className={classes.drawerContainer}>
                     <SwipeableViews
+                        style={{}}
+                        containerStyle={{overflow: "visible"}}
                         disableLazyLoading={true}
                         animateHeight={true}
                         index={_view_name_index}
@@ -950,7 +971,7 @@ class Pixel extends React.Component {
                             Object.entries(actions).map(a => a[1]).map((view, index) => {
 
                                 return (
-                                    <List className={classes.listOfTools}>
+                                    <List style={{overflow: "visible"}} className={classes.listOfTools}>
 
                                         {
                                             _view_names[index] === "layers" ?
@@ -962,7 +983,9 @@ class Pixel extends React.Component {
                                                     {[..._layers].reverse().map((layer, index, array) => {
                                                         const index_reverse_order = (array.length - 1) - index;
                                                         return (
-                                                            <ListItem button disabled={_layer_index === index_reverse_order} onClick={() => this._change_active_layer(index_reverse_order)}>
+                                                            <ListItem
+                                                                className={_layer_index === index_reverse_order ? classes.layerSelected: null}
+                                                                button onClick={() => this._change_active_layer(index_reverse_order)}>
                                                                 <ListItemAvatar>
                                                                     <Avatar variant="square" className={classes.layerThumbnail} src={layer.thumbnail} />
                                                                 </ListItemAvatar>
@@ -1082,8 +1105,11 @@ class Pixel extends React.Component {
                                 open={_is_edit_drawer_open}
                                 onOpen={this._handle_edit_drawer_open}
                                 onClose={this._handle_edit_drawer_close}
+                                classes={{
+                                    paper: classes.swipeableDrawerPaper
+                                }}
                                 variant="temporary"
-                                anchor="right"
+                                anchor="bottom"
                             >
                                 {drawer_content}
                             </SwipeableDrawer>
