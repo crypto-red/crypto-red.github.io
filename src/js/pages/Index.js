@@ -17,6 +17,7 @@ import AppTabs from "../components/AppTabs";
 import dispatcher from "../dispatcher";
 import actions from "../actions/utils";
 import Home from "./Home";
+import Pixel from "./Pixel";
 import About from "./About";
 import Dashboard from "./Dashboard";
 import Settings from "./Settings";
@@ -395,6 +396,7 @@ class Index extends React.Component {
         let page_tabs_component = null;
         const page_compoments = {
             home: <Home></Home>,
+            pixel: <Pixel></Pixel>,
             unknown: <Unknown></Unknown>,
             about: <About pathname={pathname}></About>,
             dashboard: <Dashboard></Dashboard>,

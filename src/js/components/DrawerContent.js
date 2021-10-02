@@ -35,11 +35,12 @@ import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
 import LockIcon from "@material-ui/icons/Lock";
 import AtmIcon from "@material-ui/icons/Atm";
 import FeedbackIcon from "@material-ui/icons/Feedback";
+import DownasaurIcon from "../icons/Downasaur";
+
 import QrCodeScanIcon from "../icons/QrCodeScan";
-
 import CryptDialog from "../components/CryptDialog";
-import QRCodeToolsDialog from "../components/QRCodeToolsDialog";
 
+import QRCodeToolsDialog from "../components/QRCodeToolsDialog";
 import { HISTORY, COINS } from "../utils/constants";
 import api from "../utils/api";
 import actions from "../actions/utils";
@@ -186,6 +187,14 @@ class DrawerContent extends React.Component {
         const { _history } = this.state;
 
         _history.push("/dashboard");
+        this.props.onClose();
+    };
+
+    _open_pixel_page = () => {
+
+        const { _history } = this.state;
+
+        _history.push("/pixel");
         this.props.onClose();
     };
 
@@ -371,6 +380,18 @@ class DrawerContent extends React.Component {
                         <Collapse in={_menu_expanded === "coins"} timeout="auto" unmountOnExit>
                             <List button component="div" disablePadding>
                                 {coinListItem}
+                            </List>
+                        </Collapse>
+                        <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "nft")}>
+                            <ListItemText primary={"NFT"} />
+                            <ExpandMoreIcon  className={_menu_expanded === "nft" ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
+                        </ListItem>
+                        <Collapse in={_menu_expanded === "nft"} timeout="auto" unmountOnExit>
+                            <List button component="div" disablePadding>
+                                <ListItem button className={classes.nested} onClick={this._open_pixel_page}>
+                                    <ListItemIcon><DownasaurIcon className={classes.iconColor} /></ListItemIcon>
+                                    <ListItemText primary={"Editor"} />
+                                </ListItem>
                             </List>
                         </Collapse>
                         <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "trade")}>

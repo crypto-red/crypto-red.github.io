@@ -51,6 +51,11 @@ const PAGE_ROUTES = [
         tabs: ""
     },
     {
+        page_regex: /\/(pixel)$/,
+        page_name: "pixel",
+        tabs: ""
+    },
+    {
         page_regex: /\/(accounts)$/,
         page_name: "accounts",
         tabs: ""

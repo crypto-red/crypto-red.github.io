@@ -109,7 +109,7 @@ class CoinBalance extends React.Component {
 
         let hive_username = logged_account ? logged_account.hive_username || "": "";
 
-        if(logged_account && !(coin_id.includes("hive") && hive_username === "")) {
+        if(logged_account) {
 
             this.setState({_coin_balance: null}, () => {
 

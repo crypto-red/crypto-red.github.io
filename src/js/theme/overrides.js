@@ -5,7 +5,9 @@ const overrides = {
                 overflow: "overlay",
             },
             body: {
-                backgroundColor: "#F4F6F8"
+                backgroundColor: "#F4F6F8",
+                width: "100vw",
+                height: "100vh",
             },
             "p img": {
                 width: "100%",
