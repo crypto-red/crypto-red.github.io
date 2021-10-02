@@ -266,6 +266,7 @@ class Pixel extends React.Component {
             _is_something_selected: false,
             _hide_canvas_content: false,
             _show_original_image_in_background: false,
+            _show_transparent_image_in_background: true,
             _is_image_import_mode: false,
             _layers: [{name: "Layer 0", hidden: false}],
             _layer_index: 0,
@@ -678,6 +679,11 @@ class Pixel extends React.Component {
         this.setState({_show_original_image_in_background: !this.state._show_original_image_in_background});
     }
 
+    _show_hide_transparent_image = () => {
+
+        this.setState({_show_transparent_image_in_background: !this.state._show_transparent_image_in_background});
+    }
+
     _handle_image_import_mode_change = (is_image_import_mode) => {
 
         this.setState({_is_image_import_mode: is_image_import_mode});
@@ -778,6 +784,7 @@ class Pixel extends React.Component {
             _is_image_import_mode,
             _hide_canvas_content,
             _show_original_image_in_background,
+            _show_transparent_image_in_background,
             _can_undo,
             _can_redo,
             _current_color,
@@ -833,6 +840,7 @@ class Pixel extends React.Component {
                     tools: [
                         {icon: _hide_canvas_content ? <LayerOutlineIcon />: <LayerOffOutlineIcon />, text: _hide_canvas_content ? "Show canvas content": "Hide canvas content", on_click: () => {this._show_hide_canvas_content()}},
                         {icon: _show_original_image_in_background ? <ImageOffOutlineIcon />: <ImageOutlineIcon />, text: _show_original_image_in_background ? "Hide bg img": "Show bg img", on_click: () => {this._show_hide_background_image()}},
+                        {icon: _show_transparent_image_in_background ? <ImageOffOutlineIcon />: <ImageOutlineIcon />, text: _show_transparent_image_in_background ? "Hide chessboard": "Show chessboard", on_click: () => {this._show_hide_transparent_image()}},
                     ]
                 },
                 {
@@ -861,31 +869,31 @@ class Pixel extends React.Component {
                     icon: <DrawIcon />,
                     text: "Drawing tools",
                     tools: [
-                        {icon: <ColorPickerIcon />, text: "Picker", on_click: () => {this._set_tool("PICKER")}},
-                        {icon: <MoveIcon />, text: "Move", on_click: () => {this._set_tool("MOVE")}},
-                        {icon: <PencilIcon />, text: "Pencil", on_click: () => {this._set_tool("PENCIL")}},
-                        {icon: <PencilPerfectIcon />, text: "Pencil perfect", on_click: () => {this._set_tool("PENCIL PERFECT")}},
-                        {icon: <MirrorIcon />, text: "Set pencil mirror", on_click: () => {this._set_tool("SET PENCIL MIRROR")}},
+                        {icon: <ColorPickerIcon />, disabled: _tool === "PICKER", text: "Picker", on_click: () => {this._set_tool("PICKER")}},
+                        {icon: <MoveIcon />, disabled: _tool === "MOVE", text: "Move", on_click: () => {this._set_tool("MOVE")}},
+                        {icon: <PencilIcon />, disabled: _tool === "PENCIL", text: "Pencil", on_click: () => {this._set_tool("PENCIL")}},
+                        {icon: <PencilPerfectIcon />, disabled: _tool === "PENCIL PERFECT", text: "Pencil perfect", on_click: () => {this._set_tool("PENCIL PERFECT")}},
+                        {icon: <MirrorIcon />, disabled: _tool === "SET PENCIL MIRROR", text: "Set pencil mirror", on_click: () => {this._set_tool("SET PENCIL MIRROR")}},
                     ]
                 },
                 {
                     icon: <ShapesIcon />,
                     text: "Shapes tools",
                     tools: [
-                        {icon: <LineIcon />, text: "Line", on_click: () => {this._set_tool("LINE")}},
-                        {icon: <RectangleIcon />, text: "Rectangle", on_click: () => {this._set_tool("RECTANGLE")}},
-                        {icon: <EllipseIcon />, text: "Ellipse", on_click: () => {this._set_tool("ELLIPSE")}},
-                        {icon: <ContourIcon />, text: "Contour", on_click: () => {this._set_tool("CONTOUR")}},
+                        {icon: <LineIcon />, disabled: _tool === "LINE", text: "Line", on_click: () => {this._set_tool("LINE")}},
+                        {icon: <RectangleIcon />, disabled: _tool === "RECTANGLE", text: "Rectangle", on_click: () => {this._set_tool("RECTANGLE")}},
+                        {icon: <EllipseIcon />, disabled: _tool === "ELLIPSE", text: "Ellipse", on_click: () => {this._set_tool("ELLIPSE")}},
+                        {icon: <ContourIcon />, disabled: _tool === "CONTOUR", text: "Contour", on_click: () => {this._set_tool("CONTOUR")}},
                     ]
                 },
                 {
                     icon: <PaintIcon />,
                     text: "Paint tools",
                     tools: [
-                        {icon: <BucketIcon />, text: "Bucket", on_click: () => {this._set_tool("BUCKET")}},
-                        {icon: <BucketIcon />, text: "Magic bucket", on_click: () => {this._set_tool("HUE BUCKET")}},
-                        {icon: <PaletteSwatchIcon />, text: "Exchange", on_click: () => {this._set_tool("EXCHANGE")}},
-                        {icon: <BorderBottomIcon />, text: "Border", on_click: () => {this._set_tool("BORDER")}},
+                        {icon: <BucketIcon />, disabled: _tool === "BUCKET", text: "Bucket", on_click: () => {this._set_tool("BUCKET")}},
+                        {icon: <BucketIcon />, disabled: _tool === "HUE BUCKET", text: "Magic bucket", on_click: () => {this._set_tool("HUE BUCKET")}},
+                        {icon: <PaletteSwatchIcon />, disabled: _tool === "EXCHANGE", text: "Exchange", on_click: () => {this._set_tool("EXCHANGE")}},
+                        {icon: <BorderBottomIcon />, disabled: _tool === "BORDER", text: "Border", on_click: () => {this._set_tool("BORDER")}},
                     ]
                 },
                 {
@@ -913,14 +921,14 @@ class Pixel extends React.Component {
                     icon: <SelectInImageIcon />,
                     text: "Select tool",
                     tools: [
-                        {icon: <SelectIcon />, text: "Select path", on_click: () => {this._set_tool("SELECT PATH")}},
-                        {icon: <SelectColorIcon />, text: "Select color", on_click: () => {this._set_tool("SELECT COLOR")}},
-                        {icon: <MagicIcon />, text: "Select color threshold", on_click: () => {this._set_tool("SELECT COLOR THRESHOLD")}},
-                        {icon: <SquareSmallIcon />, text: "Select pixel", on_click: () => {this._set_tool("SELECT PIXEL")}},
-                        {icon: <SquareSmallIcon />, text: "Select pixel perfect", on_click: () => {this._set_tool("SELECT PIXEL PERFECT")}},
-                        {icon: <SelectIcon />, text: "Select line", on_click: () => {this._set_tool("SELECT LINE")}},
-                        {icon: <SelectionRectangleIcon />, text: "Select rectangle", on_click: () => {this._set_tool("SELECT RECTANGLE")}},
-                        {icon: <SelectionEllipseIcon />, text: "Select ellipse", on_click: () => {this._set_tool("SELECT ELLIPSE")}},
+                        {icon: <SelectIcon />, disabled: _tool === "SELECT PATH", text: "Select path", on_click: () => {this._set_tool("SELECT PATH")}},
+                        {icon: <SelectColorIcon />, disabled: _tool === "SELECT COLOR", text: "Select color", on_click: () => {this._set_tool("SELECT COLOR")}},
+                        {icon: <MagicIcon />, disabled: _tool === "SELECT COLOR THRESHOLD", text: "Select color threshold", on_click: () => {this._set_tool("SELECT COLOR THRESHOLD")}},
+                        {icon: <SquareSmallIcon />, disabled: _tool === "SELECT PIXEL", text: "Select pixel", on_click: () => {this._set_tool("SELECT PIXEL")}},
+                        {icon: <SquareSmallIcon />, disabled: _tool === "SELECT PIXEL PERFECT", text: "Select pixel perfect", on_click: () => {this._set_tool("SELECT PIXEL PERFECT")}},
+                        {icon: <SelectIcon />, disabled: _tool === "SELECT LINE", text: "Select line", on_click: () => {this._set_tool("SELECT LINE")}},
+                        {icon: <SelectionRectangleIcon />, disabled: _tool === "SELECT RECTANGLE", text: "Select rectangle", on_click: () => {this._set_tool("SELECT RECTANGLE")}},
+                        {icon: <SelectionEllipseIcon />, disabled: _tool === "SELECT ELLIPSE", text: "Select ellipse", on_click: () => {this._set_tool("SELECT ELLIPSE")}},
                     ]
                 },
                 {
@@ -1145,6 +1153,7 @@ class Pixel extends React.Component {
                                 tool={_tool}
                                 hide_canvas_content={_hide_canvas_content}
                                 show_original_image_in_background={_show_original_image_in_background}
+                                show_transparent_image_in_background={_show_transparent_image_in_background}
                                 select_mode={_select_mode}
                                 pencil_mirror_mode={_pencil_mirror_mode}
                                 hue={_hue}

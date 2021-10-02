@@ -47,16 +47,17 @@ class CanvasPixels extends React.Component {
             fast_drawing: props.fast_drawing || false,
             canvas_cursor: props.canvas_cursor || 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAYAAAAfrhY5AAAAAXNSR0IArs4c6QAAAFxJREFUSIntlkEKACEQw6b7/z/Hq7cdqeAcmrtJQRCrDACc824YZ8B3cU/iiSc+M27x7IULDqrq3Z0kdaVdnwA6XqA14Mh3svTXuA246QtzyB8u8cQTHx23cF+4BaK1P/6WF9EdAAAAAElFTkSuQmCC") 15 15, auto',
             canvas_border_width: props.canvas_border_width || 1,
-            canvas_border_color: props.canvas_border_color || "#888",
-            canvas_border_radius: props.canvas_border_radius || 0,
+            canvas_border_color: props.canvas_border_color || "#666",
+            canvas_border_radius: props.canvas_border_radius || 2,
             canvas_wrapper_box_shadow: props.canvas_wrapper_box_shadow || "0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%)",
             canvas_wrapper_border_width: props.canvas_wrapper_border_width || 0,
             canvas_wrapper_border_color: props.canvas_wrapper_border_color || "#000000",
             canvas_wrapper_background_color: props.canvas_wrapper_background_color || "#ffffff",
-            canvas_wrapper_border_radius: props.canvas_wrapper_border_radius || 2,
-            canvas_wrapper_padding: props.canvas_wrapper_padding || 32,
-            show_original_image_in_background: true || props.show_original_image_in_background,
-            hide_canvas_content: false || props.hide_canvas_content,
+            canvas_wrapper_border_radius: props.canvas_wrapper_border_radius || 4,
+            canvas_wrapper_padding: props.canvas_wrapper_padding || 96,
+            show_original_image_in_background: typeof props.show_original_image_in_background === "undefined" ? true: props.show_original_image_in_background,
+            show_transparent_image_in_background: typeof props.show_transparent_image_in_background === "undefined" ? true: props.show_transparent_image_in_background,
+            hide_canvas_content: props.hide_canvas_content || false,
             scale: props.scale || 0.75,
             scale_pos_x: props.scale_pos_x || 0,
             scale_pos_y: props.scale_pos_y || 0,
@@ -5519,6 +5520,7 @@ class CanvasPixels extends React.Component {
             pxl_height,
             px_per_px,
             show_original_image_in_background,
+            show_transparent_image_in_background,
             className,
             _base64_original_images,
             _original_image_index,
@@ -5544,7 +5546,11 @@ class CanvasPixels extends React.Component {
         const background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
             {
                 background: `url("${_base64_original_images[_original_image_index]}")`,
-                backgroundSize: "100% 100%"
+                backgroundSize: "100% 100%",
+            }:
+            show_transparent_image_in_background ?
+            {
+                background: "repeating-conic-gradient(rgb(2 9 35 / 12%) 0% 25%, transparent 0% 50%) 50% / 20px 20px",
             }: {};
 
         const canvas_container_width = _canvas_container === null ? 0: _canvas_container.clientWidth || 0;
@@ -5683,7 +5689,7 @@ class CanvasPixels extends React.Component {
                              borderRadius: canvas_wrapper_border_radius,
                              width: canvas_wrapper_width,
                              height: canvas_wrapper_height,
-                             padding: canvas_wrapper_padding,
+                             padding: canvas_wrapper_padding * scale,
                              margin: "0 auto"
                          }}
                          ref={this._set_canvas_wrapper_ref}>
