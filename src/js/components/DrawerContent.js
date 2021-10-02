@@ -35,7 +35,7 @@ import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
 import LockIcon from "@material-ui/icons/Lock";
 import AtmIcon from "@material-ui/icons/Atm";
 import FeedbackIcon from "@material-ui/icons/Feedback";
-import DownasaurIcon from "../icons/Downasaur";
+import ImageEditIcon from "../icons/ImageEdit";
 
 import QrCodeScanIcon from "../icons/QrCodeScan";
 import CryptDialog from "../components/CryptDialog";
@@ -389,7 +389,7 @@ class DrawerContent extends React.Component {
                         <Collapse in={_menu_expanded === "nft"} timeout="auto" unmountOnExit>
                             <List button component="div" disablePadding>
                                 <ListItem button className={classes.nested} onClick={this._open_pixel_page}>
-                                    <ListItemIcon><DownasaurIcon className={classes.iconColor} /></ListItemIcon>
+                                    <ListItemIcon><ImageEditIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary={"Editor"} />
                                 </ListItem>
                             </List>

@@ -46,7 +46,7 @@ class CanvasPixels extends React.Component {
             px_per_px: props.px_per_px || 4,
             fast_drawing: props.fast_drawing || false,
             canvas_cursor: props.canvas_cursor || 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAYAAAAfrhY5AAAAAXNSR0IArs4c6QAAAFxJREFUSIntlkEKACEQw6b7/z/Hq7cdqeAcmrtJQRCrDACc824YZ8B3cU/iiSc+M27x7IULDqrq3Z0kdaVdnwA6XqA14Mh3svTXuA246QtzyB8u8cQTHx23cF+4BaK1P/6WF9EdAAAAAElFTkSuQmCC") 15 15, auto',
-            canvas_border_width: props.canvas_border_width || 1,
+            canvas_border_width: props.canvas_border_width || 0,
             canvas_border_color: props.canvas_border_color || "#666",
             canvas_border_radius: props.canvas_border_radius || 2,
             canvas_wrapper_box_shadow: props.canvas_wrapper_box_shadow || "0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%)",

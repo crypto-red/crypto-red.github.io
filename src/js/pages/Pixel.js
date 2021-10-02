@@ -81,6 +81,7 @@ import ImageOffOutlineIcon from "../icons/ImageOffOutline";
 import ImageOutlineIcon from "../icons/ImageOutline";
 import ImageEditIcon from "../icons/ImageEdit";
 import MergeIcon from "../icons/Merge";
+import CheckBoldIcon from "../icons/CheckBold";
 
 import {List, ListSubheader, ListItem, ListItemIcon, ListItemText, ListItemAvatar, Avatar} from "@material-ui/core";
 import Fab from "@material-ui/core/Fab";
@@ -125,6 +126,15 @@ const styles = theme => ({
             display: "none",
         },
     },
+    coordinate: {
+        padding: "0px 0px 8px 0px",
+        display: "block",
+        textAlign: "right",
+        color: "#aaa",
+        [theme.breakpoints.down("md")]: {
+            display: "none",
+        },
+    },
     contentDrawerFixed: {
         [theme.breakpoints.down("md")]: {
             display: "none",
@@ -142,14 +152,21 @@ const styles = theme => ({
         maxWidth: "100%",
     },
     drawerContainer: {
-        overflow: "overlay",
-        "& div": {
-            overflow: "hidden",
+        overflowY: "overlay",
+        overflowX: "hidden",
+        "& > div": {
+            overflowX: "auto !important",
+            overflowY: "visible !important",
+            display: "inline-table !important",
+            width: "100% !important",
         },
-        '& div .react-swipeable-view-container div[data-swipeable="true"]': {
+        '& div .react-swipeable-view-container > div[data-swipeable="true"]': {
             overflow: "visible !important",
             alignItems: "normal",
-        }
+        },
+        '& > div > .react-swipeable-view-container': {
+            display: "flex !important",
+        },
     },
     listSubHeader: {
         alignSelf: "flex-start",
@@ -170,13 +187,13 @@ const styles = theme => ({
             flex: "auto",
         },
         "& .MuiTabs-indicator": {
-            backgroundColor: theme.palette.primary.action
+            backgroundColor: theme.palette.secondary.main
         }
     },
     tab: {
-        color: theme.palette.primary.action,
+        color: theme.palette.secondary.main,
         "&.Mui-selected": {
-            color: theme.palette.primary.action,
+            color: theme.palette.secondary.dark,
         },
     },
     backdrop: {
@@ -199,8 +216,8 @@ const styles = theme => ({
         marginRight: theme.spacing(2),
     },
     layerSelected: {
-        borderLeft: `4px solid ${theme.palette.primary.action}`,
-        paddingLeft: 12,
+        borderRight: `4px solid ${theme.palette.primary.action}`,
+        paddingRight: 12,
     },
     fab: {
         [theme.breakpoints.up("lg")]: {
@@ -224,10 +241,9 @@ const styles = theme => ({
     },
     buttonColor: {
         padding: 0,
-        borderRadius: "50%",
+        borderRadius: 2,
         height: 32,
-        width: 32,
-        boxShadow: "rgb(0 0 0 / 20%) 0px 3px 1px -2px, rgb(0 0 0 / 14%) 0px 2px 2px 0px, rgb(0 0 0 / 12%) 0px 1px 5px 0px",
+        width: 32
     },
     chromePicker: {
         fontFamily: "Open Sans !important",
@@ -309,6 +325,15 @@ class Pixel extends React.Component {
         if(!_canvas) { return "#000000" }
 
         return _canvas._hsl_to_hex(h, s, l);
+    };
+
+    _rgba_from_hex = (hex) => {
+
+        const { _canvas } = this.state;
+
+        if(!_canvas) { return [0, 0, 0, 0] }
+
+        return _canvas.get_rgba_from_hex(hex);
     };
 
     _handle_keydown = (event) => {
@@ -982,44 +1007,50 @@ class Pixel extends React.Component {
         };
 
         let colors = [];
-        for (let i = 1; i <= 70; i++) {
+        for (let i = 1; i <= 96; i++) {
 
-            colors.push(this._hsl_to_hex((i / 70) * 360, _saturation, _luminosity));
+            colors.push(this._hsl_to_hex((i / 96) * 360, _saturation, _luminosity));
         }
+
+        const [r_1, g_1, b_1] = _current_color === "#ffffff" ? [196, 196, 196]: this._rgba_from_hex(_current_color);
+        const is_current_color_dark = r_1 + g_1 + b_1 < 152 * 3;
+
+        const [r_2, g_2, b_2] = _second_color === "#ffffff" ? [196, 196, 196]: this._rgba_from_hex(_second_color);
+        const is_second_color_dark = r_2 + g_2 + b_2 < 152 * 3;
 
         const drawer_content = (
             <div style={{display: "contents"}}>
-                <div style={{padding: 21, position: "relative", zIndex: -1}}>
-                    <Typography id="strength-slider" gutterBottom>
-                        Effect strength:
-                    </Typography>
-                    <Slider
-                        defaultValue={2/16}
-                        step={1/16}
-                        min={0}
-                        max={1}
-                        onChangeCommitted={this._set_value_from_slider}
-                        aria-labelledby="strength-slider"
-                    />
-                    <span>{`X: ${_x}, Y: ${_y}`}</span>
+                <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
+                    <div style={{padding: "16px 24px 12px 24px", position: "relative", zIndex: -1}}>
+                        <span className={classes.coordinate}>{`X: ${_x}, Y: ${_y}`}</span>
+                        <Typography id="strength-slider" gutterBottom>
+                            Effect strength:
+                        </Typography>
+                        <Slider
+                            defaultValue={2/16}
+                            step={1/16}
+                            min={0}
+                            max={1}
+                            onChangeCommitted={this._set_value_from_slider}
+                            aria-labelledby="strength-slider"
+                        />
+                    </div>
+                    <Tabs className={classes.tabs}
+                          indicatorColor="primary"
+                          textColor="primary"
+                          variant="fullWidth"
+                          selectionFollowsFocus
+                          value={_view_name_index}
+                          onChange={this._handle_view_name_change}>
+                        <Tab className={classes.tab} icon={<PaletteIcon />} />
+                        <Tab className={classes.tab} icon={<ImageIcon />} />
+                        <Tab className={classes.tab} icon={<AllLayersIcon />} />
+                        <Tab className={classes.tab} icon={<ToolsIcon />} />
+                        <Tab className={classes.tab} icon={<SelectIcon />} />
+                        <Tab className={classes.tab} icon={<ImageEffectIcon />} />
+                        <Tab className={classes.tab} icon={<ImageFilterIcon />} />
+                    </Tabs>
                 </div>
-                <Divider />
-                <Tabs className={classes.tabs}
-                      indicatorColor="primary"
-                      textColor="primary"
-                      variant="fullWidth"
-                      selectionFollowsFocus
-                      value={_view_name_index}
-                      onChange={this._handle_view_name_change}>
-                    <Tab className={classes.tab} icon={<PaletteIcon />} />
-                    <Tab className={classes.tab} icon={<ImageIcon />} />
-                    <Tab className={classes.tab} icon={<AllLayersIcon />} />
-                    <Tab className={classes.tab} icon={<ToolsIcon />} />
-                    <Tab className={classes.tab} icon={<SelectIcon />} />
-                    <Tab className={classes.tab} icon={<ImageEffectIcon />} />
-                    <Tab className={classes.tab} icon={<ImageFilterIcon />} />
-                </Tabs>
-                <Divider />
                 <div className={classes.drawerContainer}>
                     <SwipeableViews
                         containerStyle={{overflow: "visible"}}
@@ -1076,10 +1107,14 @@ class Pixel extends React.Component {
                                                                       disableAlpha />
                                                     </Menu>
 
-                                                    <Button variant={"contained"} style={{margin: 24, boxSizing: "content-box", background: _current_color, borderRadius: 2, height: 48, width: 96}} onClick={(event) => {this._handle_color_menu_open(event, _current_color)}}/>
-                                                    <Button variant={"contained"} style={{margin: 24, boxSizing: "content-box", background: _second_color, borderRadius: 2, height: 48, width: 96}} onClick={(event) => {this._switch_with_second_color()}}/>
+                                                    <Button variant={"contained"} style={{fontWeight: "bold", color: is_current_color_dark ? "white": "black", boxShadow: `0px 2px 4px -1px rgb(${r_1} ${g_1} ${b_1} / 20%), 0px 4px 5px 0px rgb(${r_1} ${g_1} ${b_1} / 14%), 0px 1px 10px 0px rgb(${r_1} ${g_1} ${b_1} / 12%)`, margin: 24, boxSizing: "content-box", background: _current_color, borderRadius: 4, height: 48, width: 96}} onClick={(event) => {this._handle_color_menu_open(event, _current_color)}}>
+                                                        Primary
+                                                    </Button>
+                                                    <Button variant={"contained"} style={{fontWeight: "bold", color: is_second_color_dark ? "white": "black", boxShadow: `0px 2px 4px -1px rgb(${r_2} ${g_2} ${b_2} / 20%), 0px 4px 5px 0px rgb(${r_2} ${g_2} ${b_2} / 14%), 0px 1px 10px 0px rgb(${r_2} ${g_2} ${b_2} / 12%)`, margin: 24, boxSizing: "content-box", background: _second_color, borderRadius: 4, height: 48, width: 96}} onClick={(event) => {this._switch_with_second_color()}}>
+                                                        Secondary
+                                                    </Button>
 
-                                                    <div style={{padding: 21, position: "relative"}}>
+                                                    <div style={{padding: "8px 24px", position: "relative"}}>
                                                         <Typography id="luminosity-slider" gutterBottom>Luminosity</Typography>
                                                         <Slider defaultValue={_luminosity} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_luminosity_from_slider} aria-labelledby="luminosity-slider"/>
 
@@ -1089,13 +1124,22 @@ class Pixel extends React.Component {
                                                     </div>
 
 
-                                                    <div style={{ padding: 24, display: "flex", flexDirection: "row", justifyContent: "center", alignContent: "stretch", gap: "12px 12px", flexWrap: "wrap"}}>
+                                                    <div style={{ padding: 24, display: "flex", flexDirection: "row", justifyContent: "flex-start", alignContent: "stretch", gap: "8px", flexWrap: "wrap"}}>
                                                         {colors.map((color, index) => {
 
+                                                            const [r, g, b] = this._rgba_from_hex(color);
+
                                                             return (
-                                                                <Fade in timeout={200 + index * 20}>
-                                                                    <ButtonBase small key={index} style={{background: color}} className={classes.buttonColor} onClick={() => {this._handle_current_color_change(color)}}/>
-                                                                </Fade>
+
+                                                                    <ButtonBase
+                                                                        key={index}
+                                                                        style={{
+                                                                            background: color,
+                                                                            boxShadow: `0px 2px 4px -1px rgb(${r} ${g} ${b} / 20%), 0px 4px 5px 0px rgb(${r} ${g} ${b} / 14%), 0px 1px 10px 0px rgb(${r} ${g} ${b} / 12%)`
+                                                                        }}
+                                                                        className={classes.buttonColor} onClick={() => {this._handle_current_color_change(color)}}>
+                                                                        {color === _current_color ? <Fade in><CheckBoldIcon style={{color: is_current_color_dark ? "white": "black"}} /></Fade>: ""}
+                                                                    </ButtonBase>
                                                             )
                                                         })}
                                                     </div>
