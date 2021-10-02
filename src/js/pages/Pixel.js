@@ -219,7 +219,7 @@ const styles = theme => ({
     },
     buttonColor: {
         padding: 0,
-        borderRadius: 2,
+        borderRadius: "50%",
         height: 32,
         width: 32,
         margin: "auto"
@@ -1073,7 +1073,7 @@ class Pixel extends React.Component {
                                                     <div style={{ textAlign: "center", margin: 24, display: "inline-flex", flexDirection: "row", justifyContent: "flex-start", alignContent: "stretch", gap: "12px 12px", flexWrap: "wrap"}}>
                                                         {colors.map((color, index) => {
 
-                                                            return <ButtonBase small key={index} style={{background: color}} classes={classes.buttonColor} onClick={() => {this._handle_current_color_change(color)}}/>
+                                                            return <ButtonBase small key={index} style={{background: color}} className={classes.buttonColor} onClick={() => {this._handle_current_color_change(color)}}/>
                                                         })}
                                                     </div>
 
@@ -1151,13 +1151,12 @@ class Pixel extends React.Component {
                                 pxl_height={_height}
                                 pxl_current_color={_current_color}
                                 convert_scale={1}
-                                default_size={128}
-                                max_size={128*2}
+                                default_size={96}
+                                max_size={96*2}
                                 fast_drawing={true}
-                                px_per_px={1}/>
+                                px_per_px={4}/>
                             <SwipeableDrawer
                                 className={classes.contentDrawer}
-                                hysteresis={0.8}
                                 disableBackdropTransition={true}
                                 open={_is_edit_drawer_open}
                                 onOpen={this._handle_edit_drawer_open}
