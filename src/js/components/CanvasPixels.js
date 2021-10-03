@@ -75,11 +75,11 @@ class CanvasPixels extends React.Component {
             _old_layers: [{id: Date.now(), name: "Layer 0", hidden: false, opacity: 1, data: {}}],
             _layers: [{id: Date.now(), name: "Layer 0", hidden: false, opacity: 1, data: {}}],
             _layer_index: 0,
-            _s_pxl_colors: [["#00000000"]], // THIS [OK]
+            _s_pxl_colors: [["#00000000"]],
             _old_pxl_colors: ["#00000000"],
-            _s_pxls: [new Array(props.pxl_width * props.pxl_height).fill(0)], // THIS [OK]
+            _s_pxls: [new Array(props.pxl_width * props.pxl_height).fill(0)],
             _old_pxls: new Array(props.pxl_width * props.pxl_height).fill(0),
-            _json_state_history: `{"previous_history_position": 0, "history_position": 0, "state_history": []}`,  // THIS [OK]
+            _json_state_history: `{"previous_history_position": 0, "history_position": 0, "state_history": []}`,
             _old_pxl_width: 0,
             _old_pxl_height: 0,
             _pxls_hovered: null,
@@ -269,8 +269,20 @@ class CanvasPixels extends React.Component {
             });
         }
 
+        if(this.state.pxl_width !== new_props.pxl_width || this.state.pxl_height !== new_props.pxl_height) {
+
+            this.setState({
+                _pxl_indexes_of_selection: new Set(),
+                _layers: [{id: Date.now(), name: "Layer 0", hidden: false, opacity: 1, data: {}}],
+                _layer_index: 0,
+                _s_pxl_colors: [["#00000000"]],
+                _old_pxl_colors: ["#00000000"],
+            });
+        }
+
 
         if(
+            this.state.pxl_width !== new_props.pxl_width || this.state.pxl_height !== new_props.pxl_height ||
             this.state.hide_canvas_content !== new_props.hide_canvas_content ||
             this.state.pencil_mirror_mode !== new_props.pencil_mirror_mode ||
             this.state.tool.includes("PENCIL") && this.state.tool !== new_props.tool
@@ -3591,6 +3603,11 @@ class CanvasPixels extends React.Component {
     _notify_position_change = (event, position) => {
 
         if(this.props.onPositionChange) {
+
+            position = {
+                x: typeof position.x === "undefined" ? -1: position.x,
+                y: typeof position.y === "undefined" ? -1: position.y,
+            };
 
             this.props.onPositionChange(position);
         }

@@ -92,6 +92,7 @@ import DialogCloseButton from "../components/DialogCloseButton";
 import lightGreen from "@material-ui/core/colors/lightGreen";
 import red from "@material-ui/core/colors/red";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import ImagePlus from "../icons/ImagePlus";
 
 const styles = theme => ({
     green: {
@@ -310,7 +311,7 @@ class Pixel extends React.Component {
             _select_mode: "REPLACE",
             _pencil_mirror_mode: "NONE",
             _filters: [],
-            _position: {x: -1, y: -1},
+            _x: -1, _y: -1,
             _is_something_selected: false,
             _hide_canvas_content: false,
             _show_original_image_in_background: false,
@@ -726,6 +727,16 @@ class Pixel extends React.Component {
 
     };
 
+    _set_width_from_slider = (event, value) => {
+
+        this.setState({_width: value});
+    };
+
+    _set_height_from_slider = (event, value) => {
+
+        this.setState({_height: value});
+    };
+
     _handle_hue_change = (value) => {
 
         this.setState({_hue: value});
@@ -1103,7 +1114,7 @@ class Pixel extends React.Component {
                 <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
                     <div className={classes.drawerHeader}>
                         <span className={classes.coordinate}>
-                            <span>{`X: ${_x || -1}, Y: ${_y || -1} `}</span>
+                            <span>{`X: ${_x+1}, Y: ${_y+1} `}</span>
                             <span className={_kb < 64 ? classes.green: classes.red}>{`[~${Math.round(_kb * 100) / 100} kB]`}</span>
                         </span>
                         <Typography id="strength-slider" gutterBottom>
@@ -1296,6 +1307,26 @@ class Pixel extends React.Component {
                                                 );
                                             })
                                         }
+
+                                        {
+                                            _view_names[index] === "image" ?
+                                                <div>
+                                                    <ListSubheader className={classes.listSubHeader}>
+                                                        <span><ImagePlusIcon /></span>
+                                                        <span>Create new</span>
+                                                    </ListSubheader>
+                                                    <div style={{padding: "8px 24px", position: "relative"}}>
+                                                        <Typography id="width-slider" gutterBottom>Width</Typography>
+                                                        <Slider defaultValue={_width} step={8} valueLabelDisplay="auto" min={0} max={256} onChangeCommitted={this._set_width_from_slider} aria-labelledby="width-slider"/>
+                                                        <Typography id="height-slider" gutterBottom>Height</Typography>
+                                                        <Slider defaultValue={_height} step={8} valueLabelDisplay="auto" min={0} max={256} onChangeCommitted={this._set_height_from_slider} aria-labelledby="height-slider"/>
+                                                    </div>
+
+
+                                                </div>
+                                                : null
+                                        }
+
                                     </List>
                                 );
 
