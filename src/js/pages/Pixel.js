@@ -153,7 +153,7 @@ const styles = theme => ({
         left: "50%",
         transform: "translate(-50%, 0%)",
         borderRadius: "0px 0px 4px 4px",
-        backgroundColor: "#eeeeee",
+        backgroundColor: "#f5f5f5",
         [theme.breakpoints.down("md")]: {
             display: "none",
         },
@@ -1173,7 +1173,7 @@ class Pixel extends React.Component {
                                                                     _layer_index === index_reverse_order || _previous_layer_index === index_reverse_order ?
                                                                         <Collapse timeout={{ appear: 250, enter: 250, exit: 250 }} in={_layer_opened && _layer_index === index_reverse_order} className={classes.layerSelected}>
                                                                             <Divider />
-                                                                            <div style={{padding: "12px 24px"}}>
+                                                                            <div style={{padding: "12px 0px 12px 32px"}}>
                                                                                 <span>Colours:</span>
                                                                                 <div style={{ padding: "12px 0px", display: "flex", flexDirection: "row", justifyContent: "flex-start", alignContent: "stretch", gap: "8px", flexWrap: "wrap"}}>
                                                                                     {layer.colors.map((color, index) => {
@@ -1199,7 +1199,7 @@ class Pixel extends React.Component {
                                                                                 </div>
                                                                             </div>
                                                                             <Divider />
-                                                                            <div style={{padding: "12px 24px"}}>
+                                                                            <div style={{padding: "12px 0px 12px 32px"}}>
                                                                                 <span>Actions:</span>
                                                                                 <div style={{padding: "12px 0px"}}>
                                                                                     <Button color="primary" onClick={this._move_layer_up}>Move Layer up</Button>

@@ -20,9 +20,9 @@ import DialogActions from "@material-ui/core/DialogActions";
 import Dialog from "@material-ui/core/Dialog";
 import Checkbox from "@material-ui/core/Checkbox";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import Badge from "@material-ui/core/Badge";
 
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import MonetizationOnIcon from "@material-ui/icons/MonetizationOn";
 import PersonIcon from "@material-ui/icons/Person";
 import CodeIcon from "@material-ui/icons/Code";
 import SwapVertIcon from "@material-ui/icons/SwapVert";
@@ -35,6 +35,7 @@ import CloudDownloadIcon from "@material-ui/icons/CloudDownload";
 import LockIcon from "@material-ui/icons/Lock";
 import AtmIcon from "@material-ui/icons/Atm";
 import FeedbackIcon from "@material-ui/icons/Feedback";
+import ForumIcon from "@material-ui/icons/Forum";
 import ImageEditIcon from "../icons/ImageEdit";
 
 import QrCodeScanIcon from "../icons/QrCodeScan";
@@ -93,7 +94,37 @@ const styles = theme => ({
         "& .MuiAvatar-img": {
             objectFit: "initial",
         },
-    }
+    },
+    styledBadgeConnected: {
+        "& .MuiBadge-badge": {
+            backgroundColor: "#44b700",
+            color: "#44b700",
+            boxShadow: `0 0 0 2px ${theme.palette.secondary.main}`,
+            "&::after": {
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                borderRadius: "50%",
+                animation: "$ripple 1.2s infinite ease-in-out",
+                border: "1px solid currentColor",
+                content: "\"\"",
+            },
+        },
+        "@global": {
+            "@keyframes ripple": {
+                "0%": {
+                    transform: "scale(.8)",
+                    opacity: 1,
+                },
+                "100%": {
+                    transform: "scale(2.4)",
+                    opacity: 0,
+                },
+            }
+        }
+    },
 });
 
 class DrawerContent extends React.Component {
@@ -472,9 +503,11 @@ class DrawerContent extends React.Component {
                                     <ListItemIcon><CloudDownloadIcon className={classes.iconColor} /></ListItemIcon>
                                     <ListItemText primary={t( "components.drawer_content.menu.more.download")} />
                                 </ListItem>
-                                <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://opencollective.com/crypto-red")}>
-                                    <ListItemIcon><MonetizationOnIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary={t( "components.drawer_content.menu.more.donations")} />
+                                <ListItem button className={classes.nested} onClick={(event) => this._open_link(event, "https://t.me/walletcryptored")}>
+                                    <Badge className={classes.styledBadgeConnected} overlap="circular" badgeContent=" " variant="dot">
+                                        <ListItemIcon><ForumIcon className={classes.iconColor} /></ListItemIcon>
+                                    </Badge>
+                                    <ListItemText primary="Telegram" />
                                 </ListItem>
                                 <ListItem button className={classes.nested} onClick={(event) => {this._open_link(event, "https://forms.gle/iuEXqM2Nx61qwmPJ7")}}>
                                     <ListItemIcon><FeedbackIcon className={classes.iconColor} /></ListItemIcon>
