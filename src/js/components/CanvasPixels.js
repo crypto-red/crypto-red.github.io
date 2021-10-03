@@ -286,6 +286,44 @@ class CanvasPixels extends React.Component {
         }
     }
 
+    current_layer_up = () => {
+
+        let { _layers, _layer_index, _s_pxl_colors, _s_pxls } = this.state;
+
+        if(_layer_index < _layers.length-1) {
+
+            _layers.splice(_layer_index+1, 0, _layers.splice(_layer_index, 1)[0]);
+            _s_pxl_colors.splice(_layer_index+1, 0, _s_pxl_colors.splice(_layer_index, 1)[0]);
+            _s_pxls.splice(_layer_index+1, 0, _s_pxls.splice(_layer_index, 1)[0]);
+
+
+            this.setState({_layers, _s_pxl_colors, _s_pxls, _layer_index: _layer_index +1}, () => {
+
+                this._update_canvas();
+                this._notify_layers_and_compute_thumbnails_change();
+            });
+        }
+    };
+
+    current_layer_down = () => {
+
+        let { _layers, _layer_index, _s_pxl_colors, _s_pxls } = this.state;
+
+        if(_layer_index > 0) {
+
+            _layers.splice(_layer_index-1, 0, _layers.splice(_layer_index, 1)[0]);
+            _s_pxl_colors.splice(_layer_index-1, 0, _s_pxl_colors.splice(_layer_index, 1)[0]);
+            _s_pxls.splice(_layer_index-1, 0, _s_pxls.splice(_layer_index, 1)[0]);
+
+
+            this.setState({_layers, _s_pxl_colors, _s_pxls, _layer_index: _layer_index -1}, () => {
+
+                this._update_canvas();
+                this._notify_layers_and_compute_thumbnails_change();
+            });
+        }
+    };
+
     new_layer = (at_index) => {
 
         const {pxl_width, pxl_height} = this.state;
@@ -507,14 +545,17 @@ class CanvasPixels extends React.Component {
 
         if(this.props.onLayersChange) {
 
-            const { _layer_index, _layers } = this.state;
-            this.props.onLayersChange(_layer_index, _layers);
-        }
+            const { _layer_index, _layers, _s_pxl_colors } = this.state;
 
+            this.props.onLayersChange(_layer_index, JSON.stringify(_layers.map((layer, index) => {
+
+                layer.colors = _s_pxl_colors[index].slice(0, 80);
+                return layer;
+            })));
+        }
     };
 
     _notify_layers_and_compute_thumbnails_change = () => {
-
 
         const { _json_state_history } = this.state;
         const { previous_history_position, history_position, state_history } = JSON.parse(_json_state_history);
@@ -1553,6 +1594,8 @@ class CanvasPixels extends React.Component {
                     return pxl === pxl_color_index ? new_color_index: pxl;
                 });
 
+                [pxls_copy, pxl_colors_copy] = this._remove_duplicate_pxl_colors(pxls_copy, pxl_colors_copy);
+
                 let ns_pxl_colors = this.state._s_pxl_colors;
                 ns_pxl_colors[_layer_index] = pxl_colors_copy;
 
@@ -1973,6 +2016,8 @@ class CanvasPixels extends React.Component {
                         color_pixel(pxl_index, true);
                     });
 
+                    [pxls_copy, pxl_colors_copy] = this._remove_duplicate_pxl_colors(pxls_copy, pxl_colors_copy);
+
                     let ns_pxl_colors = this.state._s_pxl_colors;
                     ns_pxl_colors[_layer_index] = pxl_colors_copy;
 
@@ -2010,6 +2055,8 @@ class CanvasPixels extends React.Component {
                     });
 
                 }else if(tool === "BUCKET" || tool === "HUE BUCKET"){
+
+                    [pxls_copy, pxl_colors_copy] = this._remove_duplicate_pxl_colors(pxls_copy, pxl_colors_copy);
 
                     let ns_pxl_colors = this.state._s_pxl_colors;
                     ns_pxl_colors[_layer_index] = pxl_colors_copy;

@@ -18,6 +18,7 @@ import Drawer from "@material-ui/core/Drawer";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import Collapse from "@material-ui/core/Collapse";
 
 import { HISTORY } from "../utils/constants";
 
@@ -88,8 +89,17 @@ import Fab from "@material-ui/core/Fab";
 import Grow from "@material-ui/core/Grow";
 import Fade from "@material-ui/core/Fade";
 import DialogCloseButton from "../components/DialogCloseButton";
+import lightGreen from "@material-ui/core/colors/lightGreen";
+import red from "@material-ui/core/colors/red";
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 const styles = theme => ({
+    green: {
+        color: lightGreen[700],
+    },
+    red: {
+        color: red[500],
+    },
     root: {
         minHeight: "100%",
         minWidth: "100%",
@@ -126,11 +136,24 @@ const styles = theme => ({
             display: "none",
         },
     },
+    drawerHeader: {
+        [theme.breakpoints.down("md")]: {
+            padding: "16px 24px 8px 24px",
+        },
+        padding: "36px 24px 8px 24px",
+        position: "relative",
+        zIndex: -1
+    },
     coordinate: {
-        padding: "0px 0px 8px 0px",
+        padding: "6px 8px 6px 8px",
         display: "block",
-        textAlign: "right",
-        color: "#aaa",
+        position: "absolute",
+        color: "#696969",
+        top: 0,
+        left: "50%",
+        transform: "translate(-50%, 0%)",
+        borderRadius: "0px 0px 4px 4px",
+        backgroundColor: "#eeeeee",
         [theme.breakpoints.down("md")]: {
             display: "none",
         },
@@ -212,6 +235,7 @@ const styles = theme => ({
             width: "auto",
             borderRadius: 2,
             background: "repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / 8px 8px",
+            imageRendering: "pixelated",
         },
         marginRight: theme.spacing(2),
     },
@@ -247,6 +271,14 @@ const styles = theme => ({
     },
     chromePicker: {
         fontFamily: "Open Sans !important",
+    },
+    flipExpandMoreIcon: {
+        transform: "rotate(180deg)",
+        transition: "transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
+    },
+    expandMoreIcon: {
+        transform: "rotate(0deg)",
+        transition: "transform 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"
     },
 });
 
@@ -286,10 +318,13 @@ class Pixel extends React.Component {
             _is_image_import_mode: false,
             _layers: [{name: "Layer 0", hidden: false}],
             _layer_index: 0,
+            _previous_layer_index: 0,
+            _layer_opened: false,
             _mine_player_direction: "UP",
             _is_edit_drawer_open: false,
             _saturation: 60,
             _luminosity: 60,
+            _kb: 0,
         };
     };
 
@@ -301,6 +336,11 @@ class Pixel extends React.Component {
 
             actions.trigger_loading_update(100);
         }, 250);
+
+        setInterval(() => {
+
+            this._estimate_size();
+        }, 750);
     }
 
     componentWillUnmount() {
@@ -409,6 +449,18 @@ class Pixel extends React.Component {
         a.href = "" + _canvas.get_base64_png_data_url(scale); //Image Base64 Goes here
         a.download = "Image.png"; //File name Here
         a.click();
+    };
+
+    _estimate_size = () => {
+
+        const { _canvas } = this.state;
+
+        if(!_canvas) {return 0}
+
+        const base64 = _canvas.get_base64_png_data_url(1)
+        const bytes = 3 * Math.ceil((base64.length/4));
+
+        this.setState({_kb: bytes / 1000})
     };
 
     _undo = () => {
@@ -716,7 +768,9 @@ class Pixel extends React.Component {
 
     _handle_layers_change = (layer_index, layers) => {
 
-        this.setState({_layer_index: layer_index, _layers: layers});
+        const { _layer_index } = this.state;
+
+        this.setState({_previous_layer_index: _layer_index, _layer_index: layer_index, _layers: JSON.parse(layers)});
     };
 
     _handle_game_end = () => {
@@ -733,8 +787,32 @@ class Pixel extends React.Component {
 
     _change_active_layer = (index) => {
 
+        const { _canvas, _layer_index, _layer_opened } = this.state;
+
+        if(_layer_index !== index) {
+
+            if(_layer_opened) {
+
+                this.setState({_layer_opened: false});
+            }
+
+            _canvas.change_active_layer(index);
+        }else {
+
+            this.setState({_layer_opened: !_layer_opened});
+        }
+    };
+
+    _move_layer_up = () => {
+
         const { _canvas } = this.state;
-        _canvas.change_active_layer(index);
+        _canvas.current_layer_up();
+    };
+
+    _move_layer_down = () => {
+
+        const { _canvas } = this.state;
+        _canvas.current_layer_down();
     };
 
     _toggle_layer_visibility = (index) => {
@@ -806,6 +884,7 @@ class Pixel extends React.Component {
             _view_names,
             _layers,
             _layer_index,
+            _previous_layer_index,
             _is_image_import_mode,
             _hide_canvas_content,
             _show_original_image_in_background,
@@ -822,13 +901,14 @@ class Pixel extends React.Component {
             _filters,
             _select_mode,
             _pencil_mirror_mode,
-            _x, _y,
+            _x, _y, _kb,
             _is_something_selected,
             _mine_player_direction,
             _game_ended,
             _is_edit_drawer_open,
             _saturation,
             _luminosity,
+            _layer_opened,
         } = this.state;
 
         const actions = {
@@ -1021,8 +1101,11 @@ class Pixel extends React.Component {
         const drawer_content = (
             <div style={{display: "contents"}}>
                 <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
-                    <div style={{padding: "16px 24px 12px 24px", position: "relative", zIndex: -1}}>
-                        <span className={classes.coordinate}>{`X: ${_x}, Y: ${_y}`}</span>
+                    <div className={classes.drawerHeader}>
+                        <span className={classes.coordinate}>
+                            <span>{`X: ${_x || -1}, Y: ${_y || -1} `}</span>
+                            <span className={_kb < 64 ? classes.green: classes.red}>{`[~${Math.round(_kb * 100) / 100} kB]`}</span>
+                        </span>
                         <Typography id="strength-slider" gutterBottom>
                             Effect strength:
                         </Typography>
@@ -1076,14 +1159,58 @@ class Pixel extends React.Component {
                                                     {[..._layers].reverse().map((layer, index, array) => {
                                                         const index_reverse_order = (array.length - 1) - index;
                                                         return (
-                                                            <ListItem
-                                                                className={_layer_index === index_reverse_order ? classes.layerSelected: null}
-                                                                button onClick={() => this._change_active_layer(index_reverse_order)}>
-                                                                <ListItemAvatar>
-                                                                    <Avatar variant="square" className={classes.layerThumbnail} src={layer.thumbnail} />
-                                                                </ListItemAvatar>
-                                                                <ListItemText primary={layer.name} />
-                                                            </ListItem>
+                                                            <div>
+                                                                <ListItem
+                                                                    className={_layer_index === index_reverse_order ? classes.layerSelected: null}
+                                                                    button onClick={() => this._change_active_layer(index_reverse_order)}>
+                                                                    <ListItemAvatar>
+                                                                        <Avatar variant="square" className={classes.layerThumbnail} src={layer.thumbnail} />
+                                                                    </ListItemAvatar>
+                                                                    <ListItemText primary={layer.name} />
+                                                                    <ExpandMoreIcon  className={_layer_opened && _layer_index === index_reverse_order ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
+                                                                </ListItem>
+                                                                {
+                                                                    _layer_index === index_reverse_order || _previous_layer_index === index_reverse_order ?
+                                                                        <Collapse timeout={{ appear: 250, enter: 250, exit: 250 }} in={_layer_opened && _layer_index === index_reverse_order} className={classes.layerSelected}>
+                                                                            <Divider />
+                                                                            <div style={{padding: "12px 24px"}}>
+                                                                                <span>Colours:</span>
+                                                                                <div style={{ padding: "12px 0px", display: "flex", flexDirection: "row", justifyContent: "flex-start", alignContent: "stretch", gap: "8px", flexWrap: "wrap"}}>
+                                                                                    {layer.colors.map((color, index) => {
+
+                                                                                        const [r, g, b] = this._rgba_from_hex(color);
+
+                                                                                        return (
+
+                                                                                            <ButtonBase
+                                                                                                key={index}
+                                                                                                style={{
+                                                                                                    background: color,
+                                                                                                    boxShadow: `0px 2px 4px -1px rgb(${r} ${g} ${b} / 20%), 0px 4px 5px 0px rgb(${r} ${g} ${b} / 14%), 0px 1px 10px 0px rgb(${r} ${g} ${b} / 12%)`
+                                                                                                }}
+                                                                                                className={classes.buttonColor} onClick={() => {this._handle_current_color_change(color)}}>
+                                                                                                {color === _current_color ? <Fade in><CheckBoldIcon style={{color: is_current_color_dark ? "white": "black"}} /></Fade>: ""}
+                                                                                            </ButtonBase>
+                                                                                        )
+                                                                                    })}
+                                                                                </div>
+                                                                                <div style={{padding: "12px 0px"}}>
+                                                                                    {layer.colors.length >= 80 ? <Button color="primary" onClick={this._less_colors_auto}>...Compact colors</Button>: null}
+                                                                                </div>
+                                                                            </div>
+                                                                            <Divider />
+                                                                            <div style={{padding: "12px 24px"}}>
+                                                                                <span>Actions:</span>
+                                                                                <div style={{padding: "12px 0px"}}>
+                                                                                    <Button color="primary" onClick={this._move_layer_up}>Move Layer up</Button>
+                                                                                    <Button color="primary" onClick={this._move_layer_down}>Move Layer down</Button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </Collapse>:
+                                                                        null
+                                                                }
+                                                                <Divider />
+                                                            </div>
                                                         );
                                                     })}
                                                 </div>: null
