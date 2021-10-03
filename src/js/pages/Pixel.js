@@ -133,6 +133,7 @@ const styles = theme => ({
     },
     contentDrawer: {
         display: "flex",
+        zIndex: 1300,
         [theme.breakpoints.up("lg")]: {
             display: "none",
         },
@@ -190,6 +191,7 @@ const styles = theme => ({
         },
         '& > div > .react-swipeable-view-container': {
             display: "flex !important",
+            minHeight: "calc(100vh - 149px) !important",
         },
     },
     listSubHeader: {
@@ -349,14 +351,14 @@ class Pixel extends React.Component {
         document.removeEventListener("keydown", this._handle_keydown);
     }
 
-    _handle_view_name_change = (event, view_name_index) => {
+    _handle_view_name_change = (view_name_index, previous_name_index = null) => {
 
         const { _view_names } = this.state;
 
         const _view_name = _view_names[view_name_index] || _view_names[0];
         const _view_name_index = _view_names.indexOf(_view_name) === -1 ? 0: _view_names.indexOf(_view_name);
 
-        this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index});
+        this.setState({_previous_view_name_index: previous_name_index || this.state._view_name_index, _view_name_index});
     };
 
     _hsl_to_hex = (h, s, l) => {
@@ -1135,7 +1137,7 @@ class Pixel extends React.Component {
                           variant="fullWidth"
                           selectionFollowsFocus
                           value={_view_name_index}
-                          onChange={this._handle_view_name_change}>
+                          onChange={(event, index) => {this._handle_view_name_change(index)}}>
                         <Tab className={classes.tab} icon={<PaletteIcon />} />
                         <Tab className={classes.tab} icon={<ImageIcon />} />
                         <Tab className={classes.tab} icon={<AllLayersIcon />} />
@@ -1151,6 +1153,7 @@ class Pixel extends React.Component {
                         animateHeight={true}
                         index={_view_name_index}
                         onChangeIndex={this._handle_view_name_change}
+                        disableLazyLoading={true}
                     >
                         {
                             Object.entries(actions).map(a => a[1]).map((view, index) => {
@@ -1168,7 +1171,10 @@ class Pixel extends React.Component {
                                                         <span>All layers</span>
                                                     </ListSubheader>
                                                     {[..._layers].reverse().map((layer, index, array) => {
+
                                                         const index_reverse_order = (array.length - 1) - index;
+                                                        layer.colors = layer.colors || [];
+
                                                         return (
                                                             <div>
                                                                 <ListItem
@@ -1384,13 +1390,14 @@ class Pixel extends React.Component {
                             <SwipeableDrawer
                                 className={classes.contentDrawer}
                                 disableBackdropTransition={true}
+                                keepMounted={true}
                                 open={_is_edit_drawer_open}
                                 onOpen={this._handle_edit_drawer_open}
                                 onClose={this._handle_edit_drawer_close}
                                 classes={{
                                     paper: classes.swipeableDrawerPaper
                                 }}
-                                variant="temporary"
+                                variant="persistent"
                                 anchor="top"
                             >
                                 <DialogCloseButton onClick={this._handle_edit_drawer_close} />
