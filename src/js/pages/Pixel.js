@@ -704,9 +704,10 @@ class Pixel extends React.Component {
         );
 
         return (
-            <div onContextMenu={(e) => {e.preventDefault()}}>
+            <div>
                 <Backdrop className={classes.backdrop} open={_loading} />
                 <Menu
+                    onContextMenu={(e) => {e.preventDefault()}}
                     dense={true}
                     keepMounted
                     open={_menu_mouse_y !== null}
@@ -754,6 +755,7 @@ class Pixel extends React.Component {
                     <div className={classes.content}>
                         <div className={classes.contentInner}>
                             <CanvasPixels
+                                onContextMenu={(e) => {e.preventDefault()}}
                                 key={"canvas"}
                                 className={classes.contentCanvas}
                                 ref={this._set_canvas_ref}

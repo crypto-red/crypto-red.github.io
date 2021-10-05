@@ -886,7 +886,9 @@ class PixelToolboxSwipeableViews extends React.Component {
         return (
             <SwipeableViews
                 containerStyle={{overflow: "visible"}}
-                animateHeight={true}
+                animateHeight={false}
+                animateTransitions={false}
+                disableLazyLoading={true}
                 index={view_name_index}
                 onChangeIndex={this._handle_view_name_change}
                 disabled={true}
@@ -894,7 +896,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                 {
                     Object.entries(actions).map(a => a[1]).map((view, index) => {
 
-                        //if(view_name_index !== index && previous_view_name_index !== index) { return <List style={{overflow: "visible"}} />; }
+                        if(view_name_index !== index && previous_view_name_index !== index) { return <List style={{overflow: "visible"}} />; }
 
                         return (
                             <List key={index} style={{overflow: "visible", paddingTop: 0}} >
