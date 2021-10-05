@@ -43,6 +43,16 @@ import FileImportIcon from "../icons/FileImport";
 import ContrastCircleIcon from "../icons/ContrastCircle";
 import LessColorIcon from "../icons/LessColor";
 import ImageSmoothIcon from "../icons/ImageSmooth";
+import SelectInImageIcon from "../icons/SelectInImage";
+import BorderBottomIcon from "../icons/BorderBottom";
+import BucketIcon from "../icons/Bucket";
+import SelectInvertIcon from "../icons/SelectInvert";
+import CopyIcon from "@material-ui/icons/FileCopy";
+import CutIcon from "../icons/Cut";
+import EraserIcon from "../icons/Eraser";
+import MirrorIcon from "../icons/Mirror";
+import PencilIcon from "../icons/Pencil";
+import PencilPerfectIcon from "../icons/PencilPerfect";
 
 const styles = theme => ({
     green: {
@@ -228,6 +238,8 @@ class Pixel extends React.Component {
             _slider_value: 8/32,
             _game_ended: false,
             _tool: "PENCIL",
+            _memory_tool: null,
+            _previous_tool_timestamp: 1/0,
             _select_mode: "REPLACE",
             _pencil_mirror_mode: "NONE",
             _filters: [],
@@ -255,7 +267,9 @@ class Pixel extends React.Component {
 
         this._update_settings();
         document.addEventListener("keydown", this._handle_keydown);
+        document.addEventListener("keyup", this._handle_keyup);
         actions.trigger_loading_update(0);
+
         setTimeout(() => {
 
             actions.trigger_loading_update(100);
@@ -265,6 +279,7 @@ class Pixel extends React.Component {
     componentWillUnmount() {
 
         document.removeEventListener("keydown", this._handle_keydown);
+        document.removeEventListener("keyup", this._handle_keyup);
     }
 
     _handle_menu_close = () => {
@@ -278,7 +293,7 @@ class Pixel extends React.Component {
             _menu_mouse_x: event.clientX - 2,
             _menu_mouse_y: event.clientY - 4,
             _menu_data: data,
-            _menu_event: event
+            _menu_event: event,
         });
 
     };
@@ -332,20 +347,42 @@ class Pixel extends React.Component {
             }
         }else {
             event.preventDefault();
+            event.stopPropagation();
 
             switch (event.keyCode) {
 
                 case 37:
-                    e.preventDefault();
+
                     this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index: _view_name_index-1 < 0 ? _view_names.length-1: _view_name_index-1});
                     break;
                 case 39:
-                    e.preventDefault();
+
                     this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index: _view_name_index+1 > _view_names.length-1 ? 0: _view_name_index+1});
                     break;
             }
 
-            if (event.ctrlKey && event.key === "z") {
+            if(event.key === "1") {
+
+                this.setState({_view_name_index: 0});
+            }else if(event.key === "2") {
+
+                this.setState({_view_name_index: 1});
+            }else if(event.key === "3") {
+
+                this.setState({_view_name_index: 2});
+            }else if(event.key === "4") {
+
+                this.setState({_view_name_index: 3});
+            }else if(event.key === "5") {
+
+                this.setState({_view_name_index: 4});
+            }else if(event.key === "6") {
+
+                this.setState({_view_name_index: 5});
+            }else if(event.key === "7") {
+
+                this.setState({_view_name_index: 6});
+            }else if(event.ctrlKey && event.key === "z") {
 
                 this._undo();
             }else if(event.ctrlKey && event.key === "y") {
@@ -360,11 +397,67 @@ class Pixel extends React.Component {
             }else if(event.ctrlKey && event.key === "i") {
 
                 this._import_image();
-            }else if(event.key === "Enter") {
+            }else if(!event.ctrlKey && event.key === "o") {
 
-                const { _canvas } = this.state;
-                _canvas.confirm_import();
+                this._set_tool("PICKER");
+            }else if(!event.ctrlKey && event.key === "b") {
+
+                this._set_tool("BUCKET");
+            }else if(!event.ctrlKey && event.key === "h") {
+
+                this._set_tool("HUE BUCKET");
+            }else if(!event.ctrlKey && event.key === "x") {
+
+                this._set_tool("EXCHANGE");
+            }else if(!event.ctrlKey && event.key === "u") {
+
+                this._set_tool("BORDER");
+            }else if(!event.ctrlKey && event.key === "r") {
+
+                this._set_tool("RECTANGLE");
+            }else if(event.ctrlKey && event.key === "r") {
+
+                this._set_tool("SELECT RECTANGLE");
+            }else if(!event.ctrlKey && event.key === "e") {
+
+                this._set_tool("ELLIPSE");
             }else if(event.ctrlKey && event.key === "e") {
+
+                this._set_tool("SELECT ELLIPSE");
+            }else if(!event.ctrlKey && event.key === "l") {
+
+                this._set_tool("LINE");
+            }else if(event.ctrlKey && event.key === "l") {
+
+                this._set_tool("SELECT LINE");
+            }else if(!event.ctrlKey && event.key === "p") {
+
+                this._set_tool("PENCIL");
+            }else if(!event.ctrlKey && event.key === "n") {
+
+                this._set_tool("PENCIL PERFECT");
+            }else if(event.ctrlKey && event.key === "p") {
+
+                this._set_tool("SELECT PENCIL");
+            }else if(event.ctrlKey && event.key === "n") {
+
+                this._set_tool("SELECT PENCIL PERFECT");
+            }else if(!event.ctrlKey && event.key === "m") {
+
+                this._set_tool("SET PENCIL MIRROR");
+            }else if(!event.ctrlKey && event.key === "f") {
+
+                this._set_tool("CONTOUR");
+            }else if(event.ctrlKey && event.key === "f") {
+
+                this._set_tool("SELECT PATH");
+            }else if(event.ctrlKey && event.key === "k") {
+
+                this._set_tool("SELECT COLOR THRESHOLD");
+            }else if(event.ctrlKey && event.key === "g") {
+
+                this._set_tool("SELECT COLOR");
+            }else if(event.ctrlKey && event.key === "q") {
 
                 const { _canvas } = this.state;
 
@@ -382,10 +475,53 @@ class Pixel extends React.Component {
                 a.download = "Image.png"; //File name Here
                 a.click();
 
+            }else if(event.key === "Enter") {
+
+                const { _canvas } = this.state;
+                _canvas.confirm_import();
+            }else if(event.ctrlKey && event.key === "Control") {
+
+                if(_tool.includes("SELECT")) {
+
+                    this.setState({_previous_tool_timestamp: Date.now()});
+                    this._set_select_mode("REMOVE");
+                }else {
+
+                    this.setState({_previous_tool_timestamp: Date.now()});
+                    this._set_tool("PICKER", false);
+                }
+            }else if(event.key === "Shift") {
+
+                if(_tool.includes("SELECT")) {
+
+                    this.setState({_previous_tool_timestamp: Date.now()});
+                    this._set_select_mode("ADD");
+                }
+            }else {
+
             }
 
         }
     };
+
+    _handle_keyup = (event) => {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const { _tool, _memory_tool, _previous_tool_timestamp } = this.state;
+
+        if(_memory_tool && _memory_tool !== _tool && Date.now() - 10 * 1000 < _previous_tool_timestamp) {
+
+            this.setState({_previous_tool_timestamp: 1/0});
+            this._set_tool(_memory_tool);
+
+        }else if(_previous_tool_timestamp < Date.now() && _tool.includes("SELECT")) {
+
+            this.setState({_previous_tool_timestamp: 1/0});
+            this._set_select_mode("REPLACE");
+        }
+    }
 
     _upload_image = () => {
 
@@ -498,9 +634,14 @@ class Pixel extends React.Component {
         this.setState({_height: value});
     };
 
-    _set_tool = (name) => {
+    _set_tool = (name, remember = true) => {
 
         this.setState({_tool: name.toUpperCase()});
+
+        if(remember) {
+
+            this.setState({_memory_tool: name.toUpperCase()});
+        }
     }
 
     _set_select_mode = (mode) => {
@@ -624,13 +765,6 @@ class Pixel extends React.Component {
             increase -= colors_removed > 0 ? 1: 0;
         }
     };
-
-    _smooth_adjust = () => {
-
-        const { _canvas } = this.state;
-
-        _canvas.smooth_adjust();
-    }
 
     render() {
 
@@ -758,6 +892,7 @@ class Pixel extends React.Component {
                         style: {
                             maxHeight: 350,
                             width: 250,
+                            overflowY: "overlay"
                         },
                     }}
                     onContextMenu={(e) => {e.preventDefault()}}
@@ -772,6 +907,78 @@ class Pixel extends React.Component {
                             : undefined
                     }
                 >
+                    <span style={{textAlign: "left", padding: 8, color: "#666"}}>X: {_menu_data.pos_x}, Y: {_menu_data.pos_y}</span>
+                    {
+                        _tool === "SET PENCIL MIRROR" || _pencil_mirror_mode !== "NONE" ?
+                            <div>
+                                <ListSubheader className={classes.contextMenuSubheader}>Tools</ListSubheader>
+                                <ListItem button divider disabled={_tool === "PENCIL"} onClick={() => {this._set_tool("PENCIL")}}>
+                                    <ListItemIcon>
+                                        <PencilIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Pencil" />
+                                </ListItem>
+                                <ListItem button divider disabled={_tool === "PENCIL PERFECT"} onClick={() => {this._set_tool("PENCIL PERFECT")}}>
+                                    <ListItemIcon>
+                                        <PencilPerfectIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary="Pencil perfect" />
+                                </ListItem>
+
+                                <ListSubheader className={classes.contextMenuSubheader}>Mirror mode</ListSubheader>
+                                {
+                                    [
+                                        {icon: <MirrorIcon />, disabled: _pencil_mirror_mode === "NONE",text: "None", on_click: () => {this._set_pencil_mirror_mode("NONE")}},
+                                        {icon: <MirrorIcon />, disabled: _pencil_mirror_mode === "VERTICAL", text: "Vertical", on_click: () => {this._set_pencil_mirror_mode("VERTICAL")}},
+                                        {icon: <MirrorIcon />, disabled: _pencil_mirror_mode === "HORIZONTAL", text: "Horizontal", on_click: () => {this._set_pencil_mirror_mode("HORIZONTAL")}},
+                                        {icon: <MirrorIcon />, disabled: _pencil_mirror_mode === "BOTH", text: "Both", on_click: () => {this._set_pencil_mirror_mode("BOTH")}},
+                                    ].map((item) => {
+
+                                        return (
+                                            <ListItem button divider disabled={item.disabled} onClick={item.on_click}>
+                                                <ListItemIcon>
+                                                    {item.icon}
+                                                </ListItemIcon>
+                                                <ListItemText primary={item.text} />
+                                            </ListItem>
+                                        );
+
+                                    })
+                                }
+                            </div>
+                            : null
+
+                    }
+                    {
+                        _is_something_selected ?
+                            <div>
+                                <ListSubheader className={classes.contextMenuSubheader}>Apply to selection</ListSubheader>
+                                {
+                                    [
+                                        {icon: <SelectInImageIcon />, text: "Shrink", on_click: () => {_canvas.to_selection_size(-1)}},
+                                        {icon: <SelectInImageIcon />, text: "Grow", on_click: () => {_canvas.to_selection_size(1)}},
+                                        {icon: <BorderBottomIcon />, text: "Border", on_click: () => {_canvas.to_selection_border()}},
+                                        {icon: <BucketIcon />, text: "Bucket", on_click: () => {_canvas.to_selection_bucket()}},
+                                        {icon: <SelectInImageIcon />, text: "Crop", on_click: () => {_canvas.to_selection_crop()}},
+                                        {icon: <SelectInvertIcon />, text: "Invert", on_click: () => {_canvas.to_selection_invert()}},
+                                        {icon: <CopyIcon />, text: "Copy", on_click: () => {_canvas.copy_selection()}},
+                                        {icon: <CutIcon />, text: "Cut", on_click: () => {_canvas.cut_selection()}},
+                                        {icon: <EraserIcon />, text: "Erase", on_click: () => {_canvas.erase_selection()}},
+                                    ].map((item) => {
+
+                                        return (
+                                            <ListItem button divider onClick={item.on_click}>
+                                                <ListItemIcon>
+                                                    {item.icon}
+                                                </ListItemIcon>
+                                                <ListItemText primary={item.text} />
+                                            </ListItem>
+                                        );
+                                    })
+                                }
+                            </div>
+                            : null
+                    }
                     <ListSubheader className={classes.contextMenuSubheader}>Color</ListSubheader>
                     <ListItem button divider disabled={_menu_data.pxl_color === _current_color} onClick={(event) => this._set_current_color(_menu_data.pxl_color)}>
                         <ListItemIcon>
@@ -798,7 +1005,7 @@ class Pixel extends React.Component {
                         </ListItemIcon>
                         <ListItemText primary="Reduce color number" />
                     </ListItem>
-                    <ListItem button divider onClick={(event) => this._smooth_adjust(1)}>
+                    <ListItem button divider onClick={(event) => _canvas.smooth_adjust(1)}>
                         <ListItemIcon>
                             <ImageSmoothIcon />
                         </ListItemIcon>

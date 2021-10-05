@@ -268,48 +268,6 @@ class PixelToolboxSwipeableViews extends React.Component {
         a.click();
     };
 
-    _undo = () => {
-
-        const { canvas } = this.state;
-        canvas.undo();
-    };
-
-    _redo = () => {
-
-        const { canvas } = this.state;
-        canvas.redo();
-    };
-
-    _bw = () => {
-
-        const { canvas } = this.state;
-        canvas.to_greyscale();
-    };
-
-    _sepia = () => {
-
-        const { canvas } = this.state;
-        canvas.to_sepia();
-    };
-
-    _filter = (name) => {
-
-        const { canvas, slider_value } = this.state;
-        canvas.to_filter(name, slider_value);
-    };
-
-    _to_alpha = () => {
-
-        const { canvas, current_color, slider_value } = this.state;
-        canvas.to_alpha(current_color, slider_value);
-    }
-
-    _less_colors = () => {
-
-        const { canvas, slider_value } = this.state;
-        canvas.to_less_color(slider_value);
-    };
-
     _less_colors_stepped = (increase = 1) => {
 
         const { canvas } = this.state;
@@ -324,115 +282,15 @@ class PixelToolboxSwipeableViews extends React.Component {
         }
     };
 
-    _less_colors_auto = () => {
-
-        const { canvas } = this.state;
-        canvas.to_less_color("auto");
-    };
-
-    _to_vignette = () => {
-
-        const { canvas, current_color, slider_value } = this.state;
-        canvas.to_vignette(current_color, slider_value);
-    };
-
-    _to_dutone = () => {
-
-        const { canvas, current_color, slider_value } = this.state;
-        canvas.to_dutone(slider_value, "#000000ff", current_color);
-    };
-
-    _to_auto_contrast = () => {
-
-        const { canvas, slider_value } = this.state;
-        canvas.auto_adjust_contrast(slider_value);
-    };
-
     _colorize = () => {
 
-        const { canvas, hue, current_color, slider_value } = this.state;
+        const { canvas, current_color, slider_value } = this.state;
 
         const [r, g, b, a] = canvas.get_rgba_from_hex(current_color);
         const [h, s, l] = canvas.rgb_to_hsl(r, g, b);
 
-        canvas.to_color(hue, slider_value, s === 0 ? null: s, l === 0 ? null: l);
+        canvas.to_color(h, slider_value, s === 0 ? null: s, l === 0 ? null: l);
     }
-
-    _smooth_adjust = () => {
-
-        const { canvas } = this.state;
-
-        canvas.smooth_adjust();
-    }
-
-    _mirror_horizontal = () => {
-
-        const { canvas } = this.state;
-        canvas.to_mirror(true);
-
-    };
-
-    _mirror_vertical = () => {
-
-        const { canvas } = this.state;
-        canvas.to_mirror(false);
-
-    };
-
-    _to_rotation = (right = true) => {
-
-        const { canvas } = this.state;
-        canvas.to_rotation(right);
-    };
-
-    _to_selection_border = () => {
-
-        const { canvas } = this.state;
-        canvas.to_selection_border();
-    }
-
-    _to_selection_bucket = () => {
-
-        const { canvas } = this.state;
-        canvas.to_selection_bucket();
-    }
-
-    _to_selection_crop = () => {
-
-        const { canvas } = this.state;
-        canvas.to_selection_crop();
-    }
-
-    _to_selection_changes = () => {
-
-        const { canvas } = this.state;
-        canvas.to_selection_changes(0, 25, -10);
-    }
-
-    _to_selection_invert = () => {
-
-        const { canvas } = this.state;
-        canvas.to_selection_invert();
-    }
-
-    _grow_current_selection = () => {
-
-        const { canvas } = this.state;
-        canvas.to_selection_size(1);
-    };
-
-    _shrink_current_selection = () => {
-
-        const { canvas } = this.state;
-        canvas.to_selection_size(-1);
-    };
-
-
-    _new_layer = () => {
-
-        const { canvas } = this.state;
-        canvas.new_layer();
-    };
 
     _import_image = () => {
 
@@ -440,12 +298,6 @@ class PixelToolboxSwipeableViews extends React.Component {
 
             this.props.on_import_image();
         }
-    };
-
-    _confirm_import = () => {
-
-        const { canvas } = this.state;
-        canvas.confirm_import();
     };
 
     _upload_image = () => {
@@ -600,70 +452,11 @@ class PixelToolboxSwipeableViews extends React.Component {
         }
     };
 
-    _move_layer_up = () => {
-
-        const { canvas } = this.state;
-        canvas.current_layer_up();
-    };
-
-    _move_layer_down = () => {
-
-        const { canvas } = this.state;
-        canvas.current_layer_down();
-    };
-
-    _toggle_layer_visibility = (index) => {
-
-        const { canvas } = this.state;
-        canvas.toggle_layer_visibility(index);
-    };
-
-    _change_layer_opacity = (index) => {
-
-        const { canvas, slider_value } = this.state;
-        canvas.change_layer_opacity(index, slider_value);
-    }
-
-    _merge_down_layer = (index) => {
-
-        const { canvas } = this.state;
-        canvas.merge_down_layer(index);
-    };
-
-    _delete_layer = (index) => {
-
-        const { canvas } = this.state;
-        canvas.delete_layer(index);
-    };
-
-    _duplicate_layer = (index) => {
-
-        const { canvas } = this.state;
-        canvas.duplicate_layer(index);
-    };
-
-    _copy_selection = () => {
-
-        const { canvas } = this.state;
-        canvas.copy_selection();
-    };
-
-    _cut_selection = () => {
-
-        const { canvas } = this.state;
-        canvas.cut_selection();
-    };
-
-    _erase_selection = () => {
-
-        const { canvas } = this.state;
-        canvas.erase_selection();
-    };
-
     render() {
         
         const {
             classes,
+            canvas,
             _anchor_el,
             view_name_index,
             previous_view_name_index,
@@ -699,8 +492,8 @@ class PixelToolboxSwipeableViews extends React.Component {
                     icon: <HistoryIcon />,
                     text: "History",
                     tools: [
-                        {icon: <ArrowBackIcon />, disabled: !can_undo ,text: "Undo", sub: "[CTRL + Z]", on_click: () => {this._undo()}},
-                        {icon: <ArrowForwardIcon />, disabled: !can_redo , text: "Redo", sub: "[CTRL + Y]", on_click: () => {this._redo()}},
+                        {icon: <ArrowBackIcon />, disabled: !can_undo ,text: "Undo", sub: "[CTRL + Z]", on_click: () => {canvas.undo()}},
+                        {icon: <ArrowForwardIcon />, disabled: !can_redo , text: "Redo", sub: "[CTRL + Y]", on_click: () => {canvas.redo()}},
                     ]
                 },
                 {
@@ -714,7 +507,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                     icon: <DownloadIcon />,
                     text: "Download",
                     tools: [
-                        {icon: <FileDownloadIcon />, text: "Download (small size)", sub: "[CTRL + E]", on_click: () => {this._download_png(1)}},
+                        {icon: <FileDownloadIcon />, text: "Download (small size)", sub: "[CTRL + Q]", on_click: () => {this._download_png(1)}},
                         {icon: <FileDownloadIcon />, text: "Download (big size)", sub: "[CTRL + S]", on_click: () => {this._download_png(32)}},
                     ]
                 },
@@ -733,12 +526,12 @@ class PixelToolboxSwipeableViews extends React.Component {
                     icon: <LayerEditIcon />,
                     text: `Layer actions`,
                     tools: [
-                        {icon: <LayerAddIcon />, text: "New layer", on_click: () => {this._new_layer(layer_index+1)}},
-                        {icon: <LayerDeleteIcon />, text: "Delete layer", on_click: () => {this._delete_layer(layer_index)}},
-                        {icon: <ContentDuplicateIcon />, text: "Duplicate layer", on_click: () => {this._duplicate_layer(layer_index)}},
-                        {icon: <MergeIcon />, text: "Merge down layer", on_click: () => {this._merge_down_layer(layer_index)}},
-                        {icon: layers[layer_index].hidden ? <EyeIcon />: <EyeOffIcon />, text: layers[layer_index].hidden ? `Show`: `Hide`, on_click: () => {this._toggle_layer_visibility(layer_index)}},
-                        {icon: <OpacityIcon />, text: `Opacity: ${layers[layer_index].opacity} -> ${slider_value}`, on_click: () => {this._change_layer_opacity(layer_index)}},
+                        {icon: <LayerAddIcon />, text: "New layer", on_click: () => {canvas.new_layer(layer_index+1)}},
+                        {icon: <LayerDeleteIcon />, text: "Delete layer", on_click: () => {canvas.delete_layer(layer_index)}},
+                        {icon: <ContentDuplicateIcon />, text: "Duplicate layer", on_click: () => {canvas.duplicate_layer(layer_index)}},
+                        {icon: <MergeIcon />, text: "Merge down layer", on_click: () => {canvas.merge_down_layer(layer_index)}},
+                        {icon: layers[layer_index].hidden ? <EyeIcon />: <EyeOffIcon />, text: layers[layer_index].hidden ? `Show`: `Hide`, on_click: () => {canvas.toggle_layer_visibility(layer_index)}},
+                        {icon: <OpacityIcon />, text: `Opacity: ${layers[layer_index].opacity} -> ${slider_value}`, on_click: () => {canvas.change_layer_opacity(layer_index)}},
                     ]
                 },
                 {
@@ -746,7 +539,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                     text: "Import image",
                     tools: [
                         {icon: <FileImportIcon />, text: "Import image", sub: "[CTRL + I]", on_click: () => {this._import_image()}},
-                        {icon: <FileImportIcon />, text: "Confirm import", sub: "[Enter]", disabled: !is_image_import_mode, on_click: () => {this._confirm_import()}},
+                        {icon: <FileImportIcon />, text: "Confirm import", sub: "[Enter]", disabled: !is_image_import_mode, on_click: () => {canvas.confirm_import()}},
                     ]
                 },
             ],
@@ -755,31 +548,31 @@ class PixelToolboxSwipeableViews extends React.Component {
                     icon: <DrawIcon />,
                     text: "Drawing tools",
                     tools: [
-                        {icon: <ColorPickerIcon />, disabled: tool === "PICKER", text: "Picker", on_click: () => {this._set_tool("PICKER")}},
-                        {icon: <MoveIcon />, disabled: tool === "MOVE", text: "Move", on_click: () => {this._set_tool("MOVE")}},
-                        {icon: <PencilIcon />, disabled: tool === "PENCIL", text: "Pencil", on_click: () => {this._set_tool("PENCIL")}},
-                        {icon: <PencilPerfectIcon />, disabled: tool === "PENCIL PERFECT", text: "Pencil perfect", on_click: () => {this._set_tool("PENCIL PERFECT")}},
-                        {icon: <MirrorIcon />, disabled: tool === "SET PENCIL MIRROR", text: "Set pencil mirror", on_click: () => {this._set_tool("SET PENCIL MIRROR")}},
+                        {icon: <ColorPickerIcon />, disabled: tool === "PICKER", text: "Picker", sub: "[CTRL (HOLD)]", on_click: () => {this._set_tool("PICKER")}},
+                        {icon: <MoveIcon />, disabled: tool === "MOVE", text: "Move", sub: "[MID. CLICK]", on_click: () => {this._set_tool("MOVE")}},
+                        {icon: <PencilIcon />, disabled: tool === "PENCIL", text: "Pencil", sub: "[P]", on_click: () => {this._set_tool("PENCIL")}},
+                        {icon: <PencilPerfectIcon />, disabled: tool === "PENCIL PERFECT", text: "Pencil perfect", sub: "[N]", on_click: () => {this._set_tool("PENCIL PERFECT")}},
+                        {icon: <MirrorIcon />, disabled: tool === "SET PENCIL MIRROR", text: "Set pencil mirror", sub: "[M]", on_click: () => {this._set_tool("SET PENCIL MIRROR")}},
                     ]
                 },
                 {
                     icon: <ShapesIcon />,
                     text: "Shapes tools",
                     tools: [
-                        {icon: <LineIcon />, disabled: tool === "LINE", text: "Line", on_click: () => {this._set_tool("LINE")}},
-                        {icon: <RectangleIcon />, disabled: tool === "RECTANGLE", text: "Rectangle", on_click: () => {this._set_tool("RECTANGLE")}},
-                        {icon: <EllipseIcon />, disabled: tool === "ELLIPSE", text: "Ellipse", on_click: () => {this._set_tool("ELLIPSE")}},
-                        {icon: <ContourIcon />, disabled: tool === "CONTOUR", text: "Contour", on_click: () => {this._set_tool("CONTOUR")}},
+                        {icon: <LineIcon />, disabled: tool === "LINE", text: "Line", sub: "[L]", on_click: () => {this._set_tool("LINE")}},
+                        {icon: <RectangleIcon />, disabled: tool === "RECTANGLE", text: "Rectangle", sub: "[R]", on_click: () => {this._set_tool("RECTANGLE")}},
+                        {icon: <EllipseIcon />, disabled: tool === "ELLIPSE", text: "Ellipse", sub: "[E]", on_click: () => {this._set_tool("ELLIPSE")}},
+                        {icon: <ContourIcon />, disabled: tool === "CONTOUR", text: "Free path", sub: "[F]", on_click: () => {this._set_tool("CONTOUR")}},
                     ]
                 },
                 {
                     icon: <PaintIcon />,
                     text: "Paint tools",
                     tools: [
-                        {icon: <BucketIcon />, disabled: tool === "BUCKET", text: "Bucket", on_click: () => {this._set_tool("BUCKET")}},
-                        {icon: <BucketIcon />, disabled: tool === "HUE BUCKET", text: "Magic bucket", on_click: () => {this._set_tool("HUE BUCKET")}},
-                        {icon: <PaletteSwatchIcon />, disabled: tool === "EXCHANGE", text: "Exchange", on_click: () => {this._set_tool("EXCHANGE")}},
-                        {icon: <BorderBottomIcon />, disabled: tool === "BORDER", text: "Border", on_click: () => {this._set_tool("BORDER")}},
+                        {icon: <BucketIcon />, disabled: tool === "BUCKET", text: "Bucket", sub: "[B]", on_click: () => {this._set_tool("BUCKET")}},
+                        {icon: <BucketIcon />, disabled: tool === "HUE BUCKET", text: "Hue bucket", sub: "[H]", on_click: () => {this._set_tool("HUE BUCKET")}},
+                        {icon: <PaletteSwatchIcon />, disabled: tool === "EXCHANGE", text: "Exchange", sub: "[X]", on_click: () => {this._set_tool("EXCHANGE")}},
+                        {icon: <BorderBottomIcon />, disabled: tool === "BORDER", text: "Border", sub: "[U]", on_click: () => {this._set_tool("BORDER")}},
                     ]
                 },
                 {
@@ -798,8 +591,8 @@ class PixelToolboxSwipeableViews extends React.Component {
                     icon: <SelectCompareIcon />,
                     text: "Select mode",
                     tools: [
-                        {icon: <SelectRemoveDifferenceIcon />, disabled: select_mode === "REMOVE" ,text: "Select remove", on_click: () => {this._set_select_mode("REMOVE")}},
-                        {icon: <SelectAddIcon />, disabled: select_mode === "ADD", text: "Select add", on_click: () => {this._set_select_mode("ADD")}},
+                        {icon: <SelectRemoveDifferenceIcon />, disabled: select_mode === "REMOVE", text: "Select remove", sub: "[CTRL (HOLD)]", on_click: () => {this._set_select_mode("REMOVE")}},
+                        {icon: <SelectAddIcon />, disabled: select_mode === "ADD", text: "Select add", sub: "[SHIFT (HOLD)]", on_click: () => {this._set_select_mode("ADD")}},
                         {icon: <SelectIcon />, disabled: select_mode === "REPLACE", text: "Select replace", on_click: () => {this._set_select_mode("REPLACE")}},
                     ]
                 },
@@ -807,29 +600,29 @@ class PixelToolboxSwipeableViews extends React.Component {
                     icon: <SelectInImageIcon />,
                     text: "Select tool",
                     tools: [
-                        {icon: <SelectIcon />, disabled: tool === "SELECT PATH", text: "Select path", on_click: () => {this._set_tool("SELECT PATH")}},
-                        {icon: <SelectColorIcon />, disabled: tool === "SELECT COLOR", text: "Select color", on_click: () => {this._set_tool("SELECT COLOR")}},
-                        {icon: <MagicIcon />, disabled: tool === "SELECT COLOR THRESHOLD", text: "Select color threshold", on_click: () => {this._set_tool("SELECT COLOR THRESHOLD")}},
-                        {icon: <SquareSmallIcon />, disabled: tool === "SELECT PIXEL", text: "Select pixel", on_click: () => {this._set_tool("SELECT PIXEL")}},
-                        {icon: <SquareSmallIcon />, disabled: tool === "SELECT PIXEL PERFECT", text: "Select pixel perfect", on_click: () => {this._set_tool("SELECT PIXEL PERFECT")}},
-                        {icon: <SelectIcon />, disabled: tool === "SELECT LINE", text: "Select line", on_click: () => {this._set_tool("SELECT LINE")}},
-                        {icon: <SelectionRectangleIcon />, disabled: tool === "SELECT RECTANGLE", text: "Select rectangle", on_click: () => {this._set_tool("SELECT RECTANGLE")}},
-                        {icon: <SelectionEllipseIcon />, disabled: tool === "SELECT ELLIPSE", text: "Select ellipse", on_click: () => {this._set_tool("SELECT ELLIPSE")}},
+                        {icon: <SelectIcon />, disabled: tool === "SELECT PATH", text: "Select path", sub: "[CTRL + F]", on_click: () => {this._set_tool("SELECT PATH")}},
+                        {icon: <SelectColorIcon />, disabled: tool === "SELECT COLOR", text: "Select color", sub: "[CTRL + G]", on_click: () => {this._set_tool("SELECT COLOR")}},
+                        {icon: <MagicIcon />, disabled: tool === "SELECT COLOR THRESHOLD", text: "Select color threshold", sub: "[CTRL + K]", on_click: () => {this._set_tool("SELECT COLOR THRESHOLD")}},
+                        {icon: <SquareSmallIcon />, disabled: tool === "SELECT PIXEL", text: "Select pixel", sub: "[CTRL + P]", on_click: () => {this._set_tool("SELECT PIXEL")}},
+                        {icon: <SquareSmallIcon />, disabled: tool === "SELECT PIXEL PERFECT", text: "Select pixel perfect", sub: "[CTRL + N]", on_click: () => {this._set_tool("SELECT PIXEL PERFECT")}},
+                        {icon: <SelectIcon />, disabled: tool === "SELECT LINE", text: "Select line", sub: "[CTRL + L]", on_click: () => {this._set_tool("SELECT LINE")}},
+                        {icon: <SelectionRectangleIcon />, disabled: tool === "SELECT RECTANGLE", text: "Select rectangle", sub: "[CTRL + R]", on_click: () => {this._set_tool("SELECT RECTANGLE")}},
+                        {icon: <SelectionEllipseIcon />, disabled: tool === "SELECT ELLIPSE", text: "Select ellipse", sub: "[CTRL + E]", on_click: () => {this._set_tool("SELECT ELLIPSE")}},
                     ]
                 },
                 {
                     icon: <ImageMoveIcon />,
                     text: "Apply to selection",
                     tools: [
-                        {icon: <SelectInImageIcon />, disabled: !is_something_selected, text: "Shrink", on_click: () => {this._shrink_current_selection()}},
-                        {icon: <SelectInImageIcon />, disabled: !is_something_selected, text: "Grow", on_click: () => {this._grow_current_selection()}},
-                        {icon: <BorderBottomIcon />, disabled: !is_something_selected, text: "Border", on_click: () => {this._to_selection_border()}},
-                        {icon: <BucketIcon />, disabled: !is_something_selected, text: "Bucket", on_click: () => {this._to_selection_bucket()}},
-                        {icon: <SelectInImageIcon />, disabled: !is_something_selected, text: "Crop", on_click: () => {this._to_selection_crop()}},
-                        {icon: <SelectInvertIcon />, disabled: !is_something_selected, text: "Invert", on_click: () => {this._to_selection_invert()}},
-                        {icon: <CopyIcon />, disabled: !is_something_selected, text: "Copy", on_click: () => {this._copy_selection()}},
-                        {icon: <CutIcon />, disabled: !is_something_selected, text: "Cut", on_click: () => {this._cut_selection()}},
-                        {icon: <EraserIcon />, disabled: !is_something_selected, text: "Erase", on_click: () => {this._erase_selection()}},
+                        {icon: <SelectInImageIcon />, disabled: !is_something_selected, text: "Shrink", on_click: () => {canvas.to_selection_size(-1)}},
+                        {icon: <SelectInImageIcon />, disabled: !is_something_selected, text: "Grow", on_click: () => {canvas.to_selection_size(1)}},
+                        {icon: <BorderBottomIcon />, disabled: !is_something_selected, text: "Border", on_click: () => {canvas.to_selection_border()}},
+                        {icon: <BucketIcon />, disabled: !is_something_selected, text: "Bucket", on_click: () => {canvas.to_selection_bucket()}},
+                        {icon: <SelectInImageIcon />, disabled: !is_something_selected, text: "Crop", on_click: () => {canvas.to_selection_crop()}},
+                        {icon: <SelectInvertIcon />, disabled: !is_something_selected, text: "Invert", on_click: () => {canvas.to_selection_invert()}},
+                        {icon: <CopyIcon />, disabled: !is_something_selected, text: "Copy", on_click: () => {canvas.copy_selection()}},
+                        {icon: <CutIcon />, disabled: !is_something_selected, text: "Cut", on_click: () => {canvas.cut_selection()}},
+                        {icon: <EraserIcon />, disabled: !is_something_selected, text: "Erase", on_click: () => {canvas.erase_selection()}},
                     ]
                 },
             ],
@@ -838,16 +631,16 @@ class PixelToolboxSwipeableViews extends React.Component {
                     icon: <ImageEffectIcon />,
                     text: "Effects",
                     tools: [
-                        {icon: <ImageSmoothIcon />, text: "Smooth", sub: "Run smooth effect once", on_click: () => {this._smooth_adjust()}},
-                        {icon: <ContrastCircleIcon />, text: "To auto contrast", sub: "Effect strength have an impact", on_click: () => {this._to_auto_contrast()}},
-                        {icon: <ImageVignetteIcon />, text: "To vignette", sub: "Current color and effect strength have an impact", on_click: () => {this._to_vignette()}},
-                        {icon: <LessColorIcon />, text: "To less colors", sub: "Effect strength have an impact", on_click: () => {this._less_colors()}},
-                        {icon: <LessColorAutoIcon />, text: "Less colors auto", sub: "Apply to current layer", on_click: () => {this._less_colors_auto()}},
-                        {icon: <DutoneIcon />, text: "To dutone", sub: "Current color and effect strength have an impact", on_click: () => {this._to_dutone()}},
+                        {icon: <ImageSmoothIcon />, text: "Smooth", sub: "Run smooth effect once", on_click: () => {canvas.smooth_adjust(1)}},
+                        {icon: <ContrastCircleIcon />, text: "To auto contrast", sub: "Effect strength have an impact", on_click: () => {canvas.auto_adjust_contrast(slider_value)}},
+                        {icon: <ImageVignetteIcon />, text: "To vignette", sub: "Current color and effect strength have an impact", on_click: () => {canvas.to_vignette(current_color, slider_value)}},
+                        {icon: <LessColorIcon />, text: "To less colors", sub: "Effect strength have an impact", on_click: () => {canvas.to_less_color(slider_value)}},
+                        {icon: <LessColorAutoIcon />, text: "Less colors auto", sub: "Apply to current layer", on_click: () => {canvas.to_less_color("auto")}},
+                        {icon: <DutoneIcon />, text: "To dutone", sub: "Current color and effect strength have an impact", on_click: () => {canvas.to_dutone(slider_value, second_color, current_color)}},
                         {icon: <ColorizedIcon />, text: "To colorized", sub: "Current color and effect strength have an impact", on_click: () => {this._colorize()}},
-                        {icon: <AlphaIcon />, text: "To alpha", sub: "Current color and effect strength have an impact", on_click: () => {this._to_alpha()}},
-                        {icon: <SwapVerticalIcon />, text: "Mirror vertical", sub: "Apply to current layer", on_click: () => {this._mirror_vertical()}},
-                        {icon: <SwapHorizontalIcon />, text: "Mirror horizontal", sub: "Apply to current layer", on_click: () => {this._mirror_horizontal()}},
+                        {icon: <AlphaIcon />, text: "To alpha", sub: "Current color and effect strength have an impact", on_click: () => {canvas.to_alpha(current_color, slider_value)}},
+                        {icon: <SwapVerticalIcon />, text: "Mirror vertical", sub: "Apply to current layer", on_click: () => {canvas.to_mirror(false)}},
+                        {icon: <SwapHorizontalIcon />, text: "Mirror horizontal", sub: "Apply to current layer", on_click: () => {canvas.to_mirror(true)}},
                         {icon: <RotateRightIcon />, text: "Rotate 90°", sub: "Apply to all layers", on_click: () => {this._to_rotation(true)}},
                         {icon: <RotateLeftIcon />, text: "Rotate - 90°", sub: "Apply to all layers",on_click: () => {this._to_rotation(false)}},
                     ]
@@ -858,10 +651,10 @@ class PixelToolboxSwipeableViews extends React.Component {
                     icon: <ImageFilterIcon />,
                     text: `Filters (Strength: ${slider_value*100}%)`,
                     tools: filters.map( (name) => {
-                        return {icon: <Jdenticon value={name} size={"24"}/>, text: name, on_click: () => {this._filter(name)}}
+                        return {icon: <Jdenticon value={name} size={"24"}/>, text: name, on_click: () => {canvas.to_filter(name, slider_value)}}
                     }).concat([
-                        {icon: <Jdenticon value={"Black & White"} size={"24"}/>, text: "Black & White", on_click: () => {this._bw()}},
-                        {icon: <Jdenticon value={"Sepia"} size={"24"}/>, text: "Sepia", on_click: () => {this._sepia()}},
+                        {icon: <Jdenticon value={"Black & White"} size={"24"}/>, text: "Black & White", on_click: () => {canvas.to_greyscale()}},
+                        {icon: <Jdenticon value={"Sepia"} size={"24"}/>, text: "Sepia", on_click: () => {canvas.to_sepia()}},
                     ]),
                 },
             ],
@@ -947,8 +740,8 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                                     <div style={{padding: "12px 0px 12px 32px"}}>
                                                                         <span>Actions:</span>
                                                                         <div style={{padding: "12px 0px"}}>
-                                                                            <Button color="primary" onClick={this._move_layer_up}>Move Layer up</Button>
-                                                                            <Button color="primary" onClick={this._move_layer_down}>Move Layer down</Button>
+                                                                            <Button color="primary" onClick={() => {canvas.current_layer_up()}}>Move Layer up</Button>
+                                                                            <Button color="primary" onClick={() => {canvas.current_layer_down()}}>Move Layer down</Button>
                                                                         </div>
                                                                     </div>
                                                                 </Collapse>:
@@ -1047,8 +840,6 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                 <Typography id="height-slider" gutterBottom>Height</Typography>
                                                 <Slider defaultValue={height} step={8} valueLabelDisplay="auto" min={0} max={256} onChangeCommitted={this._set_height_from_slider} aria-labelledby="height-slider"/>
                                             </div>
-
-
                                         </div>
                                         : null
                                 }

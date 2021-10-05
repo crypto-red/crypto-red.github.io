@@ -46,7 +46,7 @@ class CanvasPixels extends React.Component {
             px_per_px: props.px_per_px || 4,
             fast_drawing: props.fast_drawing || false,
             canvas_cursor: props.canvas_cursor || 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAYAAAAfrhY5AAAAAXNSR0IArs4c6QAAAFxJREFUSIntlkEKACEQw6b7/z/Hq7cdqeAcmrtJQRCrDACc824YZ8B3cU/iiSc+M27x7IULDqrq3Z0kdaVdnwA6XqA14Mh3svTXuA246QtzyB8u8cQTHx23cF+4BaK1P/6WF9EdAAAAAElFTkSuQmCC") 15 15, auto',
-            canvas_border_width: props.canvas_border_width || 0,
+            canvas_border_width: props.canvas_border_width || 1,
             canvas_border_color: props.canvas_border_color || "#666",
             canvas_border_radius: props.canvas_border_radius || 2,
             canvas_wrapper_box_shadow: props.canvas_wrapper_box_shadow || "0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%)",
@@ -168,20 +168,39 @@ class CanvasPixels extends React.Component {
 
         const pixelated_css =
             "canvas.Canvas-Pixels {"+
-            "-ms-interpolation-mode: -webkit-optimize-contrast;" +
-            "image-rendering: nearest-neighbor;" +
-            "image-rendering: optimizeSpeed;" +
-            "image-rendering: -moz-crisp-edges;" +
-            "image-rendering: -webkit-optimize-contrast;" +
-            "image-rendering: optimize-contrast;" +
-            "image-rendering: -o-pixelated;" +
-            "-ms-interpolation-mode: nearest-neighbor;" +
-            "image-rendering: pixelated;" +
-            "-ms-touch-action: none;" +
+                "-ms-interpolation-mode: -webkit-optimize-contrast;" +
+                "image-rendering: nearest-neighbor;" +
+                "image-rendering: optimizeSpeed;" +
+                "image-rendering: -moz-crisp-edges;" +
+                "image-rendering: -webkit-optimize-contrast;" +
+                "image-rendering: optimize-contrast;" +
+                "image-rendering: -o-pixelated;" +
+                "-ms-interpolation-mode: nearest-neighbor;" +
+                "image-rendering: pixelated;" +
+                "-ms-touch-action: none;" +
             "}";
 
+        const canvas_wrapper_overflow_scrollbar =
+            "div.Canvas-Wrapper-Overflow::-webkit-scrollbar {"+
+                "width: 16px;"+
+                "height: 16px;"+
+            "}";
+
+        const canvas_wrapper_overflow_scrollbar_thumb =
+            "div.Canvas-Wrapper-Overflow::-webkit-scrollbar-thumb {"+
+                "border-radius: 0px;"+
+                "background-color: #19193399;"+
+            "}";
+
+        const canvas_wrapper_overflow_scrollbar_thumb_hover =
+            "div.Canvas-Wrapper-Overflow:hover::-webkit-scrollbar-thumb {"+
+                "border-radius: 0px;"+
+                "background-color: #1c1882cc;"+
+            "}";
+
+
         const canvas_style = document.createElement("style");
-        canvas_style.innerHTML = pixelated_css;
+        canvas_style.innerHTML = pixelated_css + canvas_wrapper_overflow_scrollbar + canvas_wrapper_overflow_scrollbar_thumb + canvas_wrapper_overflow_scrollbar_thumb_hover;
         document.head.appendChild(canvas_style);
         this._notify_layers_and_compute_thumbnails_change();
     }
@@ -2515,6 +2534,7 @@ class CanvasPixels extends React.Component {
     _handle_canvas_container_wheel = (event) => {
 
         let { scale, scale_pos_x, scale_pos_y, _canvas_wrapper_overflow, _canvas_container } = this.state;
+        let _canvas_container_rect = _canvas_container.getBoundingClientRect();
 
         event.preventDefault();
         let delta = Math.max(Math.min(0.125, Math.abs(event.deltaY * -0.01)), 0.25);
@@ -2529,8 +2549,8 @@ class CanvasPixels extends React.Component {
             let ratio = 1 - scale / new_scale;
             let ratio2 = new_scale / scale;
 
-            const pos_x_in_canvas_container = (event.pageX - _canvas_container.offsetLeft - _canvas_container.clientLeft);
-            const pos_y_in_canvas_container = (event.pageY - _canvas_container.offsetTop - _canvas_container.clientTop);
+            const pos_x_in_canvas_container = (event.pageX - _canvas_container_rect.x);
+            const pos_y_in_canvas_container = (event.pageY - _canvas_container_rect.y);
 
             const pos_x_in_canvas_container_center = pos_x_in_canvas_container - _canvas_container.clientWidth / 2;
             const pos_y_in_canvas_container_center = pos_y_in_canvas_container - _canvas_container.clientHeight / 2;
@@ -2538,8 +2558,8 @@ class CanvasPixels extends React.Component {
             let new_scale_pos_x = (scale_pos_x + (pos_x_in_canvas_container * ratio)) * ratio2;
             let new_scale_pos_y = (scale_pos_y + (pos_y_in_canvas_container * ratio)) * ratio2;
 
-            new_scale_pos_x += pos_x_in_canvas_container_center * ratio;
-            new_scale_pos_y += pos_y_in_canvas_container_center * ratio;
+            //new_scale_pos_x += pos_x_in_canvas_container_center * ratio;
+            //new_scale_pos_y += pos_y_in_canvas_container_center * ratio;
 
             this.setState({
                 scale: new_scale,
@@ -5834,7 +5854,7 @@ class CanvasPixels extends React.Component {
 
         return (
             <div ref={this._set_canvas_container_ref} style={{boxSizing: "content-box"}} className={className}>
-                <div ref={this._set_canvas_wrapper_overflow_ref}  style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "auto", boxSizing: "border-box", ...canvas_container_center_props}}>
+                <div ref={this._set_canvas_wrapper_overflow_ref} className={"Canvas-Wrapper-Overflow"} style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "overlay", boxSizing: "border-box", ...canvas_container_center_props}}>
                     <div className={"Canvas-Wrapper"}
                          style={{
                              boxShadow: canvas_wrapper_box_shadow,
