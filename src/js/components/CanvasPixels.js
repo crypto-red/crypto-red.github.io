@@ -54,7 +54,7 @@ class CanvasPixels extends React.Component {
             canvas_wrapper_border_color: props.canvas_wrapper_border_color || "#000000",
             canvas_wrapper_background_color: props.canvas_wrapper_background_color || "#ffffff",
             canvas_wrapper_border_radius: props.canvas_wrapper_border_radius || 4,
-            canvas_wrapper_padding: props.canvas_wrapper_padding || 36,
+            canvas_wrapper_padding: props.canvas_wrapper_padding || 48,
             show_original_image_in_background: typeof props.show_original_image_in_background === "undefined" ? true: props.show_original_image_in_background,
             show_transparent_image_in_background: typeof props.show_transparent_image_in_background === "undefined" ? true: props.show_transparent_image_in_background,
             hide_canvas_content: props.hide_canvas_content || false,
@@ -5854,7 +5854,7 @@ class CanvasPixels extends React.Component {
 
         return (
             <div ref={this._set_canvas_container_ref} style={{boxSizing: "content-box"}} className={className}>
-                <div ref={this._set_canvas_wrapper_overflow_ref} className={"Canvas-Wrapper-Overflow"} style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "overlay", boxSizing: "border-box", ...canvas_container_center_props}}>
+                <div ref={this._set_canvas_wrapper_overflow_ref} className={"Canvas-Wrapper-Overflow"} style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "overlay", boxSizing: "border-box", touchAction: "manipulation", overscrollBehavior: "none", ...canvas_container_center_props}}>
                     <div className={"Canvas-Wrapper"}
                          style={{
                              boxShadow: canvas_wrapper_box_shadow,

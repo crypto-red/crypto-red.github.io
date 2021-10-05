@@ -92,6 +92,7 @@ const styles = theme => ({
         }
     },
     contentDrawer: {
+        overscrollBehavior: "none",
         display: "flex",
         zIndex: 1300,
         [theme.breakpoints.up("lg")]: {
@@ -838,7 +839,7 @@ class Pixel extends React.Component {
                         <Tab className={classes.tab} icon={<ImageFilterIcon />} />
                     </Tabs>
                 </div>
-                <div className={classes.drawerContainer}>
+                <div className={classes.drawerContainer} onGotPointerCapture={(event) => {event.stopPropagation(); event.preventDefault();}}>
                     <PixelToolboxSwipeableViews
                         canvas={_canvas}
                         view_class={classes.listOfTools}
@@ -1080,7 +1081,7 @@ class Pixel extends React.Component {
                                     paper: classes.swipeableDrawerPaper
                                 }}
                                 variant="persistent"
-                                anchor="top"
+                                anchor="bottom"
                             >
                                 <DialogCloseButton onClick={this._handle_edit_drawer_close} />
                                 {drawer_content}
