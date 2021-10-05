@@ -40,6 +40,9 @@ import PixelToolboxSwipeableViews from "../components/PixelToolboxSwipeableViews
 import api from "../utils/api";
 import {ListItem} from "@material-ui/core";
 import FileImportIcon from "../icons/FileImport";
+import ContrastCircleIcon from "../icons/ContrastCircle";
+import LessColorIcon from "../icons/LessColor";
+import ImageSmoothIcon from "../icons/ImageSmooth";
 
 const styles = theme => ({
     green: {
@@ -188,7 +191,17 @@ const styles = theme => ({
             width: "100vw",
         },
         width: 360,
-    }
+    },
+    contextMenuSubheader: {
+        lineHeight: "24px",
+        backgroundColor: "#eee",
+        color: theme.palette.secondary.light,
+    },
+    contextMenu: {
+        "& .MuiList-padding": {
+            padding: 0,
+        },
+    },
 });
 
 
@@ -456,7 +469,13 @@ class Pixel extends React.Component {
 
     _handle_current_color_change = (color) => {
 
-        this.setState({_current_color: color.hex ? color.hex: color});
+        color = color.hex ? color.hex: color;
+
+        const { _canvas } = this.state;
+        const [r, g, b, a] = _canvas.get_rgba_from_hex(color);
+        const [h, s, l] = _canvas.rgb_to_hsl(r, g, b);
+
+        this.setState({_current_color: color, _hue: h});
     };
 
     _handle_something_selected_change = (is_something_selected) => {
@@ -586,6 +605,33 @@ class Pixel extends React.Component {
         this.setState({_menu_data});
     };
 
+    _to_auto_medium_more_contrast = () => {
+
+        const { _canvas } = this.state;
+        _canvas.auto_adjust_contrast(1/3);
+    };
+
+    _less_colors_stepped = (increase = 1) => {
+
+        const { _canvas } = this.state;
+
+        let colors_removed = 0;
+        let less_color_step = increase;
+        while (colors_removed === 0 || increase !== 0) {
+
+            colors_removed = _canvas.to_less_color(less_color_step / 64).colors_removed;
+            less_color_step += increase;
+            increase -= colors_removed > 0 ? 1: 0;
+        }
+    };
+
+    _smooth_adjust = () => {
+
+        const { _canvas } = this.state;
+
+        _canvas.smooth_adjust();
+    }
+
     render() {
 
         const {
@@ -707,6 +753,13 @@ class Pixel extends React.Component {
             <div>
                 <Backdrop className={classes.backdrop} open={_loading} />
                 <Menu
+                    className={classes.contextMenu}
+                    PaperProps={{
+                        style: {
+                            maxHeight: 350,
+                            width: 250,
+                        },
+                    }}
                     onContextMenu={(e) => {e.preventDefault()}}
                     dense={true}
                     keepMounted
@@ -719,27 +772,46 @@ class Pixel extends React.Component {
                             : undefined
                     }
                 >
-                    <ListSubheader style={{lineHeight: "24px"}}>Color</ListSubheader>
-                    <ListItem button disabled={_menu_data.pxl_color === _current_color} onClick={(event) => this._set_current_color(_menu_data.pxl_color)}>
+                    <ListSubheader className={classes.contextMenuSubheader}>Color</ListSubheader>
+                    <ListItem button divider disabled={_menu_data.pxl_color === _current_color} onClick={(event) => this._set_current_color(_menu_data.pxl_color)}>
                         <ListItemIcon>
                             <SquareIcon style={{ color: _menu_data.pxl_color, background: "repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / 8px 8px"}} />
                         </ListItemIcon>
                         <ListItemText primary="Pick color" />
                     </ListItem>
-                    <ListItem button disabled={_menu_data.pxl_color === _current_color} onClick={(event) => this._exchange_pixel_colors(_menu_data.pxl_color, _current_color)}>
+                    <ListItem button divider disabled={_menu_data.pxl_color === _current_color} onClick={(event) => this._exchange_pixel_colors(_menu_data.pxl_color, _current_color)}>
                         <ListItemIcon>
                             <SquareIcon style={{ color: _current_color, background: "repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / 8px 8px"}} />
                         </ListItemIcon>
                         <ListItemText primary="Replace color" />
                     </ListItem>
-                    <ListSubheader style={{lineHeight: "24px"}}>Load</ListSubheader>
-                    <ListItem button onClick={(event) => this._upload_image()}>
+                    <ListSubheader className={classes.contextMenuSubheader}>Effect</ListSubheader>
+                    <ListItem button divider onClick={(event) => this._to_auto_medium_more_contrast()}>
+                        <ListItemIcon>
+                            <ContrastCircleIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Increase contrast" />
+                    </ListItem>
+                    <ListItem button divider onClick={(event) => this._less_colors_stepped(2)}>
+                        <ListItemIcon>
+                            <LessColorIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Reduce color number" />
+                    </ListItem>
+                    <ListItem button divider onClick={(event) => this._smooth_adjust(1)}>
+                        <ListItemIcon>
+                            <ImageSmoothIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Smooth a bit" />
+                    </ListItem>
+                    <ListSubheader className={classes.contextMenuSubheader}>Load</ListSubheader>
+                    <ListItem button divider onClick={(event) => this._upload_image()}>
                         <ListItemIcon>
                             <FileImportIcon />
                         </ListItemIcon>
                         <ListItemText primary="Open image" />
                     </ListItem>
-                    <ListItem button onClick={(event) => this._import_image()}>
+                    <ListItem button divider onClick={(event) => this._import_image()}>
                         <ListItemIcon>
                             <FileImportIcon />
                         </ListItemIcon>

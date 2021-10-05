@@ -310,16 +310,17 @@ class PixelToolboxSwipeableViews extends React.Component {
         canvas.to_less_color(slider_value);
     };
 
-    _less_colors_stepped = () => {
+    _less_colors_stepped = (increase = 1) => {
 
-        let { canvas } = this.state;
+        const { canvas } = this.state;
 
         let colors_removed = 0;
-        let less_color_step = 1;
-        while (colors_removed === 0) {
+        let less_color_step = increase;
+        while (colors_removed === 0 || increase !== 0) {
 
             colors_removed = canvas.to_less_color(less_color_step / 64).colors_removed;
-            less_color_step++;
+            less_color_step += increase;
+            increase -= colors_removed > 0 ? 1: 0;
         }
     };
 
@@ -501,11 +502,6 @@ class PixelToolboxSwipeableViews extends React.Component {
 
             this.forceUpdate();
         });
-    };
-
-    _set_hue_from_slider = (event, value) => {
-
-        this.setState({hue: value});
     };
 
     _set_tool = (name) => {
