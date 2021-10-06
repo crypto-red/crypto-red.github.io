@@ -2672,6 +2672,8 @@ class CanvasPixels extends React.Component {
             }
         }
 
+        console.log(_pointer_events);
+
         if (_pointer_events.length === 2) {
 
 
@@ -2696,7 +2698,7 @@ class CanvasPixels extends React.Component {
             };
         }
 
-        this.setState({_pointer_events, _latest_pointers_data});
+        this.setState({_pointer_events: [..._pointer_events], _latest_pointers_data});
     };
 
     _handle_canvas_container_pointer_up = (event) => {
@@ -2715,7 +2717,7 @@ class CanvasPixels extends React.Component {
             _latest_pointers_data = {};
         }
 
-        this.setState({_pointer_events, _latest_pointers_data});
+        this.setState({_pointer_events: [..._pointer_events], _latest_pointers_data});
     };
 
     _handle_canvas_mouse_move = (event) => {
