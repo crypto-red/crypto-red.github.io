@@ -290,12 +290,21 @@ class Pixel extends React.Component {
 
     _handle_right_click = (event, data) => {
 
+        const { _canvas } = this.state;
+
         this.setState({
             _menu_mouse_x: event.clientX - 2,
             _menu_mouse_y: event.clientY - 4,
             _menu_data: data,
             _menu_event: event,
         });
+
+        setTimeout(() => {
+
+            data.pxl_color = _canvas.get_pixel_color_from_pos(data.pos_x, data.pos_y);
+            this.setState({_menu_data: data});
+
+        }, 1000);
 
     };
 
