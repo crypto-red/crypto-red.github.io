@@ -1521,6 +1521,14 @@ class CanvasPixels extends React.Component {
         element.addEventListener("pointerout", this._handle_canvas_container_pointer_up, {capture: true});
         element.addEventListener("pointerleave", this._handle_canvas_container_pointer_up, {capture: true});
 
+        let events = ['onclick', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'ondblclick', 'onfocus', 'onblur'];
+
+        events.forEach(function (event) {
+            element[event] = function () {
+                return false;
+            };
+        });
+
         this.setState({_canvas_container: element});
     };
 
@@ -2658,7 +2666,7 @@ class CanvasPixels extends React.Component {
         let { _pointer_events, _latest_pointers_data } = this.state;
 
         for (let i = 0; i < _pointer_events.length; i++) {
-            if (event.pointerId == _pointer_events[i].pointerId) {
+            if (event.pointerId === _pointer_events[i].pointerId) {
                 _pointer_events[i] = event;
                 break;
             }
@@ -2693,7 +2701,7 @@ class CanvasPixels extends React.Component {
 
     _handle_canvas_container_pointer_up = (event) => {
 
-        let { _pointer_events } = this.state;
+        let { _pointer_events, _latest_pointers_data } = this.state;
 
         for (let i = 0; i < _pointer_events.length; i++) {
             if (_pointer_events[i].pointerId == event.pointerId) {
@@ -2702,7 +2710,12 @@ class CanvasPixels extends React.Component {
             }
         }
 
-        this.setState({_pointer_events});
+        if (_pointer_events.length < 2) {
+
+            _latest_pointers_data = {};
+        }
+
+        this.setState({_pointer_events, _latest_pointers_data});
     };
 
     _handle_canvas_mouse_move = (event) => {
@@ -5970,7 +5983,7 @@ class CanvasPixels extends React.Component {
 
         return (
             <div ref={this._set_canvas_container_ref} style={{boxSizing: "content-box"}} className={className}>
-                <div ref={this._set_canvas_wrapper_overflow_ref} className={"Canvas-Wrapper-Overflow"} style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "overlay", boxSizing: "border-box", touchAction: "manipulation", ...canvas_container_center_props}}>
+                <div ref={this._set_canvas_wrapper_overflow_ref} className={"Canvas-Wrapper-Overflow"} style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "overlay", boxSizing: "border-box", ...canvas_container_center_props}}>
                     <div className={"Canvas-Wrapper"}
                          style={{
                              boxShadow: canvas_wrapper_box_shadow,
