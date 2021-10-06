@@ -149,6 +149,8 @@ class CanvasPixels extends React.Component {
             _explosion_index: -1,
             _selection_pair_highlight: true,
             _old_selection_pair_highlight: true,
+            _pointer_events: [],
+            _latest_pointers_data: {},
         };
     };
 
@@ -165,6 +167,11 @@ class CanvasPixels extends React.Component {
         setInterval(() => {
             this._maybe_update_selection_highlight();
         }, 1000 * 2/5);
+
+        const body_css =
+            "body {"+
+                "touch-action:none;"+
+            "}";
 
         const pixelated_css =
             "canvas.Canvas-Pixels {"+
@@ -200,7 +207,7 @@ class CanvasPixels extends React.Component {
 
 
         const canvas_style = document.createElement("style");
-        canvas_style.innerHTML = pixelated_css + canvas_wrapper_overflow_scrollbar + canvas_wrapper_overflow_scrollbar_thumb + canvas_wrapper_overflow_scrollbar_thumb_hover;
+        canvas_style.innerHTML = body_css + pixelated_css + canvas_wrapper_overflow_scrollbar + canvas_wrapper_overflow_scrollbar_thumb + canvas_wrapper_overflow_scrollbar_thumb_hover;
         document.head.appendChild(canvas_style);
         this._notify_layers_and_compute_thumbnails_change();
     }
@@ -337,7 +344,7 @@ class CanvasPixels extends React.Component {
         }
     }
 
-    zoom_of = (of = 1.5) => {
+    zoom_of = (of = 1.5, to_x = null, to_y = null) => {
 
         let { scale, scale_pos_x, scale_pos_y, _canvas_wrapper_overflow, _canvas_container } = this.state;
 
@@ -348,8 +355,16 @@ class CanvasPixels extends React.Component {
             let ratio = 1 - scale / new_scale;
             let ratio2 = new_scale / scale;
 
-            const pos_x_in_canvas_container = _canvas_container.offsetWidth / 2;
-            const pos_y_in_canvas_container = _canvas_container.offsetHeight / 2;
+            let pos_x_in_canvas_container = _canvas_container.offsetWidth / 2;
+            let pos_y_in_canvas_container = _canvas_container.offsetHeight / 2;
+
+            if(to_x !== null && to_y !== null) {
+
+                let _canvas_container_rect = _canvas_container.getBoundingClientRect();
+
+                pos_x_in_canvas_container = (to_x - _canvas_container_rect.x);
+                pos_y_in_canvas_container = (to_y - _canvas_container_rect.y);
+            }
 
             let new_scale_pos_x = (scale_pos_x + (pos_x_in_canvas_container * ratio)) * ratio2;
             let new_scale_pos_y = (scale_pos_y + (pos_y_in_canvas_container * ratio)) * ratio2;
@@ -1499,6 +1514,12 @@ class CanvasPixels extends React.Component {
 
         element.addEventListener("wheel", this._handle_canvas_container_wheel, {capture: true});
         element.addEventListener("scroll", this._handle_canvas_container_scroll, {capture: true});
+        element.addEventListener("pointerdown", this._handle_canvas_container_pointer_down, {capture: true});
+        element.addEventListener("pointermove", this._handle_canvas_container_pointer_move, {capture: true});
+        element.addEventListener("pointerup", this._handle_canvas_container_pointer_up, {capture: true});
+        element.addEventListener("pointercancel", this._handle_canvas_container_pointer_up, {capture: true});
+        element.addEventListener("pointerout", this._handle_canvas_container_pointer_up, {capture: true});
+        element.addEventListener("pointerleave", this._handle_canvas_container_pointer_up, {capture: true});
 
         this.setState({_canvas_container: element});
     };
@@ -1523,6 +1544,12 @@ class CanvasPixels extends React.Component {
         _canvas.removeEventListener("mouseleave", this._handle_canvas_mouse_leave);
         _canvas_container.removeEventListener("wheel", this._handle_canvas_container_wheel);
         _canvas_container.removeEventListener("scroll", this._handle_canvas_container_scroll);
+        _canvas_container.removeEventListener("pointerdown", this._handle_canvas_container_pointer_down);
+        _canvas_container.removeEventListener("pointermove", this._handle_canvas_container_pointer_move);
+        _canvas_container.removeEventListener("pointerup", this._handle_canvas_container_pointer_up);
+        _canvas_container.removeEventListener("pointercancel", this._handle_canvas_container_pointer_up);
+        _canvas_container.removeEventListener("pointerout", this._handle_canvas_container_pointer_up);
+        _canvas_container.removeEventListener("pointerleave", this._handle_canvas_container_pointer_up);
     }
 
     _get_canvas_pos_from_event = (event) => {
@@ -2616,6 +2643,66 @@ class CanvasPixels extends React.Component {
             scale_pos_x: _canvas_wrapper_overflow.scrollLeft,
             scale_pos_y: _canvas_wrapper_overflow.scrollTop,
         });
+    };
+
+    _handle_canvas_container_pointer_down = (event) => {
+
+        let { _pointer_events } = this.state;
+        _pointer_events.push(event);
+
+        this.setState({_pointer_events});
+    };
+
+    _handle_canvas_container_pointer_move = (event) => {
+
+        let { _pointer_events, _latest_pointers_data } = this.state;
+
+        for (let i = 0; i < _pointer_events.length; i++) {
+            if (event.pointerId == _pointer_events[i].pointerId) {
+                _pointer_events[i] = event;
+                break;
+            }
+        }
+
+        if (_pointer_events.length === 2) {
+
+
+            let x_diff = Math.abs(_pointer_events[0].clientX - _pointer_events[1].clientX);
+            let y_diff = Math.abs(_pointer_events[0].clientY - _pointer_events[1].clientY);
+            let h_diff = Math.hypot(_pointer_events[0].pageX - _pointer_events[1].pageX, _pointer_events[0].pageY - _pointer_events[1].pageY);
+            let x_center = (_pointer_events[0].pageX + _pointer_events[1].pageX) / 2;
+            let y_center = (_pointer_events[0].pageY + _pointer_events[1].pageY) / 2;
+
+            if(_latest_pointers_data !== {}) {
+
+                const of = h_diff / _latest_pointers_data.h_diff;
+                this.zoom_of(of, x_center, y_center);
+            }
+
+            _latest_pointers_data = {
+                x_diff,
+                y_diff,
+                h_diff,
+                x_center,
+                y_center,
+            };
+        }
+
+        this.setState({_pointer_events, _latest_pointers_data});
+    };
+
+    _handle_canvas_container_pointer_up = (event) => {
+
+        let { _pointer_events } = this.state;
+
+        for (let i = 0; i < _pointer_events.length; i++) {
+            if (_pointer_events[i].pointerId == event.pointerId) {
+                _pointer_events.splice(i, 1);
+                break;
+            }
+        }
+
+        this.setState({_pointer_events});
     };
 
     _handle_canvas_mouse_move = (event) => {
