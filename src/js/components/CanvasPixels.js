@@ -2672,8 +2672,6 @@ class CanvasPixels extends React.Component {
             }
         }
 
-        console.log(_pointer_events);
-
         if (_pointer_events.length === 2) {
 
 
@@ -5984,8 +5982,8 @@ class CanvasPixels extends React.Component {
         }
 
         return (
-            <div ref={this._set_canvas_container_ref} style={{boxSizing: "content-box"}} className={className}>
-                <div ref={this._set_canvas_wrapper_overflow_ref} className={"Canvas-Wrapper-Overflow"} style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "overlay", boxSizing: "border-box", ...canvas_container_center_props}}>
+            <div ref={this._set_canvas_container_ref} style={{boxSizing: "content-box", touchAction: "none"}} className={className}>
+                <div ref={this._set_canvas_wrapper_overflow_ref} className={"Canvas-Wrapper-Overflow"} style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "overlay", touchAction: "none", boxSizing: "border-box", ...canvas_container_center_props}}>
                     <div className={"Canvas-Wrapper"}
                          style={{
                              boxShadow: canvas_wrapper_box_shadow,
