@@ -150,7 +150,7 @@ class CanvasPixels extends React.Component {
             _selection_pair_highlight: true,
             _old_selection_pair_highlight: true,
             _pointer_events: [],
-            _latest_pointers_data: {},
+            _latest_pointers_distance: 0,
         };
     };
 
@@ -344,7 +344,7 @@ class CanvasPixels extends React.Component {
         }
     }
 
-    zoom_of = (of = 1.5, to_x = null, to_y = null) => {
+    zoom_of = (of = 1, page_x = null, page_y = null) => {
 
         let { scale, scale_pos_x, scale_pos_y, _canvas_wrapper_overflow, _canvas_container } = this.state;
 
@@ -358,12 +358,12 @@ class CanvasPixels extends React.Component {
             let pos_x_in_canvas_container = _canvas_container.offsetWidth / 2;
             let pos_y_in_canvas_container = _canvas_container.offsetHeight / 2;
 
-            if(to_x !== null && to_y !== null) {
+            if(page_x !== null && page_y !== null) {
 
                 let _canvas_container_rect = _canvas_container.getBoundingClientRect();
 
-                pos_x_in_canvas_container = (to_x - _canvas_container_rect.x);
-                pos_y_in_canvas_container = (to_y - _canvas_container_rect.y);
+                pos_x_in_canvas_container = (page_x - _canvas_container_rect.x);
+                pos_y_in_canvas_container = (page_y - _canvas_container_rect.y);
             }
 
             let new_scale_pos_x = (scale_pos_x + (pos_x_in_canvas_container * ratio)) * ratio2;
@@ -2658,12 +2658,12 @@ class CanvasPixels extends React.Component {
         let { _pointer_events } = this.state;
         _pointer_events.push(event);
 
-        this.setState({_pointer_events});
+        this.setState({_pointer_events: [..._pointer_events]});
     };
 
     _handle_canvas_container_pointer_move = (event) => {
 
-        let { _pointer_events, _latest_pointers_data } = this.state;
+        let { _pointer_events, _latest_pointers_distance } = this.state;
 
         for (let i = 0; i < _pointer_events.length; i++) {
             if (event.pointerId === _pointer_events[i].pointerId) {
@@ -2672,39 +2672,41 @@ class CanvasPixels extends React.Component {
             }
         }
 
+        if(_pointer_events.length === 1) {
+
+            _pointer_events.push({
+                clientX: 100,
+                clientY: 100,
+                pageX: 150,
+                pageY: 150,
+                pointerId: "hello",
+            });
+        }
+
         if (_pointer_events.length === 2) {
 
 
             let x_diff = Math.abs(_pointer_events[0].clientX - _pointer_events[1].clientX);
             let y_diff = Math.abs(_pointer_events[0].clientY - _pointer_events[1].clientY);
-            let h_diff = Math.hypot(_pointer_events[0].pageX - _pointer_events[1].pageX, _pointer_events[0].pageY - _pointer_events[1].pageY);
-            let x_center = (_pointer_events[0].pageX + _pointer_events[1].pageX) / 2;
-            let y_center = (_pointer_events[0].pageY + _pointer_events[1].pageY) / 2;
+            let a_diff = Math.sqrt((x_diff * x_diff) + (y_diff * y_diff))
+            let page_x_center = (_pointer_events[0].pageX + _pointer_events[1].pageX) / 2;
+            let page_y_center = (_pointer_events[0].pageY + _pointer_events[1].pageY) / 2;
 
-            if(_latest_pointers_data !== {}) {
+            const of = _latest_pointers_distance ? a_diff / _latest_pointers_distance : 1;
+            this.zoom_of(of, page_x_center, page_y_center);
 
-                const of = h_diff / _latest_pointers_data.h_diff;
-                this.zoom_of(of, x_center, y_center);
-            }
+            _latest_pointers_distance = a_diff;
 
-            _latest_pointers_data = {
-                x_diff,
-                y_diff,
-                h_diff,
-                x_center,
-                y_center,
-            };
+            this.setState({_pointer_events: [..._pointer_events], _latest_pointers_distance});
         }
-
-        this.setState({_pointer_events: [..._pointer_events], _latest_pointers_data});
     };
 
     _handle_canvas_container_pointer_up = (event) => {
 
-        let { _pointer_events, _latest_pointers_data } = this.state;
+        let { _pointer_events, _latest_pointers_distance } = this.state;
 
         for (let i = 0; i < _pointer_events.length; i++) {
-            if (_pointer_events[i].pointerId == event.pointerId) {
+            if (_pointer_events[i].pointerId === event.pointerId) {
                 _pointer_events.splice(i, 1);
                 break;
             }
@@ -2712,10 +2714,10 @@ class CanvasPixels extends React.Component {
 
         if (_pointer_events.length < 2) {
 
-            _latest_pointers_data = {};
+            _latest_pointers_distance = 0;
         }
 
-        this.setState({_pointer_events: [..._pointer_events], _latest_pointers_data});
+        this.setState({_pointer_events: [..._pointer_events], _latest_pointers_distance});
     };
 
     _handle_canvas_mouse_move = (event) => {
@@ -5982,8 +5984,8 @@ class CanvasPixels extends React.Component {
         }
 
         return (
-            <div ref={this._set_canvas_container_ref} style={{boxSizing: "content-box", touchAction: "none"}} className={className}>
-                <div ref={this._set_canvas_wrapper_overflow_ref} className={"Canvas-Wrapper-Overflow"} style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "overlay", touchAction: "none", boxSizing: "border-box", ...canvas_container_center_props}}>
+            <div ref={this._set_canvas_container_ref} style={{boxSizing: "content-box"}} className={className}>
+                <div ref={this._set_canvas_wrapper_overflow_ref} className={"Canvas-Wrapper-Overflow"} style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "overlay", boxSizing: "border-box", ...canvas_container_center_props}}>
                     <div className={"Canvas-Wrapper"}
                          style={{
                              boxShadow: canvas_wrapper_box_shadow,
