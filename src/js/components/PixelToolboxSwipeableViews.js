@@ -82,6 +82,10 @@ import RotateRightIcon from "../icons/RotateRight";
 import SwapHorizontalIcon from "../icons/SwapHorizontal";
 import SwapVerticalIcon from "../icons/SwapVertical";
 
+import MagnifyPlusIcon from "../icons/MagnifyPlus";
+import MagnifyMinusIcon from "../icons/MagnifyMinus";
+import NavigationIcon from "../icons/Navigation";
+
 import Jdenticon from "react-jdenticon";
 
 const styles = theme => ({
@@ -489,6 +493,15 @@ class PixelToolboxSwipeableViews extends React.Component {
             "palette": [],
             "image": [
                 {
+                    icon: <NavigationIcon />,
+                    text: "Navigation",
+                    tools: [
+                        {icon: <MoveIcon />, disabled: tool === "MOVE", text: "Move", on_click: () => {this._set_tool("MOVE")}},
+                        {icon: <MagnifyPlusIcon />, text: "Zoom in", on_click: () => {canvas.zoom_of(1.5)}},
+                        {icon: <MagnifyMinusIcon />, text: "Zoom out", on_click: () => {canvas.zoom_of(0.75)}},
+                    ]
+                },
+                {
                     icon: <HistoryIcon />,
                     text: "History",
                     tools: [
@@ -549,7 +562,6 @@ class PixelToolboxSwipeableViews extends React.Component {
                     text: "Drawing tools",
                     tools: [
                         {icon: <ColorPickerIcon />, disabled: tool === "PICKER", text: "Picker", sub: "[CTRL (HOLD)]", on_click: () => {this._set_tool("PICKER")}},
-                        {icon: <MoveIcon />, disabled: tool === "MOVE", text: "Move", sub: "[MID. CLICK]", on_click: () => {this._set_tool("MOVE")}},
                         {icon: <PencilIcon />, disabled: tool === "PENCIL", text: "Pencil", sub: "[P]", on_click: () => {this._set_tool("PENCIL")}},
                         {icon: <PencilPerfectIcon />, disabled: tool === "PENCIL PERFECT", text: "Pencil perfect", sub: "[N]", on_click: () => {this._set_tool("PENCIL PERFECT")}},
                         {icon: <MirrorIcon />, disabled: tool === "SET PENCIL MIRROR", text: "Set pencil mirror", sub: "[M]", on_click: () => {this._set_tool("SET PENCIL MIRROR")}},

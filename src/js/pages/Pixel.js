@@ -908,7 +908,7 @@ class Pixel extends React.Component {
                             : undefined
                     }
                 >
-                    <span style={{textAlign: "left", padding: 8, color: "#666"}}>X: {_menu_data.pos_x}, Y: {_menu_data.pos_y}</span>
+                    <span style={{textAlign: "left", padding: "12px 8px", color: "#666"}}>X: {_menu_data.pos_x}, Y: {_menu_data.pos_y}</span>
                     {
                         _tool === "SET PENCIL MIRROR" || _pencil_mirror_mode !== "NONE" ?
                             <div>

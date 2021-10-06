@@ -6,6 +6,7 @@ const overrides = {
             },
             body: {
                 backgroundColor: "#F4F6F8",
+                touchAction: "none",
                 width: "100vw",
                 height: "100vh",
             },

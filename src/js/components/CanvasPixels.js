@@ -337,6 +337,41 @@ class CanvasPixels extends React.Component {
         }
     }
 
+    zoom_of = (of = 1.5) => {
+
+        let { scale, scale_pos_x, scale_pos_y, _canvas_wrapper_overflow, _canvas_container } = this.state;
+
+        let new_scale = scale * of;
+
+        if(!(new_scale > 6) && !(new_scale < 1/6)) {
+
+            let ratio = 1 - scale / new_scale;
+            let ratio2 = new_scale / scale;
+
+            const pos_x_in_canvas_container = _canvas_container.offsetWidth / 2;
+            const pos_y_in_canvas_container = _canvas_container.offsetHeight / 2;
+
+            let new_scale_pos_x = (scale_pos_x + (pos_x_in_canvas_container * ratio)) * ratio2;
+            let new_scale_pos_y = (scale_pos_y + (pos_y_in_canvas_container * ratio)) * ratio2;
+
+            this.setState({
+                scale: new_scale,
+            }, () => {
+
+                _canvas_wrapper_overflow.scrollLeft = new_scale_pos_x;
+                _canvas_wrapper_overflow.scrollTop = new_scale_pos_y;
+
+                this.setState({
+                    scale_pos_x: _canvas_wrapper_overflow.scrollLeft,
+                    scale_pos_y: _canvas_wrapper_overflow.scrollTop,
+                }, () =>{
+
+                });
+
+            });
+        }
+    };
+
     current_layer_up = () => {
 
         let { _layers, _layer_index, _s_pxl_colors, _s_pxls } = this.state;
@@ -2552,14 +2587,8 @@ class CanvasPixels extends React.Component {
             const pos_x_in_canvas_container = (event.pageX - _canvas_container_rect.x);
             const pos_y_in_canvas_container = (event.pageY - _canvas_container_rect.y);
 
-            const pos_x_in_canvas_container_center = pos_x_in_canvas_container - _canvas_container.clientWidth / 2;
-            const pos_y_in_canvas_container_center = pos_y_in_canvas_container - _canvas_container.clientHeight / 2;
-
             let new_scale_pos_x = (scale_pos_x + (pos_x_in_canvas_container * ratio)) * ratio2;
             let new_scale_pos_y = (scale_pos_y + (pos_y_in_canvas_container * ratio)) * ratio2;
-
-            //new_scale_pos_x += pos_x_in_canvas_container_center * ratio;
-            //new_scale_pos_y += pos_y_in_canvas_container_center * ratio;
 
             this.setState({
                 scale: new_scale,
@@ -5854,7 +5883,7 @@ class CanvasPixels extends React.Component {
 
         return (
             <div ref={this._set_canvas_container_ref} style={{boxSizing: "content-box"}} className={className}>
-                <div ref={this._set_canvas_wrapper_overflow_ref} className={"Canvas-Wrapper-Overflow"} style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "overlay", boxSizing: "border-box", touchAction: "manipulation", overscrollBehavior: "none", ...canvas_container_center_props}}>
+                <div ref={this._set_canvas_wrapper_overflow_ref} className={"Canvas-Wrapper-Overflow"} style={{height: "100%", width: "100%", aspectRatio: `1 / 1`, overflow: "overlay", boxSizing: "border-box", touchAction: "manipulation", ...canvas_container_center_props}}>
                     <div className={"Canvas-Wrapper"}
                          style={{
                              boxShadow: canvas_wrapper_box_shadow,
