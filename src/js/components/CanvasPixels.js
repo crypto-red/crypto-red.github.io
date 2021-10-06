@@ -344,7 +344,7 @@ class CanvasPixels extends React.Component {
         }
     }
 
-    zoom_of = (of = 1, page_x = null, page_y = null) => {
+    zoom_of = (of = 1, page_x = null, page_y = null, move_x = 0, move_y = 0) => {
 
         let { scale, scale_pos_x, scale_pos_y, _canvas_wrapper_overflow, _canvas_container } = this.state;
 
@@ -368,6 +368,9 @@ class CanvasPixels extends React.Component {
 
             let new_scale_pos_x = (scale_pos_x + (pos_x_in_canvas_container * ratio)) * ratio2;
             let new_scale_pos_y = (scale_pos_y + (pos_y_in_canvas_container * ratio)) * ratio2;
+
+            new_scale_pos_x += move_x;
+            new_scale_pos_y += move_y;
 
             this.setState({
                 scale: new_scale,
@@ -2672,28 +2675,17 @@ class CanvasPixels extends React.Component {
             }
         }
 
-        if(_pointer_events.length === 1) {
-
-            _pointer_events.push({
-                clientX: 100,
-                clientY: 100,
-                pageX: 150,
-                pageY: 150,
-                pointerId: "hello",
-            });
-        }
-
         if (_pointer_events.length === 2) {
 
 
-            let x_diff = Math.abs(_pointer_events[0].clientX - _pointer_events[1].clientX);
-            let y_diff = Math.abs(_pointer_events[0].clientY - _pointer_events[1].clientY);
+            let x_diff = _pointer_events[0].clientX - _pointer_events[1].clientX;
+            let y_diff = _pointer_events[0].clientY - _pointer_events[1].clientY;
             let a_diff = Math.sqrt((x_diff * x_diff) + (y_diff * y_diff))
             let page_x_center = (_pointer_events[0].pageX + _pointer_events[1].pageX) / 2;
             let page_y_center = (_pointer_events[0].pageY + _pointer_events[1].pageY) / 2;
 
             const of = _latest_pointers_distance ? a_diff / _latest_pointers_distance : 1;
-            this.zoom_of(of, page_x_center, page_y_center);
+            this.zoom_of(of, page_x_center, page_y_center, x_diff, y_diff);
 
             _latest_pointers_distance = a_diff;
 
