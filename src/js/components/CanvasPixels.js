@@ -2740,7 +2740,7 @@ class CanvasPixels extends React.Component {
 
                 const of = _latest_pointers_distance > 0 ? anchor_diff / _latest_pointers_distance : 1;
 
-                this.zoom_of(of, page_x_center, page_y_center, move_x, move_y);
+                this.zoom_of(of, page_x_center, page_y_center, -move_x, -move_y);
 
                 this.setState({
                     _pointer_events: [..._pointer_events],
