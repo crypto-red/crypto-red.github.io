@@ -49,17 +49,16 @@ class CanvasPixels extends React.Component {
             canvas_border_width: props.canvas_border_width || 1,
             canvas_border_color: props.canvas_border_color || "#666",
             canvas_border_radius: props.canvas_border_radius || 2,
-            canvas_wrapper_box_shadow: props.canvas_wrapper_box_shadow || "0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%)",
             canvas_wrapper_border_width: props.canvas_wrapper_border_width || 0,
             canvas_wrapper_border_color: props.canvas_wrapper_border_color || "#000000",
             canvas_wrapper_background_color: props.canvas_wrapper_background_color || "#ffffff",
             canvas_wrapper_border_radius: props.canvas_wrapper_border_radius || 4,
-            canvas_wrapper_padding: props.canvas_wrapper_padding || 48,
+            canvas_wrapper_padding: props.canvas_wrapper_padding || 72,
             show_original_image_in_background: typeof props.show_original_image_in_background === "undefined" ? true: props.show_original_image_in_background,
             show_transparent_image_in_background: typeof props.show_transparent_image_in_background === "undefined" ? true: props.show_transparent_image_in_background,
             hide_canvas_content: props.hide_canvas_content || false,
-            default_scale: props.default_scale || 0.8,
-            scale: props.scale || props.default_scale || 0.8,
+            default_scale: props.default_scale || 0.75,
+            scale: props.scale || props.default_scale || 0.75,
             scale_move_x: 0,
             scale_move_y: 0,
             mine_player_direction: props.mine_player_direction || "UP",
@@ -193,10 +192,27 @@ class CanvasPixels extends React.Component {
                 "-ms-touch-action: none;" +
             "}";
 
+        const canvas_wrapper_css =
+            ".Canvas-Wrapper {"+
+                "box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);"+
+                "transition: box-shadow 333ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"+
+                "cursor: grab;"+
+                "border: 1px solid #ddd !important;"+
+            "}";
 
+        const canvas_wrapper_hover_css =
+            ".Canvas-Wrapper:hover {"+
+                "box-shadow: 0 10px 20px rgb(0 0 0 / 19%), 0 6px 6px rgb(0 0 0 / 23%);"+
+            "}";
+
+        const canvas_wrapper_active_css =
+            ".Canvas-Wrapper:active {"+
+                "cursor: grabbing;"+
+                "border: 1px solid #bbb !important;"+
+            "}";
 
         const canvas_style = document.createElement("style");
-        canvas_style.innerHTML = body_css + pixelated_css;
+        canvas_style.innerHTML = body_css + pixelated_css + canvas_wrapper_css + canvas_wrapper_hover_css + canvas_wrapper_active_css;
         document.head.appendChild(canvas_style);
         this._notify_layers_and_compute_thumbnails_change();
 
@@ -1560,6 +1576,10 @@ class CanvasPixels extends React.Component {
 
     _set_canvas_wrapper_ref = (element) => {
 
+        if(element === null) {return}
+
+        element.addEventListener("mousemove", this._handle_canvas_wrapper_mouse_move, {capture: true});
+
         this.setState({_canvas_wrapper: element}, () => {
 
             this._to_canvas_middle();
@@ -1568,6 +1588,7 @@ class CanvasPixels extends React.Component {
 
     _set_canvas_wrapper_overflow_ref = (element) => {
 
+        if(element === null) {return}
         this.setState({_canvas_wrapper_overflow: element});
     };
 
@@ -1591,12 +1612,13 @@ class CanvasPixels extends React.Component {
 
     componentWillUnmount() {
 
-        const { _canvas, _canvas_container } = this.state;
+        const { _canvas, _canvas_container, _canvas_wrapper } = this.state;
 
         _canvas.removeEventListener("mousemove", this._handle_canvas_mouse_move);
         _canvas.removeEventListener("mousedown", this._handle_canvas_mouse_down);
         _canvas.removeEventListener("mouseup", this._handle_canvas_mouse_up);
         _canvas.removeEventListener("mouseleave", this._handle_canvas_mouse_leave);
+        _canvas_wrapper.removeEventListener("mousemove", this._handle_canvas_wrapper_mouse_move);
         _canvas_container.removeEventListener("wheel", this._handle_canvas_container_wheel);
         _canvas_container.removeEventListener("pointerdown", this._handle_canvas_container_pointer_down);
         _canvas_container.removeEventListener("pointermove", this._handle_canvas_container_pointer_move);
@@ -1760,9 +1782,9 @@ class CanvasPixels extends React.Component {
                 event.stopPropagation();
                 event.preventDefault();
 
-                if(this.props.on_right_click) {
+                if(this.props.onRightClick) {
 
-                    this.props.on_right_click(event, {
+                    this.props.onRightClick(event, {
                         pos_x: pos_x,
                         pos_y: pos_y,
                         pxl_color: _s_pxl_colors[_layer_index][pxl_color_index]
@@ -1811,10 +1833,12 @@ class CanvasPixels extends React.Component {
 
                 const pixel_color_hex = this.get_pixel_color_from_pos(pos_x, pos_y);
                 this._notify_current_color_change(pixel_color_hex);
+                this._notify_relevant_action_event(event);
             }else if (tool === "EXCHANGE" && event_which === 1) {
 
                 const pixel_color_hex = _s_pxl_colors[_layer_index][pxl_color_index];
                 this._exchange_pixel_color(pixel_color_hex, pxl_current_color);
+                this._notify_relevant_action_event(event);
 
             }else if(tool === "LINE" || tool === "RECTANGLE" || tool === "ELLIPSE"){
 
@@ -1858,6 +1882,7 @@ class CanvasPixels extends React.Component {
 
                         this._update_canvas();
                     });
+                    this._notify_relevant_action_event(event);
                 }
 
 
@@ -2278,6 +2303,7 @@ class CanvasPixels extends React.Component {
 
                         this._update_canvas();
                     });
+                    this._notify_relevant_action_event(event);
                 }
 
             }else if ((tool === "SELECT COLOR") && event_which === 1) {
@@ -2742,10 +2768,6 @@ class CanvasPixels extends React.Component {
 
             if(_previous_single_pointer_down_timestamp + 400 > Date.now() && _pointer_events.length === 1 && Math.abs(x - event.x) < 25 && Math.abs(y - event.y) < 25) {
 
-                setTimeout(() => {
-                    this.undo();
-                }, 600);
-
                 this._handle_canvas_mouse_down(event, 3);
                 _previous_single_pointer_down_timestamp = Date.now();
                 event.preventDefault();
@@ -2844,6 +2866,16 @@ class CanvasPixels extends React.Component {
             _latest_pointers_client_x_center,
             _latest_pointers_client_y_center,
         });
+    };
+
+    _handle_canvas_wrapper_mouse_move = (event) => {
+
+        const { _pxls_hovered } = this.state;
+
+        if((!_pxls_hovered || _pxls_hovered <= 0) && event.which === 1) {
+
+            this.zoom_of(1, null, null, event.movementX, event.movementY);
+        }
     };
 
     _handle_canvas_mouse_move = (event, event_which = null) => {
@@ -3265,7 +3297,7 @@ class CanvasPixels extends React.Component {
         this._notify_position_change(null, {x:-1, y: -1});
     }
 
-    _handle_canvas_mouse_up = () => {
+    _handle_canvas_mouse_up = (event) => {
 
         let { _paint_or_select_hover_pxl_indexes, tool, _imported_image_pxls } = this.state;
 
@@ -3966,6 +3998,14 @@ class CanvasPixels extends React.Component {
         }
 
     }
+    
+    _notify_relevant_action_event = (event) => {
+      
+        if(this.props.onRelevantActionEvent) {
+            
+            this.props.onRelevantActionEvent(event);
+        }
+    };
 
     _notify_position_change = (event, position) => {
 
@@ -3980,11 +4020,11 @@ class CanvasPixels extends React.Component {
         }
     };
 
-    _notify_current_color_change = (color) => {
+    _notify_current_color_change = (color, event = null) => {
 
         if(this.props.onCurrentColorChange) {
 
-            this.props.onCurrentColorChange(color);
+            this.props.onCurrentColorChange(color, event);
         } else {
 
             this.setState({pxl_current_color: color});
@@ -5981,7 +6021,6 @@ class CanvasPixels extends React.Component {
             _canvas_container,
             scale_move_x,
             scale_move_y,
-            canvas_wrapper_box_shadow,
             canvas_border_width,
             canvas_border_color,
             canvas_wrapper_background_color,
@@ -6004,7 +6043,7 @@ class CanvasPixels extends React.Component {
             }:
             show_transparent_image_in_background ?
                 {
-                    background: "repeating-conic-gradient(rgb(2 9 35 / 12%) 0% 25%, transparent 0% 50%) 50% / 20px 20px",
+                    background: `repeating-conic-gradient(rgb(2 9 35 / 12%) 0% 25%, transparent 0% 50%) 50% / calc(200% / ${pxl_width}) calc(200% / ${pxl_height})`,
                 }: {};
 
         const canvas_container_width = _canvas_container === null ? 0: _canvas_container.clientWidth || 0;
@@ -6140,10 +6179,9 @@ class CanvasPixels extends React.Component {
                      }}>
                     <div className={"Canvas-Wrapper"}
                          style={{
-                             boxShadow: canvas_wrapper_box_shadow,
-                             borderWidth: canvas_wrapper_border_width,
+                             borderWidth: 1,
                              borderStyle: "solid",
-                             borderColor: canvas_wrapper_border_color,
+                             borderColor: "#fff",
                              backgroundColor: canvas_wrapper_background_color,
                              borderRadius: canvas_wrapper_border_radius,
                              width: canvas_wrapper_width,

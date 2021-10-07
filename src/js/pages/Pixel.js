@@ -15,7 +15,7 @@ import Menu from "@material-ui/core/Menu";
 import ListSubheader from "@material-ui/core/ListSubheader";
 import ListItemText from "@material-ui/core/ListItemText";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
-import Divider from "@material-ui/core/Divider";
+import TouchRipple from "@material-ui/core/ButtonBase/TouchRipple";
 
 import { HISTORY } from "../utils/constants";
 
@@ -217,6 +217,11 @@ const styles = theme => ({
             padding: 0,
         },
     },
+    ripple: {
+        "& .MuiTouchRipple-rippleVisible": {
+            opacity: ".6",
+        },
+    },
 });
 
 
@@ -243,7 +248,7 @@ class Pixel extends React.Component {
             _slider_value: 8/32,
             _game_ended: false,
             _tool: "PENCIL",
-            _memory_tool: null,
+            _memory_tool: "PENCIL",
             _previous_tool_timestamp: 1/0,
             _select_mode: "REPLACE",
             _pencil_mirror_mode: "NONE",
@@ -592,6 +597,12 @@ class Pixel extends React.Component {
         this._handle_edit_drawer_close();
     };
 
+    _set_ripple_ref = (element) => {
+
+        if(element === null) {return}
+        this.setState({_ripple: element});
+    };
+
     _set_canvas_ref = (element) => {
 
         if(element === null) {return}
@@ -618,15 +629,40 @@ class Pixel extends React.Component {
         this.setState({_width, _height})
     }
 
-    _handle_current_color_change = (color) => {
+    _handle_current_color_change = (color, event) => {
 
         color = color.hex ? color.hex: color;
 
-        const { _canvas } = this.state;
+        const { _canvas, _ripple } = this.state;
         const [r, g, b, a] = _canvas.get_rgba_from_hex(color);
         const [h, s, l] = _canvas.rgb_to_hsl(r, g, b);
 
         this.setState({_current_color: color, _hue: h});
+
+        if(event && _ripple) {
+
+            _ripple.start(event);
+
+            setTimeout(() => {
+
+                _ripple.stop(event);
+            }, 250);
+        }
+    };
+
+    _handle_relevant_action_event = (event) => {
+
+        const { _ripple } = this.state;
+
+        if(event && _ripple) {
+
+            _ripple.start(event);
+
+            setTimeout(() => {
+
+                _ripple.stop(event);
+            }, 250);
+        }
     };
 
     _handle_something_selected_change = (is_something_selected) => {
@@ -997,13 +1033,13 @@ class Pixel extends React.Component {
                     <ListSubheader className={classes.contextMenuSubheader}>Color</ListSubheader>
                     <ListItem button divider disabled={_menu_data.pxl_color === _current_color} onClick={(event) => this._set_current_color(_menu_data.pxl_color)}>
                         <ListItemIcon>
-                            <SquareIcon style={{ color: _menu_data.pxl_color, background: "repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / 8px 8px"}} />
+                            <SquareIcon style={{ color: _menu_data.pxl_color, background: `repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / calc(200% / ${_width}) calc(200% / ${_height})`}} />
                         </ListItemIcon>
                         <ListItemText primary="Pick color" />
                     </ListItem>
                     <ListItem button divider disabled={_menu_data.pxl_color === _current_color} onClick={(event) => this._exchange_pixel_colors(_menu_data.pxl_color, _current_color)}>
                         <ListItemIcon>
-                            <SquareIcon style={{ color: _current_color, background: "repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / 8px 8px"}} />
+                            <SquareIcon style={{ color: _current_color, background: `repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / calc(200% / ${_width}) calc(200% / ${_height})`}} />
                         </ListItemIcon>
                         <ListItemText primary="Replace color" />
                     </ListItem>
@@ -1053,42 +1089,51 @@ class Pixel extends React.Component {
                 <div className={classes.root}>
                     <div className={classes.content}>
                         <div className={classes.contentInner}>
-                            <CanvasPixels
-                                onContextMenu={(e) => {e.preventDefault()}}
-                                key={"canvas"}
-                                className={classes.contentCanvas}
-                                ref={this._set_canvas_ref}
-                                tool={_tool}
-                                hide_canvas_content={_hide_canvas_content}
-                                show_original_image_in_background={_show_original_image_in_background}
-                                show_transparent_image_in_background={_show_transparent_image_in_background}
-                                select_mode={_select_mode}
-                                pencil_mirror_mode={_pencil_mirror_mode}
-                                hue={_hue}
-                                bucket_threshold={_slider_value}
-                                color_loss={_slider_value}
-                                pxl_current_opacity={1}
-                                onImageLoadComplete={this._handle_image_load_complete}
-                                onImageLoad={this._handle_image_load}
-                                onCanUndoRedoChange={this._handle_can_undo_redo_change}
-                                onSizeChange={this._handle_size_change}
-                                onCurrentColorChange={this._handle_current_color_change}
-                                onSomethingSelectedChange={this._handle_something_selected_change}
-                                onImageImportModeChange={this._handle_image_import_mode_change}
-                                on_kb_change={this._handle_kb_change}
-                                onPositionChange={this._handle_position_change}
-                                onLayersChange={this._handle_layers_change}
-                                onGameEnd={this._handle_game_end}
-                                on_right_click={this._handle_right_click}
-                                mine_player_direction={_mine_player_direction}
-                                pxl_width={_width}
-                                pxl_height={_height}
-                                pxl_current_color={_current_color}
-                                convert_scale={1}
-                                default_size={96}
-                                max_size={96*2}
-                                fast_drawing={true}
-                                px_per_px={4}/>
+                            <div className={classes.contentCanvas}>
+                                <CanvasPixels
+                                    onContextMenu={(e) => {e.preventDefault()}}
+                                    key={"canvas"}
+                                    className={classes.contentCanvas}
+                                    ref={this._set_canvas_ref}
+                                    tool={_tool}
+                                    hide_canvas_content={_hide_canvas_content}
+                                    show_original_image_in_background={_show_original_image_in_background}
+                                    show_transparent_image_in_background={_show_transparent_image_in_background}
+                                    select_mode={_select_mode}
+                                    pencil_mirror_mode={_pencil_mirror_mode}
+                                    hue={_hue}
+                                    bucket_threshold={_slider_value}
+                                    color_loss={_slider_value}
+                                    pxl_current_opacity={1}
+                                    onImageLoadComplete={this._handle_image_load_complete}
+                                    onImageLoad={this._handle_image_load}
+                                    onCanUndoRedoChange={this._handle_can_undo_redo_change}
+                                    onSizeChange={this._handle_size_change}
+                                    onCurrentColorChange={this._handle_current_color_change}
+                                    onSomethingSelectedChange={this._handle_something_selected_change}
+                                    onImageImportModeChange={this._handle_image_import_mode_change}
+                                    on_kb_change={this._handle_kb_change}
+                                    onPositionChange={this._handle_position_change}
+                                    onLayersChange={this._handle_layers_change}
+                                    onGameEnd={this._handle_game_end}
+                                    onRelevantActionEvent={this._handle_relevant_action_event}
+                                    onRightClick={this._handle_right_click}
+                                    mine_player_direction={_mine_player_direction}
+                                    pxl_width={_width}
+                                    pxl_height={_height}
+                                    pxl_current_color={_current_color}
+                                    convert_scale={1}
+                                    default_size={96}
+                                    max_size={96*2}
+                                    fast_drawing={true}
+                                    px_per_px={4}/>
+                                <TouchRipple
+                                    className={classes.ripple}
+                                    ref={this._set_ripple_ref}
+                                    center={false}
+                                    style={{color: _current_color}}
+                                />
+                            </div>
                             <SwipeableDrawer
                                 className={classes.contentDrawer}
                                 disableBackdropTransition={true}
