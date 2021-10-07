@@ -2745,8 +2745,8 @@ class CanvasPixels extends React.Component {
                 this.setState({
                     _pointer_events: [..._pointer_events],
                     _latest_pointers_distance: anchor_diff,
-                    _latest_pointers_client_x_center: page_x_center,
-                    _latest_pointers_client_y_center: page_y_center,
+                    _latest_pointers_client_x_center: client_x_center,
+                    _latest_pointers_client_y_center: client_y_center,
                 });
 
             }else if(_pointer_events.length === 1) {
