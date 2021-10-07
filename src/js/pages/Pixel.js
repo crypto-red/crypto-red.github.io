@@ -80,7 +80,7 @@ const styles = theme => ({
         display: "flex",
         flexGrow: 1,
         position: "relative",
-        backgroundColor: theme.palette.primary.darker,
+        backgroundColor: "#eee",
     },
     contentCanvas: {
         width: "100%",
@@ -179,19 +179,23 @@ const styles = theme => ({
         zIndex: 2000,
         color: "#fff",
     },
-    fab: {
+    fabs: {
         [theme.breakpoints.up("lg")]: {
             display: "none",
         },
+        boxShadow: "0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%)",
         zIndex: 100,
         position: "fixed",
+        bottom: theme.spacing(2),
+        right: theme.spacing(2),
+    },
+    fab: {
+        boxShadow: "none !important",
         backgroundColor: theme.palette.primary.action,
         color: theme.palette.primary.contrastText,
         "&:hover": {
             backgroundColor: theme.palette.primary.actionLighter,
         },
-        bottom: theme.spacing(2),
-        right: theme.spacing(2),
         "& svg": {
             marginRight: 4
         }
@@ -585,6 +589,7 @@ class Pixel extends React.Component {
     _handle_image_load_complete = () => {
 
         this.setState({_loading: false});
+        this._handle_edit_drawer_close();
     };
 
     _set_canvas_ref = (element) => {
@@ -1036,9 +1041,14 @@ class Pixel extends React.Component {
                     </ListItem>
                 </Menu>
                 <Grow in>
-                    <Fab className={classes.fab} variant="extended" onClick={this._handle_edit_drawer_open}>
-                        <ImageEditIcon /> Edit
-                    </Fab>
+                    <div className={classes.fabs}>
+                        <Fab className={classes.fab} style={{borderBottomRightRadius: 0, borderTopRightRadius: 0, borderRight: "1px solid #403ca9"}} variant="extended" onClick={(event) => {_canvas.force_click()}}>
+                            Click
+                        </Fab>
+                        <Fab className={classes.fab} style={{borderBottomLeftRadius: 0, borderTopLeftRadius: 0, borderLeft: "1px solid #403ca9"}} variant="extended" onClick={this._handle_edit_drawer_open}>
+                            <ImageEditIcon />
+                        </Fab>
+                    </div>
                 </Grow>
                 <div className={classes.root}>
                     <div className={classes.content}>

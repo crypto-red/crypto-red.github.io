@@ -58,7 +58,8 @@ class CanvasPixels extends React.Component {
             show_original_image_in_background: typeof props.show_original_image_in_background === "undefined" ? true: props.show_original_image_in_background,
             show_transparent_image_in_background: typeof props.show_transparent_image_in_background === "undefined" ? true: props.show_transparent_image_in_background,
             hide_canvas_content: props.hide_canvas_content || false,
-            scale: props.scale || 0.75,
+            default_scale: props.default_scale || 0.8,
+            scale: props.scale || props.default_scale || 0.8,
             scale_move_x: 0,
             scale_move_y: 0,
             mine_player_direction: props.mine_player_direction || "UP",
@@ -154,6 +155,8 @@ class CanvasPixels extends React.Component {
             _latest_pointers_client_x_center: 0,
             _latest_pointers_client_y_center: 0,
             _previous_single_pointer_down_timestamp: 0,
+            _previous_single_pointer_down_x_y: [-1, -1],
+            _image_move_from: [-1, -1]
         };
     };
 
@@ -196,6 +199,21 @@ class CanvasPixels extends React.Component {
         canvas_style.innerHTML = body_css + pixelated_css;
         document.head.appendChild(canvas_style);
         this._notify_layers_and_compute_thumbnails_change();
+
+        window.addEventListener("resize", this._updated_dimensions.bind(this));
+        this._updated_dimensions();
+    }
+
+    _updated_dimensions = () => {
+
+        let w = window,
+            d = document,
+            documentElement = d.documentElement,
+            body = d.getElementsByTagName('body')[0],
+            _width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
+            _height = w.innerHeight|| documentElement.clientHeight || body.clientHeight;
+
+        this._to_canvas_middle();
     }
 
     _maybe_update_mine_player = () => {
@@ -309,6 +327,9 @@ class CanvasPixels extends React.Component {
                 _old_pxls: new Array(new_props.pxl_width * new_props.pxl_height).fill(0),
                 _s_pxl_colors: [["#00000000"]],
                 _old_pxl_colors: ["#00000000"],
+            }, () => {
+
+                this._to_canvas_middle();
             });
         }
 
@@ -329,6 +350,11 @@ class CanvasPixels extends React.Component {
             this.setState(new_props);
         }
     }
+
+    force_click = () => {
+
+        this._handle_canvas_mouse_down(null, 1);
+    };
 
     zoom_of = (of = 1, page_x = null, page_y = null, move_x = 0, move_y = 0) => {
 
@@ -1477,6 +1503,7 @@ class CanvasPixels extends React.Component {
                 _is_there_new_dimension: true,
             }, () => {
 
+                this._to_canvas_middle();
                 this.setState({_original_image_index: new_base64_original_images.indexOf(base64_original_image), _last_action_timestamp: Date.now()});
                 this._notify_size_change();
                 this._notify_layers_change();
@@ -1546,7 +1573,7 @@ class CanvasPixels extends React.Component {
 
     _to_canvas_middle = () => {
 
-        const {_canvas_container, _canvas_wrapper} = this.state;
+        const {_canvas_container, _canvas_wrapper, default_scale} = this.state;
 
         if(_canvas_container && _canvas_wrapper) {
 
@@ -1556,6 +1583,7 @@ class CanvasPixels extends React.Component {
             this.setState({
                 scale_move_x: for_middle_x,
                 scale_move_y: for_middle_y,
+                scale: default_scale,
             })
 
         }
@@ -1686,17 +1714,40 @@ class CanvasPixels extends React.Component {
 
     };
 
-    _handle_canvas_mouse_down = (event, event_which = null) => {
+    _handle_canvas_mouse_down = (event = null, event_which = null) => {
 
-        event_which = event_which || event.which;
-        const [ pos_x, pos_y ] = this._get_canvas_pos_from_event(event);
-        if(pos_x === -1 || pos_y === -1) { return; }
-        let { _shape_index_a, _select_shape_index_a, _shape_index_b, _select_shape_index_b } = this.state;
         const { hide_canvas_content, tool, pxl_width, pxl_height, pxl_current_color, pxl_current_opacity, bucket_threshold, select_mode } = this.state;
+        event_which = event_which !== null ? event_which: event.which;
+
+        let [ pos_x, pos_y ] = [ -1, -1 ];
+
+        if(this.state._pxls_hovered !== null && event === null) {
+
+            const hover_pos_x = this.state._pxls_hovered % pxl_width;
+            const hover_pos_y = (this.state._pxls_hovered - hover_pos_x) / pxl_width;
+            [ pos_x, pos_y ] = [hover_pos_x, hover_pos_y];
+
+        }else if(event) {
+
+            [ pos_x, pos_y ] = this._get_canvas_pos_from_event(event);
+        }
+
+        if(pos_x === -1 || pos_y === -1) { return; }
+
+        let { _shape_index_a, _select_shape_index_a, _shape_index_b, _select_shape_index_b } = this.state;
         let { _pxl_indexes_of_selection } = this.state;
         const pxl_index = (pos_y * pxl_width) + pos_x;
         const { _s_pxls, _s_pxl_colors, _layer_index, hue, _layers } = this.state;
         const pxl_color_index = _s_pxls[_layer_index][pxl_index];
+
+        if (event_which === -1) {
+
+            this.setState({_pxls_hovered: pxl_index}, () => {
+
+                this._update_canvas();
+            });
+            return;
+        }
 
         if (event_which === 1) {
 
@@ -1748,9 +1799,9 @@ class CanvasPixels extends React.Component {
 
                 this.setState({_imported_image_move_from: [pos_x, pos_y]});
 
-            }else if((event_which === 2) || (tool === "MOVE" && event_which === 1)){
+            }else if((event_which === 2) || (tool === "MOVE" && (event_which === 1 || event_which === -1))){
 
-                this.setState({_image_move_from: [event.pageX, event.pageY]});
+                this.setState({_image_move_from: [event.x, event.y]});
 
             }else if(tool === "MINE" && event_which === 1){
 
@@ -2683,11 +2734,13 @@ class CanvasPixels extends React.Component {
 
         if(event.pointerType !== "mouse") {
 
-            let { _pointer_events, _previous_single_pointer_down_timestamp } = this.state;
+            let { _pointer_events, _previous_single_pointer_down_timestamp, _previous_single_pointer_down_x_y } = this.state;
 
             _pointer_events.push(event);
 
-            if(_previous_single_pointer_down_timestamp + 400 > Date.now() && _pointer_events.length === 1) {
+            const [x, y] = _previous_single_pointer_down_x_y;
+
+            if(_previous_single_pointer_down_timestamp + 400 > Date.now() && _pointer_events.length === 1 && Math.abs(x - event.x) < 25 && Math.abs(y - event.y) < 25) {
 
                 setTimeout(() => {
                     this.undo();
@@ -2699,12 +2752,12 @@ class CanvasPixels extends React.Component {
 
             }else if(_pointer_events.length === 1) {
 
-                this._handle_canvas_mouse_down(event, 1);
+                this._handle_canvas_mouse_down(event, -1);
                 _previous_single_pointer_down_timestamp = Date.now();
                 event.preventDefault();
             }
 
-            this.setState({_pointer_events: [..._pointer_events], _previous_single_pointer_down_timestamp});
+            this.setState({_pointer_events: [..._pointer_events], _previous_single_pointer_down_timestamp, _previous_single_pointer_down_x_y: [event.x, event.y]});
         }
     };
 
@@ -2723,6 +2776,7 @@ class CanvasPixels extends React.Component {
         if(event.pointerType !== "mouse") {
 
             event.preventDefault();
+            event.stopPropagation();
 
             if (_pointer_events.length === 2) {
 
@@ -2751,12 +2805,11 @@ class CanvasPixels extends React.Component {
 
             }else if(_pointer_events.length === 1) {
 
-                this._handle_canvas_mouse_move(event, 1);
+                this._handle_canvas_mouse_move(event, -1);
 
                 this.setState({
                     _pointer_events: [..._pointer_events],
                 });
-
             }
         }
 
@@ -2782,7 +2835,7 @@ class CanvasPixels extends React.Component {
 
         if(_pointer_events.length === 0) {
 
-            this._handle_canvas_mouse_up(event);
+            //this._handle_canvas_mouse_up(event);
         }
 
         this.setState({
@@ -2796,17 +2849,18 @@ class CanvasPixels extends React.Component {
     _handle_canvas_mouse_move = (event, event_which = null) => {
 
         event.preventDefault();
-        event_which = event_which || event.which;
+        event_which = event_which !== null ? event_which: event.which;
+        const { tool, pxl_width, pxl_height, _pxls_hovered, _mouse_down, scale, pxl_current_color, hide_canvas_content } = this.state;
 
         const [ pos_x, pos_y ] = this._get_canvas_pos_from_event(event);
 
-        if((event_which === 2) || (tool === "MOVE" && event_which === 1)){
+        if((event_which === 2) || ((tool === "MOVE") && (event_which === 1 || event_which === -1))) {
 
             const [from_x, from_y] = this.state._image_move_from;
-            const x_difference_px = from_x - event.pageX;
-            const y_difference_px = from_y - event.pageY;
+            const x_difference_px = -event.movementX //from_x - event.x;
+            const y_difference_px = -event.movementY  //from_y - event.y;
 
-            const _image_move_from = [event.pageX, event.pageY];
+            const _image_move_from = [event.x, event.y];
 
             let { _canvas_wrapper, _canvas_container, _canvas_wrapper_overflow } = this.state;
             let { scale_move_x, scale_move_y } = this.state;
@@ -2833,7 +2887,6 @@ class CanvasPixels extends React.Component {
         }
 
         if(pos_x === -1 || pos_y === -1) { return; }
-        const { tool, pxl_width, pxl_height, _pxls_hovered, _mouse_down, scale, pxl_current_color, hide_canvas_content } = this.state;
         let { _pxl_indexes_of_selection, _imported_image_pxls } = this.state;
         const pxl_index = (pos_y * pxl_width) + pos_x;
 
@@ -3218,7 +3271,7 @@ class CanvasPixels extends React.Component {
 
         if(_imported_image_pxls.length > 0){
 
-            this.setState({_imported_image_move_from: [0, 0], _mouse_down: false});
+            this.setState({_imported_image_move_from: [-1, -1], _mouse_down: false});
 
         }else if(_paint_or_select_hover_pxl_indexes.size > 0 && tool === "CONTOUR") {
 
@@ -4403,6 +4456,8 @@ class CanvasPixels extends React.Component {
                         _is_there_new_dimension: true,
                     }, () => {
 
+                        this._to_canvas_middle();
+
                         this.setState({
                             _original_image_index: new_base64_original_images.indexOf(base64_original_image),
                             _last_action_timestamp: Date.now()
@@ -4923,6 +4978,7 @@ class CanvasPixels extends React.Component {
                     _imported_image_pxls
                 }, () => {
 
+                    this._to_canvas_middle();
                     this.setState({_original_image_index: new_base64_original_images.indexOf(base64_original_image), _last_action_timestamp: Date.now()});
                     this._update_canvas();
                 })
@@ -4943,6 +4999,7 @@ class CanvasPixels extends React.Component {
                 _imported_image_pxls
             }, () => {
 
+                this._to_canvas_middle();
                 this._update_canvas();
             });
         }
@@ -5589,6 +5646,11 @@ class CanvasPixels extends React.Component {
                     _original_image_index: -1,
                 }, () => {
 
+                    if(_is_there_new_dimension) {
+
+                        this._to_canvas_middle();
+                    }
+
                     this.setState({_original_image_index: new_base64_original_images.indexOf(base64_original_image), _last_action_timestamp: Date.now()});
                     this._notify_size_change();
                     this._update_canvas();
@@ -5612,6 +5674,11 @@ class CanvasPixels extends React.Component {
                 _shape_index_a: new_shape_index_a,
                 _last_action_timestamp: Date.now()
             }, () => {
+
+                if(_is_there_new_dimension) {
+
+                    this._to_canvas_middle();
+                }
 
                 this._notify_size_change();
                 this._update_canvas();
@@ -6086,7 +6153,7 @@ class CanvasPixels extends React.Component {
                              top: 0,
                              left: 0,
                              display: "inline-block",
-                             transform: `translate(calc(0% + ${scale_move_x}px), calc(0% + ${scale_move_y}px))`,
+                             transform: `translate(${scale_move_x}px, ${scale_move_y}px)`,
                              transformOrigin: "center center",
                              boxSizing: "border-box",
                          }}
@@ -6098,8 +6165,8 @@ class CanvasPixels extends React.Component {
                                 borderStyle: "solid",
                                 borderColor: canvas_border_color,
                                 borderRadius: canvas_border_radius,
-                                width: `calc(100%)`,
-                                height: `calc(100%)`,
+                                width: `100%`,
+                                height: `100%`,
                                 ...background_image_style_props,
                             }}
                             className={"Canvas-Pixels"}
