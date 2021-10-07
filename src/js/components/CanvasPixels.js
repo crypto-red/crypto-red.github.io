@@ -59,8 +59,6 @@ class CanvasPixels extends React.Component {
             show_transparent_image_in_background: typeof props.show_transparent_image_in_background === "undefined" ? true: props.show_transparent_image_in_background,
             hide_canvas_content: props.hide_canvas_content || false,
             scale: props.scale || 0.75,
-            scale_pos_x: 0,
-            scale_pos_y: 0,
             scale_move_x: 0,
             scale_move_y: 0,
             mine_player_direction: props.mine_player_direction || "UP",
@@ -153,8 +151,8 @@ class CanvasPixels extends React.Component {
             _old_selection_pair_highlight: true,
             _pointer_events: [],
             _latest_pointers_distance: 0,
-            _latest_pointers_page_x_center: 0,
-            _latest_pointers_page_y_center: 0,
+            _latest_pointers_client_x_center: 0,
+            _latest_pointers_client_y_center: 0,
             _previous_single_pointer_down_timestamp: 0,
         };
     };
@@ -192,34 +190,10 @@ class CanvasPixels extends React.Component {
                 "-ms-touch-action: none;" +
             "}";
 
-        const canvas_wrapper_overflow_scrollbar =
-            "@media (max-width:1280px) {"+
-                "div.Canvas-Wrapper-Overflow::-webkit-scrollbar {"+
-                    "width: 4px;"+
-                    "height: 4px;"+
-                "}"+
-            "}"+
-            ".Canvas-Wrapper-Overflow::-webkit-scrollbar {"+
-                "width: 12px;"+
-                "height: 12px;"+
-                "margin: -4px;"+
-            "}";
-
-        const canvas_wrapper_overflow_scrollbar_thumb =
-            "div.Canvas-Wrapper-Overflow::-webkit-scrollbar-thumb {"+
-                "border-radius: 2px;"+
-                "background-color: #19193399;"+
-            "}";
-
-        const canvas_wrapper_overflow_scrollbar_thumb_hover =
-            "div.Canvas-Wrapper-Overflow:hover::-webkit-scrollbar-thumb {"+
-                "border-radius: 2px;"+
-                "background-color: #1c1882cc;"+
-            "}";
 
 
         const canvas_style = document.createElement("style");
-        canvas_style.innerHTML = body_css + pixelated_css + canvas_wrapper_overflow_scrollbar + canvas_wrapper_overflow_scrollbar_thumb + canvas_wrapper_overflow_scrollbar_thumb_hover;
+        canvas_style.innerHTML = body_css + pixelated_css;
         document.head.appendChild(canvas_style);
         this._notify_layers_and_compute_thumbnails_change();
     }
@@ -358,7 +332,7 @@ class CanvasPixels extends React.Component {
 
     zoom_of = (of = 1, page_x = null, page_y = null, move_x = 0, move_y = 0) => {
 
-        let { scale, scale_pos_x, scale_pos_y, _canvas_wrapper_overflow, _canvas_container, _canvas_wrapper } = this.state;
+        let { scale, scale_move_x, scale_move_y, _canvas_wrapper_overflow, _canvas_container, _canvas_wrapper } = this.state;
 
         let new_scale = scale * of;
 
@@ -381,45 +355,30 @@ class CanvasPixels extends React.Component {
                 pos_y_in_canvas_container = _canvas_container.offsetHeight / 2;
             }
 
-            let new_scale_pos_x = (scale_pos_x + (pos_x_in_canvas_container * ratio)) * ratio2;
-            let new_scale_pos_y = (scale_pos_y + (pos_y_in_canvas_container * ratio)) * ratio2;
-
-            let n_scale_pos_x = new_scale_pos_x + move_x;
-            let n_scale_pos_y = new_scale_pos_y + move_y;
+            let new_scale_move_x = (scale_move_x - (pos_x_in_canvas_container * ratio)) * ratio2;
+            let new_scale_move_y = (scale_move_y - (pos_y_in_canvas_container * ratio)) * ratio2;
 
             this.setState({
                 scale: new_scale,
             }, () => {
 
-                let { scale_pos_x, scale_pos_y, _canvas_wrapper, _canvas_wrapper_overflow } = this.state;
-                let { scale_move_x, scale_move_y } = this.state;
+                let { _canvas_wrapper } = this.state;
 
-                const scale_move_x_max = 0.75 * _canvas_wrapper_overflow.offsetWidth - (_canvas_wrapper_overflow.offsetWidth - _canvas_wrapper.offsetWidth) / 2;
-                const scale_move_y_max = 0.75 * _canvas_wrapper_overflow.offsetHeight - (_canvas_wrapper_overflow.offsetHeight - _canvas_wrapper.offsetHeight) / 2;
+                const for_middle_x = (_canvas_container.offsetWidth - _canvas_wrapper.offsetWidth) / 2;
+                const for_middle_y = (_canvas_container.offsetHeight - _canvas_wrapper.offsetHeight) / 2;
 
-                let new_scale_move_x = scale_move_x - (n_scale_pos_x - scale_pos_x);
-                let new_scale_move_y = scale_move_y - (n_scale_pos_y - scale_pos_y);
-                let new_scale_move_x_rigged = Math.min(Math.abs(new_scale_move_x), scale_move_x_max) * (new_scale_move_x < 0 ? -1: 1);
-                let new_scale_move_y_rigged = Math.min(Math.abs(new_scale_move_y), scale_move_y_max) * (new_scale_move_y < 0 ? -1: 1);
-                let scale_move_x_diff = new_scale_move_x - new_scale_move_x_rigged;
-                let scale_move_y_diff = new_scale_move_y - new_scale_move_y_rigged;
+                const scale_move_x_max = -128 + _canvas_container.offsetWidth - (_canvas_container.offsetWidth - _canvas_wrapper.offsetWidth) / 2;
+                const scale_move_y_max = -128 + _canvas_container.offsetHeight - (_canvas_container.offsetHeight - _canvas_wrapper.offsetHeight) / 2;
 
-                let new_scale_pos_x = n_scale_pos_x + scale_move_x_diff;
-                let new_scale_pos_y = n_scale_pos_y + scale_move_y_diff;
+                new_scale_move_y -= for_middle_y;
+                new_scale_move_x -= for_middle_x;
 
-                _canvas_wrapper_overflow.scrollLeft = new_scale_pos_x;
-                _canvas_wrapper_overflow.scrollTop = new_scale_pos_y;
-
-                scale_pos_x = _canvas_wrapper_overflow.scrollLeft;
-                scale_pos_y = _canvas_wrapper_overflow.scrollTop;
-                scale_move_x = new_scale_move_x_rigged;
-                scale_move_y = new_scale_move_y_rigged;
+                let new_scale_move_x_rigged = (Math.min(Math.abs(new_scale_move_x), scale_move_x_max)) * (new_scale_move_x < 0 ? -1: 1) + for_middle_x;
+                let new_scale_move_y_rigged = (Math.min(Math.abs(new_scale_move_y), scale_move_y_max)) * (new_scale_move_y < 0 ? -1: 1) + for_middle_y;
 
                 this.setState({
-                    scale_pos_x,
-                    scale_pos_y,
-                    scale_move_x,
-                    scale_move_y,
+                    scale_move_x: new_scale_move_x_rigged,
+                    scale_move_y: new_scale_move_y_rigged,
                 });
             });
         }
@@ -1551,7 +1510,6 @@ class CanvasPixels extends React.Component {
         if(element === null) {return}
 
         element.addEventListener("wheel", this._handle_canvas_container_wheel, {capture: true});
-        element.addEventListener("scroll", this._handle_canvas_container_scroll, {capture: true});
         element.addEventListener("pointerdown", this._handle_canvas_container_pointer_down, {capture: true});
         element.addEventListener("pointermove", this._handle_canvas_container_pointer_move, {capture: true});
         element.addEventListener("pointerup", this._handle_canvas_container_pointer_up, {capture: true});
@@ -1567,17 +1525,40 @@ class CanvasPixels extends React.Component {
             };
         });
 
-        this.setState({_canvas_container: element});
+        this.setState({_canvas_container: element}, () => {
+
+            this._to_canvas_middle();
+        });
     };
 
     _set_canvas_wrapper_ref = (element) => {
 
-        this.setState({_canvas_wrapper: element});
+        this.setState({_canvas_wrapper: element}, () => {
+
+            this._to_canvas_middle();
+        });
     };
 
     _set_canvas_wrapper_overflow_ref = (element) => {
 
         this.setState({_canvas_wrapper_overflow: element});
+    };
+
+    _to_canvas_middle = () => {
+
+        const {_canvas_container, _canvas_wrapper} = this.state;
+
+        if(_canvas_container && _canvas_wrapper) {
+
+            const for_middle_x = (_canvas_container.offsetWidth - _canvas_wrapper.offsetWidth) / 2;
+            const for_middle_y = (_canvas_container.offsetHeight - _canvas_wrapper.offsetHeight) / 2;
+
+            this.setState({
+                scale_move_x: for_middle_x,
+                scale_move_y: for_middle_y,
+            })
+
+        }
     };
 
     componentWillUnmount() {
@@ -1589,7 +1570,6 @@ class CanvasPixels extends React.Component {
         _canvas.removeEventListener("mouseup", this._handle_canvas_mouse_up);
         _canvas.removeEventListener("mouseleave", this._handle_canvas_mouse_leave);
         _canvas_container.removeEventListener("wheel", this._handle_canvas_container_wheel);
-        _canvas_container.removeEventListener("scroll", this._handle_canvas_container_scroll);
         _canvas_container.removeEventListener("pointerdown", this._handle_canvas_container_pointer_down);
         _canvas_container.removeEventListener("pointermove", this._handle_canvas_container_pointer_move);
         _canvas_container.removeEventListener("pointerup", this._handle_canvas_container_pointer_up);
@@ -2651,7 +2631,7 @@ class CanvasPixels extends React.Component {
 
     _handle_canvas_container_wheel = (event) => {
 
-        let { scale, scale_pos_x, scale_pos_y, _canvas_wrapper_overflow, _canvas_container } = this.state;
+        let { scale, scale_move_x, scale_move_y, _canvas_wrapper, _canvas_wrapper_overflow, _canvas_container } = this.state;
         let _canvas_container_rect = _canvas_container.getBoundingClientRect();
 
         event.preventDefault();
@@ -2670,56 +2650,33 @@ class CanvasPixels extends React.Component {
             const pos_x_in_canvas_container = (event.pageX - _canvas_container_rect.x);
             const pos_y_in_canvas_container = (event.pageY - _canvas_container_rect.y);
 
-            let n_scale_pos_x = (scale_pos_x + (pos_x_in_canvas_container * ratio)) * ratio2;
-            let n_scale_pos_y = (scale_pos_y + (pos_y_in_canvas_container * ratio)) * ratio2;
+            let new_scale_move_x = (scale_move_x - (pos_x_in_canvas_container * ratio)) * ratio2;
+            let new_scale_move_y = (scale_move_y - (pos_y_in_canvas_container * ratio)) * ratio2;
 
             this.setState({
                 scale: new_scale,
             }, () => {
 
-                let { scale_pos_x, scale_pos_y, _canvas_wrapper, _canvas_wrapper_overflow } = this.state;
-                let { scale_move_x, scale_move_y } = this.state;
+                let { _canvas_wrapper } = this.state;
 
-                const scale_move_x_max = 0.75 * _canvas_wrapper_overflow.offsetWidth - (_canvas_wrapper_overflow.offsetWidth - _canvas_wrapper.offsetWidth) / 2;
-                const scale_move_y_max = 0.75 * _canvas_wrapper_overflow.offsetHeight - (_canvas_wrapper_overflow.offsetHeight - _canvas_wrapper.offsetHeight) / 2;
+                const for_middle_x = (_canvas_container.offsetWidth - _canvas_wrapper.offsetWidth) / 2;
+                const for_middle_y = (_canvas_container.offsetHeight - _canvas_wrapper.offsetHeight) / 2;
 
-                let new_scale_move_x = scale_move_x - (n_scale_pos_x - scale_pos_x);
-                let new_scale_move_y = scale_move_y - (n_scale_pos_y - scale_pos_y);
-                let new_scale_move_x_rigged = Math.min(Math.abs(new_scale_move_x), scale_move_x_max) * (new_scale_move_x < 0 ? -1: 1);
-                let new_scale_move_y_rigged = Math.min(Math.abs(new_scale_move_y), scale_move_y_max) * (new_scale_move_y < 0 ? -1: 1);
-                let scale_move_x_diff = new_scale_move_x - new_scale_move_x_rigged;
-                let scale_move_y_diff = new_scale_move_y - new_scale_move_y_rigged;
+                const scale_move_x_max = -128 + _canvas_container.offsetWidth - (_canvas_container.offsetWidth - _canvas_wrapper.offsetWidth) / 2;
+                const scale_move_y_max = -128 + _canvas_container.offsetHeight - (_canvas_container.offsetHeight - _canvas_wrapper.offsetHeight) / 2;
 
-                let new_scale_pos_x = n_scale_pos_x + scale_move_x_diff;
-                let new_scale_pos_y = n_scale_pos_y + scale_move_y_diff;
+                new_scale_move_y -= for_middle_y;
+                new_scale_move_x -= for_middle_x;
 
-                _canvas_wrapper_overflow.scrollLeft = new_scale_pos_x;
-                _canvas_wrapper_overflow.scrollTop = new_scale_pos_y;
-
-                scale_pos_x = _canvas_wrapper_overflow.scrollLeft;
-                scale_pos_y = _canvas_wrapper_overflow.scrollTop;
-                scale_move_x = new_scale_move_x_rigged;
-                scale_move_y = new_scale_move_y_rigged;
+                let new_scale_move_x_rigged = (Math.min(Math.abs(new_scale_move_x), scale_move_x_max)) * (new_scale_move_x < 0 ? -1: 1) + for_middle_x;
+                let new_scale_move_y_rigged = (Math.min(Math.abs(new_scale_move_y), scale_move_y_max)) * (new_scale_move_y < 0 ? -1: 1) + for_middle_y;
 
                 this.setState({
-                    scale_pos_x,
-                    scale_pos_y,
-                    scale_move_x,
-                    scale_move_y,
+                    scale_move_x: new_scale_move_x_rigged,
+                    scale_move_y: new_scale_move_y_rigged,
                 });
-
             });
         }
-    };
-
-    _handle_canvas_container_scroll = (event) => {
-
-        const { _canvas_wrapper_overflow } = this.state;
-
-        this.setState({
-            scale_pos_x: _canvas_wrapper_overflow.scrollLeft,
-            scale_pos_y: _canvas_wrapper_overflow.scrollTop,
-        });
     };
 
     _handle_canvas_container_pointer_down = (event) => {
@@ -2753,7 +2710,7 @@ class CanvasPixels extends React.Component {
 
     _handle_canvas_container_pointer_move = (event) => {
 
-        const { _latest_pointers_page_x_center, _latest_pointers_page_y_center } = this.state;
+        const { _latest_pointers_client_x_center, _latest_pointers_client_y_center } = this.state;
         let { _pointer_events, _latest_pointers_distance } = this.state;
 
         for (let i = 0; i < _pointer_events.length; i++) {
@@ -2763,59 +2720,59 @@ class CanvasPixels extends React.Component {
             }
         }
 
-        if(_pointer_events.length) {
+        if(event.pointerType !== "mouse") {
 
-            if(_pointer_events[0].pointerType !== "mouse") {
+            event.preventDefault();
 
-                event.preventDefault();
+            if (_pointer_events.length === 2) {
 
-                if (_pointer_events.length === 2) {
+                const x_diff = _pointer_events[0].clientX - _pointer_events[1].clientX;
+                const y_diff = _pointer_events[0].clientY - _pointer_events[1].clientY;
+                const anchor_diff = Math.sqrt((x_diff * x_diff) + (y_diff * y_diff));
+                const page_x_center = (_pointer_events[0].pageX + _pointer_events[1].pageX) / 2;
+                const page_y_center = (_pointer_events[0].pageY + _pointer_events[1].pageY) / 2;
+                const client_x_center = (_pointer_events[0].clientX + _pointer_events[1].clientX) / 2;
+                const client_y_center = (_pointer_events[0].clientY + _pointer_events[1].clientY) / 2;
+                const move_x = _latest_pointers_client_x_center > 0 ? _latest_pointers_client_x_center - client_x_center: 0;
+                const move_y = _latest_pointers_client_y_center > 0 ? _latest_pointers_client_y_center - client_y_center: 0;
+                const move_diff = Math.sqrt((move_x * move_x) + (move_y * move_y));
+                const anchor_diff_diff = Math.abs(_latest_pointers_distance - anchor_diff);
 
-                    const x_diff = _pointer_events[0].clientX - _pointer_events[1].clientX;
-                    const y_diff = _pointer_events[0].clientY - _pointer_events[1].clientY;
-                    const a_diff = Math.sqrt((x_diff * x_diff) + (y_diff * y_diff));
-                    const page_x_center = (_pointer_events[0].pageX + _pointer_events[1].pageX) / 2;
-                    const page_y_center = (_pointer_events[0].pageY + _pointer_events[1].pageY) / 2;
-                    const move_x = _latest_pointers_page_x_center > 0 ? _latest_pointers_page_x_center - page_x_center: 0;
-                    const move_y = _latest_pointers_page_y_center > 0 ? _latest_pointers_page_y_center - page_y_center: 0;
-                    const move_diff = Math.sqrt((move_x * move_x) + (move_y * move_y));
+                const of = _latest_pointers_distance > 0 ? anchor_diff / _latest_pointers_distance : 1;
 
-                    const of = _latest_pointers_distance > 0 ? a_diff / _latest_pointers_distance : 1;
+                if(move_diff < anchor_diff_diff) {
 
-                    if(move_diff < a_diff) {
+                    this.zoom_of(of, page_x_center, page_y_center, 0, 0);
+                }else {
 
-                        this.zoom_of(of, page_x_center, page_y_center, 0, 0);
-                    }else {
-
-                        this.zoom_of(1, null, null, move_x, move_y);
-                    }
-
-                    _latest_pointers_distance = a_diff;
-
-                    this.setState({
-                        _pointer_events: [..._pointer_events],
-                        _latest_pointers_distance,
-                        _latest_pointers_page_x_center: page_x_center,
-                        _latest_pointers_page_y_center: page_y_center,
-                    });
-
-                }else if(_pointer_events.length === 1) {
-
-                    const event = _pointer_events[0];
-                    this._handle_canvas_mouse_move(event, 1);
-
-                    this.setState({
-                        _pointer_events: [..._pointer_events],
-                    });
-
+                    this.zoom_of(1, null, null, move_x, move_y);
                 }
+
+                _latest_pointers_distance = anchor_diff;
+
+                this.setState({
+                    _pointer_events: [..._pointer_events],
+                    _latest_pointers_distance,
+                    _latest_pointers_client_x_center: page_x_center,
+                    _latest_pointers_client_y_center: page_y_center,
+                });
+
+            }else if(_pointer_events.length === 1) {
+
+                this._handle_canvas_mouse_move(event, 1);
+
+                this.setState({
+                    _pointer_events: [..._pointer_events],
+                });
+
             }
         }
+
     };
 
     _handle_canvas_container_pointer_up = (event) => {
 
-        let { _pointer_events, _latest_pointers_distance, _latest_pointers_page_x_center, _latest_pointers_page_y_center } = this.state;
+        let { _pointer_events, _latest_pointers_distance, _latest_pointers_client_x_center, _latest_pointers_client_y_center } = this.state;
 
         for (let i = 0; i < _pointer_events.length; i++) {
             if (_pointer_events[i].pointerId === event.pointerId) {
@@ -2827,8 +2784,8 @@ class CanvasPixels extends React.Component {
         if (_pointer_events.length < 2) {
 
             _latest_pointers_distance = 0;
-            _latest_pointers_page_x_center = 0;
-            _latest_pointers_page_y_center = 0;
+            _latest_pointers_client_x_center = 0;
+            _latest_pointers_client_y_center = 0;
         }
 
         if(_pointer_events.length === 0) {
@@ -2839,8 +2796,8 @@ class CanvasPixels extends React.Component {
         this.setState({
             _pointer_events: [..._pointer_events],
             _latest_pointers_distance,
-            _latest_pointers_page_x_center,
-            _latest_pointers_page_y_center,
+            _latest_pointers_client_x_center,
+            _latest_pointers_client_y_center,
         });
     };
 
@@ -2850,55 +2807,43 @@ class CanvasPixels extends React.Component {
         event_which = event_which || event.which;
 
         const [ pos_x, pos_y ] = this._get_canvas_pos_from_event(event);
-        if(pos_x === -1 || pos_y === -1) { return; }
-        const { tool, pxl_width, pxl_height, _pxls_hovered, _mouse_down, scale, pxl_current_color, hide_canvas_content } = this.state;
-        let { _pxl_indexes_of_selection, _imported_image_pxls } = this.state;
-
-        const pxl_index = (pos_y * pxl_width) + pos_x;
 
         if((event_which === 2) || (tool === "MOVE" && event_which === 1)){
 
             const [from_x, from_y] = this.state._image_move_from;
-            const x_difference = from_x - event.pageX;
-            const y_difference = from_y - event.pageY;
+            const x_difference_px = from_x - event.pageX;
+            const y_difference_px = from_y - event.pageY;
 
             const _image_move_from = [event.pageX, event.pageY];
 
-            const x_difference_px = x_difference;
-            const y_difference_px = y_difference;
-
-            let { scale_pos_x, scale_pos_y, _canvas_wrapper, _canvas_wrapper_overflow } = this.state;
+            let { _canvas_wrapper, _canvas_container, _canvas_wrapper_overflow } = this.state;
             let { scale_move_x, scale_move_y } = this.state;
 
-            const scale_move_x_max = 0.75 * _canvas_wrapper_overflow.offsetWidth - (_canvas_wrapper_overflow.offsetWidth - _canvas_wrapper.offsetWidth) / 2;
-            const scale_move_y_max = 0.75 * _canvas_wrapper_overflow.offsetHeight - (_canvas_wrapper_overflow.offsetHeight - _canvas_wrapper.offsetHeight) / 2;
+            const for_middle_x = (_canvas_container.offsetWidth - _canvas_wrapper.offsetWidth) / 2;
+            const for_middle_y = (_canvas_container.offsetHeight - _canvas_wrapper.offsetHeight) / 2;
+
+            const scale_move_x_max = -128 + _canvas_container.offsetWidth - (_canvas_container.offsetWidth - _canvas_wrapper.offsetWidth) / 2;
+            const scale_move_y_max = -128 + _canvas_container.offsetHeight - (_canvas_container.offsetHeight - _canvas_wrapper.offsetHeight) / 2;
 
             let new_scale_move_x = scale_move_x - x_difference_px;
             let new_scale_move_y = scale_move_y - y_difference_px;
-            let new_scale_move_x_rigged = Math.min(Math.abs(new_scale_move_x), scale_move_x_max) * (new_scale_move_x < 0 ? -1: 1);
-            let new_scale_move_y_rigged = Math.min(Math.abs(new_scale_move_y), scale_move_y_max) * (new_scale_move_y < 0 ? -1: 1);
-            let scale_move_x_diff = new_scale_move_x - new_scale_move_x_rigged;
-            let scale_move_y_diff = new_scale_move_y - new_scale_move_y_rigged;
+            new_scale_move_y -= for_middle_y;
+            new_scale_move_x -= for_middle_x;
 
-            let new_scale_pos_x = scale_pos_x + scale_move_x_diff;
-            let new_scale_pos_y = scale_pos_y + scale_move_y_diff;
-
-            _canvas_wrapper_overflow.scrollLeft = new_scale_pos_x;
-            _canvas_wrapper_overflow.scrollTop = new_scale_pos_y;
-
-            scale_pos_x = _canvas_wrapper_overflow.scrollLeft;
-            scale_pos_y = _canvas_wrapper_overflow.scrollTop;
-            scale_move_x = new_scale_move_x_rigged;
-            scale_move_y = new_scale_move_y_rigged;
+            let new_scale_move_x_rigged = (Math.min(Math.abs(new_scale_move_x), scale_move_x_max)) * (new_scale_move_x < 0 ? -1: 1) + for_middle_x;
+            let new_scale_move_y_rigged = (Math.min(Math.abs(new_scale_move_y), scale_move_y_max)) * (new_scale_move_y < 0 ? -1: 1) + for_middle_y;
 
             this.setState({
-                scale_pos_x,
-                scale_pos_y,
-                scale_move_x,
-                scale_move_y,
+                scale_move_x: new_scale_move_x_rigged,
+                scale_move_y: new_scale_move_y_rigged,
                 _image_move_from,
             });
         }
+
+        if(pos_x === -1 || pos_y === -1) { return; }
+        const { tool, pxl_width, pxl_height, _pxls_hovered, _mouse_down, scale, pxl_current_color, hide_canvas_content } = this.state;
+        let { _pxl_indexes_of_selection, _imported_image_pxls } = this.state;
+        const pxl_index = (pos_y * pxl_width) + pos_x;
 
         if(pxl_index !== _pxls_hovered && !hide_canvas_content) {
 
@@ -6022,10 +5967,6 @@ class CanvasPixels extends React.Component {
             canvas_wrapper_width = (canvas_wrapper_height - canvas_wrapper_extra_height) * (pxl_width / pxl_height) + canvas_wrapper_extra_height;
         }
 
-        let canvas_container_center_props = canvas_wrapper_height <= canvas_container_height ?
-            {justifyContent: "center", display: "flex", flexDirection: "column"}:
-            {};
-
         let cursor = 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAYAAADhAJiYAAAAq0lEQVRYR+1WQQrAIAxb///oDmUOkc3W2kEG2XHQGpPURg6wTzLwqKr2fUQk3Ddc2AMogBqGgo2ARpkhGaKHZtMIKRmnjJLtrBBIU0O9QzvsjrUpyzUd0BgfvAdYWz3StzLUm7KBuWLEKzZPzHjqO8SWElXuX7UnLCCvTCvTFJYsAuarGswp270tQ77FIOQuY0BjQLOM+zuGVlbK7HIpLzXH3vIXGfIwlGXqE9034xUtxdxDAAAAAElFTkSuQmCC") 18 18, auto';
 
         if(_is_image_import_mode) {
@@ -6127,53 +6068,53 @@ class CanvasPixels extends React.Component {
         }
 
         return (
-            <div ref={this._set_canvas_container_ref} style={{boxSizing: "content-box"}} className={className}>
+            <div ref={this._set_canvas_container_ref} style={{boxSizing: "content-box", position: "relative", overflow: "hidden"}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
                      className={"Canvas-Wrapper-Overflow"}
                      style={{
                          height: "100%",
                          width: "100%",
-                         aspectRatio: `1 / 1`,
-                         overflow: "scroll",
+                         overflow: "overlay",
+                         position: "contents",
                          touchAction: "none",
                          boxSizing: "border-box",
-                         flexDirection: "column-reverse",
-                         ...canvas_container_center_props
                      }}>
-                        <div className={"Canvas-Wrapper"}
-                             style={{
-                                 boxShadow: canvas_wrapper_box_shadow,
-                                 borderWidth: canvas_wrapper_border_width,
-                                 borderStyle: "solid",
-                                 borderColor: canvas_wrapper_border_color,
-                                 backgroundColor: canvas_wrapper_background_color,
-                                 borderRadius: canvas_wrapper_border_radius,
-                                 width: canvas_wrapper_width,
-                                 height: canvas_wrapper_height,
-                                 padding: canvas_wrapper_padding * scale,
-                                 margin: "0 auto",
-                                 display: "inline-block",
-                                 transform: `translate(${scale_move_x}px, ${scale_move_y}px)`,
-                                 transformOrigin: "unset",
-                                 boxSizing: "unset",
-                             }}
-                             ref={this._set_canvas_wrapper_ref}>
-                            <canvas
-                                style={{
-                                    cursor: cursor,
-                                    borderWidth: canvas_border_width,
-                                    borderStyle: "solid",
-                                    borderColor: canvas_border_color,
-                                    borderRadius: canvas_border_radius,
-                                    width: `calc(100%)`,
-                                    height: `calc(100%)`,
-                                    ...background_image_style_props,
-                                }}
-                                className={"Canvas-Pixels"}
-                                ref={this._set_canvas_ref}
-                                width={pxl_width * px_per_px}
-                                height={pxl_height * px_per_px}/>
-                        </div>
+                    <div className={"Canvas-Wrapper"}
+                         style={{
+                             boxShadow: canvas_wrapper_box_shadow,
+                             borderWidth: canvas_wrapper_border_width,
+                             borderStyle: "solid",
+                             borderColor: canvas_wrapper_border_color,
+                             backgroundColor: canvas_wrapper_background_color,
+                             borderRadius: canvas_wrapper_border_radius,
+                             width: canvas_wrapper_width,
+                             height: canvas_wrapper_height,
+                             padding: canvas_wrapper_padding * scale,
+                             position: "absolute",
+                             top: 0,
+                             left: 0,
+                             display: "inline-block",
+                             transform: `translate(calc(0% + ${scale_move_x}px), calc(0% + ${scale_move_y}px))`,
+                             transformOrigin: "center center",
+                             boxSizing: "border-box",
+                         }}
+                         ref={this._set_canvas_wrapper_ref}>
+                        <canvas
+                            style={{
+                                cursor: cursor,
+                                borderWidth: canvas_border_width,
+                                borderStyle: "solid",
+                                borderColor: canvas_border_color,
+                                borderRadius: canvas_border_radius,
+                                width: `calc(100%)`,
+                                height: `calc(100%)`,
+                                ...background_image_style_props,
+                            }}
+                            className={"Canvas-Pixels"}
+                            ref={this._set_canvas_ref}
+                            width={pxl_width * px_per_px}
+                            height={pxl_height * px_per_px}/>
+                    </div>
                 </div>
             </div>
         );
