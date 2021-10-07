@@ -355,8 +355,8 @@ class CanvasPixels extends React.Component {
                 pos_y_in_canvas_container = _canvas_container.offsetHeight / 2;
             }
 
-            let new_scale_move_x = (scale_move_x - (pos_x_in_canvas_container * ratio)) * ratio2;
-            let new_scale_move_y = (scale_move_y - (pos_y_in_canvas_container * ratio)) * ratio2;
+            let new_scale_move_x = (scale_move_x - (pos_x_in_canvas_container * ratio)) * ratio2 + move_x;
+            let new_scale_move_y = (scale_move_y - (pos_y_in_canvas_container * ratio)) * ratio2 + move_y;
 
             this.setState({
                 scale: new_scale,
@@ -2740,19 +2740,11 @@ class CanvasPixels extends React.Component {
 
                 const of = _latest_pointers_distance > 0 ? anchor_diff / _latest_pointers_distance : 1;
 
-                if(move_diff < anchor_diff_diff) {
-
-                    this.zoom_of(of, page_x_center, page_y_center, 0, 0);
-                }else {
-
-                    this.zoom_of(1, null, null, move_x, move_y);
-                }
-
-                _latest_pointers_distance = anchor_diff;
+                this.zoom_of(of, page_x_center, page_y_center, move_x, move_y);
 
                 this.setState({
                     _pointer_events: [..._pointer_events],
-                    _latest_pointers_distance,
+                    _latest_pointers_distance: anchor_diff,
                     _latest_pointers_client_x_center: page_x_center,
                     _latest_pointers_client_y_center: page_y_center,
                 });
