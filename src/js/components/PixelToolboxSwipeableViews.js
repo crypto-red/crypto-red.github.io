@@ -92,7 +92,7 @@ const styles = theme => ({
     listSubHeader: {
         alignSelf: "flex-start",
         color: theme.palette.secondary.light,
-        backgroundColor: "#eeeeee",
+        backgroundColor: "#e5e5e5",
         "& span svg": {
             verticalAlign: "sub",
             marginRight: theme.spacing(1),
@@ -653,8 +653,8 @@ class PixelToolboxSwipeableViews extends React.Component {
                         {icon: <AlphaIcon />, text: "To alpha", sub: "Current color and effect strength have an impact", on_click: () => {canvas.to_alpha(current_color, slider_value)}},
                         {icon: <SwapVerticalIcon />, text: "Mirror vertical", sub: "Apply to current layer", on_click: () => {canvas.to_mirror(false)}},
                         {icon: <SwapHorizontalIcon />, text: "Mirror horizontal", sub: "Apply to current layer", on_click: () => {canvas.to_mirror(true)}},
-                        {icon: <RotateRightIcon />, text: "Rotate 90°", sub: "Apply to all layers", on_click: () => {this._to_rotation(true)}},
-                        {icon: <RotateLeftIcon />, text: "Rotate - 90°", sub: "Apply to all layers",on_click: () => {this._to_rotation(false)}},
+                        {icon: <RotateRightIcon />, text: "Rotate 90°", sub: "Apply to all layers", on_click: () => {canvas.to_rotation(true)}},
+                        {icon: <RotateLeftIcon />, text: "Rotate - 90°", sub: "Apply to all layers",on_click: () => {canvas.to_rotation(false)}},
                     ]
                 }
             ],

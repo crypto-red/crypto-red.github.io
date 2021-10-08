@@ -5,7 +5,7 @@ const overrides = {
                 overflow: "overlay",
             },
             body: {
-                backgroundColor: "#F4F6F8",
+                backgroundColor: "#FAFAFA",
                 touchAction: "none",
                 width: "100vw",
                 height: "100vh",
@@ -27,8 +27,8 @@ const overrides = {
                 color: "inherit"
             },
             ".MuiDialogActions-root": {
-                borderTop: "1px solid #060f23",
-                backgroundColor: "#f8f8f9",
+                borderTop: "1px solid #e5e5e5",
+                backgroundColor: "#fafafa",
             },
             ".MuiFab-root.MuiFab-extended": {
                 borderRadius: 4,

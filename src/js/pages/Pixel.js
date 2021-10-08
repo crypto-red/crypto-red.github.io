@@ -80,7 +80,8 @@ const styles = theme => ({
         display: "flex",
         flexGrow: 1,
         position: "relative",
-        backgroundColor: "#eee",
+        background: "linear-gradient(90deg, #f5f5f5 30px, transparent 1%) center, linear-gradient(#f5f5f5 30px, transparent 1%) center, #b5b5b5",
+        backgroundSize: "32px 32px"
     },
     contentCanvas: {
         width: "100%",
@@ -89,6 +90,17 @@ const styles = theme => ({
         overflow: "hidden",
         [theme.breakpoints.down("sm")]: {
             height: "calc(100vh - 56px)",
+        },
+        animation: "$fade 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
+        "@global": {
+            "@keyframes fade": {
+                "0%": {
+                    opacity: 0,
+                },
+                "100%": {
+                    opacity: 1,
+                },
+            }
         }
     },
     contentDrawer: {
@@ -105,7 +117,8 @@ const styles = theme => ({
         },
         padding: "36px 24px 8px 24px",
         position: "relative",
-        zIndex: -1
+        zIndex: -1,
+        background: "#fff",
     },
     coordinate: {
         padding: "6px 8px 6px 8px",
@@ -134,6 +147,7 @@ const styles = theme => ({
         border: "none",
         width: 360,
         overflowX: "overlay",
+        background: "#fafafa",
     },
     swipeableDrawerPaper: {
         maxWidth: "100%",
@@ -171,8 +185,10 @@ const styles = theme => ({
     },
     tab: {
         color: theme.palette.secondary.main,
+        backgroundColor: "#fff",
         "&.Mui-selected": {
             color: theme.palette.secondary.dark,
+            backgroundColor: "#e5e5e5",
         },
     },
     backdrop: {
@@ -218,9 +234,9 @@ const styles = theme => ({
         },
     },
     ripple: {
-        "& .MuiTouchRipple-rippleVisible": {
-            opacity: ".6",
-        },
+        "& > .MuiTouchRipple-rippleVisible": {
+            animation: "MuiTouchRipple-keyframes-enter 200ms cubic-bezier(0.4, 0, 0.2, 1)"
+        }
     },
 });
 
@@ -269,7 +285,9 @@ class Pixel extends React.Component {
             _menu_mouse_y: null,
             _menu_mouse_x: null,
             _menu_data: {},
-            _menu_event: null
+            _menu_event: null,
+            _ripple_color: "#ffffffff",
+            _ripple_opacity: 1,
         };
     };
 
@@ -283,7 +301,7 @@ class Pixel extends React.Component {
         setTimeout(() => {
 
             actions.trigger_loading_update(100);
-        }, 250);
+        }, 300);
     }
 
     componentWillUnmount() {
@@ -638,30 +656,22 @@ class Pixel extends React.Component {
         const [h, s, l] = _canvas.rgb_to_hsl(r, g, b);
 
         this.setState({_current_color: color, _hue: h});
-
-        if(event && _ripple) {
-
-            _ripple.start(event);
-
-            setTimeout(() => {
-
-                _ripple.stop(event);
-            }, 250);
-        }
     };
 
-    _handle_relevant_action_event = (event) => {
+    _handle_relevant_action_event = (event, color, opacity) => {
 
         const { _ripple } = this.state;
 
         if(event && _ripple) {
 
-            _ripple.start(event);
+            this.setState({_ripple_color: color, _ripple_opacity: 1}, () => {
+                _ripple.start(event);
 
-            setTimeout(() => {
+                setTimeout(() => {
 
-                _ripple.stop(event);
-            }, 250);
+                    _ripple.stop(event);
+                }, 250);
+            });
         }
     };
 
@@ -851,6 +861,8 @@ class Pixel extends React.Component {
             _menu_mouse_y,
             _menu_mouse_x,
             _menu_data,
+            _ripple_color,
+            _ripple_opacity,
         } = this.state;
 
         const drawer_content = (
@@ -1126,12 +1138,12 @@ class Pixel extends React.Component {
                                     default_size={96}
                                     max_size={96*2}
                                     fast_drawing={true}
-                                    px_per_px={4}/>
+                                    px_per_px={1}/>
                                 <TouchRipple
                                     className={classes.ripple}
                                     ref={this._set_ripple_ref}
                                     center={false}
-                                    style={{color: _current_color}}
+                                    style={{color: _ripple_color, opacity: _ripple_opacity, position: "fixed", width: "100vw", height: "100vh", zIndex: 2000}}
                                 />
                             </div>
                             <SwipeableDrawer

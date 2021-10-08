@@ -47,7 +47,7 @@ class CanvasPixels extends React.Component {
             fast_drawing: props.fast_drawing || false,
             canvas_cursor: props.canvas_cursor || 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAYAAAAfrhY5AAAAAXNSR0IArs4c6QAAAFxJREFUSIntlkEKACEQw6b7/z/Hq7cdqeAcmrtJQRCrDACc824YZ8B3cU/iiSc+M27x7IULDqrq3Z0kdaVdnwA6XqA14Mh3svTXuA246QtzyB8u8cQTHx23cF+4BaK1P/6WF9EdAAAAAElFTkSuQmCC") 15 15, auto',
             canvas_border_width: props.canvas_border_width || 1,
-            canvas_border_color: props.canvas_border_color || "#666",
+            canvas_border_color: props.canvas_border_color || "#E5E5E5",
             canvas_border_radius: props.canvas_border_radius || 2,
             canvas_wrapper_border_width: props.canvas_wrapper_border_width || 0,
             canvas_wrapper_border_color: props.canvas_wrapper_border_color || "#000000",
@@ -179,7 +179,7 @@ class CanvasPixels extends React.Component {
             "}";
 
         const pixelated_css =
-            "canvas.Canvas-Pixels {"+
+            "canvas.Canvas-Pixels, .Canvas-Wrapper, .MuiTouchRipple-root {"+
                 "-ms-interpolation-mode: -webkit-optimize-contrast;" +
                 "image-rendering: nearest-neighbor;" +
                 "image-rendering: optimizeSpeed;" +
@@ -194,21 +194,21 @@ class CanvasPixels extends React.Component {
 
         const canvas_wrapper_css =
             ".Canvas-Wrapper {"+
-                "box-shadow: 0 3px 6px rgb(0 0 0 / 16%), 0 3px 6px rgb(0 0 0 / 23%);"+
-                "transition: box-shadow 333ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"+
+                "box-shadow: 0px 3px 3px -2px rgb(0 0 0 / 20%), 0px 3px 4px 0px rgb(0 0 0 / 14%), 0px 1px 8px 0px rgb(0 0 0 / 12%);"+
+                "transition: box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"+
                 "cursor: grab;"+
-                "border: 1px solid #ddd !important;"+
+                "border: 1px solid #ccc !important;"+
             "}";
 
         const canvas_wrapper_hover_css =
             ".Canvas-Wrapper:hover {"+
-                "box-shadow: 0 10px 20px rgb(0 0 0 / 19%), 0 6px 6px rgb(0 0 0 / 23%);"+
+                "box-shadow: 0px 3px 5px -1px rgb(0 0 0 / 20%), 0px 6px 10px 0px rgb(0 0 0 / 14%), 0px 1px 18px 0px rgb(0 0 0 / 12%);"+
             "}";
 
         const canvas_wrapper_active_css =
             ".Canvas-Wrapper:active {"+
                 "cursor: grabbing;"+
-                "border: 1px solid #bbb !important;"+
+                "border: 1px solid #c9c9c9 !important;"+
             "}";
 
         const canvas_style = document.createElement("style");
@@ -1833,12 +1833,12 @@ class CanvasPixels extends React.Component {
 
                 const pixel_color_hex = this.get_pixel_color_from_pos(pos_x, pos_y);
                 this._notify_current_color_change(pixel_color_hex);
-                this._notify_relevant_action_event(event);
+                this._notify_relevant_action_event(event, pixel_color_hex, 1);
             }else if (tool === "EXCHANGE" && event_which === 1) {
 
                 const pixel_color_hex = _s_pxl_colors[_layer_index][pxl_color_index];
                 this._exchange_pixel_color(pixel_color_hex, pxl_current_color);
-                this._notify_relevant_action_event(event);
+                this._notify_relevant_action_event(event, pxl_current_color, 1);
 
             }else if(tool === "LINE" || tool === "RECTANGLE" || tool === "ELLIPSE"){
 
@@ -1882,7 +1882,7 @@ class CanvasPixels extends React.Component {
 
                         this._update_canvas();
                     });
-                    this._notify_relevant_action_event(event);
+                    this._notify_relevant_action_event(event, "#ffffffff", .6);
                 }
 
 
@@ -2303,7 +2303,7 @@ class CanvasPixels extends React.Component {
 
                         this._update_canvas();
                     });
-                    this._notify_relevant_action_event(event);
+                    this._notify_relevant_action_event(event, pxl_current_color, 1);
                 }
 
             }else if ((tool === "SELECT COLOR") && event_which === 1) {
@@ -3999,11 +3999,11 @@ class CanvasPixels extends React.Component {
 
     }
     
-    _notify_relevant_action_event = (event) => {
+    _notify_relevant_action_event = (event, color = "#ffffffff", opacity = 1) => {
       
         if(this.props.onRelevantActionEvent) {
             
-            this.props.onRelevantActionEvent(event);
+            this.props.onRelevantActionEvent(event, color, opacity);
         }
     };
 
@@ -6043,7 +6043,7 @@ class CanvasPixels extends React.Component {
             }:
             show_transparent_image_in_background ?
                 {
-                    background: `repeating-conic-gradient(rgb(2 9 35 / 12%) 0% 25%, transparent 0% 50%) 50% / calc(200% / ${pxl_width}) calc(200% / ${pxl_height})`,
+                    background: `repeating-conic-gradient(rgb(96 96 96 / 12%) 0% 25%, transparent 0% 50%) 50% / calc(200% / ${pxl_width}) calc(200% / ${pxl_height})`,
                 }: {};
 
         const canvas_container_width = _canvas_container === null ? 0: _canvas_container.clientWidth || 0;
