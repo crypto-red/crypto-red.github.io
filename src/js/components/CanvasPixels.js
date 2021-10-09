@@ -23,15 +23,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 
-let raf = window.mozRequestAnimationFrame    ||
+let raf =
+    window.oRequestAnimationFrame      ||
+    window.mozRequestAnimationFrame    ||
     window.webkitRequestAnimationFrame ||
-    window.msRequestAnimationFrame     ||
-    window.oRequestAnimationFrame;
+    window.msRequestAnimationFrame;
 
-let caf = window.mozCancelAnimationFrame    ||
+let caf =
+    window.oCancelAnimationFrame      ||
+    window.mozCancelAnimationFrame    ||
     window.webkitCancelAnimationFrame ||
-    window.msCancelAnimationFrame     ||
-    window.oCancelAnimationFrame;
+    window.msCancelAnimationFrame;
 
 window.caf_id = null;
 window.last_raf_time = Date.now()
@@ -1575,11 +1577,14 @@ class CanvasPixels extends React.Component {
                 _is_there_new_dimension: true,
             }, () => {
 
-                this.setState({_original_image_index: new_base64_original_images.indexOf(base64_original_image), _last_action_timestamp: Date.now()});
-                this._notify_size_change();
-                this._notify_layers_change();
-                this._update_canvas();
-                this._notify_image_load_complete();
+                this._request_force_update(() => {
+
+                    this.setState({_original_image_index: new_base64_original_images.indexOf(base64_original_image), _last_action_timestamp: Date.now()});
+                    this._notify_size_change();
+                    this._notify_layers_change();
+                    this._update_canvas();
+                    this._notify_image_load_complete();
+                });
             });
 
         }, 50);
@@ -4163,10 +4168,7 @@ class CanvasPixels extends React.Component {
 
         if(this.props.onSizeChange) { this.props.onSizeChange(pxl_width, pxl_height); }
 
-        setTimeout(() => {
-
-            this._update_screen_zoom_ratio(true);
-        }, 50);
+        this._update_screen_zoom_ratio(true);
     };
 
     _can_undo = () => {
@@ -4208,12 +4210,15 @@ class CanvasPixels extends React.Component {
                 _json_state_history: new_json_state_history,
             }, () => {
 
-                this.setState({_original_image_index});
-                this._notify_size_change();
-                this._notify_layers_and_compute_thumbnails_change();
-                this._notify_can_undo_redo_change();
-                this._notify_is_something_selected();
-                this._update_canvas();
+                this._request_force_update(() =>{
+
+                    this.setState({_original_image_index});
+                    this._notify_size_change();
+                    this._notify_layers_and_compute_thumbnails_change();
+                    this._notify_can_undo_redo_change();
+                    this._notify_is_something_selected();
+                    this._update_canvas();
+                });
             });
         }
     };
@@ -4256,13 +4261,15 @@ class CanvasPixels extends React.Component {
                 _json_state_history: new_json_state_history,
             }, () => {
 
-                this.setState({_original_image_index});
-                this._notify_size_change();
-                this._notify_layers_and_compute_thumbnails_change();
-                this._notify_can_undo_redo_change();
-                this._notify_is_something_selected();
-                this._update_canvas();
+                this._request_force_update(() => {
 
+                    this.setState({_original_image_index});
+                    this._notify_size_change();
+                    this._notify_layers_and_compute_thumbnails_change();
+                    this._notify_can_undo_redo_change();
+                    this._notify_is_something_selected();
+                    this._update_canvas();
+                });
             });
 
         }
@@ -4599,15 +4606,16 @@ class CanvasPixels extends React.Component {
                         _is_there_new_dimension: true,
                     }, () => {
 
-                        this._update_screen_zoom_ratio();
+                        this._request_force_update(() => {
 
-                        this.setState({
-                            _original_image_index: new_base64_original_images.indexOf(base64_original_image),
-                            _last_action_timestamp: Date.now()
+                            this.setState({
+                                _original_image_index: new_base64_original_images.indexOf(base64_original_image),
+                                _last_action_timestamp: Date.now()
+                            });
+
+                            this._notify_size_change();
+                            this._update_canvas();
                         });
-
-                        this._notify_size_change();
-                        this._update_canvas();
                     })
 
                 };
@@ -4624,8 +4632,11 @@ class CanvasPixels extends React.Component {
                     _last_action_timestamp: Date.now(),
                 }, () => {
 
-                    this._notify_size_change();
-                    this._update_canvas();
+                    this._request_force_update(() => {
+
+                        this._notify_size_change();
+                        this._update_canvas();
+                    });
                 });
 
             }
@@ -5788,14 +5799,12 @@ class CanvasPixels extends React.Component {
                     _original_image_index: -1,
                 }, () => {
 
-                    if(_is_there_new_dimension) {
+                    this._request_force_update(() => {
 
-                        this._update_screen_zoom_ratio(true);
-                    }
-
-                    this.setState({_original_image_index: new_base64_original_images.indexOf(base64_original_image), _last_action_timestamp: Date.now()});
-                    this._notify_size_change();
-                    this._update_canvas();
+                        this.setState({_original_image_index: new_base64_original_images.indexOf(base64_original_image), _last_action_timestamp: Date.now()});
+                        this._notify_size_change();
+                        this._update_canvas();
+                    });
                 });
 
             };
@@ -5817,13 +5826,11 @@ class CanvasPixels extends React.Component {
                 _last_action_timestamp: Date.now()
             }, () => {
 
-                if(_is_there_new_dimension) {
+                this._request_force_update(() => {
 
-                    this._update_screen_zoom_ratio(true);
-                }
-
-                this._notify_size_change();
-                this._update_canvas();
+                    this._notify_size_change();
+                    this._update_canvas();
+                });
             });
         }
     };
