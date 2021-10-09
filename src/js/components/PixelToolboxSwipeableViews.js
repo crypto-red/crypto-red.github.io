@@ -456,6 +456,14 @@ class PixelToolboxSwipeableViews extends React.Component {
         }
     };
 
+    _handle_action_close = () => {
+
+        if(this.props.onActionClose) {
+
+            this.props.onActionClose();
+        }
+    };
+
     render() {
         
         const {
@@ -663,7 +671,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                     icon: <ImageFilterIcon />,
                     text: `Filters (Strength: ${slider_value*100}%)`,
                     tools: filters.map( (name) => {
-                        return {icon: <Jdenticon value={name} size={"24"}/>, text: name, on_click: () => {canvas.to_filter(name, slider_value)}}
+                        return {icon: <Jdenticon value={name} size={"24"}/>, text: name, on_click: () => {canvas.to_filter(name, slider_value); this._handle_action_close();}}
                     }).concat([
                         {icon: <Jdenticon value={"Black & White"} size={"24"}/>, text: "Black & White", on_click: () => {canvas.to_greyscale()}},
                         {icon: <Jdenticon value={"Sepia"} size={"24"}/>, text: "Sepia", on_click: () => {canvas.to_sepia()}},
@@ -743,7 +751,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                                             layer.colors.length >= 2 ?
                                                                                 <div style={{padding: "12px 0px"}}>
                                                                                     <Button color="primary"
-                                                                                            onClick={this._less_colors_stepped}>...Less colors</Button>
+                                                                                            onClick={() => this._less_colors_stepped(1)}>...Less colors</Button>
                                                                                 </div>
                                                                                 : null
                                                                         }

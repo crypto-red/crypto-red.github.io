@@ -105,7 +105,7 @@ const styles = theme => ({
     contentDrawer: {
         overscrollBehavior: "none",
         display: "flex",
-        zIndex: 1300,
+        zIndex: 1400,
         [theme.breakpoints.up("lg")]: {
             display: "none",
         },
@@ -206,10 +206,10 @@ const styles = theme => ({
     },
     fab: {
         boxShadow: "none !important",
-        backgroundColor: theme.palette.primary.action,
+        background: theme.palette.primary.action,
         color: theme.palette.primary.contrastText,
         "&:hover": {
-            backgroundColor: theme.palette.primary.actionLighter,
+            background: theme.palette.primary.actionLighter,
         },
         "& svg": {
             marginRight: 4
@@ -770,9 +770,9 @@ class Pixel extends React.Component {
         });
     };
 
-    _handle_edit_drawer_open = (_view_name_index) => {
+    _handle_edit_drawer_open = (event, _view_name_index) => {
 
-        _view_name_index = _view_name_index !== null ? _view_name_index: this.state._view_name_index;
+        _view_name_index = typeof _view_name_index !== "undefined" ? _view_name_index: this.state._view_name_index;
 
         this.setState({_is_edit_drawer_open: true, _view_name_index});
     };
@@ -909,6 +909,7 @@ class Pixel extends React.Component {
                 </div>
                 <div className={classes.drawerContainer} onGotPointerCapture={(event) => {event.stopPropagation(); event.preventDefault();}}>
                     <PixelToolboxSwipeableViews
+                        onActionClose={this._handle_edit_drawer_close}
                         canvas={_canvas}
                         view_class={classes.listOfTools}
                         view_name_index={_view_name_index}
@@ -1080,7 +1081,7 @@ class Pixel extends React.Component {
                         </ListItemIcon>
                         <ListItemText primary="Smooth a bit" />
                     </ListItem>
-                    <ListItem button divider onClick={(event) => this._handle_edit_drawer_open(6)}>
+                    <ListItem button divider onClick={(event) => this._handle_edit_drawer_open(null,6)}>
                         <ListItemIcon>
                             <ImageFilterIcon />
                         </ListItemIcon>
@@ -1102,10 +1103,7 @@ class Pixel extends React.Component {
                 </Menu>
                 <Grow in>
                     <div className={classes.fabs}>
-                        <Fab className={classes.fab} style={{borderBottomRightRadius: 0, borderTopRightRadius: 0, borderRight: "1px solid #403ca9"}} variant="extended" onClick={(event) => {_canvas.force_click()}}>
-                            Click
-                        </Fab>
-                        <Fab className={classes.fab} style={{borderBottomLeftRadius: 0, borderTopLeftRadius: 0, borderLeft: "1px solid #403ca9"}} variant="extended" onClick={this._handle_edit_drawer_open}>
+                        <Fab className={classes.fab} variant="extended" onClick={this._handle_edit_drawer_open}>
                             <ImageEditIcon />
                         </Fab>
                     </div>
@@ -1147,8 +1145,8 @@ class Pixel extends React.Component {
                                     pxl_height={_height}
                                     pxl_current_color={_current_color}
                                     convert_scale={1}
-                                    default_size={96}
-                                    max_size={96*2}
+                                    default_size={128}
+                                    max_size={128*2}
                                     fast_drawing={true}
                                     px_per_px={1}/>
                                 <TouchRipple

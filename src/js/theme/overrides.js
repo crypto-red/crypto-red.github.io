@@ -47,6 +47,23 @@ const overrides = {
             },
             "svg": {
                 fontFamily: "Open Sans !important"
+            },
+            ".MuiBackdrop-root": {
+                backdropFilter: "blur(1px)",
+                transform: "scale(8)",
+                animation: "$fadeBlur 400ms cubic-bezier(0.4, 0, 0.2, 1)",
+                "@global": {
+                    "@keyframes fadeBlur": {
+                        "0%": {
+                            backdropFilter: "blur(1px)",
+                            transform: "scale(1)",
+                        },
+                        "100%": {
+                            backdropFilter: "blur(1px)",
+                            transform: "scale(8)",
+                        },
+                    }
+                }
             }
         },
     },
