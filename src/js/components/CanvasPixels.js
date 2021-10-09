@@ -169,11 +169,11 @@ class CanvasPixels extends React.Component {
 
         setInterval(() => {
             this._maybe_save_state();
-        }, 240);
+        }, 250);
 
         setInterval(() => {
             this.set_move_speed_average_now();
-        }, 120);
+        }, 200);
 
         setInterval(() => {
             this._maybe_update_mine_player();
@@ -205,10 +205,12 @@ class CanvasPixels extends React.Component {
 
         const canvas_wrapper_css =
             ".Canvas-Wrapper {"+
-                "transition: box-shadow 120ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"+
+                "transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1) 50ms;"+
+            "}"+
+            ".Canvas-Wrapper:not[.Canvas-Focused]{"+
                 "cursor: grab;"+
             "}"+
-            ".Canvas-Wrapper.move {"+
+            ".Canvas-Wrapper:not[.Canvas-Focused]:active {"+
                 "cursor: grabbing;"+
             "}";
 
@@ -409,6 +411,7 @@ class CanvasPixels extends React.Component {
 
             this.setState({
                 scale: new_scale,
+                _moves_speed_average_now: of !== 1 ? 6: this.state._moves_speed_average_now,
             }, () => {
 
                 let { _canvas_wrapper } = this.state;
@@ -1523,7 +1526,7 @@ class CanvasPixels extends React.Component {
                 _is_there_new_dimension: true,
             }, () => {
 
-                this._update_screen_zoom_ratio();
+                this._update_screen_zoom_ratio(true);
                 this.setState({_original_image_index: new_base64_original_images.indexOf(base64_original_image), _last_action_timestamp: Date.now()});
                 this._notify_size_change();
                 this._notify_layers_change();
@@ -1546,15 +1549,7 @@ class CanvasPixels extends React.Component {
         element.addEventListener("mouseup", this._handle_canvas_mouse_up, {capture: true});
         element.addEventListener("mouseleave", this._handle_canvas_mouse_leave, {capture: true});
 
-        this.setState({_canvas: element}, () => {
-
-            this._update_canvas();
-
-            setTimeout(() => {
-
-                this._to_canvas_middle();
-            }, 50);
-        });
+        this.setState({_canvas: element});
     };
 
     _set_canvas_container_ref = (element) => {
@@ -1615,6 +1610,7 @@ class CanvasPixels extends React.Component {
                 _previous_scale_move_y: for_middle_y,
                 _previous_scale_move_timestamp: 0,
                 scale: default_scale,
+                _moves_speed_average_now: 6,
             }, () => {
 
                 this.forceUpdate();
@@ -2743,6 +2739,7 @@ class CanvasPixels extends React.Component {
 
             this.setState({
                 scale: new_scale,
+                _moves_speed_average_now: 6,
             }, () => {
 
                 let { _canvas_wrapper } = this.state;
@@ -2883,6 +2880,14 @@ class CanvasPixels extends React.Component {
 
         event.preventDefault();
 
+        if(this.state._mouse_inside === true) {
+
+            this.setState({_mouse_inside: false}, () => {
+
+                this.forceUpdate();
+            });
+        }
+
         const { _pxls_hovered, tool } = this.state;
 
         if((!_pxls_hovered || _pxls_hovered <= 0) && event.which === 1 && tool === "MOVE") {
@@ -2939,6 +2944,8 @@ class CanvasPixels extends React.Component {
 
         if(pxl_index !== _pxls_hovered && !hide_canvas_content) {
 
+            let force_update = !this.state._mouse_inside;
+
             if(_imported_image_pxls.length > 0){
 
                 let { _imported_image_scale_delta_x, _imported_image_scale_delta_y, _imported_image_start_x, _imported_image_start_y, _imported_image_width, _imported_image_height } = this.state;
@@ -2994,6 +3001,11 @@ class CanvasPixels extends React.Component {
                         _imported_image_move_from,
                     }, () => {
 
+                        if(force_update) {
+
+                            this.forceUpdate();
+                        }
+
                         this._update_canvas();
                         this._notify_position_change(event, {x:pos_x, y: pos_y});
                     });
@@ -3004,6 +3016,11 @@ class CanvasPixels extends React.Component {
                         _is_on_resize_element,
                         _mouse_inside: true
                     }, () => {
+
+                        if(force_update) {
+
+                            this.forceUpdate();
+                        }
 
                         this._update_canvas();
                         this._notify_position_change(event, {x:pos_x, y: pos_y});
@@ -3178,6 +3195,11 @@ class CanvasPixels extends React.Component {
                     _last_action_timestamp
                 }, () =>{
 
+                    if(force_update) {
+
+                        this.forceUpdate();
+                    }
+
                     this._update_canvas();
                     this._notify_position_change(event, {x:pos_x, y: pos_y});
                 });
@@ -3271,6 +3293,11 @@ class CanvasPixels extends React.Component {
                     _paint_or_select_hover_actions_latest_index: pxl_index,
                     _last_action_timestamp}, () => {
 
+                    if(force_update) {
+
+                        this.forceUpdate();
+                    }
+
                     this._update_canvas();
                     this._notify_is_something_selected();
                     this._notify_position_change(event, {x:pos_x, y: pos_y});
@@ -3289,6 +3316,11 @@ class CanvasPixels extends React.Component {
                     _paint_or_select_hover_pxl_indexes: new Set(),
                 }, () => {
 
+                    if(force_update) {
+
+                        this.forceUpdate();
+                    }
+
                     this._update_canvas();
                     this._notify_position_change(event, {x:pos_x, y: pos_y});
                 });
@@ -3304,6 +3336,7 @@ class CanvasPixels extends React.Component {
         this.setState({_mouse_down: false, _mouse_inside: false, _pxls_hovered: null}, () => {
 
             this._update_canvas();
+            this.forceUpdate();
         });
 
         this._notify_position_change(null, {x:-1, y: -1});
@@ -3958,7 +3991,7 @@ class CanvasPixels extends React.Component {
         ];
     };
 
-    _maybe_save_state = () => {
+    _maybe_save_state = (save_pending_data) => {
 
         const { pxl_width, pxl_height, _s_pxls, _original_image_index, _s_pxl_colors, _layers, _layer_index, _pxl_indexes_of_selection, _last_action_timestamp, _json_state_history, _state_history_length, _undo_buffer_time_ms, _pencil_mirror_index } = this.state;
 
@@ -3991,6 +4024,7 @@ class CanvasPixels extends React.Component {
             const new_json_state_history = JSON.stringify({previous_history_position, history_position, state_history});
 
             this.setState({_json_state_history: new_json_state_history});
+            return new_json_state_history;
 
         }else {
 
@@ -3999,7 +4033,7 @@ class CanvasPixels extends React.Component {
             const previous_state_index = current_state_size - back_in_history_of;
             const previous_state = state_history[previous_state_index];
 
-            if(JSON.stringify(previous_state) !== JSON.stringify(current_state) && _last_action_timestamp + _undo_buffer_time_ms < Date.now()) {
+            if(JSON.stringify(previous_state) !== JSON.stringify(current_state) && (_last_action_timestamp + _undo_buffer_time_ms < Date.now() || save_pending_data)) {
 
                 // An action must have been performed and the last action must be older of 1 sec
                 if(back_in_history_of) {
@@ -4018,9 +4052,10 @@ class CanvasPixels extends React.Component {
 
                     this._notify_can_undo_redo_change();
                 });
-
                 return new_json_state_history;
             }
+
+            return null;
         }
 
         return null;
@@ -4107,14 +4142,12 @@ class CanvasPixels extends React.Component {
 
     undo = () => {
 
-        const maybe_just_saved_json_history_state = this._maybe_save_state();
-        const { _json_state_history } = maybe_just_saved_json_history_state ?
-            {maybe_just_saved_json_history_state}:
-            this.state;
+        const is_pending_save_data = this._maybe_save_state(true);
+        const _json_state_history = is_pending_save_data === null ? this.state._json_state_history: is_pending_save_data;
 
         let {state_history, history_position, previous_history_position} = JSON.parse(_json_state_history);
 
-        if(this._can_undo()){
+        if(this._can_undo() || is_pending_save_data){
 
             previous_history_position = history_position;
             history_position--;
@@ -4156,10 +4189,8 @@ class CanvasPixels extends React.Component {
 
     redo = () => {
 
-        const maybe_just_saved_json_history_state = this._maybe_save_state();
-        const { _json_state_history } = maybe_just_saved_json_history_state ?
-            {maybe_just_saved_json_history_state}:
-            this.state;
+        const is_pending_save_data = this._maybe_save_state(true);
+        const _json_state_history = is_pending_save_data === null ? this.state._json_state_history: is_pending_save_data;
 
         let {state_history, history_position, previous_history_position} = JSON.parse(_json_state_history);
 
@@ -5720,7 +5751,7 @@ class CanvasPixels extends React.Component {
 
                     if(_is_there_new_dimension) {
 
-                        this._update_screen_zoom_ratio();
+                        this._update_screen_zoom_ratio(true);
                     }
 
                     this.setState({_original_image_index: new_base64_original_images.indexOf(base64_original_image), _last_action_timestamp: Date.now()});
@@ -5749,7 +5780,7 @@ class CanvasPixels extends React.Component {
 
                 if(_is_there_new_dimension) {
 
-                    this._update_screen_zoom_ratio();
+                    this._update_screen_zoom_ratio(true);
                 }
 
                 this._notify_size_change();
@@ -6228,7 +6259,7 @@ class CanvasPixels extends React.Component {
     set_move_speed_average_now = () => {
 
         const { _moves_speed_average, _scale_move_timestamp } = this.state;
-        const _moves_speed_average_now = Math.max(Math.round(_moves_speed_average - (Date.now() - _scale_move_timestamp) / 120), 1) || 1;
+        const _moves_speed_average_now = Math.max(Math.round(_moves_speed_average - (120 + (Date.now() - _scale_move_timestamp)) / 120), 1) || 1;
 
         this.setState({_moves_speed_average_now}, () => {
 
@@ -6246,11 +6277,11 @@ class CanvasPixels extends React.Component {
         
         this.setState({_canvas_container_width, _canvas_container_height}, () => {
 
-            this._update_screen_zoom_ratio();
+            this._update_screen_zoom_ratio(true);
         });
     };
 
-    _update_screen_zoom_ratio = () => {
+    _update_screen_zoom_ratio = (align_center_middle) => {
 
         const { _canvas_container_width, _canvas_container_height, pxl_width, pxl_height } = this.state;
 
@@ -6260,7 +6291,14 @@ class CanvasPixels extends React.Component {
 
         this.setState({_screen_zoom_ratio}, () => {
 
-            this._to_canvas_middle();
+            this.forceUpdate(() => {
+
+                if(align_center_middle) {
+
+                    this._to_canvas_middle();
+                }
+
+            });
         });
 
     };
@@ -6288,7 +6326,8 @@ class CanvasPixels extends React.Component {
             _mouse_down,
             tool,
             select_mode,
-            _screen_zoom_ratio
+            _screen_zoom_ratio,
+            _mouse_inside,
         } = this.state;
 
         const background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
@@ -6315,7 +6354,7 @@ class CanvasPixels extends React.Component {
                          position: "contents",
                          boxSizing: "border-box",
                      }}>
-                    <div className={"Canvas-Wrapper"}
+                    <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused": "")}
                          style={{
                              borderWidth: 1,
                              borderStyle: "solid",

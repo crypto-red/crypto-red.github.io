@@ -770,9 +770,11 @@ class Pixel extends React.Component {
         });
     };
 
-    _handle_edit_drawer_open = () => {
+    _handle_edit_drawer_open = (_view_name_index) => {
 
-        this.setState({_is_edit_drawer_open: true});
+        _view_name_index = _view_name_index !== null ? _view_name_index: this.state._view_name_index;
+
+        this.setState({_is_edit_drawer_open: true, _view_name_index});
     };
 
     _handle_edit_drawer_close = () => {
@@ -1077,6 +1079,12 @@ class Pixel extends React.Component {
                             <ImageSmoothIcon />
                         </ListItemIcon>
                         <ListItemText primary="Smooth a bit" />
+                    </ListItem>
+                    <ListItem button divider onClick={(event) => this._handle_edit_drawer_open(6)}>
+                        <ListItemIcon>
+                            <ImageFilterIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Add a filter" />
                     </ListItem>
                     <ListSubheader className={classes.contextMenuSubheader}>Load</ListSubheader>
                     <ListItem button divider onClick={(event) => this._upload_image()}>
