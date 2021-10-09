@@ -80,8 +80,7 @@ const styles = theme => ({
         display: "flex",
         flexGrow: 1,
         position: "relative",
-        background: "linear-gradient(90deg, #f5f5f5 30px, transparent 1%) center, linear-gradient(#f5f5f5 30px, transparent 1%) center, #b5b5b5",
-        backgroundSize: "32px 32px"
+        backgroundSize: "32px 32px !important"
     },
     contentCanvas: {
         width: "100%",
@@ -533,6 +532,10 @@ class Pixel extends React.Component {
 
                     this.setState({_previous_tool_timestamp: Date.now()});
                     this._set_select_mode("ADD");
+                }else {
+
+                    this.setState({_previous_tool_timestamp: Date.now()});
+                    this._set_tool("MOVE", false);
                 }
             }else {
 
@@ -863,6 +866,7 @@ class Pixel extends React.Component {
             _menu_data,
             _ripple_color,
             _ripple_opacity,
+            _menu_event,
         } = this.state;
 
         const drawer_content = (
@@ -1043,13 +1047,13 @@ class Pixel extends React.Component {
                             : null
                     }
                     <ListSubheader className={classes.contextMenuSubheader}>Color</ListSubheader>
-                    <ListItem button divider disabled={_menu_data.pxl_color === _current_color} onClick={(event) => this._set_current_color(_menu_data.pxl_color)}>
+                    <ListItem button divider disabled={_menu_data.pxl_color === _current_color} onClick={(event) => {this._set_current_color(_menu_data.pxl_color); this._handle_relevant_action_event(_menu_event, _menu_data.pxl_color, 1);}}>
                         <ListItemIcon>
                             <SquareIcon style={{ color: _menu_data.pxl_color, background: `repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / calc(200% / ${_width}) calc(200% / ${_height})`}} />
                         </ListItemIcon>
                         <ListItemText primary="Pick color" />
                     </ListItem>
-                    <ListItem button divider disabled={_menu_data.pxl_color === _current_color} onClick={(event) => this._exchange_pixel_colors(_menu_data.pxl_color, _current_color)}>
+                    <ListItem button divider disabled={_menu_data.pxl_color === _current_color} onClick={(event) => {this._exchange_pixel_colors(_menu_data.pxl_color, _current_color); this._handle_relevant_action_event(_menu_event, _current_color, 1);}}>
                         <ListItemIcon>
                             <SquareIcon style={{ color: _current_color, background: `repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / calc(200% / ${_width}) calc(200% / ${_height})`}} />
                         </ListItemIcon>
@@ -1100,7 +1104,7 @@ class Pixel extends React.Component {
                 </Grow>
                 <div className={classes.root}>
                     <div className={classes.content}>
-                        <div className={classes.contentInner}>
+                        <div className={classes.contentInner} style={{background: `linear-gradient(90deg, #f5f5f5 30px, transparent 1%) center, linear-gradient(#f5f5f5 30px, transparent 1%) center, #ddd`}}>
                             <div className={classes.contentCanvas}>
                                 <CanvasPixels
                                     onContextMenu={(e) => {e.preventDefault()}}
