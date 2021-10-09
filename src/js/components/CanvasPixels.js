@@ -2997,8 +2997,6 @@ class CanvasPixels extends React.Component {
 
         if(pxl_index !== _pxls_hovered && !hide_canvas_content) {
 
-            let force_update = !this.state._mouse_inside;
-
             if(_imported_image_pxls.length > 0){
 
                 let { _imported_image_scale_delta_x, _imported_image_scale_delta_y, _imported_image_start_x, _imported_image_start_y, _imported_image_width, _imported_image_height } = this.state;
@@ -3054,13 +3052,11 @@ class CanvasPixels extends React.Component {
                         _imported_image_move_from,
                     }, () => {
 
-                        if(force_update) {
+                        this._request_force_update(() => {
 
-                            this._request_force_update();
-                        }
-
-                        this._update_canvas();
-                        this._notify_position_change(event, {x:pos_x, y: pos_y});
+                            this._update_canvas();
+                            this._notify_position_change(event, {x:pos_x, y: pos_y});
+                        });
                     });
                 }else {
 
@@ -3070,13 +3066,11 @@ class CanvasPixels extends React.Component {
                         _mouse_inside: true
                     }, () => {
 
-                        if(force_update) {
+                        this._request_force_update(() => {
 
-                            this._request_force_update();
-                        }
-
-                        this._update_canvas();
-                        this._notify_position_change(event, {x:pos_x, y: pos_y});
+                            this._update_canvas();
+                            this._notify_position_change(event, {x:pos_x, y: pos_y});
+                        });
                     });
                 }
 
@@ -3248,13 +3242,11 @@ class CanvasPixels extends React.Component {
                     _last_action_timestamp
                 }, () =>{
 
-                    if(force_update) {
+                    this._request_force_update(() => {
 
-                        this._request_force_update();
-                    }
-
-                    this._update_canvas();
-                    this._notify_position_change(event, {x:pos_x, y: pos_y});
+                        this._update_canvas();
+                        this._notify_position_change(event, {x:pos_x, y: pos_y});
+                    });
                 });
 
             }else if((tool === "SELECT PIXEL" || tool === "SELECT PIXEL PERFECT" || tool === "SELECT PATH") && event_which === 1 && _mouse_down) {
@@ -3346,14 +3338,12 @@ class CanvasPixels extends React.Component {
                     _paint_or_select_hover_actions_latest_index: pxl_index,
                     _last_action_timestamp}, () => {
 
-                    if(force_update) {
+                    this._request_force_update(() => {
 
-                        this._request_force_update();
-                    }
-
-                    this._update_canvas();
-                    this._notify_is_something_selected();
-                    this._notify_position_change(event, {x:pos_x, y: pos_y});
+                        this._update_canvas();
+                        this._notify_is_something_selected();
+                        this._notify_position_change(event, {x:pos_x, y: pos_y});
+                    });
                 });
 
             }else {
@@ -3369,13 +3359,11 @@ class CanvasPixels extends React.Component {
                     _paint_or_select_hover_pxl_indexes: new Set(),
                 }, () => {
 
-                    if(force_update) {
+                    this._request_force_update(() => {
 
-                        this._request_force_update();
-                    }
-
-                    this._update_canvas();
-                    this._notify_position_change(event, {x:pos_x, y: pos_y});
+                        this._update_canvas();
+                        this._notify_position_change(event, {x:pos_x, y: pos_y});
+                    });
                 });
 
             }
