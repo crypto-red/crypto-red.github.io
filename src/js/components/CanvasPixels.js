@@ -4274,7 +4274,7 @@ class CanvasPixels extends React.Component {
 
         let {state_history, history_position, previous_history_position} = JSON.parse(_json_state_history);
 
-        if (this._can_redo()) {
+        if (this._can_redo() || is_pending_save_data) {
 
             previous_history_position = history_position;
             history_position++;
@@ -6361,29 +6361,38 @@ class CanvasPixels extends React.Component {
         });
     }
 
-    set_move_speed_average_now = () => {
+    set_move_speed_average_now = (set_move_speed_average_timestamp = 0) => {
 
-        const { _scale_move_timestamp } = this.state;
-        let { _moves_speed_average_now } = this.state
+        let { _moves_speed_average_now, _scale_move_timestamp } = this.state
+        const now = Date.now();
 
-        _moves_speed_average_now = Math.max((_moves_speed_average_now - Math.floor(( Date.now() - _scale_move_timestamp) / 60)), -2);
+        if(now - set_move_speed_average_timestamp >= 60 && now - _scale_move_timestamp >= 60)  {
 
-        this.setState({
-            _moves_speed_average_now,
-            _scale_move_timestamp: _moves_speed_average_now !== this.state._moves_speed_average_now ? Date.now(): this.state._scale_move_timestamp,
-        }, () => {
+            _moves_speed_average_now = Math.max((_moves_speed_average_now - Math.floor(( now - _scale_move_timestamp) / 60)), -2);
 
-            this._request_force_update(() => {
+            this.setState({
+                _moves_speed_average_now,
+                _scale_move_timestamp: _moves_speed_average_now !== this.state._moves_speed_average_now ? now: this.state._scale_move_timestamp,
+            }, () => {
 
-                if(_moves_speed_average_now > -2) {
+                this._request_force_update(() => {
 
-                    setTimeout(() => {
+                    if(_moves_speed_average_now > -2) {
 
-                        this.set_move_speed_average_now();
-                    }, 60);
-                }
+                        setTimeout(() => {
+
+                            this.set_move_speed_average_now(now);
+                        }, 65);
+                    }
+                });
             });
-        });
+        }else if(set_move_speed_average_timestamp === 0) {
+
+            setTimeout(() => {
+
+                this.set_move_speed_average_now(now);
+            }, 65);
+        }
     }
 
     _update_canvas_container_size = () => {
