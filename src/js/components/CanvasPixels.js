@@ -24,12 +24,14 @@ SOFTWARE.
  */
 
 let raf =
+    window.requestAnimationFrame       ||
     window.oRequestAnimationFrame      ||
     window.mozRequestAnimationFrame    ||
     window.webkitRequestAnimationFrame ||
     window.msRequestAnimationFrame;
 
 let caf =
+    window.cancelAnimationFrame       ||
     window.oCancelAnimationFrame      ||
     window.mozCancelAnimationFrame    ||
     window.webkitCancelAnimationFrame ||
@@ -49,7 +51,7 @@ window.anim_loop = ( render ) => {
 
         let deltaT = 1 + now - window.last_raf_time;
         // do not render frame when deltaT is too high
-        if ( deltaT > 160) {
+        if ( deltaT > 1000 / 15) {
             running = true;
         }
 
@@ -59,7 +61,7 @@ window.anim_loop = ( render ) => {
             window.previous_cpaf_fps = 1000 / deltaT;
             window.last_raf_time = now;
 
-        }else if(running && caf_id !== null && deltaT > 1000 / 60) {
+        }else if(running && caf_id !== null && deltaT > 1000 / 45) {
 
             window.caf_id = caf(window.caf_id);
             window.caf_id = raf(render);
@@ -105,6 +107,7 @@ class CanvasPixels extends React.Component {
             canvas_cursor: props.canvas_cursor || 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAYAAAAfrhY5AAAAAXNSR0IArs4c6QAAAFxJREFUSIntlkEKACEQw6b7/z/Hq7cdqeAcmrtJQRCrDACc824YZ8B3cU/iiSc+M27x7IULDqrq3Z0kdaVdnwA6XqA14Mh3svTXuA246QtzyB8u8cQTHx23cF+4BaK1P/6WF9EdAAAAAElFTkSuQmCC") 15 15, auto',
             canvas_border_radius: props.canvas_border_radius || 0,
             canvas_wrapper_background_color: props.canvas_wrapper_background_color || "#ffffff",
+            canvas_wrapper_border_width: props.canvas_wrapper_border_width || 0,
             canvas_wrapper_border_radius: props.canvas_wrapper_border_radius || 2,
             canvas_wrapper_padding: props.canvas_wrapper_padding || 72,
             show_original_image_in_background: typeof props.show_original_image_in_background === "undefined" ? true: props.show_original_image_in_background,
@@ -115,8 +118,6 @@ class CanvasPixels extends React.Component {
             scale_move_x: 0,
             scale_move_y: 0,
             _scale_move_timestamp: 0,
-            _previous_scale_move_x: 0,
-            _previous_scale_move_y: 0,
             _moves_speeds: [],
             _moves_speed_average_now: -2,
             mine_player_direction: props.mine_player_direction || "UP",
@@ -217,9 +218,12 @@ class CanvasPixels extends React.Component {
             _image_move_from: [-1, -1],
             _canvas_container_width: 0, 
             _canvas_container_height: 0,
+            _canvas_container_left: 0,
+            _canvas_container_top: 0,
             _updated_at: Date.now(),
             _screen_zoom_ratio: 1,
             _notified_position_at: 0,
+            _event_button: -1,
         };
     };
 
@@ -410,11 +414,8 @@ class CanvasPixels extends React.Component {
                 _moves_speed_average_now: 6,
             }, () => {
 
-                this._request_force_update(() => {
-
-                    this._update_screen_zoom_ratio(true);
-                    this.set_move_speed_average_now();
-                });
+                this._update_screen_zoom_ratio(true);
+                this.set_move_speed_average_now();
             });
         }
 
@@ -448,7 +449,7 @@ class CanvasPixels extends React.Component {
 
     zoom_of = (of = 1, page_x = null, page_y = null, move_x = 0, move_y = 0) => {
 
-        let { scale, scale_move_x, scale_move_y, _canvas_wrapper_overflow, _canvas_container, _canvas_wrapper } = this.state;
+        let { scale, scale_move_x, scale_move_y } = this.state;
 
         let new_scale = scale * of;
 
@@ -457,30 +458,27 @@ class CanvasPixels extends React.Component {
             let ratio = 1 - scale / new_scale;
             let ratio2 = new_scale / scale;
 
+            let pos = this._get_canvas_pos();
             let pos_x_in_canvas_container, pos_y_in_canvas_container;
 
             if(page_x !== null && page_y !== null) {
 
-                let _canvas_container_rect = _canvas_container.getBoundingClientRect();
-
-                pos_x_in_canvas_container = (page_x - _canvas_container_rect.x);
-                pos_y_in_canvas_container = (page_y - _canvas_container_rect.y);
+                pos_x_in_canvas_container = (page_x - pos.canvas_container.left);
+                pos_y_in_canvas_container = (page_y - pos.canvas_container.top);
             }else {
 
-                pos_x_in_canvas_container = _canvas_container.clientWidth / 2;
-                pos_y_in_canvas_container = _canvas_container.clientHeight / 2;
+                pos_x_in_canvas_container = pos.canvas_container.width / 2;
+                pos_y_in_canvas_container = pos.canvas_container.height / 2;
             }
 
             let new_scale_move_x = (scale_move_x - (pos_x_in_canvas_container * ratio)) * ratio2 + move_x;
             let new_scale_move_y = (scale_move_y - (pos_y_in_canvas_container * ratio)) * ratio2 + move_y;
 
-            let { _canvas_wrapper } = this.state;
+            const for_middle_x = (pos.canvas_container.width - pos.canvas_wrapper.width) / 2;
+            const for_middle_y = (pos.canvas_container.height - pos.canvas_wrapper.height) / 2;
 
-            const for_middle_x = (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
-            const for_middle_y = (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
-
-            const scale_move_x_max = -128 + _canvas_container.clientWidth - (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
-            const scale_move_y_max = -128 + _canvas_container.clientHeight - (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
+            const scale_move_x_max = -128 + pos.canvas_wrapper.width + for_middle_x;
+            const scale_move_y_max = -128 + pos.canvas_wrapper.height + for_middle_y;
 
             new_scale_move_y -= for_middle_y;
             new_scale_move_x -= for_middle_x;
@@ -1607,33 +1605,12 @@ class CanvasPixels extends React.Component {
 
         element.context2d = element.getContext("2d");
 
-        element.addEventListener("mousemove", this._handle_canvas_mouse_move, {capture: false});
-        element.addEventListener("mousedown", this._handle_canvas_mouse_down, {capture: false});
-        element.addEventListener("mouseup", this._handle_canvas_mouse_up, {capture: false});
-        element.addEventListener("mouseleave", this._handle_canvas_mouse_leave, {capture: false});
-
         this.setState({_canvas: element});
     };
 
     _set_canvas_container_ref = (element) => {
 
         if(element === null) {return}
-
-        element.addEventListener("wheel", this._handle_canvas_container_wheel, {capture: false});
-        element.addEventListener("pointerdown", this._handle_canvas_container_pointer_down, {capture: false});
-        element.addEventListener("pointermove", this._handle_canvas_container_pointer_move, {capture: false});
-        element.addEventListener("pointerup", this._handle_canvas_container_pointer_up, {capture: false});
-        element.addEventListener("pointercancel", this._handle_canvas_container_pointer_up, {capture: false});
-        element.addEventListener("pointerout", this._handle_canvas_container_pointer_up, {capture: false});
-        element.addEventListener("pointerleave", this._handle_canvas_container_pointer_up, {capture: false});
-
-        let events = ['onclick', 'onmousedown', 'onmousemove', 'onmouseout', 'onmouseover', 'onmouseup', 'ondblclick', 'onfocus', 'onblur'];
-
-        events.forEach(function (event) {
-            element[event] = function () {
-                return false;
-            };
-        });
 
         this.setState({_canvas_container: element}, () => {
 
@@ -1645,14 +1622,21 @@ class CanvasPixels extends React.Component {
 
         if(element === null) {return}
 
-        element.addEventListener("mousemove", this._handle_canvas_wrapper_mouse_move, {capture: false});
-
         this.setState({_canvas_wrapper: element});
     };
 
     _set_canvas_wrapper_overflow_ref = (element) => {
 
         if(element === null) {return}
+
+        element.addEventListener("wheel", this.handle_canvas_wrapper_overflow_wheel, {capture: true});
+        element.addEventListener("pointerdown", this._handle_canvas_wrapper_overflow_pointer_down, {capture: true});
+        element.addEventListener("pointermove", this._handle_canvas_wrapper_overflow_pointer_move, {capture: true});
+        element.addEventListener("pointerup", this._handle_canvas_wrapper_overflow_pointer_up, {capture: true});
+        element.addEventListener("pointercancel", this._handle_canvas_wrapper_overflow_pointer_up, {capture: true});
+        element.addEventListener("pointerout", this._handle_canvas_wrapper_overflow_pointer_up, {capture: true});
+        element.addEventListener("pointerleave", this._handle_canvas_wrapper_overflow_pointer_up, {capture: true});
+
         this.setState({_canvas_wrapper_overflow: element});
     };
 
@@ -1674,8 +1658,6 @@ class CanvasPixels extends React.Component {
                     this.setState({
                         scale_move_x: for_middle_x,
                         scale_move_y: for_middle_y,
-                        _previous_scale_move_x: this.state.scale_move_x,
-                        _previous_scale_move_y: this.state.scale_move_y,
                         _moves_speed_average_now: 8,
                     }, () => {
 
@@ -1691,27 +1673,22 @@ class CanvasPixels extends React.Component {
 
     componentWillUnmount() {
 
-        const { _canvas, _canvas_container, _canvas_wrapper } = this.state;
+        const { _canvas_wrapper_overflow } = this.state;
 
-        _canvas.removeEventListener("mousemove", this._handle_canvas_mouse_move);
-        _canvas.removeEventListener("mousedown", this._handle_canvas_mouse_down);
-        _canvas.removeEventListener("mouseup", this._handle_canvas_mouse_up);
-        _canvas.removeEventListener("mouseleave", this._handle_canvas_mouse_leave);
-        _canvas_wrapper.removeEventListener("mousemove", this._handle_canvas_wrapper_mouse_move);
-        _canvas_container.removeEventListener("wheel", this._handle_canvas_container_wheel);
-        _canvas_container.removeEventListener("pointerdown", this._handle_canvas_container_pointer_down);
-        _canvas_container.removeEventListener("pointermove", this._handle_canvas_container_pointer_move);
-        _canvas_container.removeEventListener("pointerup", this._handle_canvas_container_pointer_up);
-        _canvas_container.removeEventListener("pointercancel", this._handle_canvas_container_pointer_up);
-        _canvas_container.removeEventListener("pointerout", this._handle_canvas_container_pointer_up);
-        _canvas_container.removeEventListener("pointerleave", this._handle_canvas_container_pointer_up);
+        _canvas_wrapper_overflow.removeEventListener("wheel", this.handle_canvas_wrapper_overflow_wheel);
+        _canvas_wrapper_overflow.removeEventListener("pointerdown", this._handle_canvas_wrapper_overflow_pointer_down);
+        _canvas_wrapper_overflow.removeEventListener("pointermove", this._handle_canvas_wrapper_overflow_pointer_move);
+        _canvas_wrapper_overflow.removeEventListener("pointerup", this._handle_canvas_wrapper_overflow_pointer_up);
+        _canvas_wrapper_overflow.removeEventListener("pointercancel", this._handle_canvas_wrapper_overflow_pointer_up);
+        _canvas_wrapper_overflow.removeEventListener("pointerout", this._handle_canvas_wrapper_overflow_pointer_up);
+        _canvas_wrapper_overflow.removeEventListener("pointerleave", this._handle_canvas_wrapper_overflow_pointer_up);
     }
 
     _get_canvas_pos_from_event = (event) => {
 
-        let { pxl_width, pxl_height, _canvas } = this.state;
+        let { pxl_width, pxl_height } = this.state;
 
-        const rect = _canvas.getBoundingClientRect();
+        const rect = this._get_canvas_pos().canvas;
 
         const pos_x_in_canvas = event.pageX - rect.left;
         const pos_y_in_canvas = event.pageY - rect.top;
@@ -1814,18 +1791,10 @@ class CanvasPixels extends React.Component {
 
     };
 
-    _handle_canvas_mouse_down = (event = null, event_which = null) => {
+    _handle_canvas_mouse_down = (event, canvas_event_target) => {
 
-        event.stopPropagation();
-        event.preventDefault();
-
-        this.setState({_mouse_down: true}, () => {
-
-            this._request_force_update();
-        });
-
-        const { hide_canvas_content, tool, pxl_width, pxl_height, pxl_current_color, pxl_current_opacity, bucket_threshold, select_mode } = this.state;
-        event_which = event_which !== null ? event_which: event.which;
+        const { hide_canvas_content, tool, pxl_width, pxl_height, pxl_current_color, pxl_current_opacity, bucket_threshold, select_mode, _event_button } = this.state;
+        const event_which = _event_button + 1;
 
         let [ pos_x, pos_y ] = [ -1, -1 ];
 
@@ -1861,19 +1830,7 @@ class CanvasPixels extends React.Component {
 
             // Left mouse button was clicked
             this.setState({_mouse_down: Date.now()});
-        }else {
-
-            if(event_which === 3) {
-
-                if(this.props.onRightClick) {
-
-                    this.props.onRightClick(event, {
-                        pos_x: pos_x,
-                        pos_y: pos_y,
-                        pxl_color: _s_pxl_colors[_layer_index][pxl_color_index]
-                    });
-                }
-            }
+        }else if(event_which === 3) {
 
             _shape_index_a = -1;
             _select_shape_index_a = -1;
@@ -2789,10 +2746,9 @@ class CanvasPixels extends React.Component {
         return pixel_color_hex;
     };
 
-    _handle_canvas_container_wheel = (event) => {
+    handle_canvas_wrapper_overflow_wheel = (event) => {
 
         let { scale, scale_move_x, scale_move_y, _canvas_container } = this.state;
-        let _canvas_container_rect = _canvas_container.getBoundingClientRect();
 
         event.preventDefault();
         let delta = Math.max(Math.min(0.125, Math.abs(event.deltaY * -0.01)), 0.25);
@@ -2805,20 +2761,27 @@ class CanvasPixels extends React.Component {
 
             let ratio = 1 - scale / new_scale;
             let ratio2 = new_scale / scale;
+            let pos = this._get_canvas_pos();
+            let pos_x_in_canvas_container, pos_y_in_canvas_container;
 
-            const pos_x_in_canvas_container = (event.pageX - _canvas_container_rect.x);
-            const pos_y_in_canvas_container = (event.pageY - _canvas_container_rect.y);
+            if(event.pageX !== null && event.pageY !== null) {
 
-            let new_scale_move_x = (scale_move_x - (pos_x_in_canvas_container * ratio)) * ratio2;
-            let new_scale_move_y = (scale_move_y - (pos_y_in_canvas_container * ratio)) * ratio2;
+                pos_x_in_canvas_container = (event.pageX - pos.canvas_container.left);
+                pos_y_in_canvas_container = (event.pageY - pos.canvas_container.top);
+            }else {
 
-            let { _canvas_wrapper } = this.state;
+                pos_x_in_canvas_container = pos.canvas_container.width / 2;
+                pos_y_in_canvas_container = pos.canvas_container.height / 2;
+            }
 
-            const for_middle_x = (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
-            const for_middle_y = (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
+            let new_scale_move_x = (scale_move_x - (pos_x_in_canvas_container * ratio)) * ratio2 + event.movementX;
+            let new_scale_move_y = (scale_move_y - (pos_y_in_canvas_container * ratio)) * ratio2 + event.movementY;
 
-            const scale_move_x_max = -128 + _canvas_container.clientWidth - (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
-            const scale_move_y_max = -128 + _canvas_container.clientHeight - (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
+            const for_middle_x = (pos.canvas_container.width - pos.canvas_wrapper.width) / 2;
+            const for_middle_y = (pos.canvas_container.height - pos.canvas_wrapper.height) / 2;
+
+            const scale_move_x_max = -128 + pos.canvas_wrapper.width + for_middle_x;
+            const scale_move_y_max = -128 + pos.canvas_wrapper.height + for_middle_y;
 
             new_scale_move_y -= for_middle_y;
             new_scale_move_x -= for_middle_x;
@@ -2836,93 +2799,213 @@ class CanvasPixels extends React.Component {
         }
     };
 
-    _handle_canvas_container_pointer_down = (event) => {
+    _handle_canvas_pointer_down = (event, canvas_event_target) => {
 
-        if(event.pointerType !== "mouse") {
+        let { _pointer_events, _previous_single_pointer_down_timestamp, _previous_single_pointer_down_x_y } = this.state;
 
-            let { _pointer_events, _previous_single_pointer_down_timestamp, _previous_single_pointer_down_x_y } = this.state;
+        const [x, y] = _previous_single_pointer_down_x_y;
 
-            _pointer_events.push(event);
+        if(_previous_single_pointer_down_timestamp + 400 > Date.now() && _pointer_events.length === 1 && Math.abs(x - event.pageX) < 10 && Math.abs(y - event.pageY) < 10) {
 
-            const [x, y] = _previous_single_pointer_down_x_y;
+            setTimeout(() => {
 
-            if(_previous_single_pointer_down_timestamp + 400 > Date.now() && _pointer_events.length === 1 && Math.abs(x - event.x) < 25 && Math.abs(y - event.y) < 25) {
+                const [pos_x, pos_y] = this._get_canvas_pos_from_event(event);
+                const {_s_pxl_colors, _layer_index, _s_pxls, pxl_width} = this.state;
+                const pxl_index = (pos_y * pxl_width) + pos_x;
+                const pxl_color_index = pxl_index >= 0 ? _s_pxls[_layer_index][pxl_index]: null;
 
-                setTimeout(() => {
+                if(this.props.onRightClick) {
 
-                    this._handle_canvas_mouse_down(event, 3);
-                }, 250);
-                _previous_single_pointer_down_timestamp = Date.now();
-                event.preventDefault();
+                    this.props.onRightClick(event, {
+                        pos_x: pos_x,
+                        pos_y: pos_y,
+                        pxl_color: pxl_color_index === null ? null: _s_pxl_colors[_layer_index][pxl_color_index],
+                    });
+                }
 
-            }else if(_pointer_events.length === 1) {
+            }, 250);
 
-                this._handle_canvas_mouse_down(event, -1);
-                _previous_single_pointer_down_timestamp = Date.now();
-                event.preventDefault();
-            }
+            _previous_single_pointer_down_timestamp = Date.now();
+            this.setState({_previous_single_pointer_down_timestamp});
 
-            this.setState({_pointer_events: [..._pointer_events], _previous_single_pointer_down_timestamp, _previous_single_pointer_down_x_y: [event.x, event.y]});
+        }else if(_pointer_events.length === 1) {
+
+            //this._handle_canvas_mouse_down(event, -1);
+            _previous_single_pointer_down_timestamp = Date.now();
+            this.setState({_previous_single_pointer_down_timestamp});
         }
     };
 
-    _handle_canvas_container_pointer_move = (event) => {
+    _handle_canvas_pointer_move = (event, canvas_event_target) => {
 
         const { _latest_pointers_client_x_center, _latest_pointers_client_y_center } = this.state;
         let { _pointer_events, _latest_pointers_distance } = this.state;
 
-        for (let i = 0; i < _pointer_events.length; i++) {
-            if (event.pointerId === _pointer_events[i].pointerId) {
-                _pointer_events[i] = event;
-                break;
-            }
-        }
+        if (_pointer_events.length === 2) {
 
-        if(event.pointerType !== "mouse") {
+            const x_diff = _pointer_events[0].clientX - _pointer_events[1].clientX;
+            const y_diff = _pointer_events[0].clientY - _pointer_events[1].clientY;
+            const anchor_diff = Math.sqrt((x_diff * x_diff) + (y_diff * y_diff));
+            const page_x_center = (_pointer_events[0].pageX + _pointer_events[1].pageX) / 2;
+            const page_y_center = (_pointer_events[0].pageY + _pointer_events[1].pageY) / 2;
+            const client_x_center = (_pointer_events[0].clientX + _pointer_events[1].clientX) / 2;
+            const client_y_center = (_pointer_events[0].clientY + _pointer_events[1].clientY) / 2;
+            const move_x = _latest_pointers_client_x_center > 0 ? _latest_pointers_client_x_center - client_x_center: 0;
+            const move_y = _latest_pointers_client_y_center > 0 ? _latest_pointers_client_y_center - client_y_center: 0;
+            const move_diff = Math.sqrt((move_x * move_x) + (move_y * move_y));
+            const anchor_diff_diff = Math.abs(_latest_pointers_distance - anchor_diff);
 
-            event.preventDefault();
-            event.stopPropagation();
+            const of = _latest_pointers_distance > 0 ? anchor_diff / _latest_pointers_distance : 1;
 
-            if (_pointer_events.length === 2) {
-
-                const x_diff = _pointer_events[0].clientX - _pointer_events[1].clientX;
-                const y_diff = _pointer_events[0].clientY - _pointer_events[1].clientY;
-                const anchor_diff = Math.sqrt((x_diff * x_diff) + (y_diff * y_diff));
-                const page_x_center = (_pointer_events[0].pageX + _pointer_events[1].pageX) / 2;
-                const page_y_center = (_pointer_events[0].pageY + _pointer_events[1].pageY) / 2;
-                const client_x_center = (_pointer_events[0].clientX + _pointer_events[1].clientX) / 2;
-                const client_y_center = (_pointer_events[0].clientY + _pointer_events[1].clientY) / 2;
-                const move_x = _latest_pointers_client_x_center > 0 ? _latest_pointers_client_x_center - client_x_center: 0;
-                const move_y = _latest_pointers_client_y_center > 0 ? _latest_pointers_client_y_center - client_y_center: 0;
-                const move_diff = Math.sqrt((move_x * move_x) + (move_y * move_y));
-                const anchor_diff_diff = Math.abs(_latest_pointers_distance - anchor_diff);
-
-                const of = _latest_pointers_distance > 0 ? anchor_diff / _latest_pointers_distance : 1;
+            this.setState({
+                _latest_pointers_distance: anchor_diff,
+                _latest_pointers_client_x_center: client_x_center,
+                _latest_pointers_client_y_center: client_y_center,
+            }, () => {
 
                 this.zoom_of(of, page_x_center, page_y_center, -move_x, -move_y);
+            });
 
-                this.setState({
-                    _pointer_events: [..._pointer_events],
-                    _latest_pointers_distance: anchor_diff,
-                    _latest_pointers_client_x_center: client_x_center,
-                    _latest_pointers_client_y_center: client_y_center,
-                });
+        }else if(canvas_event_target === "CANVAS_WRAPPER_OVERFLOW") {
 
-            }else if(_pointer_events.length === 1) {
-
-                this._handle_canvas_mouse_move(event, -1);
-
-                this.setState({
-                    _pointer_events: [..._pointer_events],
-                });
-            }
+            this._handle_canvas_move(event);
         }
-
     };
 
-    _handle_canvas_container_pointer_up = (event) => {
+    _handle_canvas_wrapper_mouse_move = (event) => {
 
-        let { _pointer_events, _latest_pointers_distance, _latest_pointers_client_x_center, _latest_pointers_client_y_center } = this.state;
+        if(this.state._mouse_inside === true) {
+
+            this.setState({_mouse_inside: false});
+        }
+
+        const { _pxls_hovered, tool } = this.state;
+
+        if((!_pxls_hovered || _pxls_hovered <= 0) && event.which === 1 && (tool === "MOVE" || tool === "PICKER")) {
+
+            this.zoom_of(1, null, null, event.movementX, event.movementY);
+        }
+    };
+
+    _handle_canvas_wrapper_overflow_pointer_move = (event) => {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const canvas_event_target = this._get_canvas_event_target(event);
+
+        if(event.pointerType === "mouse") {
+
+            this._handle_canvas_mouse_move(event, canvas_event_target);
+
+        }else {
+
+            let { _pointer_events } = this.state;
+
+            for (let i = 0; i < _pointer_events.length; i++) {
+                if (event.pointerId === _pointer_events[i].pointerId) {
+                    _pointer_events[i] = event;
+                    break;
+                }
+            }
+
+            this.setState({_pointer_events: [..._pointer_events]}, () => {
+
+                this._handle_canvas_pointer_move(event, canvas_event_target);
+            });
+        }
+    };
+
+    _handle_canvas_wrapper_overflow_pointer_down = (event) => {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const canvas_event_target = this._get_canvas_event_target(event);
+        let { _pointer_events } = this.state;
+        _pointer_events.push(event);
+
+        if(event.pointerType === "mouse") {
+
+            const { scale_move_x, scale_move_y } = this.state;
+
+            this.setState({
+                _event_button: event.button,
+                _mouse_down: true,
+                _previous_single_pointer_down_x_y: [event.pageX, event.pageY],
+                _previous_initial_scale_move: [scale_move_x, scale_move_y],
+                _pointer_events,
+            }, ()  => {
+
+                this._request_force_update();
+                if(canvas_event_target === "CANVAS"){
+
+                    this._handle_canvas_mouse_down(event, canvas_event_target);
+                }
+
+                if(event.button === 2) {
+
+                    const [pos_x, pos_y] = this._get_canvas_pos_from_event(event);
+                    const {_s_pxl_colors, _layer_index, _s_pxls, pxl_width} = this.state;
+                    const pxl_index = (pos_y * pxl_width) + pos_x;
+                    const pxl_color_index = pxl_index >= 0 ? _s_pxls[_layer_index][pxl_index] : null;
+
+                    if (this.props.onRightClick) {
+
+                        this.props.onRightClick(event, {
+                            pos_x: pos_x,
+                            pos_y: pos_y,
+                            pxl_color: pxl_color_index === null ? null : _s_pxl_colors[_layer_index][pxl_color_index],
+                        });
+                    }
+
+                    return false;
+                }
+
+            });
+
+        }else {
+
+            const { scale_move_x, scale_move_y } = this.state;
+
+            this.setState({
+                _event_button: event.button,
+                _mouse_down: true,
+                _previous_single_pointer_down_x_y: [event.pageX, event.pageY],
+                _previous_initial_scale_move: [scale_move_x, scale_move_y],
+                _pointer_events
+            }, ()  => {
+
+                this._handle_canvas_pointer_down(event, canvas_event_target);
+            });
+        }
+    };
+
+    _get_canvas_event_target = (event) => {
+
+        const pos = this._get_canvas_pos();
+
+        if(event.pageX >= pos.canvas.left && event.pageY >= pos.canvas.top && event.pageX <= pos.canvas.right && event.pageY <= pos.canvas.bottom) { // Canvas
+
+            return "CANVAS";
+        }else if(event.pageX >= pos.canvas_wrapper.left && event.pageY >= pos.canvas_wrapper.top && event.pageX <= pos.canvas_wrapper.right && event.pageY <= pos.canvas_wrapper.bottom) { // Canvas wrapper
+
+            return "CANVAS_WRAPPER";
+        }else {
+
+            return "CANVAS_WRAPPER_OVERFLOW"
+        }
+
+    }
+
+    _handle_canvas_wrapper_overflow_pointer_up = (event) => {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        const canvas_event_target = this._get_canvas_event_target(event);
+
+        let { _pointer_events, _latest_pointers_distance, _latest_pointers_client_x_center, _latest_pointers_client_y_center, scale_move_x, scale_move_y } = this.state;
 
         for (let i = 0; i < _pointer_events.length; i++) {
             if (_pointer_events[i].pointerId === event.pointerId) {
@@ -2938,82 +3021,139 @@ class CanvasPixels extends React.Component {
             _latest_pointers_client_y_center = 0;
         }
 
-        if(_pointer_events.length === 0) {
-
-            //this._handle_canvas_mouse_up(event);
-        }
-
         this.setState({
             _pointer_events: [..._pointer_events],
+            _previous_initial_scale_move: [scale_move_x, scale_move_y],
             _latest_pointers_distance,
             _latest_pointers_client_x_center,
             _latest_pointers_client_y_center,
+        }, () => {
+
+            if(event.pointerType === "mouse") {
+
+                if(canvas_event_target === "CANVAS") {
+
+                    this._handle_canvas_mouse_up(event, canvas_event_target);
+                }else {
+
+                    this._handle_canvas_mouse_leave(event, canvas_event_target);
+                }
+            }
+
         });
     };
 
-    _handle_canvas_wrapper_mouse_move = (event) => {
+    _get_canvas_pos = (event) => {
 
-        event.preventDefault();
+        const {
+            _canvas_container_left,
+            _canvas_container_top,
+            _canvas_container_width,
+            _canvas_container_height,
+            pxl_width, pxl_height,
+            _screen_zoom_ratio, scale,
+            canvas_wrapper_padding,
+            canvas_wrapper_border_width,
+            scale_move_x, scale_move_y
+        } = this.state;
 
-        if(this.state._mouse_inside === true) {
+        let canvas_wrapper_border_box_extra_size = Math.round(canvas_wrapper_padding * scale + canvas_wrapper_border_width) * 2
+        let canvas_wrapper_width = Math.round(pxl_width * _screen_zoom_ratio * scale) + canvas_wrapper_border_box_extra_size;
+        let canvas_wrapper_height = Math.round(pxl_height * _screen_zoom_ratio * scale) + canvas_wrapper_border_box_extra_size;
+        let canvas_wrapper_offset_left = scale_move_x;
+        let canvas_wrapper_offset_top = scale_move_y;
+        let canvas_wrapper_left = _canvas_container_left + canvas_wrapper_offset_left;
+        let canvas_wrapper_top = _canvas_container_top + canvas_wrapper_offset_top;
+        let canvas_wrapper_right = canvas_wrapper_left + canvas_wrapper_width;
+        let canvas_wrapper_bottom = canvas_wrapper_top + canvas_wrapper_height;
 
-            this.setState({_mouse_inside: false});
-        }
+        let canvas_offset_left = canvas_wrapper_border_box_extra_size / 2;
+        let canvas_offset_top = canvas_wrapper_border_box_extra_size / 2;
+        let canvas_left = canvas_wrapper_left + canvas_offset_left;
+        let canvas_top = canvas_wrapper_top + canvas_offset_top;
+        let canvas_right = canvas_wrapper_right - canvas_wrapper_border_box_extra_size / 2;
+        let canvas_bottom = canvas_wrapper_bottom - canvas_wrapper_border_box_extra_size / 2;
 
-        const { _pxls_hovered, tool } = this.state;
+        return {
+            canvas: {
+                offset_left: canvas_offset_left,
+                offset_top: canvas_offset_top,
+                left: canvas_left,
+                top: canvas_top,
+                right: canvas_right,
+                bottom: canvas_bottom,
+                width: canvas_right - canvas_left,
+                height: canvas_bottom - canvas_top,
+            },
+            canvas_wrapper: {
+                offset_left: canvas_wrapper_offset_left,
+                offset_top: canvas_wrapper_offset_top,
+                left: canvas_wrapper_left,
+                top: canvas_wrapper_top,
+                right: canvas_wrapper_right,
+                bottom: canvas_wrapper_bottom,
+                width: canvas_wrapper_right - canvas_wrapper_left,
+                height: canvas_wrapper_bottom - canvas_wrapper_top,
+            },
+            canvas_container: {
+                offset_left: _canvas_container_left,
+                offset_top: _canvas_container_top,
+                left: _canvas_container_left,
+                top: _canvas_container_top,
+                right: _canvas_container_left + _canvas_container_width,
+                bottom: _canvas_container_top + _canvas_container_height,
+                width: _canvas_container_width,
+                height: _canvas_container_height,
+            },
+        };
+    }
 
-        if((!_pxls_hovered || _pxls_hovered <= 0) && event.which === 1 && (tool === "MOVE" || tool === "PICKER")) {
+    _handle_canvas_move = (event) => {
 
-            this.zoom_of(1, null, null, event.movementX, event.movementY);
-        }
+        const { _previous_single_pointer_down_x_y, _previous_initial_scale_move } = this.state;
+
+        const [from_x, from_y] = _previous_single_pointer_down_x_y;
+        const [init_x, init_y] = _previous_initial_scale_move;
+
+        const pos = this._get_canvas_pos();
+
+        const for_middle_x = (pos.canvas_container.width - pos.canvas_wrapper.width) / 2;
+        const for_middle_y = (pos.canvas_container.height - pos.canvas_wrapper.height) / 2;
+
+        const scale_move_x_max = -128 + pos.canvas_wrapper.width + for_middle_x;
+        const scale_move_y_max = -128 + pos.canvas_wrapper.height + for_middle_y;
+
+        let diff_scale_move_x = event.pageX - from_x;
+        let diff_scale_move_y = event.pageY - from_y;
+
+        let new_scale_move_x = init_x + diff_scale_move_x;
+        let new_scale_move_y = init_y + diff_scale_move_y;
+
+        new_scale_move_y -= for_middle_y;
+        new_scale_move_x -= for_middle_x;
+
+        let new_scale_move_x_rigged = (Math.min(Math.abs(new_scale_move_x), scale_move_x_max)) * (new_scale_move_x < 0 ? -1: 1) + for_middle_x;
+        let new_scale_move_y_rigged = (Math.min(Math.abs(new_scale_move_y), scale_move_y_max)) * (new_scale_move_y < 0 ? -1: 1) + for_middle_y;
+
+        this._set_moves(new_scale_move_x_rigged, new_scale_move_y_rigged);
     };
 
-    _handle_canvas_mouse_move = (event, event_which = null) => {
+    _handle_canvas_mouse_move = (event, canvas_event_target) => {
 
-        event.stopPropagation();
-        event.preventDefault();
+        const { tool, pxl_width, pxl_height, _pxls_hovered, pxl_current_color, hide_canvas_content, _mouse_down, _event_button } = this.state;
+        const event_which = _event_button+1;
 
-        event_which = event_which !== null ? event_which: event.which;
-        const { tool, pxl_width, pxl_height, _pxls_hovered, _mouse_down, scale, pxl_current_color, hide_canvas_content } = this.state;
+        if(((event_which === 2) || ((tool === "MOVE") && (event_which === 1))) && _mouse_down) {
 
-        const [ pos_x, pos_y ] = this._get_canvas_pos_from_event(event);
-
-        if((event_which === 2) || ((tool === "MOVE") && (event_which === 1 || event_which === -1))) {
-
-            const [from_x, from_y] = this.state._image_move_from;
-            const x_difference_px = -event.movementX; //from_x - event.x;
-            const y_difference_px = -event.movementY; //from_y - event.y;
-
-            const _image_move_from = [event.x, event.y];
-
-            let { _canvas_wrapper, _canvas_container, _canvas_wrapper_overflow } = this.state;
-            let { scale_move_x, scale_move_y } = this.state;
-
-            const for_middle_x = (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
-            const for_middle_y = (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
-
-            const scale_move_x_max = -128 + _canvas_container.clientWidth - (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
-            const scale_move_y_max = -128 + _canvas_container.clientHeight - (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
-
-            let new_scale_move_x = scale_move_x - x_difference_px;
-            let new_scale_move_y = scale_move_y - y_difference_px;
-            new_scale_move_y -= for_middle_y;
-            new_scale_move_x -= for_middle_x;
-
-            let new_scale_move_x_rigged = (Math.min(Math.abs(new_scale_move_x), scale_move_x_max)) * (new_scale_move_x < 0 ? -1: 1) + for_middle_x;
-            let new_scale_move_y_rigged = (Math.min(Math.abs(new_scale_move_y), scale_move_y_max)) * (new_scale_move_y < 0 ? -1: 1) + for_middle_y;
-
-            this.setState({_image_move_from}, () => {
-
-                this._request_force_update(() => {
-
-                    this._set_moves(new_scale_move_x_rigged, new_scale_move_y_rigged);
-                });
-
-            });
+            this._handle_canvas_move(event);
+            return;
         }
 
+        if(canvas_event_target === "CANVAS_WRAPPER_OVERFLOW") {return;}
+        const [ pos_x, pos_y ] = this._get_canvas_pos_from_event(event);
         if(pos_x === -1 || pos_y === -1) { return; }
+
+
         let { _pxl_indexes_of_selection, _imported_image_pxls } = this.state;
         const pxl_index = (pos_y * pxl_width) + pos_x;
 
@@ -3382,8 +3522,6 @@ class CanvasPixels extends React.Component {
 
     _handle_canvas_mouse_leave = () => {
 
-        this._handle_canvas_mouse_up();
-
         this.setState({_mouse_down: false, _mouse_inside: false, _pxls_hovered: null}, () => {
 
             this._update_canvas();
@@ -3395,12 +3533,19 @@ class CanvasPixels extends React.Component {
 
     _handle_canvas_mouse_up = (event) => {
 
-        let { _paint_or_select_hover_pxl_indexes, tool, _imported_image_pxls } = this.state;
+        const { scale_move_x, scale_move_y } = this.state;
 
-        this.setState({_mouse_down: false}, () => {
+        this.setState({
+            _event_button: -1,
+            _mouse_down: false,
+            _previous_single_pointer_down_x_y: [-1, -1],
+            _previous_initial_scale_move: [scale_move_x, scale_move_y],
+        }, () => {
 
             this._request_force_update();
         });
+
+        let { _paint_or_select_hover_pxl_indexes, tool, _imported_image_pxls } = this.state;
 
         if(_imported_image_pxls.length > 0){
 
@@ -3557,453 +3702,447 @@ class CanvasPixels extends React.Component {
 
         if(_last_paint_timestamp < Date.now()) {
 
-            window.anim_loop(() => {
-
-                // Importing state variables
-                let { _canvas } = this.state;
-
-                const {
-                    select_mode,
-                    pencil_mirror_mode,
-                    _pencil_mirror_index,
-                    _previous_pencil_mirror_axes_indexes,
-                    _previous_pencil_mirror_axes_hover_indexes,
-                    hide_canvas_content,
-                    _was_canvas_content_hidden,
-                    px_per_px,
-                    _old_pxls,
-                    _old_pxl_width,
-                    _old_pxl_height,
-                    pxl_width,
-                    pxl_height,
-                    _s_pxl_colors,
-                    _layers,
-                    _old_layers,
-                    _layer_index,
-                    _old_pxl_colors,
-                    _s_pxls,
-                    _old_pxls_hovered,
-                    _pxls_hovered,
-                    _mouse_inside,
-                    tool,
-                    _is_there_new_dimension,
-                    _shape_index_a,
-                    _select_shape_index_a,
-                    pxl_current_color,
-                    pxl_current_opacity,
-                    _pxl_indexes_of_selection,
-                    _pxl_indexes_of_selection_drawn,
-                    _paint_or_select_hover_pxl_indexes,
-                    _previous_mine_player_index,
-                    _mine_player_index,
-                    _mine_index,
-                    _pxls_explosion,
-                    _pxl_colors_explosion,
-                    _explosion_started_timestamp,
-                    _explosion_index,
-                    _explosion_width,
-                    _explosion_height,
-                    _explosion_time,
-                    _selection_pair_highlight,
-                    _old_selection_pair_highlight,
-                } = this.state;
-
-
-                let {
-                    _imported_image_previous_start_x,
-                    _imported_image_previous_start_y,
-                    _imported_image_start_x,
-                    _imported_image_start_y,
-                    _imported_image_previous_scale_delta_x,
-                    _imported_image_previous_scale_delta_y,
-                    _imported_image_scale_delta_x,
-                    _imported_image_scale_delta_y,
-                    _imported_image_pxls,
-                    _imported_image_width,
-                    _imported_image_height,
-                    _imported_image_pxl_colors,
-                    _previous_imported_image_pxls_positioned,
-                    _previous_image_imported_resizer_index,
-                } = this.state;
-
-                [_imported_image_pxls, _imported_image_pxl_colors, _imported_image_width, _imported_image_height] = this._get_imported_image_scaled(_imported_image_pxls, _imported_image_pxl_colors, _imported_image_width, _imported_image_height, _imported_image_scale_delta_x, _imported_image_scale_delta_y);
-
-                let {
-                    _previous_explosion_pxls_positioned
-                } = this.state;
-
-                let imported_image_pxls_positioned = [];
-                const has_an_image_imported = _imported_image_pxls.length > 0;
-                const image_imported_resizer_index = (_imported_image_start_x + _imported_image_width) + (_imported_image_start_y + _imported_image_height) * pxl_width;
-
-                if(has_an_image_imported) {
-
-                    _imported_image_pxls.forEach((pxl, index) => {
-
-                        const pos_x = index % _imported_image_width;
-                        const pos_y = (index - pos_x) / _imported_image_width;
-
-                        const current_pos_x_positioned = pos_x + _imported_image_start_x;
-                        const current_pos_y_positioned = pos_y + _imported_image_start_y;
-
-                        const imported_image_pxl_positioned_index = current_pos_y_positioned * pxl_width + current_pos_x_positioned;
-
-                        if(current_pos_x_positioned >= 0 && current_pos_x_positioned < pxl_width && current_pos_y_positioned >= 0 && current_pos_y_positioned < pxl_height) {
-
-                            imported_image_pxls_positioned[imported_image_pxl_positioned_index] = pxl;
-                        }
-
-                    });
-                }
-
-                let explosion_pxls_positioned = [];
-                const has_mine_explosion = _explosion_started_timestamp > Date.now() - _explosion_time;
-                const mine_explosion_frame = has_mine_explosion ?
-                    Math.max(Math.floor(_pxls_explosion.length - Math.floor(_explosion_time / (Date.now() - _explosion_started_timestamp))), 0):
-                    0;
-
-                if(has_mine_explosion) {
-
-                    const explosion_x = _explosion_index % pxl_width;
-                    const explosion_y = (_explosion_index - explosion_x) / pxl_width;
-
-                    const _explosion_start_x = Math.floor(explosion_x - _explosion_width / 2);
-                    const _explosion_start_y = Math.floor(explosion_y - _explosion_height / 2);
-
-                    _pxls_explosion[mine_explosion_frame].forEach((pxl, index) => {
-
-                        const pos_x = index % _explosion_width;
-                        const pos_y = (index - pos_x) / _explosion_width;
-
-                        const current_pos_x_positioned = pos_x + _explosion_start_x;
-                        const current_pos_y_positioned = pos_y + _explosion_start_y;
-
-                        const explosion_pxl_positioned_index = current_pos_y_positioned * pxl_width + current_pos_x_positioned;
-
-                        if(current_pos_x_positioned >= 0 && current_pos_x_positioned < pxl_width && current_pos_y_positioned >= 0 && current_pos_y_positioned < pxl_height) {
-
-                            explosion_pxls_positioned[explosion_pxl_positioned_index] = pxl;
-                        }
-
-
-                    });
-                }
-
-                let pencil_mirror_axes_hover_indexes = new Set();
-                let pencil_mirror_axes_indexes = new Set();
-
-                const pencil_mirror_x = _pencil_mirror_index % pxl_width;
-                const pencil_mirror_y = (_pencil_mirror_index - pencil_mirror_x) / pxl_width;
-
-                const pencil_mirror_hover_x = _pxls_hovered % pxl_width;
-                const pencil_mirror_hover_y = (_pxls_hovered - pencil_mirror_hover_x) / pxl_width;
-
-
-                if((pencil_mirror_mode === "HORIZONTAL" || pencil_mirror_mode === "BOTH") && tool.includes("PENCIL")) {
-
-                    for(let i = 0; i < pxl_height; i++) {
-
-                        if(_pencil_mirror_index !== -1) {
-
-                            pencil_mirror_axes_indexes.add(i * pxl_width + pencil_mirror_x);
-                        }
-                        if(tool === "SET PENCIL MIRROR" && _pxls_hovered !== null) {
-
-                            pencil_mirror_axes_hover_indexes.add(i * pxl_width + pencil_mirror_hover_x);
-                        }
-                    }
-
-                }
-                if((pencil_mirror_mode === "VERTICAL" || pencil_mirror_mode === "BOTH") && tool.includes("PENCIL")) {
-
-                    for(let i = 0; i < pxl_width; i++) {
-
-                        if(_pencil_mirror_index !== -1) {
-
-                            pencil_mirror_axes_indexes.add(i + pencil_mirror_y * pxl_width);
-                        }
-                        if(tool === "SET PENCIL MIRROR" && _pxls_hovered !== null) {
-
-                            pencil_mirror_axes_hover_indexes.add(i + pencil_mirror_hover_y * pxl_width);
-                        }
-                    }
-
-                }
-
-                let pixel_updated = 0;
-                const is_there_new_dimension = _is_there_new_dimension || _old_pxl_width !== pxl_width || _old_pxl_height !== pxl_height;
-                const has_new_pixel_hovered = _old_pxls_hovered !== _pxls_hovered;
-                const has_new_mine_player_index = _previous_mine_player_index !== _mine_player_index;
-
-                // Only operate on canvas context if existing
-                let _ctx = _canvas ? _canvas.context2d : null;
-                if (_ctx) {
-
-
-                    _ctx.globalCompositeOperation = "source-out";
-                    let image_data = hide_canvas_content ?
-                        new ImageData(pxl_width, pxl_height):
-                        _ctx.getImageData(0, 0, pxl_width, pxl_height);
-
-                    let pxl_indexes_of_old_shape = this.state._pxl_indexes_of_old_shape;
-                    let pxl_indexes_of_current_shape = new Set();
-
-                    if((tool === "LINE" || tool === "RECTANGLE" || tool === "ELLIPSE" || tool === "TRIANGLE") && _shape_index_a !== -1) {
-
-                        const palette_and_list_of_current_shape =
-                            tool === "LINE" ?
-                                this._get_pixels_palette_and_list_from_line(_s_pxls[_layer_index], _shape_index_a, _pxls_hovered, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity):
-                                tool === "RECTANGLE" ?
-                                    this._get_pixels_palette_and_list_from_rectangle(_s_pxls[_layer_index], _shape_index_a, _pxls_hovered, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity):
-                                    tool === "ELLIPSE" ?
-                                        this._get_pixels_palette_and_list_from_ellipse(_s_pxls[_layer_index], _shape_index_a, _pxls_hovered, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity):
-                                        this._get_pixels_palette_and_list_from_ellipse(_s_pxls[_layer_index], _shape_index_a, _pxls_hovered, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity);
-
-                        pxl_indexes_of_current_shape = new Set([...palette_and_list_of_current_shape[2]]);
-
-                    }else if ((tool === "SELECT LINE" || tool === "SELECT RECTANGLE" || tool === "SELECT ELLIPSE") && _select_shape_index_a !== -1) {
-
-                        const palette_and_list_of_current_selection_shape =
-                            tool === "SELECT LINE" ?
-                                this._get_pixels_palette_and_list_from_line(_s_pxls[_layer_index], _select_shape_index_a, _pxls_hovered):
-                                tool === "SELECT RECTANGLE" ?
-                                    this._get_pixels_palette_and_list_from_rectangle(_s_pxls[_layer_index], _select_shape_index_a, _pxls_hovered):
-                                    tool === "SELECT ELLIPSE" ?
-                                        this._get_pixels_palette_and_list_from_ellipse(_s_pxls[_layer_index], _select_shape_index_a, _pxls_hovered):
-                                        this._get_pixels_palette_and_list_from_ellipse(_s_pxls[_layer_index], _select_shape_index_a, _pxls_hovered);
-
-                        pxl_indexes_of_current_shape = new Set([...palette_and_list_of_current_selection_shape[2]]);
-                    }else if((tool === "SELECT PATH" || tool === "CONTOUR") && _paint_or_select_hover_pxl_indexes.size > 0) {
-
-                        const first_drawn_pixel = [..._paint_or_select_hover_pxl_indexes][0];
-                        const last_drawn_pixel = [..._paint_or_select_hover_pxl_indexes][_paint_or_select_hover_pxl_indexes.size-1];
-
-                        const palette_and_list = this._get_pixels_palette_and_list_from_line(_s_pxls[_layer_index], first_drawn_pixel, last_drawn_pixel, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity);
-                        const closing_path_line = palette_and_list[2];
-
-                        if(select_mode === "REMOVE" && tool === "SELECT PATH") {
-
-                            closing_path_line.forEach((pxl_index) => {
-
-                                _pxl_indexes_of_selection.delete(pxl_index);
-
-
-                            });
-                        }else {
-
-                            closing_path_line.forEach((pxl_index) => {
-
-                                if(tool === "SELECT PATH") {
-
-                                    _pxl_indexes_of_selection.add(pxl_index);
-                                }else {
-
-                                    pxl_indexes_of_current_shape.add(pxl_index);
-                                }
-                            });
-                        }
-                    }
-
-
-                    const has_new_layer = (_layers.length !== _old_layers.length);
-                    let has_layers_visibility_or_opacity_changed = has_new_layer;
-
-                    for (let i = 0; i < _layers.length ; i++) {
-
-                        if(!has_new_layer) {
-                            if(_layers[i].hidden !== _old_layers[i].hidden || _layers[i].opacity !== _old_layers[i].opacity || _layers[i].id !== _old_layers[i].id){
-
-                                has_layers_visibility_or_opacity_changed = true;
-                            }
-                        }
-
-                    }
-
-                    // This is a list of color index that we explore
-                    _s_pxls[_layer_index].forEach((pxl, index) => {
-
-                        const is_in_image_imported = has_an_image_imported && typeof imported_image_pxls_positioned[index] !== "undefined";
-                        const was_in_image_imported = typeof _previous_imported_image_pxls_positioned[index] !== "undefined";
-
-                        const is_in_image_imported_resizer = has_an_image_imported && image_imported_resizer_index === index;
-                        const was_in_image_imported_resizer = _previous_image_imported_resizer_index === index;
-
-                        const is_in_explosion = typeof explosion_pxls_positioned[index] !== "undefined";
-                        const was_in_explosion = typeof _previous_explosion_pxls_positioned[index] !== "undefined";
-
-
-                        const pos_x = index % pxl_width;
-                        const pos_y = (index - pos_x) / pxl_width;
-
-                        const is_pixel_hovered = _pxls_hovered === index;
-                        const is_the_old_pixel_hovered_to_paint = (index === _old_pxls_hovered && has_new_pixel_hovered) || (index === _pxls_hovered);
-
-                        const is_mine_player_index = _mine_player_index === index;
-                        const is_the_old_mine_player_index_to_paint = (index === _previous_mine_player_index && has_new_mine_player_index);
-
-                        const is_in_the_old_shape = pxl_indexes_of_old_shape.has(index);
-                        const is_in_the_current_shape = pxl_indexes_of_current_shape.has(index);
-                        const is_in_the_current_selection = _pxl_indexes_of_selection.has(index);
-                        const is_current_selection_hovered = _pxl_indexes_of_selection.has(_pxls_hovered);
-                        const was_current_selection_hovered = _pxl_indexes_of_selection.has(_old_pxls_hovered);
-                        const is_current_selection_hovered_changes = is_current_selection_hovered !== was_current_selection_hovered;
-                        const is_in_the_old_selection_drawn = _pxl_indexes_of_selection_drawn.has(index);
-                        const is_selected_and_hovered_recently = (is_in_the_current_selection && (is_pixel_hovered || is_the_old_pixel_hovered_to_paint));
-                        const is_selected_and_to_paint_again = is_in_the_current_selection && _selection_pair_highlight !== _old_selection_pair_highlight;
-                        const is_ancient_selected_pixel_waiting_to_update = (is_in_the_old_selection_drawn && !is_in_the_current_selection);
-                        const is_in_pencil_mirror_axes_hover_indexes = pencil_mirror_axes_hover_indexes.has(index);
-                        const was_in_pencil_mirror_axes_hover_indexes = _previous_pencil_mirror_axes_hover_indexes.has(index);
-                        const is_in_pencil_mirror_axes_indexes = pencil_mirror_axes_indexes.has(index);
-                        const is_an_old_pencil_mirror_axes_pixel_to_paint = _previous_pencil_mirror_axes_indexes.has(index) && _previous_pencil_mirror_axes_indexes !== pencil_mirror_axes_indexes;
-                        const is_a_new_pixel_to_paint = (was_in_pencil_mirror_axes_hover_indexes && !is_in_pencil_mirror_axes_hover_indexes) || is_an_old_pencil_mirror_axes_pixel_to_paint || was_in_explosion !== is_in_explosion || is_in_explosion || was_in_image_imported || is_in_image_imported || (was_in_image_imported_resizer && !is_in_image_imported_resizer) || is_there_new_dimension || has_layers_visibility_or_opacity_changed || pxl !== _old_pxls[index] || _old_pxl_colors[pxl] !== _s_pxl_colors[_layer_index][pxl];
-                        const pixel_hover_exception = tool === "ELLIPSE" && pxl_indexes_of_current_shape.size > 0;
-
-                        if (
-                            _is_there_new_dimension ||
-                            is_in_pencil_mirror_axes_hover_indexes ||
-                            is_in_pencil_mirror_axes_indexes ||
-                            (!hide_canvas_content && _was_canvas_content_hidden) ||
-                            (is_current_selection_hovered_changes && is_in_the_current_selection) ||
-                            is_selected_and_to_paint_again ||
-                            is_ancient_selected_pixel_waiting_to_update ||
-                            is_the_old_pixel_hovered_to_paint ||
-                            is_a_new_pixel_to_paint ||
-                            (is_pixel_hovered && !pixel_hover_exception) ||
-                            is_mine_player_index ||
-                            is_in_the_old_shape ||
-                            is_in_the_current_shape ||
-                            (is_in_the_current_selection && !is_in_the_old_selection_drawn) ||
-                            is_selected_and_hovered_recently ||
-                            is_the_old_mine_player_index_to_paint ||
-                            is_in_image_imported_resizer && (_selection_pair_highlight !== _old_selection_pair_highlight)
-                        ) {
-
-                            if(!hide_canvas_content) {
-
-                                let layer_pixel_colors = [];
-                                let start_i = -1;
-                                start_i++;
-
-                                for (let i = _s_pxl_colors.length - 1; i >= 0; i--) {
-
-                                    const layer_pixel_color = _s_pxl_colors[i][_s_pxls[i][index]];
-                                    layer_pixel_colors[i] = layer_pixel_color;
-                                    const [r, g, b, a] = layer_pixel_color;
-
-                                    if(a === 255 && _layers[i].opacity === 1) {
-
-                                        start_i = i;
-                                        break;
-                                    }
-
-                                }
-
-                                let pixel_color_hex = "#00000000";
-
-                                for (let i = start_i; i < _s_pxl_colors.length ; i++) {
-
-                                    if(!_layers[i].hidden) {
-
-                                        const layer_pixel_color = layer_pixel_colors[i];
-
-                                        pixel_color_hex = this._blend_colors(pixel_color_hex, layer_pixel_color, _layers[i].opacity, false);
-
-                                        if(is_in_image_imported && i === _layer_index) {
-
-                                            pixel_color_hex = this._blend_colors(pixel_color_hex, _imported_image_pxl_colors[imported_image_pxls_positioned[index]], 1, false);
-                                        }
-
-                                    }
-
-                                    if(is_in_explosion && i === _layers.length -1) {
-
-                                        pixel_color_hex = this._blend_colors(pixel_color_hex, _pxl_colors_explosion[mine_explosion_frame][explosion_pxls_positioned[index]], 1, false);
-                                    }
-
-                                }
-
-                                let color =
-                                    is_in_pencil_mirror_axes_hover_indexes ||
-                                    is_in_pencil_mirror_axes_indexes ||
-                                    (is_pixel_hovered || is_mine_player_index) ||
-                                    (_mouse_inside && is_in_the_current_shape) ||
-                                    (is_in_the_current_selection && !is_in_the_old_selection_drawn) ||
-                                    (is_a_new_pixel_to_paint && is_in_the_current_selection) ||
-                                    is_selected_and_hovered_recently ?
-                                        is_pixel_hovered || is_mine_player_index || is_in_pencil_mirror_axes_indexes ?
-                                            this._blend_colors(pixel_color_hex, "hover", 2/3, false):
-                                            this._blend_colors(pixel_color_hex, "hover", 1/3, false)
-                                        : pixel_color_hex;
-
-                                if(is_the_old_mine_player_index_to_paint || is_ancient_selected_pixel_waiting_to_update || (is_a_new_pixel_to_paint && !is_in_the_current_selection && !is_pixel_hovered && !is_in_pencil_mirror_axes_indexes)) {
-
-                                    color = pixel_color_hex;
-                                }
-
-                                if((is_in_image_imported_resizer)) {
-
-                                    const opacity = is_pixel_hovered ?
-                                        2/3 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 3:
-                                        1/3 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 3;
-                                    color = this._blend_colors(pixel_color_hex, "hover", opacity, false);
-                                }
-
-                                if(is_in_the_current_selection && !is_in_the_current_shape && !is_pixel_hovered) {
-
-                                    const opacity = 0 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 5;
-                                    color = this._blend_colors(pixel_color_hex, "hover", opacity, false);
-                                }
-
-                                // We need to clear the pixel that won't totally be opaque because it can merge colors accidentally
-                                const [r, g, b, a] = this._get_rgba_from_hex(color);
-
-                                image_data.data[index * 4 + 0] = r;
-                                image_data.data[index * 4 + 1] = g;
-                                image_data.data[index * 4 + 2] = b;
-                                image_data.data[index * 4 + 3] = a;
-
-                                //_ctx.clearRect(pos_x * px_per_px, pos_y * px_per_px, px_per_px, px_per_px);
-                                // Paint the square of real pixels from the virtual ones along with the resolution
-                                //_ctx.fillStyle = color;
-                                //_ctx.fillRect(pos_x * px_per_px, pos_y * px_per_px, px_per_px, px_per_px);
-                                pixel_updated++;
-                            }
-                        }
-
-                    });
-
-                    _ctx.putImageData(image_data, 0, 0);
-
-                    this.setState({
-                        _pxl_indexes_of_selection_drawn: new Set([..._pxl_indexes_of_selection]),
-                        _pxl_indexes_of_old_shape: new Set([...pxl_indexes_of_current_shape]),
-                        _is_there_new_dimension: false,
-                        _imported_image_previous_start_x: _imported_image_start_x,
-                        _imported_image_previous_start_y: _imported_image_start_y,
-                        _imported_image_previous_scale_delta_x: _imported_image_scale_delta_x,
-                        _imported_image_previous_scale_delta_y: _imported_image_scale_delta_y,
-                        _previous_pencil_mirror_axes_indexes: new Set([...pencil_mirror_axes_indexes]),
-                        _previous_pencil_mirror_axes_hover_indexes: new Set([...pencil_mirror_axes_hover_indexes]),
-                        _previous_explosion_pxls_positioned: [...explosion_pxls_positioned],
-                        _previous_imported_image_pxls_positioned: [...imported_image_pxls_positioned],
-                        _previous_image_imported_resizer_index: image_imported_resizer_index,
-                        _old_selection_pair_highlight: _selection_pair_highlight,
-                        _old_layers: [..._layers],
-                        _old_pxls: [..._s_pxls[_layer_index]],
-                        _old_pxl_colors: [..._s_pxl_colors[_layer_index]],
-                        _old_pxl_width: pxl_width,
-                        _old_pxl_height: pxl_height,
-                        _previous_mine_player_index: _mine_player_index,
-                        _old_pxls_hovered: _pxls_hovered,
-                        _was_canvas_content_hidden: hide_canvas_content && !_was_canvas_content_hidden,
-                        _last_paint_timestamp: Date.now()
-                    }, () => {
-
-                        window.caf_id = null;
-                    });
+        // Importing state variables
+        let { _canvas } = this.state;
+
+        const {
+            select_mode,
+            pencil_mirror_mode,
+            _pencil_mirror_index,
+            _previous_pencil_mirror_axes_indexes,
+            _previous_pencil_mirror_axes_hover_indexes,
+            hide_canvas_content,
+            _was_canvas_content_hidden,
+            px_per_px,
+            _old_pxls,
+            _old_pxl_width,
+            _old_pxl_height,
+            pxl_width,
+            pxl_height,
+            _s_pxl_colors,
+            _layers,
+            _old_layers,
+            _layer_index,
+            _old_pxl_colors,
+            _s_pxls,
+            _old_pxls_hovered,
+            _pxls_hovered,
+            _mouse_inside,
+            tool,
+            _is_there_new_dimension,
+            _shape_index_a,
+            _select_shape_index_a,
+            pxl_current_color,
+            pxl_current_opacity,
+            _pxl_indexes_of_selection,
+            _pxl_indexes_of_selection_drawn,
+            _paint_or_select_hover_pxl_indexes,
+            _previous_mine_player_index,
+            _mine_player_index,
+            _mine_index,
+            _pxls_explosion,
+            _pxl_colors_explosion,
+            _explosion_started_timestamp,
+            _explosion_index,
+            _explosion_width,
+            _explosion_height,
+            _explosion_time,
+            _selection_pair_highlight,
+            _old_selection_pair_highlight,
+        } = this.state;
+
+
+        let {
+            _imported_image_previous_start_x,
+            _imported_image_previous_start_y,
+            _imported_image_start_x,
+            _imported_image_start_y,
+            _imported_image_previous_scale_delta_x,
+            _imported_image_previous_scale_delta_y,
+            _imported_image_scale_delta_x,
+            _imported_image_scale_delta_y,
+            _imported_image_pxls,
+            _imported_image_width,
+            _imported_image_height,
+            _imported_image_pxl_colors,
+            _previous_imported_image_pxls_positioned,
+            _previous_image_imported_resizer_index,
+        } = this.state;
+
+        [_imported_image_pxls, _imported_image_pxl_colors, _imported_image_width, _imported_image_height] = this._get_imported_image_scaled(_imported_image_pxls, _imported_image_pxl_colors, _imported_image_width, _imported_image_height, _imported_image_scale_delta_x, _imported_image_scale_delta_y);
+
+        let {
+            _previous_explosion_pxls_positioned
+        } = this.state;
+
+        let imported_image_pxls_positioned = [];
+        const has_an_image_imported = _imported_image_pxls.length > 0;
+        const image_imported_resizer_index = (_imported_image_start_x + _imported_image_width) + (_imported_image_start_y + _imported_image_height) * pxl_width;
+
+        if(has_an_image_imported) {
+
+            _imported_image_pxls.forEach((pxl, index) => {
+
+                const pos_x = index % _imported_image_width;
+                const pos_y = (index - pos_x) / _imported_image_width;
+
+                const current_pos_x_positioned = pos_x + _imported_image_start_x;
+                const current_pos_y_positioned = pos_y + _imported_image_start_y;
+
+                const imported_image_pxl_positioned_index = current_pos_y_positioned * pxl_width + current_pos_x_positioned;
+
+                if(current_pos_x_positioned >= 0 && current_pos_x_positioned < pxl_width && current_pos_y_positioned >= 0 && current_pos_y_positioned < pxl_height) {
+
+                    imported_image_pxls_positioned[imported_image_pxl_positioned_index] = pxl;
                 }
 
             });
+        }
+
+        let explosion_pxls_positioned = [];
+        const has_mine_explosion = _explosion_started_timestamp > Date.now() - _explosion_time;
+        const mine_explosion_frame = has_mine_explosion ?
+            Math.max(Math.floor(_pxls_explosion.length - Math.floor(_explosion_time / (Date.now() - _explosion_started_timestamp))), 0):
+            0;
+
+        if(has_mine_explosion) {
+
+            const explosion_x = _explosion_index % pxl_width;
+            const explosion_y = (_explosion_index - explosion_x) / pxl_width;
+
+            const _explosion_start_x = Math.floor(explosion_x - _explosion_width / 2);
+            const _explosion_start_y = Math.floor(explosion_y - _explosion_height / 2);
+
+            _pxls_explosion[mine_explosion_frame].forEach((pxl, index) => {
+
+                const pos_x = index % _explosion_width;
+                const pos_y = (index - pos_x) / _explosion_width;
+
+                const current_pos_x_positioned = pos_x + _explosion_start_x;
+                const current_pos_y_positioned = pos_y + _explosion_start_y;
+
+                const explosion_pxl_positioned_index = current_pos_y_positioned * pxl_width + current_pos_x_positioned;
+
+                if(current_pos_x_positioned >= 0 && current_pos_x_positioned < pxl_width && current_pos_y_positioned >= 0 && current_pos_y_positioned < pxl_height) {
+
+                    explosion_pxls_positioned[explosion_pxl_positioned_index] = pxl;
+                }
+
+
+            });
+        }
+
+        let pencil_mirror_axes_hover_indexes = new Set();
+        let pencil_mirror_axes_indexes = new Set();
+
+        const pencil_mirror_x = _pencil_mirror_index % pxl_width;
+        const pencil_mirror_y = (_pencil_mirror_index - pencil_mirror_x) / pxl_width;
+
+        const pencil_mirror_hover_x = _pxls_hovered % pxl_width;
+        const pencil_mirror_hover_y = (_pxls_hovered - pencil_mirror_hover_x) / pxl_width;
+
+
+        if((pencil_mirror_mode === "HORIZONTAL" || pencil_mirror_mode === "BOTH") && tool.includes("PENCIL")) {
+
+            for(let i = 0; i < pxl_height; i++) {
+
+                if(_pencil_mirror_index !== -1) {
+
+                    pencil_mirror_axes_indexes.add(i * pxl_width + pencil_mirror_x);
+                }
+                if(tool === "SET PENCIL MIRROR" && _pxls_hovered !== null) {
+
+                    pencil_mirror_axes_hover_indexes.add(i * pxl_width + pencil_mirror_hover_x);
+                }
+            }
+
+        }
+        if((pencil_mirror_mode === "VERTICAL" || pencil_mirror_mode === "BOTH") && tool.includes("PENCIL")) {
+
+            for(let i = 0; i < pxl_width; i++) {
+
+                if(_pencil_mirror_index !== -1) {
+
+                    pencil_mirror_axes_indexes.add(i + pencil_mirror_y * pxl_width);
+                }
+                if(tool === "SET PENCIL MIRROR" && _pxls_hovered !== null) {
+
+                    pencil_mirror_axes_hover_indexes.add(i + pencil_mirror_hover_y * pxl_width);
+                }
+            }
+
+        }
+
+        let pixel_updated = 0;
+        const is_there_new_dimension = _is_there_new_dimension || _old_pxl_width !== pxl_width || _old_pxl_height !== pxl_height;
+        const has_new_pixel_hovered = _old_pxls_hovered !== _pxls_hovered;
+        const has_new_mine_player_index = _previous_mine_player_index !== _mine_player_index;
+
+        // Only operate on canvas context if existing
+        let _ctx = _canvas ? _canvas.context2d : null;
+        if (_ctx) {
+
+
+            _ctx.globalCompositeOperation = "source-out";
+            let image_data = hide_canvas_content ?
+                new ImageData(pxl_width, pxl_height):
+                _ctx.getImageData(0, 0, pxl_width, pxl_height);
+
+            let pxl_indexes_of_old_shape = this.state._pxl_indexes_of_old_shape;
+            let pxl_indexes_of_current_shape = new Set();
+
+            if((tool === "LINE" || tool === "RECTANGLE" || tool === "ELLIPSE" || tool === "TRIANGLE") && _shape_index_a !== -1) {
+
+                const palette_and_list_of_current_shape =
+                    tool === "LINE" ?
+                        this._get_pixels_palette_and_list_from_line(_s_pxls[_layer_index], _shape_index_a, _pxls_hovered, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity):
+                        tool === "RECTANGLE" ?
+                            this._get_pixels_palette_and_list_from_rectangle(_s_pxls[_layer_index], _shape_index_a, _pxls_hovered, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity):
+                            tool === "ELLIPSE" ?
+                                this._get_pixels_palette_and_list_from_ellipse(_s_pxls[_layer_index], _shape_index_a, _pxls_hovered, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity):
+                                this._get_pixels_palette_and_list_from_ellipse(_s_pxls[_layer_index], _shape_index_a, _pxls_hovered, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity);
+
+                pxl_indexes_of_current_shape = new Set([...palette_and_list_of_current_shape[2]]);
+
+            }else if ((tool === "SELECT LINE" || tool === "SELECT RECTANGLE" || tool === "SELECT ELLIPSE") && _select_shape_index_a !== -1) {
+
+                const palette_and_list_of_current_selection_shape =
+                    tool === "SELECT LINE" ?
+                        this._get_pixels_palette_and_list_from_line(_s_pxls[_layer_index], _select_shape_index_a, _pxls_hovered):
+                        tool === "SELECT RECTANGLE" ?
+                            this._get_pixels_palette_and_list_from_rectangle(_s_pxls[_layer_index], _select_shape_index_a, _pxls_hovered):
+                            tool === "SELECT ELLIPSE" ?
+                                this._get_pixels_palette_and_list_from_ellipse(_s_pxls[_layer_index], _select_shape_index_a, _pxls_hovered):
+                                this._get_pixels_palette_and_list_from_ellipse(_s_pxls[_layer_index], _select_shape_index_a, _pxls_hovered);
+
+                pxl_indexes_of_current_shape = new Set([...palette_and_list_of_current_selection_shape[2]]);
+            }else if((tool === "SELECT PATH" || tool === "CONTOUR") && _paint_or_select_hover_pxl_indexes.size > 0) {
+
+                const first_drawn_pixel = [..._paint_or_select_hover_pxl_indexes][0];
+                const last_drawn_pixel = [..._paint_or_select_hover_pxl_indexes][_paint_or_select_hover_pxl_indexes.size-1];
+
+                const palette_and_list = this._get_pixels_palette_and_list_from_line(_s_pxls[_layer_index], first_drawn_pixel, last_drawn_pixel, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity);
+                const closing_path_line = palette_and_list[2];
+
+                if(select_mode === "REMOVE" && tool === "SELECT PATH") {
+
+                    closing_path_line.forEach((pxl_index) => {
+
+                        _pxl_indexes_of_selection.delete(pxl_index);
+
+
+                    });
+                }else {
+
+                    closing_path_line.forEach((pxl_index) => {
+
+                        if(tool === "SELECT PATH") {
+
+                            _pxl_indexes_of_selection.add(pxl_index);
+                        }else {
+
+                            pxl_indexes_of_current_shape.add(pxl_index);
+                        }
+                    });
+                }
+            }
+
+
+            const has_new_layer = (_layers.length !== _old_layers.length);
+            let has_layers_visibility_or_opacity_changed = has_new_layer;
+
+            for (let i = 0; i < _layers.length ; i++) {
+
+                if(!has_new_layer) {
+                    if(_layers[i].hidden !== _old_layers[i].hidden || _layers[i].opacity !== _old_layers[i].opacity || _layers[i].id !== _old_layers[i].id){
+
+                        has_layers_visibility_or_opacity_changed = true;
+                    }
+                }
+
+            }
+
+            // This is a list of color index that we explore
+            _s_pxls[_layer_index].forEach((pxl, index) => {
+
+                const is_in_image_imported = has_an_image_imported && typeof imported_image_pxls_positioned[index] !== "undefined";
+                const was_in_image_imported = typeof _previous_imported_image_pxls_positioned[index] !== "undefined";
+
+                const is_in_image_imported_resizer = has_an_image_imported && image_imported_resizer_index === index;
+                const was_in_image_imported_resizer = _previous_image_imported_resizer_index === index;
+
+                const is_in_explosion = typeof explosion_pxls_positioned[index] !== "undefined";
+                const was_in_explosion = typeof _previous_explosion_pxls_positioned[index] !== "undefined";
+
+
+                const pos_x = index % pxl_width;
+                const pos_y = (index - pos_x) / pxl_width;
+
+                const is_pixel_hovered = _pxls_hovered === index;
+                const is_the_old_pixel_hovered_to_paint = (index === _old_pxls_hovered && has_new_pixel_hovered) || (index === _pxls_hovered);
+
+                const is_mine_player_index = _mine_player_index === index;
+                const is_the_old_mine_player_index_to_paint = (index === _previous_mine_player_index && has_new_mine_player_index);
+
+                const is_in_the_old_shape = pxl_indexes_of_old_shape.has(index);
+                const is_in_the_current_shape = pxl_indexes_of_current_shape.has(index);
+                const is_in_the_current_selection = _pxl_indexes_of_selection.has(index);
+                const is_current_selection_hovered = _pxl_indexes_of_selection.has(_pxls_hovered);
+                const was_current_selection_hovered = _pxl_indexes_of_selection.has(_old_pxls_hovered);
+                const is_current_selection_hovered_changes = is_current_selection_hovered !== was_current_selection_hovered;
+                const is_in_the_old_selection_drawn = _pxl_indexes_of_selection_drawn.has(index);
+                const is_selected_and_hovered_recently = (is_in_the_current_selection && (is_pixel_hovered || is_the_old_pixel_hovered_to_paint));
+                const is_selected_and_to_paint_again = is_in_the_current_selection && _selection_pair_highlight !== _old_selection_pair_highlight;
+                const is_ancient_selected_pixel_waiting_to_update = (is_in_the_old_selection_drawn && !is_in_the_current_selection);
+                const is_in_pencil_mirror_axes_hover_indexes = pencil_mirror_axes_hover_indexes.has(index);
+                const was_in_pencil_mirror_axes_hover_indexes = _previous_pencil_mirror_axes_hover_indexes.has(index);
+                const is_in_pencil_mirror_axes_indexes = pencil_mirror_axes_indexes.has(index);
+                const is_an_old_pencil_mirror_axes_pixel_to_paint = _previous_pencil_mirror_axes_indexes.has(index) && _previous_pencil_mirror_axes_indexes !== pencil_mirror_axes_indexes;
+                const is_a_new_pixel_to_paint = (was_in_pencil_mirror_axes_hover_indexes && !is_in_pencil_mirror_axes_hover_indexes) || is_an_old_pencil_mirror_axes_pixel_to_paint || was_in_explosion !== is_in_explosion || is_in_explosion || was_in_image_imported || is_in_image_imported || (was_in_image_imported_resizer && !is_in_image_imported_resizer) || is_there_new_dimension || has_layers_visibility_or_opacity_changed || pxl !== _old_pxls[index] || _old_pxl_colors[pxl] !== _s_pxl_colors[_layer_index][pxl];
+                const pixel_hover_exception = tool === "ELLIPSE" && pxl_indexes_of_current_shape.size > 0;
+
+                if (
+                    _is_there_new_dimension ||
+                    is_in_pencil_mirror_axes_hover_indexes ||
+                    is_in_pencil_mirror_axes_indexes ||
+                    (!hide_canvas_content && _was_canvas_content_hidden) ||
+                    (is_current_selection_hovered_changes && is_in_the_current_selection) ||
+                    is_selected_and_to_paint_again ||
+                    is_ancient_selected_pixel_waiting_to_update ||
+                    is_the_old_pixel_hovered_to_paint ||
+                    is_a_new_pixel_to_paint ||
+                    (is_pixel_hovered && !pixel_hover_exception) ||
+                    is_mine_player_index ||
+                    is_in_the_old_shape ||
+                    is_in_the_current_shape ||
+                    (is_in_the_current_selection && !is_in_the_old_selection_drawn) ||
+                    is_selected_and_hovered_recently ||
+                    is_the_old_mine_player_index_to_paint ||
+                    is_in_image_imported_resizer && (_selection_pair_highlight !== _old_selection_pair_highlight)
+                ) {
+
+                    if(!hide_canvas_content) {
+
+                        let layer_pixel_colors = [];
+                        let start_i = -1;
+                        start_i++;
+
+                        for (let i = _s_pxl_colors.length - 1; i >= 0; i--) {
+
+                            const layer_pixel_color = _s_pxl_colors[i][_s_pxls[i][index]];
+                            layer_pixel_colors[i] = layer_pixel_color;
+                            const [r, g, b, a] = layer_pixel_color;
+
+                            if(a === 255 && _layers[i].opacity === 1) {
+
+                                start_i = i;
+                                break;
+                            }
+
+                        }
+
+                        let pixel_color_hex = "#00000000";
+
+                        for (let i = start_i; i < _s_pxl_colors.length ; i++) {
+
+                            if(!_layers[i].hidden) {
+
+                                const layer_pixel_color = layer_pixel_colors[i];
+
+                                pixel_color_hex = this._blend_colors(pixel_color_hex, layer_pixel_color, _layers[i].opacity, false);
+
+                                if(is_in_image_imported && i === _layer_index) {
+
+                                    pixel_color_hex = this._blend_colors(pixel_color_hex, _imported_image_pxl_colors[imported_image_pxls_positioned[index]], 1, false);
+                                }
+
+                            }
+
+                            if(is_in_explosion && i === _layers.length -1) {
+
+                                pixel_color_hex = this._blend_colors(pixel_color_hex, _pxl_colors_explosion[mine_explosion_frame][explosion_pxls_positioned[index]], 1, false);
+                            }
+
+                        }
+
+                        let color =
+                            is_in_pencil_mirror_axes_hover_indexes ||
+                            is_in_pencil_mirror_axes_indexes ||
+                            (is_pixel_hovered || is_mine_player_index) ||
+                            (_mouse_inside && is_in_the_current_shape) ||
+                            (is_in_the_current_selection && !is_in_the_old_selection_drawn) ||
+                            (is_a_new_pixel_to_paint && is_in_the_current_selection) ||
+                            is_selected_and_hovered_recently ?
+                                is_pixel_hovered || is_mine_player_index || is_in_pencil_mirror_axes_indexes ?
+                                    this._blend_colors(pixel_color_hex, "hover", 2/3, false):
+                                    this._blend_colors(pixel_color_hex, "hover", 1/3, false)
+                                : pixel_color_hex;
+
+                        if(is_the_old_mine_player_index_to_paint || is_ancient_selected_pixel_waiting_to_update || (is_a_new_pixel_to_paint && !is_in_the_current_selection && !is_pixel_hovered && !is_in_pencil_mirror_axes_indexes)) {
+
+                            color = pixel_color_hex;
+                        }
+
+                        if((is_in_image_imported_resizer)) {
+
+                            const opacity = is_pixel_hovered ?
+                                2/3 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 3:
+                                1/3 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 3;
+                            color = this._blend_colors(pixel_color_hex, "hover", opacity, false);
+                        }
+
+                        if(is_in_the_current_selection && !is_in_the_current_shape && !is_pixel_hovered) {
+
+                            const opacity = 0 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 5;
+                            color = this._blend_colors(pixel_color_hex, "hover", opacity, false);
+                        }
+
+                        // We need to clear the pixel that won't totally be opaque because it can merge colors accidentally
+                        const [r, g, b, a] = this._get_rgba_from_hex(color);
+
+                        image_data.data[index * 4 + 0] = r;
+                        image_data.data[index * 4 + 1] = g;
+                        image_data.data[index * 4 + 2] = b;
+                        image_data.data[index * 4 + 3] = a;
+
+                        //_ctx.clearRect(pos_x * px_per_px, pos_y * px_per_px, px_per_px, px_per_px);
+                        // Paint the square of real pixels from the virtual ones along with the resolution
+                        //_ctx.fillStyle = color;
+                        //_ctx.fillRect(pos_x * px_per_px, pos_y * px_per_px, px_per_px, px_per_px);
+                        pixel_updated++;
+                    }
+                }
+            });
+
+            window.anim_loop(() => {
+
+                _ctx.putImageData(image_data, 0, 0);
+                this.setState({
+                    _pxl_indexes_of_selection_drawn: new Set([..._pxl_indexes_of_selection]),
+                    _pxl_indexes_of_old_shape: new Set([...pxl_indexes_of_current_shape]),
+                    _is_there_new_dimension: false,
+                    _imported_image_previous_start_x: _imported_image_start_x,
+                    _imported_image_previous_start_y: _imported_image_start_y,
+                    _imported_image_previous_scale_delta_x: _imported_image_scale_delta_x,
+                    _imported_image_previous_scale_delta_y: _imported_image_scale_delta_y,
+                    _previous_pencil_mirror_axes_indexes: new Set([...pencil_mirror_axes_indexes]),
+                    _previous_pencil_mirror_axes_hover_indexes: new Set([...pencil_mirror_axes_hover_indexes]),
+                    _previous_explosion_pxls_positioned: [...explosion_pxls_positioned],
+                    _previous_imported_image_pxls_positioned: [...imported_image_pxls_positioned],
+                    _previous_image_imported_resizer_index: image_imported_resizer_index,
+                    _old_selection_pair_highlight: _selection_pair_highlight,
+                    _old_layers: [..._layers],
+                    _old_pxls: [..._s_pxls[_layer_index]],
+                    _old_pxl_colors: [..._s_pxl_colors[_layer_index]],
+                    _old_pxl_width: pxl_width,
+                    _old_pxl_height: pxl_height,
+                    _previous_mine_player_index: _mine_player_index,
+                    _old_pxls_hovered: _pxls_hovered,
+                    _was_canvas_content_hidden: hide_canvas_content && !_was_canvas_content_hidden,
+                    _last_paint_timestamp: Date.now()
+                });
+            });
+        }
         }
     };
 
@@ -4219,7 +4358,7 @@ class CanvasPixels extends React.Component {
 
         let {state_history, history_position, previous_history_position} = JSON.parse(_json_state_history);
 
-        if(this._can_undo() || is_pending_save_data){
+        if(this._can_undo() & !is_pending_save_data){
 
             previous_history_position = history_position;
             history_position--;
@@ -4240,6 +4379,7 @@ class CanvasPixels extends React.Component {
                 _old_layers: [...this.state._layers],
                 _layer_index,
                 _json_state_history: new_json_state_history,
+                _is_there_new_dimension: has_new_dimension,
             }, () => {
 
                 this._request_force_update(() =>{
@@ -4274,7 +4414,7 @@ class CanvasPixels extends React.Component {
 
         let {state_history, history_position, previous_history_position} = JSON.parse(_json_state_history);
 
-        if (this._can_redo() || is_pending_save_data) {
+        if (this._can_redo() && !is_pending_save_data) {
 
             previous_history_position = history_position;
             history_position++;
@@ -4296,6 +4436,7 @@ class CanvasPixels extends React.Component {
                 _old_layers: [...this.state._layers],
                 _layer_index,
                 _json_state_history: new_json_state_history,
+                _is_there_new_dimension: has_new_dimension,
             }, () => {
 
                 this._request_force_update(() => {
@@ -6400,10 +6541,14 @@ class CanvasPixels extends React.Component {
         const { _canvas_container } = this.state;
         if(!_canvas_container){return;}
 
-        const _canvas_container_width = _canvas_container === null ? 0: _canvas_container.clientWidth || 0;
-        const _canvas_container_height = _canvas_container === null ? 0: _canvas_container.clientHeight || 0;
+        const rect = _canvas_container.getBoundingClientRect();
+
+        const _canvas_container_width = _canvas_container === null ? 0: rect.width || 0;
+        const _canvas_container_height = _canvas_container === null ? 0: rect.height || 0;
+        const _canvas_container_left = _canvas_container === null ? 0: rect.left || 0;
+        const _canvas_container_top = _canvas_container === null ? 0: rect.top || 0;
         
-        this.setState({_canvas_container_width, _canvas_container_height}, () => {
+        this.setState({_canvas_container_width, _canvas_container_height, _canvas_container_left, _canvas_container_top}, () => {
 
             this._update_screen_zoom_ratio(true);
         });
@@ -6446,6 +6591,7 @@ class CanvasPixels extends React.Component {
             canvas_border_radius,
             canvas_wrapper_border_radius,
             canvas_wrapper_padding,
+            canvas_wrapper_border_width,
             _moves_speed_average_now,
             _is_on_resize_element,
             _is_image_import_mode,
@@ -6483,31 +6629,35 @@ class CanvasPixels extends React.Component {
                          height: "100%",
                          width: "100%",
                          overflow: "overlay",
-                         position: "contents",
+                         position: "absolute",
                          boxSizing: "border-box",
+                         touchAction: "none",
+                         pointerEvent: "none",
                      }}>
                     <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
                          style={{
-                             borderWidth: 1,
+                             borderWidth: canvas_wrapper_border_width,
                              borderStyle: "solid",
                              borderColor: "#fff",
                              backgroundColor: canvas_wrapper_background_color,
                              borderRadius: canvas_wrapper_border_radius,
                              padding: canvas_wrapper_padding * scale,
-                             position: "absolute",
-                             top: 0,
-                             left: 0,
-                             width: pxl_width * _screen_zoom_ratio * scale,
-                             height: pxl_height * _screen_zoom_ratio * scale,
-                             transform: `translate(${scale_move_x}px, ${scale_move_y}px)`,
+                             position: "fixed",
+                             width: Math.round(pxl_width * _screen_zoom_ratio * scale),
+                             height: Math.round(pxl_height * _screen_zoom_ratio * scale),
+                             transform: `translate(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px)`,
                              transformOrigin: "center center",
                              boxSizing: "content-box",
                              boxShadow: shadow,
+                             touchAction: "none",
+                             pointerEvent: "none",
                          }}
                          ref={this._set_canvas_wrapper_ref}>
                         <canvas
                             style={{
                                 position: "absolute",
+                                touchAction: "none",
+                                pointerEvent: "none",
                                 cursor: cursor,
                                 borderRadius: canvas_border_radius,
                                 width: Math.floor(pxl_width),

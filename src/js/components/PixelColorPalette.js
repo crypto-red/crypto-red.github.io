@@ -9,11 +9,14 @@ const styles = theme => ({
         padding: 24,
         display: "flex",
         flexDirection: "row",
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         alignContent: "stretch",
         gap: 8,
         flexWrap: "wrap"
-    }
+    },
+    eraseButton: {
+        marginBottom: 8,
+    },
 });
 
 
@@ -76,6 +79,7 @@ class PixelColorPalette extends React.Component {
         return (
             <div className={classes.colorPalette} style={{ padding: padding, gap: gap}}>
                 <PixelColorPaletteItem size={32}
+                                       className={classes.eraseButton}
                                        icon={<EraserIcon />}
                                        full_width={true}
                                        color={"#00000000"}

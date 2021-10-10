@@ -53,6 +53,7 @@ import EraserIcon from "../icons/Eraser";
 import MirrorIcon from "../icons/Mirror";
 import PencilIcon from "../icons/Pencil";
 import PencilPerfectIcon from "../icons/PencilPerfect";
+import ChangeHistoryIcon from "@material-ui/icons/ChangeHistory";
 
 const styles = theme => ({
     green: {
@@ -1059,18 +1060,31 @@ class Pixel extends React.Component {
                             </div>
                             : null
                     }
-                    <ListSubheader className={classes.contextMenuSubheader}>Color</ListSubheader>
-                    <ListItem button divider disabled={_menu_data.pxl_color === _current_color} onClick={(event) => {this._set_current_color(_menu_data.pxl_color); this._handle_relevant_action_event(_menu_event, _menu_data.pxl_color, 1);}}>
+                    <ListSubheader style={_menu_data.pxl_color === null ? {display: "none"}: {}} className={classes.contextMenuSubheader}>Color</ListSubheader>
+                    <ListItem button divider style={_menu_data.pxl_color === null ? {display: "none"}: {}} disabled={_menu_data.pxl_color === _current_color || _menu_data.pxl_color === null} onClick={(event) => {this._set_current_color(_menu_data.pxl_color); this._handle_relevant_action_event(_menu_event, _menu_data.pxl_color, 1);}}>
                         <ListItemIcon>
                             <SquareIcon style={{ color: _menu_data.pxl_color, background: `repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / calc(200% / ${_width}) calc(200% / ${_height})`}} />
                         </ListItemIcon>
                         <ListItemText primary="Pick color" />
                     </ListItem>
-                    <ListItem button divider disabled={_menu_data.pxl_color === _current_color} onClick={(event) => {this._exchange_pixel_colors(_menu_data.pxl_color, _current_color); this._handle_relevant_action_event(_menu_event, _current_color, 1);}}>
+                    <ListItem button divider style={_menu_data.pxl_color === null ? {display: "none"}: {}} disabled={_menu_data.pxl_color === _current_color || _menu_data.pxl_color === null} onClick={(event) => {this._exchange_pixel_colors(_menu_data.pxl_color, _current_color); this._handle_relevant_action_event(_menu_event, _current_color, 1);}}>
                         <ListItemIcon>
                             <SquareIcon style={{ color: _current_color, background: `repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / calc(200% / ${_width}) calc(200% / ${_height})`}} />
                         </ListItemIcon>
                         <ListItemText primary="Replace color" />
+                    </ListItem>
+                    <ListSubheader className={classes.contextMenuSubheader}>Undo / Redo</ListSubheader>
+                    <ListItem button divider onClick={(event) => {_canvas.undo()}}>
+                        <ListItemIcon>
+                            <ChangeHistoryIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Undo" />
+                    </ListItem>
+                    <ListItem button divider onClick={(event) => {_canvas.redo()}}>
+                        <ListItemIcon>
+                            <ChangeHistoryIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Redo" />
                     </ListItem>
                     <ListSubheader className={classes.contextMenuSubheader}>Effect</ListSubheader>
                     <ListItem button divider onClick={(event) => this._to_auto_medium_more_contrast()}>
