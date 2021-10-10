@@ -23,6 +23,8 @@ class PixelColorPaletteItem extends React.Component {
             selected: props.selected || false,
             color: props.color || "#00000000",
             size: props.size || "inherit",
+            full_width: props.full_width || false,
+            icon: props.icon || null,
         };
     };
 
@@ -45,9 +47,9 @@ class PixelColorPaletteItem extends React.Component {
 
     shouldComponentUpdate(new_props) {
 
-        const { selected, color, size } = this.state;
+        const { selected, color, size, icon } = this.state;
 
-        if(selected !== new_props.selected || color !== new_props.color || size !== new_props.size) {
+        if(selected !== new_props.selected || color !== new_props.color || size !== new_props.size || icon !== new_props.icon) {
 
             return true;
         }else {
@@ -58,22 +60,24 @@ class PixelColorPaletteItem extends React.Component {
 
     render() {
 
-        const { classes, selected, color, size } = this.state;
+        const { classes, full_width, selected, size, color, icon } = this.state;
 
-        const [r, g, b] = color === "#ffffff" ? [196, 196, 196]: this._get_rgba_from_hex(color);
-        const is_current_color_dark = r + g + b < 192 * 3;
+        let [r, g, b, a] = this._get_rgba_from_hex(color);
+
+        const is_color_dark = a > 96 && (r + g + b) * (255 - a) / 255 < 192 * 3;
 
         return (
             <ButtonBase
+                fulllWidth={full_width}
                 onClick={this.props.onClick ? this.props.onClick: null}
                 style={{
                     background: color,
                     boxShadow: `0px 2px 4px -1px rgb(${r} ${g} ${b} / 20%), 0px 4px 5px 0px rgb(${r} ${g} ${b} / 14%), 0px 1px 10px 0px rgb(${r} ${g} ${b} / 12%)`,
-                    width: size,
+                    width: full_width ? "100%": size,
                     height: size,
                 }}
-                className={classes.colorPaletteItem}>
-                {selected ? <Fade in><CheckBoldIcon style={{color: is_current_color_dark ? "white": "black"}} /></Fade>: ""}
+                className={!full_width ? classes.colorPaletteItem: null}>
+                {selected ? <Fade in><CheckBoldIcon style={{color: is_color_dark ? "white": "black"}} /></Fade>: icon}
             </ButtonBase>
         );
     }

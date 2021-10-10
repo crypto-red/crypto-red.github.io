@@ -163,6 +163,8 @@ class PixelToolboxSwipeableViews extends React.Component {
             can_redo: props.can_redo,
             width: props.width,
             height: props.height,
+            default_width: !this.default_width ? (props.default_width || props.width || 96): 96,
+            default_height: !this.default_height ? (props.default_height || props.height || 96): 96,
             is_image_import_mode: props.is_image_import_mode,
             hide_canvas_content: props.hide_canvas_content,
             show_original_image_in_background: props.show_original_image_in_background,
@@ -249,7 +251,7 @@ class PixelToolboxSwipeableViews extends React.Component {
 
         const { canvas } = this.state;
 
-        if(!canvas) { return "#000000" }
+        if(!canvas) { return "#00000000" }
 
         return canvas._hsl_to_hex(h, s, l);
     };
@@ -495,6 +497,8 @@ class PixelToolboxSwipeableViews extends React.Component {
             _saturation,
             _luminosity,
             _layer_opened,
+            default_width,
+            default_height,
         } = this.state;
 
         const actions = {
@@ -856,9 +860,9 @@ class PixelToolboxSwipeableViews extends React.Component {
                                             </ListSubheader>
                                             <div style={{padding: "8px 24px", position: "relative", overflow: "hidden", boxSizing: "border-box"}}>
                                                 <Typography id="width-slider" gutterBottom>Width</Typography>
-                                                <Slider defaultValue={width} step={8} valueLabelDisplay="auto" min={0} max={256} onChangeCommitted={this._set_width_from_slider} aria-labelledby="width-slider"/>
+                                                <Slider defaultValue={default_width} step={8} valueLabelDisplay="auto" min={0} max={256} onChangeCommitted={this._set_width_from_slider} aria-labelledby="width-slider"/>
                                                 <Typography id="height-slider" gutterBottom>Height</Typography>
-                                                <Slider defaultValue={height} step={8} valueLabelDisplay="auto" min={0} max={256} onChangeCommitted={this._set_height_from_slider} aria-labelledby="height-slider"/>
+                                                <Slider defaultValue={default_height} step={8} valueLabelDisplay="auto" min={0} max={256} onChangeCommitted={this._set_height_from_slider} aria-labelledby="height-slider"/>
                                             </div>
                                         </div>
                                         : null

@@ -50,6 +50,7 @@ const overrides = {
             },
             ".MuiBackdrop-root": {
                 backdropFilter: "blur(3px)",
+                backgroundColor: "rgba(6, 14, 35, .5)",
                 transform: "scale(3)",
                 animation: "$fadeBlur 400ms cubic-bezier(0.4, 0, 0.2, 1)",
                 "@global": {

@@ -36,39 +36,44 @@ let caf =
     window.msCancelAnimationFrame;
 
 window.caf_id = null;
-window.last_raf_time = Date.now()
+window.last_raf_time = Date.now();
+window.previous_cpaf_fps = 0;
+window.cpaf_fps = 0;
 
-window.animLoop = ( render ) => {
+window.anim_loop = ( render ) => {
 
     function loop() {
 
         let now = Date.now();
         let running = false;
 
-        let deltaT = now - window.last_raf_time;
+        let deltaT = 1 + now - window.last_raf_time;
         // do not render frame when deltaT is too high
-        if ( deltaT > 160 ) {
+        if ( deltaT > 160) {
             running = true;
         }
 
-        if ( window.caf_id === null ) {
+        if ( window.caf_id === null) {
 
             window.caf_id = raf(render);
+            window.previous_cpaf_fps = 1000 / deltaT;
             window.last_raf_time = now;
 
-        }else if(!running){
+        }else if(running && caf_id !== null && deltaT > 1000 / 60) {
+
+            window.caf_id = caf(window.caf_id);
+            window.caf_id = raf(render);
+
+        }if(!running){
 
             render();
             window.caf_id = null;
+            window.previous_cpaf_fps = 1000 / deltaT;
             window.last_raf_time = now;
 
-        }else if(running && caf_id !== null){
+        }else if(deltaT < 1000 / 30){
 
-            window.caf_id = raf(render);
-            window.last_raf_time = now;
-        }else {
-
-            setTimeout(loop(), 16);
+            setTimeout(loop(), 1000 / 240);
         }
     }
     loop();
@@ -93,13 +98,14 @@ class CanvasPixels extends React.Component {
             bucket_threshold: props.bucket_threshold || 0,
             color_loss: props.color_loss || 0.25,
             default_size: props.default_size || 96,
+            ideal_size: props.ideal_size || props.default_size || 96,
             max_size: props.max_size || props.default_size * 2 || 192,
             px_per_px: props.px_per_px || 1,
             fast_drawing: props.fast_drawing || false,
             canvas_cursor: props.canvas_cursor || 'url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAfCAYAAAAfrhY5AAAAAXNSR0IArs4c6QAAAFxJREFUSIntlkEKACEQw6b7/z/Hq7cdqeAcmrtJQRCrDACc824YZ8B3cU/iiSc+M27x7IULDqrq3Z0kdaVdnwA6XqA14Mh3svTXuA246QtzyB8u8cQTHx23cF+4BaK1P/6WF9EdAAAAAElFTkSuQmCC") 15 15, auto',
             canvas_border_radius: props.canvas_border_radius || 0,
             canvas_wrapper_background_color: props.canvas_wrapper_background_color || "#ffffff",
-            canvas_wrapper_border_radius: props.canvas_wrapper_border_radius || 4,
+            canvas_wrapper_border_radius: props.canvas_wrapper_border_radius || 2,
             canvas_wrapper_padding: props.canvas_wrapper_padding || 72,
             show_original_image_in_background: typeof props.show_original_image_in_background === "undefined" ? true: props.show_original_image_in_background,
             show_transparent_image_in_background: typeof props.show_transparent_image_in_background === "undefined" ? true: props.show_transparent_image_in_background,
@@ -111,9 +117,8 @@ class CanvasPixels extends React.Component {
             _scale_move_timestamp: 0,
             _previous_scale_move_x: 0,
             _previous_scale_move_y: 0,
-            _previous_scale_move_timestamp: 0,
             _moves_speeds: [],
-            _moves_speed_average_now: 1,
+            _moves_speed_average_now: -2,
             mine_player_direction: props.mine_player_direction || "UP",
             _mine_index: null,
             _previous_mine_player_index: null,
@@ -158,6 +163,7 @@ class CanvasPixels extends React.Component {
             _select_shape_index_b: -1,
             _pxl_indexes_of_old_shape: new Set(),
             _pxl_indexes_of_selection: new Set(),
+            _previous_pxl_indexes_of_selection: new Set(),
             _pxl_indexes_of_selection_drawn: new Set(),
             _imported_image_previous_start_x: 0,
             _imported_image_previous_start_y: 0,
@@ -212,7 +218,8 @@ class CanvasPixels extends React.Component {
             _canvas_container_width: 0, 
             _canvas_container_height: 0,
             _updated_at: Date.now(),
-            _screen_zoom_ratio: 1
+            _screen_zoom_ratio: 1,
+            _notified_position_at: 0,
         };
     };
 
@@ -223,12 +230,12 @@ class CanvasPixels extends React.Component {
         }, 250);
 
         setInterval(() => {
-            this.set_move_speed_average_now();
-        }, 200);
+            this._notify_fps();
+        }, 999 / 3);
 
         setInterval(() => {
             this._maybe_update_mine_player();
-        }, 1000 / 29.97);
+        }, 1000 / 30);
 
         setInterval(() => {
             this._maybe_update_selection_highlight();
@@ -256,7 +263,7 @@ class CanvasPixels extends React.Component {
 
         const canvas_wrapper_css =
             ".Canvas-Wrapper {"+
-                "transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1) 50ms;"+
+                "transition: box-shadow 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;"+
             "}"+
             ".Canvas-Wrapper.MOVE:not(.Canvas-Focused), .Canvas-Wrapper.PICKER:not(.Canvas-Focused) {"+
                 "cursor: grab;"+
@@ -391,6 +398,8 @@ class CanvasPixels extends React.Component {
         if(this.state.pxl_width !== new_props.pxl_width || this.state.pxl_height !== new_props.pxl_height) {
 
             this.setState({
+                pxl_width: new_props.pxl_width,
+                pxl_height: new_props.pxl_height,
                 _pxl_indexes_of_selection: new Set(),
                 _layers: [{id: Date.now(), name: "Layer 0", hidden: false, opacity: 1, data: {}}],
                 _layer_index: 0,
@@ -398,9 +407,14 @@ class CanvasPixels extends React.Component {
                 _old_pxls: new Array(new_props.pxl_width * new_props.pxl_height).fill(0),
                 _s_pxl_colors: [["#00000000"]],
                 _old_pxl_colors: ["#00000000"],
+                _moves_speed_average_now: 6,
             }, () => {
 
-                this._update_screen_zoom_ratio();
+                this._request_force_update(() => {
+
+                    this._update_screen_zoom_ratio(true);
+                    this.set_move_speed_average_now();
+                });
             });
         }
 
@@ -460,27 +474,21 @@ class CanvasPixels extends React.Component {
             let new_scale_move_x = (scale_move_x - (pos_x_in_canvas_container * ratio)) * ratio2 + move_x;
             let new_scale_move_y = (scale_move_y - (pos_y_in_canvas_container * ratio)) * ratio2 + move_y;
 
-            this.setState({
-                scale: new_scale,
-                _moves_speed_average_now: of !== 1 ? 6: this.state._moves_speed_average_now,
-            }, () => {
+            let { _canvas_wrapper } = this.state;
 
-                let { _canvas_wrapper } = this.state;
+            const for_middle_x = (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
+            const for_middle_y = (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
 
-                const for_middle_x = (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
-                const for_middle_y = (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
+            const scale_move_x_max = -128 + _canvas_container.clientWidth - (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
+            const scale_move_y_max = -128 + _canvas_container.clientHeight - (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
 
-                const scale_move_x_max = -128 + _canvas_container.clientWidth - (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
-                const scale_move_y_max = -128 + _canvas_container.clientHeight - (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
+            new_scale_move_y -= for_middle_y;
+            new_scale_move_x -= for_middle_x;
 
-                new_scale_move_y -= for_middle_y;
-                new_scale_move_x -= for_middle_x;
+            let new_scale_move_x_rigged = (Math.min(Math.abs(new_scale_move_x), scale_move_x_max)) * (new_scale_move_x < 0 ? -1: 1) + for_middle_x;
+            let new_scale_move_y_rigged = (Math.min(Math.abs(new_scale_move_y), scale_move_y_max)) * (new_scale_move_y < 0 ? -1: 1) + for_middle_y;
 
-                let new_scale_move_x_rigged = (Math.min(Math.abs(new_scale_move_x), scale_move_x_max)) * (new_scale_move_x < 0 ? -1: 1) + for_middle_x;
-                let new_scale_move_y_rigged = (Math.min(Math.abs(new_scale_move_y), scale_move_y_max)) * (new_scale_move_y < 0 ? -1: 1) + for_middle_y;
-
-                this._set_moves(new_scale_move_x_rigged, new_scale_move_y_rigged);
-            });
+            this._set_moves(new_scale_move_x_rigged, new_scale_move_y_rigged, new_scale);
         }
     };
 
@@ -1310,7 +1318,7 @@ class CanvasPixels extends React.Component {
 
         setTimeout(() => {
 
-            const { default_size, max_size, color_loss, _base64_original_images, _original_image_index } = this.state;
+            const { default_size, max_size, ideal_size, _base64_original_images, _original_image_index } = this.state;
 
             // Draw the original image in an invisible canvas
             let width = image_obj.width;
@@ -1322,10 +1330,10 @@ class CanvasPixels extends React.Component {
             const image_data = canvas_ctx.getImageData(0, 0, width, height);
 
             // From the result in colors and pixels color index find if the image is resized bigger but from a pixelart image
-            const merge_color_threshold = 3/16;
+            const merge_color_threshold = 4/16;
             let { new_pxl_colors, new_pxls, ratio_pixel_per_color, too_much_pixel_cpu_would_go_brrrrr } = this._get_pixels_palette_and_list_from_image_data(image_data, false, (256 - 256 / (merge_color_threshold * 256)) / 256);
             const base64_original_image = new_pxl_colors.indexOf("#00000000") !== -1 ? canvas.toDataURL("image/png"): canvas.toDataURL("image/jpeg");
-            [ new_pxls, new_pxl_colors ] = this._remove_close_pxl_colors(new_pxls, new_pxl_colors, 3/16);
+            [ new_pxls, new_pxl_colors ] = this._remove_close_pxl_colors(new_pxls, new_pxl_colors, 4/16);
             ratio_pixel_per_color = new_pxls.length / new_pxl_colors.length;
 
             let a_better_scale = 1;
@@ -1367,7 +1375,7 @@ class CanvasPixels extends React.Component {
                 let most_frequent_following_repetition_number_in_px_with_bonus = 1;
                 let most_frequent_following_occurrence = 1;
                 let most_frequent_following_repetition_number = 1;
-                const ideal_size_percent_of_than_real_size = Math.sqrt((width * height) / (default_size * default_size));
+                const ideal_size_percent_of_than_real_size = Math.sqrt((width * height) / (ideal_size * ideal_size));
                 const occurrence_is_probably_lower_than = 32;
 
                 Object.entries(occ_list).forEach((value, index) => {
@@ -1480,11 +1488,12 @@ class CanvasPixels extends React.Component {
                 (ratio_pixel_per_color > 3 * 3 * Math.sqrt(a_better_scale_size) && a_better_scale_size <= (default_size * default_size) * 3) ||
                 (ratio_pixel_per_color > 2 * 2 * Math.sqrt(a_better_scale_size) && a_better_scale_size <= (default_size * default_size) * 2) ||
                 (ratio_pixel_per_color > 1 * 1 * Math.sqrt(a_better_scale_size) && a_better_scale_size <= (default_size * default_size) * 1);
-            const is_big_enough = a_better_scale_size > new_pxl_colors.length;
+            const is_less_color_enough = a_better_scale_size > new_pxl_colors.length;
+            const is_small_enough = a_better_scale_size < max_size * max_size;
 
             let is_crop_necessary = false;
 
-            if(!is_low_color_number_xor_small_enough && !enough_sure || !is_big_enough) { // The image must be lowered
+            if(!is_low_color_number_xor_small_enough && !enough_sure || (!is_small_enough || !is_less_color_enough)) { // The image must be lowered
 
                 let scale = 1;
 
@@ -1530,6 +1539,7 @@ class CanvasPixels extends React.Component {
                 height = Math.floor(cropped_height);
 
                 [canvas_resized_ctx] = this._get_new_ctx_from_canvas(width, height, true);
+
                 canvas_resized_ctx.drawImage(image_obj, sx, sy, sw, sh, 0, 0, width, height);
 
             }else {
@@ -1646,27 +1656,35 @@ class CanvasPixels extends React.Component {
         this.setState({_canvas_wrapper_overflow: element});
     };
 
-    _to_canvas_middle = () => {
+    _to_canvas_middle = (set_default_state = true, scale = null) => {
 
         const {_canvas_container, _canvas_wrapper, default_scale} = this.state;
+        scale = scale !== null ? scale: set_default_state ? default_scale: this.state.scale;
 
         if(_canvas_container && _canvas_wrapper) {
 
-            const for_middle_x = (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
-            const for_middle_y = (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
+            this.setState({scale}, () => {
 
-            this.setState({
-                scale_move_x: for_middle_x,
-                scale_move_y: for_middle_y,
-                _scale_move_timestamp: 0,
-                _previous_scale_move_x: for_middle_x,
-                _previous_scale_move_y: for_middle_y,
-                _previous_scale_move_timestamp: 0,
-                scale: default_scale,
-                _moves_speed_average_now: 6,
-            }, () => {
+                this._request_force_update(() => {
 
-                this._request_force_update();
+                    const rect = _canvas_wrapper.getBoundingClientRect();
+                    const for_middle_x = (_canvas_container.clientWidth - rect.width) / 2;
+                    const for_middle_y = (_canvas_container.clientHeight - rect.height) / 2;
+
+                    this.setState({
+                        scale_move_x: for_middle_x,
+                        scale_move_y: for_middle_y,
+                        _previous_scale_move_x: this.state.scale_move_x,
+                        _previous_scale_move_y: this.state.scale_move_y,
+                        _moves_speed_average_now: 8,
+                    }, () => {
+
+                        this._request_force_update(() => {
+
+                            this.set_move_speed_average_now();
+                        });
+                    });
+                });
             });
         }
     };
@@ -1800,6 +1818,11 @@ class CanvasPixels extends React.Component {
 
         event.stopPropagation();
         event.preventDefault();
+
+        this.setState({_mouse_down: true}, () => {
+
+            this._request_force_update();
+        });
 
         const { hide_canvas_content, tool, pxl_width, pxl_height, pxl_current_color, pxl_current_opacity, bucket_threshold, select_mode } = this.state;
         event_which = event_which !== null ? event_which: event.which;
@@ -2768,7 +2791,7 @@ class CanvasPixels extends React.Component {
 
     _handle_canvas_container_wheel = (event) => {
 
-        let { scale, scale_move_x, scale_move_y, _canvas_wrapper, _canvas_wrapper_overflow, _canvas_container } = this.state;
+        let { scale, scale_move_x, scale_move_y, _canvas_container } = this.state;
         let _canvas_container_rect = _canvas_container.getBoundingClientRect();
 
         event.preventDefault();
@@ -2776,7 +2799,6 @@ class CanvasPixels extends React.Component {
         delta = event.deltaY * -0.01 > 0 ? delta: -delta;
 
         const scale_change_ratio_on_one = Math.pow(scale < 1 ? 1 / scale: scale, 1.5);
-
         let new_scale = scale + delta * scale * ( 0.75 / scale_change_ratio_on_one );
 
         if(!(new_scale > 6) && !(new_scale < 1/6)) {
@@ -2790,27 +2812,27 @@ class CanvasPixels extends React.Component {
             let new_scale_move_x = (scale_move_x - (pos_x_in_canvas_container * ratio)) * ratio2;
             let new_scale_move_y = (scale_move_y - (pos_y_in_canvas_container * ratio)) * ratio2;
 
-            this.setState({
-                scale: new_scale,
-                _moves_speed_average_now: 6,
-            }, () => {
+            let { _canvas_wrapper } = this.state;
 
-                let { _canvas_wrapper } = this.state;
+            const for_middle_x = (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
+            const for_middle_y = (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
 
-                const for_middle_x = (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
-                const for_middle_y = (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
+            const scale_move_x_max = -128 + _canvas_container.clientWidth - (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
+            const scale_move_y_max = -128 + _canvas_container.clientHeight - (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
 
-                const scale_move_x_max = -128 + _canvas_container.clientWidth - (_canvas_container.clientWidth - _canvas_wrapper.offsetWidth) / 2;
-                const scale_move_y_max = -128 + _canvas_container.clientHeight - (_canvas_container.clientHeight - _canvas_wrapper.offsetHeight) / 2;
+            new_scale_move_y -= for_middle_y;
+            new_scale_move_x -= for_middle_x;
 
-                new_scale_move_y -= for_middle_y;
-                new_scale_move_x -= for_middle_x;
+            let new_scale_move_x_rigged = (Math.min(Math.abs(new_scale_move_x), scale_move_x_max)) * (new_scale_move_x < 0 ? -1: 1) + for_middle_x;
+            let new_scale_move_y_rigged = (Math.min(Math.abs(new_scale_move_y), scale_move_y_max)) * (new_scale_move_y < 0 ? -1: 1) + for_middle_y;
 
-                let new_scale_move_x_rigged = (Math.min(Math.abs(new_scale_move_x), scale_move_x_max)) * (new_scale_move_x < 0 ? -1: 1) + for_middle_x;
-                let new_scale_move_y_rigged = (Math.min(Math.abs(new_scale_move_y), scale_move_y_max)) * (new_scale_move_y < 0 ? -1: 1) + for_middle_y;
+            if(event.ctrlKey === true && event.deltaY !== 0) {
 
-                this._set_moves(new_scale_move_x_rigged, new_scale_move_y_rigged);
-            });
+                this._to_canvas_middle(false, new_scale);
+            }else {
+
+               this._set_moves(new_scale_move_x_rigged, new_scale_move_y_rigged, new_scale);
+            }
         }
     };
 
@@ -2935,10 +2957,7 @@ class CanvasPixels extends React.Component {
 
         if(this.state._mouse_inside === true) {
 
-            this.setState({_mouse_inside: false}, () => {
-
-                this._request_force_update();
-            });
+            this.setState({_mouse_inside: false});
         }
 
         const { _pxls_hovered, tool } = this.state;
@@ -2962,8 +2981,8 @@ class CanvasPixels extends React.Component {
         if((event_which === 2) || ((tool === "MOVE") && (event_which === 1 || event_which === -1))) {
 
             const [from_x, from_y] = this.state._image_move_from;
-            const x_difference_px = -event.movementX //from_x - event.x;
-            const y_difference_px = -event.movementY  //from_y - event.y;
+            const x_difference_px = -event.movementX; //from_x - event.x;
+            const y_difference_px = -event.movementY; //from_y - event.y;
 
             const _image_move_from = [event.x, event.y];
 
@@ -2986,7 +3005,10 @@ class CanvasPixels extends React.Component {
 
             this.setState({_image_move_from}, () => {
 
-                this._set_moves(new_scale_move_x_rigged, new_scale_move_y_rigged);
+                this._request_force_update(() => {
+
+                    this._set_moves(new_scale_move_x_rigged, new_scale_move_y_rigged);
+                });
 
             });
         }
@@ -3065,12 +3087,9 @@ class CanvasPixels extends React.Component {
                         _is_on_resize_element,
                         _mouse_inside: true
                     }, () => {
+                        this._update_canvas();
+                        this._notify_position_change(event, {x:pos_x, y: pos_y});
 
-                        this._request_force_update(() => {
-
-                            this._update_canvas();
-                            this._notify_position_change(event, {x:pos_x, y: pos_y});
-                        });
                     });
                 }
 
@@ -3242,11 +3261,8 @@ class CanvasPixels extends React.Component {
                     _last_action_timestamp
                 }, () =>{
 
-                    this._request_force_update(() => {
-
-                        this._update_canvas();
-                        this._notify_position_change(event, {x:pos_x, y: pos_y});
-                    });
+                    this._update_canvas();
+                    this._notify_position_change(event, {x:pos_x, y: pos_y});
                 });
 
             }else if((tool === "SELECT PIXEL" || tool === "SELECT PIXEL PERFECT" || tool === "SELECT PATH") && event_which === 1 && _mouse_down) {
@@ -3338,12 +3354,9 @@ class CanvasPixels extends React.Component {
                     _paint_or_select_hover_actions_latest_index: pxl_index,
                     _last_action_timestamp}, () => {
 
-                    this._request_force_update(() => {
-
-                        this._update_canvas();
-                        this._notify_is_something_selected();
-                        this._notify_position_change(event, {x:pos_x, y: pos_y});
-                    });
+                    this._update_canvas();
+                    this._notify_is_something_selected();
+                    this._notify_position_change(event, {x:pos_x, y: pos_y});
                 });
 
             }else {
@@ -3359,11 +3372,8 @@ class CanvasPixels extends React.Component {
                     _paint_or_select_hover_pxl_indexes: new Set(),
                 }, () => {
 
-                    this._request_force_update(() => {
-
-                        this._update_canvas();
-                        this._notify_position_change(event, {x:pos_x, y: pos_y});
-                    });
+                    this._update_canvas();
+                    this._notify_position_change(event, {x:pos_x, y: pos_y});
                 });
 
             }
@@ -3387,6 +3397,11 @@ class CanvasPixels extends React.Component {
 
         let { _paint_or_select_hover_pxl_indexes, tool, _imported_image_pxls } = this.state;
 
+        this.setState({_mouse_down: false}, () => {
+
+            this._request_force_update();
+        });
+
         if(_imported_image_pxls.length > 0){
 
             this.setState({_imported_image_move_from: [-1, -1], _mouse_down: false});
@@ -3408,7 +3423,6 @@ class CanvasPixels extends React.Component {
             this.setState({
                 _s_pxls,
                 _s_pxl_colors,
-                _mouse_down: false,
                 _paint_or_select_hover_pxl_indexes: new Set(),
                 _last_action_timestamp: Date.now()
             }, () => {
@@ -3450,7 +3464,6 @@ class CanvasPixels extends React.Component {
 
             this.setState({
                 _pxl_indexes_of_selection,
-                _mouse_down: false,
                 _paint_or_select_hover_pxl_indexes: new Set(),
                 _last_action_timestamp: Date.now()
             }, () => {
@@ -3460,11 +3473,7 @@ class CanvasPixels extends React.Component {
             });
 
 
-        }else {
-
-            this.setState({_mouse_down: false});
         }
-
     };
 
     _blend_colors(color_a, color_b, amount = 1, should_return_transparent = false) {
@@ -3548,7 +3557,7 @@ class CanvasPixels extends React.Component {
 
         if(_last_paint_timestamp < Date.now()) {
 
-            window.animLoop(() => {
+            window.anim_loop(() => {
 
                 // Importing state variables
                 let { _canvas } = this.state;
@@ -4018,6 +4027,16 @@ class CanvasPixels extends React.Component {
         ];
     };
 
+    _notify_fps = () => {
+
+        if(this.props.on_fps_change) {
+
+            let fps = Math.round(previous_cpaf_fps);
+            fps = Date.now() - window.last_raf_time >= 999 / 3 ? 0: fps;
+            this.props.on_fps_change(fps);
+        }
+    };
+
     _maybe_save_state = (save_pending_data) => {
 
         const { pxl_width, pxl_height, _s_pxls, _original_image_index, _s_pxl_colors, _layers, _layer_index, _pxl_indexes_of_selection, _last_action_timestamp, _json_state_history, _state_history_length, _undo_buffer_time_ms, _pencil_mirror_index } = this.state;
@@ -4096,16 +4115,29 @@ class CanvasPixels extends React.Component {
         }
     };
 
-    _notify_position_change = (event, position) => {
+    _notify_position_change = (event, position, date = null) => {
 
         if(this.props.onPositionChange) {
 
-            position = {
-                x: typeof position.x === "undefined" ? -1: position.x,
-                y: typeof position.y === "undefined" ? -1: position.y,
-            };
+            const { _notified_position_at } = this.state;
+            const now = Date.now();
 
-            this.props.onPositionChange(position);
+            if((now - _notified_position_at >= 100 && date === null) || date > _notified_position_at && now - date >= 100) {
+
+                position = {
+                    x: typeof position.x === "undefined" ? -1: position.x,
+                    y: typeof position.y === "undefined" ? -1: position.y,
+                };
+
+                this.props.onPositionChange(position);
+                this.setState({_notified_position_at: now});
+            }else if(now < date + 101){
+
+                setTimeout(() => {
+
+                    this._notify_position_change(null, {x: position.x, y: position.y}, now);
+                }, 25);
+            }
         }
     };
 
@@ -4124,9 +4156,20 @@ class CanvasPixels extends React.Component {
 
         const { _pxl_indexes_of_selection } = this.state;
 
-        if(this.props.onSomethingSelectedChange) {
+        if(Boolean(this.state._previous_pxl_indexes_of_selection.size) !== Boolean(_pxl_indexes_of_selection.size)) {
 
-            this.props.onSomethingSelectedChange(Boolean(_pxl_indexes_of_selection.size));
+            this.setState({
+                _is_something_selected: Boolean(_pxl_indexes_of_selection.size),
+                _previous_pxl_indexes_of_selection: new Set([..._pxl_indexes_of_selection])
+            }, () => {
+
+                if(this.props.onSomethingSelectedChange) {
+
+                    this.props.onSomethingSelectedChange(Boolean(_pxl_indexes_of_selection.size));
+                }
+
+                this._request_force_update(() => {});
+            });
         }
     };
 
@@ -4182,6 +4225,7 @@ class CanvasPixels extends React.Component {
             history_position--;
             const { _original_image_index, pxl_width, pxl_height, _pxl_indexes_of_selection, _s_pxl_colors, _s_pxls, _layers, _layer_index, _pencil_mirror_index } = state_history[history_position];;
             const new_json_state_history = JSON.stringify({state_history, history_position, previous_history_position});
+            const has_new_dimension = Boolean(pxl_width !== this.state.pxl_width || pxl_height !== this.state.pxl_height);
 
             this.setState({
                 _original_image_index: - 1,
@@ -4201,7 +4245,11 @@ class CanvasPixels extends React.Component {
                 this._request_force_update(() =>{
 
                     this.setState({_original_image_index});
-                    this._notify_size_change();
+
+                    if(has_new_dimension) {
+
+                        this._notify_size_change();
+                    }
                     this._notify_layers_and_compute_thumbnails_change();
                     this._notify_can_undo_redo_change();
                     this._notify_is_something_selected();
@@ -4233,6 +4281,7 @@ class CanvasPixels extends React.Component {
             const { _original_image_index, pxl_width, pxl_height, _pxl_indexes_of_selection, _s_pxl_colors, _s_pxls, _layers, _layer_index, _pencil_mirror_index } = state_history[history_position];
 
             const new_json_state_history = JSON.stringify({state_history, history_position, previous_history_position});
+            const has_new_dimension = Boolean(pxl_width !== this.state.pxl_width || pxl_height !== this.state.pxl_height);
 
             this.setState({
                 _original_image_index: - 1,
@@ -4252,7 +4301,11 @@ class CanvasPixels extends React.Component {
                 this._request_force_update(() => {
 
                     this.setState({_original_image_index});
-                    this._notify_size_change();
+
+                    if(has_new_dimension) {
+
+                        this._notify_size_change();
+                    }
                     this._notify_layers_and_compute_thumbnails_change();
                     this._notify_can_undo_redo_change();
                     this._notify_is_something_selected();
@@ -5136,11 +5189,9 @@ class CanvasPixels extends React.Component {
                 _pxl_indexes_of_selection: new_pxl_indexes_of_selection,
                 _s_pxls: ns_pxls,
                 _last_action_timestamp: Date.now(),
-                _is_there_new_dimension: true,
                 _imported_image_pxls
             }, () => {
 
-                this._update_screen_zoom_ratio();
                 this._update_canvas();
             });
         }
@@ -6254,7 +6305,9 @@ class CanvasPixels extends React.Component {
         return cursor;
     };
 
-    _set_moves = (new_scale_move_x, new_scale_move_y, new_scale_move_timestamp = Date.now()) => {
+    _set_moves = (new_scale_move_x, new_scale_move_y,  new_scale = null) => {
+
+        let new_scale_move_timestamp = Date.now();
 
         const {
             scale_move_x,
@@ -6266,8 +6319,8 @@ class CanvasPixels extends React.Component {
         const time_difference_moves = new_scale_move_timestamp - _scale_move_timestamp;
         const x_diff = scale_move_x - new_scale_move_x;
         const y_diff = scale_move_y - new_scale_move_y;
-        const space_difference_moves = Math.sqrt((x_diff * x_diff) + (y_diff * y_diff)) / scale;
-        const moves_speed = Math.min(Math.round((space_difference_moves / time_difference_moves) * 180), 240);
+        const space_difference_moves = Math.sqrt((x_diff * x_diff) + (y_diff * y_diff));
+        const moves_speed = Math.min(Math.round((space_difference_moves / time_difference_moves) * 200), 200);
 
         let { _moves_speeds } = this.state;
         _moves_speeds.push(moves_speed);
@@ -6277,23 +6330,29 @@ class CanvasPixels extends React.Component {
             _moves_speeds.shift();
         }
 
-        const _moves_speed_average =  [..._moves_speeds].slice(-15).reduce((p,c,i,a) => p+(c/a.length), 0);
+        let _moves_speed_average =  [..._moves_speeds].slice(-15).reduce((p,c,i,a) => p+(c/a.length), 0);
+        _moves_speed_average = Math.max(1, Math.round(Math.floor(_moves_speed_average * 8/200 )))
 
         this.setState({
+            scale: new_scale === null ? scale: new_scale,
             scale_move_x: new_scale_move_x,
             scale_move_y: new_scale_move_y,
-            _scale_move_timestamp: new_scale_move_timestamp,
+            _scale_move_timestamp: Date.now(),
             _moves_speeds: [..._moves_speeds],
-            _moves_speed_average: Math.max(1, Math.round(Math.ceil(_moves_speed_average / 10) / 4)),
+            _moves_speed_average_now: (new_scale !== null && new_scale > scale) ? 8: (new_scale !== null && new_scale < scale) ? 0: _moves_speed_average,
         }, () => {
 
-            this._request_force_update();
+
+            this._request_force_update(() => {
+
+                this.set_move_speed_average_now();
+            });
         });
     };
 
     _request_force_update = (callback_function = () => {}) => {
 
-        window.animLoop(() => {
+        window.anim_loop(() => {
 
             this.forceUpdate(() => {
                 callback_function();
@@ -6304,12 +6363,26 @@ class CanvasPixels extends React.Component {
 
     set_move_speed_average_now = () => {
 
-        const { _moves_speed_average, _scale_move_timestamp } = this.state;
-        const _moves_speed_average_now = Math.max(Math.round(_moves_speed_average - (120 + (Date.now() - _scale_move_timestamp)) / 120), 1) || 1;
+        const { _scale_move_timestamp } = this.state;
+        let { _moves_speed_average_now } = this.state
 
-        this.setState({_moves_speed_average_now}, () => {
+        _moves_speed_average_now = Math.max((_moves_speed_average_now - Math.floor(( Date.now() - _scale_move_timestamp) / 60)), -2);
 
-            this._request_force_update();
+        this.setState({
+            _moves_speed_average_now,
+            _scale_move_timestamp: _moves_speed_average_now !== this.state._moves_speed_average_now ? Date.now(): this.state._scale_move_timestamp,
+        }, () => {
+
+            this._request_force_update(() => {
+
+                if(_moves_speed_average_now > -2) {
+
+                    setTimeout(() => {
+
+                        this.set_move_speed_average_now();
+                    }, 60);
+                }
+            });
         });
     }
 
@@ -6341,15 +6414,10 @@ class CanvasPixels extends React.Component {
 
                 if(align_center_middle) {
 
-                    this._request_force_update(() => {
-
-                        this._to_canvas_middle();
-                    });
+                    this._to_canvas_middle();
                 }
-
             });
         });
-
     };
 
     render() {
@@ -6387,10 +6455,16 @@ class CanvasPixels extends React.Component {
             show_transparent_image_in_background ?
                 {
                     background: `repeating-conic-gradient(rgb(96 96 96 / 12%) 0% 25%, transparent 0% 50%) 50% / calc(200% / ${pxl_width}) calc(200% / ${pxl_height})`,
+                    backgroundPosition: "left top",
                 }: {};
 
         const cursor = this._get_cursor(_is_on_resize_element, _is_image_import_mode, _mouse_down, tool, select_mode);
-        const shadow = this._get_shadow(_moves_speed_average_now * 4);
+
+        let shadow_depth = Math.abs(_moves_speed_average_now);
+        shadow_depth = (_mouse_inside && _mouse_down && _moves_speed_average_now === -2) ? 1 : shadow_depth;
+        shadow_depth = (shadow_depth === 0) ? 0.75 : shadow_depth;
+
+        let shadow = this._get_shadow(Math.round(shadow_depth * 3));
 
         return (
             <div ref={this._set_canvas_container_ref} style={{boxSizing: "border-box", position: "relative", overflow: "hidden"}} className={className}>

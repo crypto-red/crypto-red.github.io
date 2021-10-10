@@ -150,6 +150,8 @@ const styles = theme => ({
     },
     swipeableDrawerPaper: {
         maxWidth: "100%",
+        overscrollBehavior: "none",
+        touchAction: "none",
     },
     drawerContainer: {
         overflowY: "overlay",
@@ -254,8 +256,8 @@ class Pixel extends React.Component {
             _loading: false,
             _can_undo: false,
             _can_redo: false,
-            _current_color: "#ffffff",
-            _second_color: "#000000",
+            _current_color: "#ffffffff",
+            _second_color: "#000000ff",
             _pxl_current_opacity: 1,
             _width: 32,
             _height: 32,
@@ -280,6 +282,8 @@ class Pixel extends React.Component {
             _mine_player_direction: "UP",
             _is_edit_drawer_open: false,
             _kb: 0,
+            _fps: 0,
+            _prev_fps: 0,
             _sfx_enabled: false,
             _menu_mouse_y: null,
             _menu_mouse_x: null,
@@ -645,6 +649,11 @@ class Pixel extends React.Component {
         this.setState({_kb: kb});
     };
 
+    _handle_fps_change = (fps) => {
+
+        this.setState({_fps: fps, _prev_fps: this.state._fps});
+    };
+
     _handle_size_change = (_width, _height) => {
 
         this.setState({_width, _height})
@@ -859,7 +868,7 @@ class Pixel extends React.Component {
             _filters,
             _select_mode,
             _pencil_mirror_mode,
-            _x, _y, _kb,
+            _x, _y, _kb, _fps, _prev_fps,
             _is_something_selected,
             _mine_player_direction,
             _is_edit_drawer_open,
@@ -876,7 +885,8 @@ class Pixel extends React.Component {
                 <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
                     <div className={classes.drawerHeader}>
                         <span className={classes.coordinate}>
-                            <span>{`X: ${_x+1}, Y: ${_y+1} `}</span>
+                            <span>{`FPS: ${Math.round((_fps + _prev_fps) / 2)}`}</span>
+                            <span>{` | X: ${_x+1}, Y: ${_y+1} | `}</span>
                             <span className={_kb < 64 ? classes.green: classes.red}>{`[~${Math.round(_kb * 100) / 100} kB]`}</span>
                         </span>
                         <Typography id="strength-slider" gutterBottom>
@@ -1110,7 +1120,7 @@ class Pixel extends React.Component {
                 </Grow>
                 <div className={classes.root}>
                     <div className={classes.content}>
-                        <div className={classes.contentInner} style={{background: `linear-gradient(90deg, #f5f5f5 30px, transparent 1%) center, linear-gradient(#f5f5f5 30px, transparent 1%) center, #ddd`}}>
+                        <div className={classes.contentInner} style={{background: `linear-gradient(90deg, #f5f5f5 30px, transparent 1%) center, linear-gradient(#f5f5f5 30px, transparent 1%) center, #afafaf`}}>
                             <div className={classes.contentCanvas}>
                                 <CanvasPixels
                                     onContextMenu={(e) => {e.preventDefault()}}
@@ -1135,6 +1145,7 @@ class Pixel extends React.Component {
                                     onSomethingSelectedChange={this._handle_something_selected_change}
                                     onImageImportModeChange={this._handle_image_import_mode_change}
                                     on_kb_change={this._handle_kb_change}
+                                    on_fps_change={this._handle_fps_change}
                                     onPositionChange={this._handle_position_change}
                                     onLayersChange={this._handle_layers_change}
                                     onGameEnd={this._handle_game_end}
@@ -1146,6 +1157,7 @@ class Pixel extends React.Component {
                                     pxl_current_color={_current_color}
                                     convert_scale={1}
                                     default_size={128}
+                                    ideal_size={96}
                                     max_size={128*2}
                                     fast_drawing={true}
                                     px_per_px={1}/>
