@@ -359,9 +359,18 @@ class Pixel extends React.Component {
     _handle_view_name_change = (view_name_index, previous_name_index = null) => {
 
         const { _view_names } = this.state;
+        previous_name_index = previous_name_index === null ? this.state._view_name_index: previous_name_index;
 
         const _view_name = _view_names[view_name_index] || _view_names[0];
         const _view_name_index = _view_names.indexOf(_view_name) === -1 ? 0: _view_names.indexOf(_view_name);
+
+        if(previous_name_index > _view_name_index) {
+
+            actions.trigger_sfx("navigation_transition-left");
+        }else {
+
+            actions.trigger_sfx("navigation_transition-right");
+        }
 
         this.setState({_previous_view_name_index: previous_name_index || this.state._view_name_index, _view_name_index});
     };
@@ -400,36 +409,36 @@ class Pixel extends React.Component {
 
                     case 37:
 
-                        this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index: _view_name_index-1 < 0 ? _view_names.length-1: _view_name_index-1});
+                        this._handle_view_name_change(_view_name_index-1 < 0 ? _view_names.length-1: _view_name_index-1);
                         break;
                     case 39:
 
-                        this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index: _view_name_index+1 > _view_names.length-1 ? 0: _view_name_index+1});
+                        this._handle_view_name_change( _view_name_index+1 > _view_names.length-1 ? 0: _view_name_index+1);
                         break;
                 }
             }
 
             if(event.key === "1") {
 
-                this.setState({_view_name_index: 0});
+                this._handle_view_name_change(0);
             }else if(event.key === "2") {
 
-                this.setState({_view_name_index: 1});
+                this._handle_view_name_change(1);
             }else if(event.key === "3") {
 
-                this.setState({_view_name_index: 2});
+                this._handle_view_name_change(2);
             }else if(event.key === "4") {
 
-                this.setState({_view_name_index: 3});
+                this._handle_view_name_change(3);
             }else if(event.key === "5") {
 
-                this.setState({_view_name_index: 4});
+                this._handle_view_name_change(4);
             }else if(event.key === "6") {
 
-                this.setState({_view_name_index: 5});
+                this._handle_view_name_change(5);
             }else if(event.key === "7") {
 
-                this.setState({_view_name_index: 6});
+                this._handle_view_name_change(6);
             }else if(event.ctrlKey && event.key === "z") {
 
                 const { _canvas } = this.state;
@@ -511,21 +520,11 @@ class Pixel extends React.Component {
                 this._set_tool("SELECT COLOR");
             }else if(event.ctrlKey && event.key === "q") {
 
-                const { _canvas } = this.state;
-
-                let a = document.createElement("a"); //Create <a>
-                a.href = "" + _canvas.get_base64_png_data_url(1); //Image Base64 Goes here
-                a.download = "Image.png"; //File name Here
-                a.click();
+                this._download_image(1);
 
             }else if(event.ctrlKey && event.key === "s") {
 
-                const { _canvas } = this.state;
-
-                let a = document.createElement("a"); //Create <a>
-                a.href = "" + _canvas.get_base64_png_data_url(32); //Image Base64 Goes here
-                a.download = "Image.png"; //File name Here
-                a.click();
+                this._download_image(32);
 
             }else if(event.key === "Enter") {
 
@@ -558,6 +557,23 @@ class Pixel extends React.Component {
             }
 
         }
+    };
+
+    _download_image = (size) => {
+
+        const { _canvas } = this.state;
+
+        let a = document.createElement("a"); //Create <a>
+        a.href = "" + _canvas.get_base64_png_data_url(size); //Image Base64 Goes here
+        a.download = "Image.png"; //File name Here
+        a.click();
+
+        actions.trigger_sfx("hero_decorative-celebration-02");
+        setTimeout(() => {
+            actions.trigger_snackbar("Do You Want To Share? Yes or No", 6000);
+            actions.jamy_update("happy");
+        }, 2000);
+
     };
 
     _handle_keyup = (event) => {
@@ -691,6 +707,8 @@ class Pixel extends React.Component {
         const { _ripple } = this.state;
 
         if(event && _ripple) {
+
+            actions.trigger_sfx("navigation_selection-complete-celebration");
 
             this.setState({_ripple_color: color, _ripple_opacity: 1}, () => {
                 _ripple.start(event);
@@ -984,6 +1002,7 @@ class Pixel extends React.Component {
                         on_view_name_change={this._handle_view_name_change}
                         on_upload_image={this._upload_image}
                         on_import_image={this._import_image}
+                        on_download_image={this._download_image}
                     />
                 </div>
             </div>

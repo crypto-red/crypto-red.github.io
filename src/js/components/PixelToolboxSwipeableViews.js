@@ -273,11 +273,10 @@ class PixelToolboxSwipeableViews extends React.Component {
 
     _download_png = (scale) => {
 
-        const { canvas } = this.state;
-        let a = document.createElement("a"); //Create <a>
-        a.href = "" + canvas.get_base64_png_data_url(scale); //Image Base64 Goes here
-        a.download = "Image.png"; //File name Here
-        a.click();
+        if(this.props.on_download_image) {
+
+            this.props.on_download_image(scale);
+        }
     };
 
     _less_colors_stepped = (increase = 1) => {

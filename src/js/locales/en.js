@@ -576,9 +576,9 @@ module.exports = {
             "text_field": "QR code value"
         },
         "share_dialog": {
-            "title": "Share",
+            "title": "Do you want to share?",
             "url": "Url",
-            "thanks_for_sharing": "Yes thanks for sharing"
+            "thanks_for_sharing": "Yes thanks for using it!"
         },
         "transaction": {
             "unconfirmed": "(Unconfirmed)",

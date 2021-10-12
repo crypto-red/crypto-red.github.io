@@ -5,9 +5,9 @@ const palette = {
         main: "#060e23",
         dark: "#060e23",
         darker: "#01071b",
-        action: "#1c1882",
+        action: "#3729c1",
         actionRed: "#440202",
-        actionLighter: "#2823ad",
+        actionLighter: "#4133c3",
         actionRedLighter: "#4e0d0d",
         actionDarker: "#100d4e",
         contrastText: "#ffffff"

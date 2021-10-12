@@ -289,8 +289,16 @@ class CanvasPixels extends React.Component {
             _notified_position_at: 0,
             _event_button: -1,
             _force_updated_timestamp: 0,
+            _canvas_event_target: "CANVAS_WRAPPER_OVERFLOW"
         };
     };
+
+    sleep_for(sleep_duration) {
+        let now = new Date().getTime();
+        while(new Date().getTime() < now + sleep_duration){
+            /* Do nothing */
+        }
+    }
 
     componentDidMount() {
 
@@ -1401,7 +1409,7 @@ class CanvasPixels extends React.Component {
             const merge_color_threshold = 4/16;
             let { new_pxl_colors, new_pxls, ratio_pixel_per_color, too_much_pixel_cpu_would_go_brrrrr } = this._get_pixels_palette_and_list_from_image_data(image_data, false, (256 - 256 / (merge_color_threshold * 256)) / 256);
             const base64_original_image = new_pxl_colors.indexOf("#00000000") !== -1 ? canvas.toDataURL("image/png"): canvas.toDataURL("image/jpeg");
-            [ new_pxls, new_pxl_colors ] = this._remove_close_pxl_colors(new_pxls, new_pxl_colors, 4/16);
+            [ new_pxls, new_pxl_colors ] = this._remove_close_pxl_colors(new_pxls, new_pxl_colors, 4/16, null, 0);
             ratio_pixel_per_color = new_pxls.length / new_pxl_colors.length;
 
             let a_better_scale = 1;
@@ -2967,6 +2975,14 @@ class CanvasPixels extends React.Component {
 
         const canvas_event_target = this._get_canvas_event_target(event);
 
+        if(this.state._canvas_event_target !== canvas_event_target) {
+
+            this.setState({_canvas_event_target: canvas_event_target}, () => {
+
+                this._request_force_update(false);
+            });
+        }
+
         if(event.pointerType === "mouse") {
 
             this._handle_canvas_mouse_move(event, canvas_event_target);
@@ -2995,7 +3011,7 @@ class CanvasPixels extends React.Component {
         event.stopPropagation();
 
         const canvas_event_target = this._get_canvas_event_target(event);
-        let { _pointer_events } = this.state;
+        let { _pointer_events, _mouse_down } = this.state;
         _pointer_events.push(event);
 
         if(event.pointerType === "mouse") {
@@ -3010,7 +3026,10 @@ class CanvasPixels extends React.Component {
                 _pointer_events,
             }, ()  => {
 
-                this._request_force_update(true);
+                if(_mouse_down !== true) {
+
+                    this._request_force_update(false);
+                }
                 if(canvas_event_target === "CANVAS"){
 
                     this._handle_canvas_mouse_down(event, canvas_event_target);
@@ -3048,6 +3067,11 @@ class CanvasPixels extends React.Component {
                 _previous_initial_scale_move: [scale_move_x, scale_move_y],
                 _pointer_events
             }, ()  => {
+
+                if(_mouse_down !== true) {
+
+                    this._request_force_update(false);
+                }
 
                 this._handle_canvas_pointer_down(event, canvas_event_target);
             });
@@ -3618,7 +3642,7 @@ class CanvasPixels extends React.Component {
 
     _handle_canvas_mouse_up = (event) => {
 
-        const { scale_move_x, scale_move_y } = this.state;
+        const { scale_move_x, scale_move_y, _mouse_down } = this.state;
 
         this.setState({
             _event_button: -1,
@@ -3627,15 +3651,19 @@ class CanvasPixels extends React.Component {
             _previous_initial_scale_move: [scale_move_x, scale_move_y],
         }, () => {
 
+            if(_mouse_down !== false) {
+
+                this._request_force_update(false);
+            }
+
             this._update_canvas();
-            this._request_force_update(true);
         });
 
         let { _paint_or_select_hover_pxl_indexes, tool, _imported_image_pxls } = this.state;
 
         if(_imported_image_pxls.length > 0){
 
-            this.setState({_imported_image_move_from: [-1, -1], _mouse_down: false});
+            this.setState({_imported_image_move_from: [-1, -1]});
 
         }else if(_paint_or_select_hover_pxl_indexes.size > 0 && tool === "CONTOUR") {
 
@@ -6394,6 +6422,7 @@ class CanvasPixels extends React.Component {
                     }
                 });
 
+                this.sleep_for(50);
                 [ new_pxls, new_pxl_colors ] = this._remove_duplicate_pxl_colors(new_pxls, original_pxl_colors);
                 original_pxl_colors = new_pxl_colors;
             }
@@ -6410,7 +6439,6 @@ class CanvasPixels extends React.Component {
                 bucket_threshold_auto_goal_attempt.add(bucket_threshold_auto_goal_target);
                 bucket_threshold_auto_goal_target ++;
             }
-
         }
 
         return this._remove_duplicate_pxl_colors(pxls, pxl_colors);
@@ -6753,6 +6781,7 @@ class CanvasPixels extends React.Component {
             select_mode,
             _screen_zoom_ratio,
             _mouse_inside,
+            _canvas_event_target,
         } = this.state;
 
         const background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
@@ -6767,7 +6796,7 @@ class CanvasPixels extends React.Component {
         const cursor = this._get_cursor(_is_on_resize_element, _is_image_import_mode, _mouse_down, tool, select_mode);
 
         let shadow_depth = Math.abs(_moves_speed_average_now);
-        shadow_depth = (_mouse_inside && _mouse_down && _moves_speed_average_now === -2) ? 1 : shadow_depth;
+        shadow_depth = (_canvas_event_target === "CANVAS" && _mouse_down && _moves_speed_average_now < 2) ? 1 : shadow_depth;
         shadow_depth = (shadow_depth === 0) ? 0.75 : shadow_depth;
 
         let shadow = this._get_shadow(Math.round(shadow_depth * 3));
