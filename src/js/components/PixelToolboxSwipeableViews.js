@@ -12,6 +12,10 @@ import ImageFilterIcon from "../icons/ImageFilter";
 import SwipeableViews from "react-swipeable-views";
 import {Avatar, List, ListItem, ListItemAvatar, ListItemIcon, ListItemText, ListSubheader} from "@material-ui/core";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import RadioGroup from "@material-ui/core/RadioGroup";
+import Radio from "@material-ui/core/Radio";
+import FormLabel from "@material-ui/core/FormLabel";
 import Collapse from "@material-ui/core/Collapse";
 import Divider from "@material-ui/core/Divider";
 import PixelColorPalette from "./PixelColorPalette";
@@ -179,6 +183,8 @@ class PixelToolboxSwipeableViews extends React.Component {
             _anchor_el: null,
             _saturation: 60,
             _luminosity: 60,
+            _opacity: 100,
+            import_size: props.import_size,
         };
     };
 
@@ -211,6 +217,7 @@ class PixelToolboxSwipeableViews extends React.Component {
             select_mode,
             pencil_mirror_mode,
             is_something_selected,
+            import_size,
         } = this.state;
 
         if (
@@ -234,7 +241,8 @@ class PixelToolboxSwipeableViews extends React.Component {
             filters !== new_props.filters ||
             select_mode !== new_props.select_mode ||
             pencil_mirror_mode !== new_props.pencil_mirror_mode ||
-            is_something_selected !== new_props.is_something_selected
+            is_something_selected !== new_props.is_something_selected ||
+            import_size !== new_props.import_size
         ) {
 
             return true;
@@ -245,13 +253,13 @@ class PixelToolboxSwipeableViews extends React.Component {
 
     }
 
-    _hsl_to_hex = (h, s, l) => {
+    _hsla_to_hex = (h, s, l, a) => {
 
         const { canvas } = this.state;
 
         if(!canvas) { return "#00000000" }
 
-        return canvas._hsl_to_hex(h, s, l);
+        return canvas._hsla_to_hex(h, s, l, a);
     };
 
     _rgba_from_hex = (hex) => {
@@ -360,6 +368,14 @@ class PixelToolboxSwipeableViews extends React.Component {
         });
     };
 
+    _set_opacity_from_slider = (event, value) => {
+
+        this.setState({_opacity: value}, () => {
+
+            this.forceUpdate();
+        });
+    };
+
     _set_tool = (name) => {
 
         if(this.props.set_tool) {
@@ -429,6 +445,14 @@ class PixelToolboxSwipeableViews extends React.Component {
         if(this.props.set_height_from_slider) {
 
             this.props.set_height_from_slider(event, value);
+        }
+    };
+
+    _set_import_size = (event) => {
+
+        if(this.props.set_import_size) {
+
+            this.props.set_import_size(event);
         }
     };
 
@@ -502,9 +526,11 @@ class PixelToolboxSwipeableViews extends React.Component {
             is_something_selected,
             _saturation,
             _luminosity,
+            _opacity,
             _layer_opened,
             default_width,
             default_height,
+            import_size,
         } = this.state;
 
         const actions = {
@@ -525,13 +551,6 @@ class PixelToolboxSwipeableViews extends React.Component {
                     tools: [
                         {icon: <ArrowBackIcon />, disabled: !can_undo ,text: "Undo", sub: "[CTRL + Z]", on_click: () => {canvas.undo()}},
                         {icon: <ArrowForwardIcon />, disabled: !can_redo , text: "Redo", sub: "[CTRL + Y]", on_click: () => {canvas.redo()}},
-                    ]
-                },
-                {
-                    icon: <ImportIcon />,
-                    text: "Upload",
-                    tools: [
-                        {icon: <ImagePlusIcon />, text: "Open image", sub: "[CTRL + O]", on_click: () => {this._upload_image()}},
                     ]
                 },
                 {
@@ -696,7 +715,7 @@ class PixelToolboxSwipeableViews extends React.Component {
         let colors = [];
         for (let i = 1; i <= 128; i++) {
 
-            colors.push(this._hsl_to_hex((i / 128) * 360, _saturation, _luminosity));
+            colors.push(this._hsla_to_hex((i / 128) * 360, _saturation, _luminosity, _opacity));
         }
 
         const [r_1, g_1, b_1] = current_color === "#ffffff" ? [196, 196, 196]: this._rgba_from_hex(current_color);
@@ -801,7 +820,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                 <ChromePicker className={classes.chromePicker}
                                                               color={ current_color }
                                                               onChange={ this._handle_current_color_change }
-                                                              disableAlpha />
+                                                              disableAlpha={false}/>
                                             </Menu>
 
                                             <div>
@@ -818,6 +837,9 @@ class PixelToolboxSwipeableViews extends React.Component {
                                             </div>
 
                                             <div style={{padding: "8px 24px", position: "relative", overflow: "hidden", boxSizing: "border-box"}}>
+                                                <Typography id="opacity-slider" gutterBottom>Opacity</Typography>
+                                                <Slider defaultValue={_opacity} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_opacity_from_slider} aria-labelledby="opacity-slider"/>
+
                                                 <Typography id="luminosity-slider" gutterBottom>Luminosity</Typography>
                                                 <Slider defaultValue={_luminosity} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_luminosity_from_slider} aria-labelledby="luminosity-slider"/>
 
@@ -869,10 +891,71 @@ class PixelToolboxSwipeableViews extends React.Component {
                                             </ListSubheader>
                                             <div style={{padding: "8px 24px", position: "relative", overflow: "hidden", boxSizing: "border-box"}}>
                                                 <Typography id="width-slider" gutterBottom>Width</Typography>
-                                                <Slider defaultValue={default_width} step={8} valueLabelDisplay="auto" min={0} max={256} onChangeCommitted={this._set_width_from_slider} aria-labelledby="width-slider"/>
+                                                <Slider value={width} step={8} valueLabelDisplay="auto" min={0} max={width > 256 ? width: 256} onChangeCommitted={this._set_width_from_slider} aria-labelledby="width-slider"/>
                                                 <Typography id="height-slider" gutterBottom>Height</Typography>
-                                                <Slider defaultValue={default_height} step={8} valueLabelDisplay="auto" min={0} max={256} onChangeCommitted={this._set_height_from_slider} aria-labelledby="height-slider"/>
+                                                <Slider value={height} step={8} valueLabelDisplay="auto" min={0} max={height > 256 ? height: 256} onChangeCommitted={this._set_height_from_slider} aria-labelledby="height-slider"/>
                                             </div>
+                                            <ListSubheader className={classes.listSubHeader}>
+                                                <span><ImportIcon /></span>
+                                                <span>Upload</span>
+                                            </ListSubheader>
+                                            <ListItem button divider onClick={() => {this._upload_image()}}>
+                                                <ListItemIcon className={classes.listItemIcon}>
+                                                    <ImagePlusIcon />
+                                                </ListItemIcon>
+                                                <ListItemText className={classes.ListItemText} primary={"Open image"} secondary={"[CTRL + O]"}/>
+                                            </ListItem>
+                                            <FormLabel style={{padding: "24px 0px 12px 24px"}} component="legend">Estimate final size</FormLabel>
+                                            <RadioGroup row name="Import size" onChange={this._set_import_size} value={import_size}>
+                                                <FormControlLabel
+                                                    value={"32"}
+                                                    control={<Radio color="primary" />}
+                                                    label="32px"
+                                                    labelPlacement="bottom"
+                                                />
+                                                <FormControlLabel
+                                                    value={"48"}
+                                                    control={<Radio color="primary" />}
+                                                    label="48px"
+                                                    labelPlacement="bottom"
+                                                />
+                                                <FormControlLabel
+                                                    value={"64"}
+                                                    control={<Radio color="primary" />}
+                                                    label="64px"
+                                                    labelPlacement="bottom"
+                                                />
+                                                <FormControlLabel
+                                                    value={"96"}
+                                                    control={<Radio color="primary" />}
+                                                    label="96px"
+                                                    labelPlacement="bottom"
+                                                />
+                                                <FormControlLabel
+                                                    value={"128"}
+                                                    control={<Radio color="primary" />}
+                                                    label="128px"
+                                                    labelPlacement="bottom"
+                                                />
+                                                <FormControlLabel
+                                                    value={"192"}
+                                                    control={<Radio color="primary" />}
+                                                    label="192px"
+                                                    labelPlacement="bottom"
+                                                />
+                                                <FormControlLabel
+                                                    value={"256"}
+                                                    control={<Radio color="primary" />}
+                                                    label="256px"
+                                                    labelPlacement="bottom"
+                                                />
+                                                <FormControlLabel
+                                                    value={"320"}
+                                                    control={<Radio color="primary" />}
+                                                    label="320px"
+                                                    labelPlacement="bottom"
+                                                />
+                                            </RadioGroup>
                                         </div>
                                         : null
                                 }

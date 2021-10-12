@@ -252,8 +252,8 @@ class Pixel extends React.Component {
         this.state = {
             classes: props.classes,
             _history: HISTORY,
-            _view_name_index: 0,
-            _previous_view_name_index: 0,
+            _view_name_index: 1,
+            _previous_view_name_index: 1,
             _view_names: ["palette", "image", "layers", "tools", "selection", "effects", "filters"],
             _canvas: null,
             _loading: false,
@@ -264,6 +264,7 @@ class Pixel extends React.Component {
             _pxl_current_opacity: 1,
             _width: 32,
             _height: 32,
+            _import_size: "96",
             _hue: 360,
             _slider_value: 8/32,
             _game_ended: false,
@@ -672,9 +673,13 @@ class Pixel extends React.Component {
 
     _handle_current_color_change = (color, event) => {
 
-        color = color.hex ? color.hex: color;
-
         const { _canvas, _ripple } = this.state;
+
+        if(typeof color.rgb !== "undefined") {
+
+            color = _canvas._get_hex_color_from_rgba_values(color.rgb.r, color.rgb.g, color.rgb.b, color.rgb.a * 255);
+        }
+
         const [r, g, b, a] = _canvas.get_rgba_from_hex(color);
         const [h, s, l] = _canvas.rgb_to_hsl(r, g, b);
 
@@ -716,6 +721,11 @@ class Pixel extends React.Component {
     _set_height_from_slider = (event, value) => {
 
         this.setState({_height: value});
+    };
+
+    _set_import_size = (event) => {
+
+        this.setState({_import_size: event.target.value});
     };
 
     _set_tool = (name, remember = true) => {
@@ -871,6 +881,7 @@ class Pixel extends React.Component {
             _tool,
             _width,
             _height,
+            _import_size,
             _hue,
             _filters,
             _select_mode,
@@ -957,12 +968,14 @@ class Pixel extends React.Component {
                         select_mode={_select_mode}
                         pencil_mirror_mode={_pencil_mirror_mode}
                         is_something_selected={_is_something_selected}
+                        import_size={_import_size}
 
                         set_tool={this._set_tool}
                         set_select_mode={this._set_select_mode}
                         set_pencil_mirror_mode={this._set_pencil_mirror_mode}
                         set_width_from_slider={this._set_width_from_slider}
                         set_height_from_slider={this._set_height_from_slider}
+                        set_import_size={this._set_import_size}
                         switch_with_second_color={this._switch_with_second_color}
                         show_hide_canvas_content={this._show_hide_canvas_content}
                         show_hide_background_image={this._show_hide_background_image}
@@ -1185,9 +1198,9 @@ class Pixel extends React.Component {
                                     pxl_height={_height}
                                     pxl_current_color={_current_color}
                                     convert_scale={1}
-                                    default_size={128}
-                                    ideal_size={96}
-                                    max_size={128*2}
+                                    default_size={_import_size}
+                                    ideal_size={_import_size}
+                                    max_size={_import_size*2}
                                     fast_drawing={true}
                                     px_per_px={1}/>
                                 <TouchRipple

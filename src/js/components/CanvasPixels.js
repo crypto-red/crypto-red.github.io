@@ -2167,6 +2167,7 @@ class CanvasPixels extends React.Component {
                     _s_pxl_colors: ns_pxl_colors,
                     _paint_or_select_hover_pxl_indexes: new Set([pxl_index]),
                     _paint_or_select_hover_actions_latest_index: pxl_index,
+                    _paint_hover_old_pxls_snapshot: [...this.state._s_pxls[_layer_index]],
                     _last_action_timestamp: Date.now()
                 }, () => {
 
@@ -3289,7 +3290,6 @@ class CanvasPixels extends React.Component {
                         _imported_image_move_from,
                     }, () => {
 
-                        this._request_force_update( true);
                         this._update_canvas();
                         this._notify_position_change(event, {x:pos_x, y: pos_y});
                     });
@@ -3639,7 +3639,7 @@ class CanvasPixels extends React.Component {
 
         }else if(_paint_or_select_hover_pxl_indexes.size > 0 && tool === "CONTOUR") {
 
-            let { _s_pxls, _s_pxl_colors, _layer_index, pxl_current_color, pxl_current_opacity } = this.state;
+            let { _s_pxls, _s_pxl_colors, _layer_index, pxl_current_color, pxl_current_opacity, _paint_hover_old_pxls_snapshot } = this.state;
 
             const first_drawn_pixel = [..._paint_or_select_hover_pxl_indexes][0];
             const last_drawn_pixel = [..._paint_or_select_hover_pxl_indexes][_paint_or_select_hover_pxl_indexes.size-1];
@@ -3649,12 +3649,13 @@ class CanvasPixels extends React.Component {
 
             _paint_or_select_hover_pxl_indexes = [..._paint_or_select_hover_pxl_indexes, ...closing_path_line];
 
-            [_s_pxls[_layer_index], _s_pxl_colors[_layer_index]] = this._get_pixels_palette_and_list_from_path(_s_pxls[_layer_index], _paint_or_select_hover_pxl_indexes, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity);
+            [_s_pxls[_layer_index], _s_pxl_colors[_layer_index]] = this._get_pixels_palette_and_list_from_path(_paint_hover_old_pxls_snapshot, _paint_or_select_hover_pxl_indexes, _s_pxl_colors[_layer_index], pxl_current_color, pxl_current_opacity);
 
             this.setState({
                 _s_pxls,
                 _s_pxl_colors,
                 _paint_or_select_hover_pxl_indexes: new Set(),
+                _paint_hover_old_pxls_snapshot: [],
                 _last_action_timestamp: Date.now()
             }, () => {
 
@@ -3707,7 +3708,7 @@ class CanvasPixels extends React.Component {
         }
     };
 
-    _blend_colors(color_a, color_b, amount = 1, should_return_transparent = false) {
+    _blend_colors = (color_a, color_b, amount = 1, should_return_transparent = false, blend_alpha = true) => {
 
         amount = Math.min(Math.max(amount, 0), 1);
         color_a = this._format_color(color_a);
@@ -4044,7 +4045,7 @@ class CanvasPixels extends React.Component {
 
             }
 
-            _ctx.globalCompositeOperation = "source-out";
+            //_ctx.globalCompositeOperation = "source-out";
             let image_data = hide_canvas_content ?
                 new ImageData(pxl_width, pxl_height):
                 _ctx.getImageData(0, 0, pxl_width, pxl_height);
@@ -5278,6 +5279,14 @@ class CanvasPixels extends React.Component {
 
         const [r, g, b] = this._hsl_to_rgb(h, s, l);
         const hex = this._get_hex_color_from_rgba_values(r, g, b, 255);
+
+        return hex;
+    };
+
+    _hsla_to_hex = (h, s, l, a) => {
+
+        const [r, g, b] = this._hsl_to_rgb(h, s, l);
+        const hex = this._get_hex_color_from_rgba_values(r, g, b, 255 * (a / 100));
 
         return hex;
     };

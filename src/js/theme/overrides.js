@@ -65,6 +65,11 @@ const overrides = {
                         },
                     }
                 }
+            },
+            ".MuiFormGroup-row": {
+                flexWrap: "wrap",
+                alignContent: "stretch",
+                justifyContent: "space-between",
             }
         },
     },
