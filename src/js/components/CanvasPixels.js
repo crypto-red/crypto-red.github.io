@@ -37,16 +37,23 @@ let caf =
     window.webkitCancelAnimationFrame ||
     window.msCancelAnimationFrame;
 
-window.caf_id = null;
-window.last_raf_time = Date.now();
-window.previous_cpaf_fps = 0;
-window.cpaf_frames = 0;
-window.cpaf_timestamp = 0;
+let caf_id = null;
+let last_raf_time = Date.now();
+let previous_cpaf_fps = 0;
+let cpaf_frames = 0;
+
+window.mobileAndTabletCheck = function() {
+    let check = false;
+    (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino|android|ipad|playbook|silk/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4))) check = true;})(navigator.userAgent||navigator.vendor||window.opera);
+    return check;
+};
+
+let is_mobile_or_tablet = window.mobileAndTabletCheck();
 
 setInterval(function(){
 
-    window.previous_cpaf_fps = cpaf_frames * 4;
-    window.cpaf_frames = 0;
+    previous_cpaf_fps = cpaf_frames * 4;
+    cpaf_frames = 0;
 
 }, 250);
 
@@ -61,7 +68,7 @@ window.anim_loop = ( render, do_not_cancel_animation = false, force_update = fal
             let now = Date.now();
             let running_smoothly = true;
 
-            let deltaT = now - window.last_raf_time;
+            let deltaT = now - last_raf_time;
             // do not render frame when deltaT is too high
             if ( deltaT > 1000 / (skip_frame_rate * 2/3)) {
                 running_smoothly = false;
@@ -69,42 +76,42 @@ window.anim_loop = ( render, do_not_cancel_animation = false, force_update = fal
 
             if(force_update) {
 
-                caf(window.caf_id);
-                window.caf_id = null;
+                caf(caf_id);
+                caf_id = null;
 
                 if(do_not_cancel_animation) {
 
                     raf(render);
                 }else {
 
-                    window.caf_id = raf(render);
+                    caf_id = raf(render);
                 }
 
-                window.cpaf_frames++;
-                window.last_raf_time = now;
+                cpaf_frames++;
+                last_raf_time = now;
 
-            }else if ( window.caf_id === null) { // Best
+            }else if ( caf_id === null) { // Best
 
                 if(do_not_cancel_animation) {
 
                     raf(render);
                 }else {
 
-                    window.caf_id = raf(render);
+                    caf_id = raf(render);
                 }
-                window.last_raf_time = now;
-                window.cpaf_frames++;
+                last_raf_time = now;
+                cpaf_frames++;
 
             }else if(!running_smoothly && caf_id !== null && deltaT > 1000 / (skip_frame_rate * 6/3) ) { // Average
 
-                caf(window.caf_id);
-                window.caf_id = null;
-                window.last_raf_time = now;
+                caf(caf_id);
+                caf_id = null;
+                last_raf_time = now;
 
                 if(!do_not_cancel_animation) {
 
-                    window.caf_id = raf(render);
-                    window.cpaf_frames++;
+                    caf_id = raf(render);
+                    cpaf_frames++;
 
                 }else {
 
@@ -113,19 +120,19 @@ window.anim_loop = ( render, do_not_cancel_animation = false, force_update = fal
 
             }else if(!running_smoothly){ // Low
 
-                caf(window.caf_id);
-                window.caf_id = null;
+                caf(caf_id);
+                caf_id = null;
 
                 if(do_not_cancel_animation) {
 
                     raf(render);
                 }else {
 
-                    window.caf_id = raf(render);
+                    caf_id = raf(render);
                 }
 
-                window.cpaf_frames++;
-                window.last_raf_time = now;
+                cpaf_frames++;
+                last_raf_time = now;
 
             }else if(deltaT > 1000 / (skip_frame_rate * 1/3 || force_update)){
 
@@ -3779,7 +3786,7 @@ class CanvasPixels extends React.Component {
         // Potentially cancel the latest animation frame (Clear old) and then request a new one that will maybe be rendered
         const { _last_paint_timestamp } = this.state;
 
-        force_update = force_update || _last_paint_timestamp + 1000 / 1000 < Date.now();
+        force_update = force_update || (_last_paint_timestamp + 1000 / 1000 < Date.now() && !is_mobile_or_tablet);
 
         // Importing state variables
         let { _canvas } = this.state;
@@ -4255,7 +4262,7 @@ class CanvasPixels extends React.Component {
 
         if(this.props.on_fps_change) {
 
-            let fps = Math.round(window.previous_cpaf_fps);
+            let fps = Math.round(previous_cpaf_fps);
             this.props.on_fps_change(fps);
         }
     };
@@ -6635,7 +6642,7 @@ class CanvasPixels extends React.Component {
         const {_force_updated_timestamp  } = this.state;
         const now = Date.now();
 
-        const ago = can_be_cancelable ? 1000 / 1000: 1000 / 1;
+        const ago = can_be_cancelable ? !is_mobile_or_tablet ? 1000 / 1000: 1000 / 1: 1000 / 1;
         let force_update = (_force_updated_timestamp < now - ago || !can_be_cancelable);
 
             this.setState({_force_updated_timestamp: now}, () => {
@@ -6644,7 +6651,7 @@ class CanvasPixels extends React.Component {
 
                     this.forceUpdate(() => {
                         callback_function();
-                        //window.caf_id = null;
+                        //caf_id = null;
                     });
                 }, !can_be_cancelable, force_update );
             });
