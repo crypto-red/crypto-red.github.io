@@ -54,6 +54,8 @@ import MirrorIcon from "../icons/Mirror";
 import PencilIcon from "../icons/Pencil";
 import PencilPerfectIcon from "../icons/PencilPerfect";
 import ChangeHistoryIcon from "@material-ui/icons/ChangeHistory";
+import SelectColorIcon from "../icons/SelectColor";
+import SelectRemoveDifferenceIcon from "../icons/SelectRemoveDifference";
 
 const styles = theme => ({
     green: {
@@ -367,39 +369,43 @@ class Pixel extends React.Component {
 
         const { _tool, _view_name_index, _view_names } = this.state;
 
-        if(_tool === "MINE"){
+        if (event) {
 
-            event.preventDefault();
-
-            switch (event.keyCode) {
-
-                case 38:
-                    this.setState({_mine_player_direction: "UP"});
-                    break;
-                case 40:
-                    this.setState({_mine_player_direction: "DOWN"});
-                    break;
-                case 37:
-                    this.setState({_mine_player_direction: "LEFT"});
-                    break;
-                case 39:
-                    this.setState({_mine_player_direction: "RIGHT"});
-                    break;
-            }
-        }else {
             event.preventDefault();
             event.stopPropagation();
 
-            switch (event.keyCode) {
+            if(_tool === "MINE"){
 
-                case 37:
+                event.preventDefault();
 
-                    this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index: _view_name_index-1 < 0 ? _view_names.length-1: _view_name_index-1});
-                    break;
-                case 39:
+                switch (event.keyCode) {
 
-                    this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index: _view_name_index+1 > _view_names.length-1 ? 0: _view_name_index+1});
-                    break;
+                    case 38:
+                        this.setState({_mine_player_direction: "UP"});
+                        break;
+                    case 40:
+                        this.setState({_mine_player_direction: "DOWN"});
+                        break;
+                    case 37:
+                        this.setState({_mine_player_direction: "LEFT"});
+                        break;
+                    case 39:
+                        this.setState({_mine_player_direction: "RIGHT"});
+                        break;
+                }
+            }else {
+
+                switch (event.keyCode) {
+
+                    case 37:
+
+                        this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index: _view_name_index-1 < 0 ? _view_names.length-1: _view_name_index-1});
+                        break;
+                    case 39:
+
+                        this.setState({_previous_view_name_index: this.state._view_name_index, _view_name_index: _view_name_index+1 > _view_names.length-1 ? 0: _view_name_index+1});
+                        break;
+                }
             }
 
             if(event.key === "1") {
@@ -425,10 +431,14 @@ class Pixel extends React.Component {
                 this.setState({_view_name_index: 6});
             }else if(event.ctrlKey && event.key === "z") {
 
-                this._undo();
+                const { _canvas } = this.state;
+
+                _canvas.undo();
             }else if(event.ctrlKey && event.key === "y") {
 
-                this._redo();
+                const { _canvas } = this.state;
+
+                _canvas.redo();
             }else if(event.ctrlKey && event.key === "m") {
 
                 this._set_tool("MINE");
@@ -479,7 +489,7 @@ class Pixel extends React.Component {
                 this._set_tool("PENCIL PERFECT");
             }else if(event.ctrlKey && event.key === "p") {
 
-                this._set_tool("SELECT PENCIL");
+                this._set_tool("SELECT PIXEL");
             }else if(event.ctrlKey && event.key === "n") {
 
                 this._set_tool("SELECT PENCIL PERFECT");
@@ -520,7 +530,7 @@ class Pixel extends React.Component {
 
                 const { _canvas } = this.state;
                 _canvas.confirm_import();
-            }else if(event.ctrlKey && event.key === "Control") {
+            }else if(event.ctrlKey) {
 
                 if(_tool.includes("SELECT")) {
 
@@ -792,18 +802,6 @@ class Pixel extends React.Component {
         this.setState({_is_edit_drawer_open: false});
     };
 
-    _undo = () => {
-
-        const { _canvas } = this.state;
-        _canvas.undo();
-    };
-
-    _redo = () => {
-
-        const { _canvas } = this.state;
-        _canvas.redo();
-    };
-
     _set_current_color = (_current_color) => {
 
         this._handle_menu_close();
@@ -840,6 +838,14 @@ class Pixel extends React.Component {
             less_color_step += increase;
             increase -= colors_removed > 0 ? 1: 0;
         }
+    };
+
+    _get_average_color_of_selection = () => {
+
+        const { _canvas } = this.state;
+        const color = _canvas.get_average_color_of_selection();
+
+        this._handle_current_color_change(color);
     };
 
     render() {
@@ -881,13 +887,19 @@ class Pixel extends React.Component {
             _menu_event,
         } = this.state;
 
+        let x = _x === -1 ? "out": _x + 1;
+        let y = _y === -1 ? "out": _y + 1;
+
+        _menu_data.pos_x = _menu_data.pos_x === -1 ? "out": _menu_data.pos_x;
+        _menu_data.pos_y = _menu_data.pos_y === -1 ? "out": _menu_data.pos_y;
+
         const drawer_content = (
             <div style={{display: "contents"}}>
                 <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
                     <div className={classes.drawerHeader}>
                         <span className={classes.coordinate}>
                             <span>{`FPS: ${Math.round((_fps + _prev_fps) / 2)}`}</span>
-                            <span>{` | X: ${_x+1}, Y: ${_y+1} | `}</span>
+                            <span>{` | X: ${x}, Y: ${y} | `}</span>
                             <span className={_kb < 64 ? classes.green: classes.red}>{`[~${Math.round(_kb * 100) / 100} kB]`}</span>
                         </span>
                         <Typography id="strength-slider" gutterBottom>
@@ -1016,7 +1028,7 @@ class Pixel extends React.Component {
                                     ].map((item) => {
 
                                         return (
-                                            <ListItem button divider disabled={item.disabled} onClick={item.on_click}>
+                                            <ListItem key={item.text} button divider disabled={item.disabled} onClick={item.on_click}>
                                                 <ListItemIcon>
                                                     {item.icon}
                                                 </ListItemIcon>
@@ -1036,6 +1048,9 @@ class Pixel extends React.Component {
                                 <ListSubheader className={classes.contextMenuSubheader}>Apply to selection</ListSubheader>
                                 {
                                     [
+                                        {icon: <SelectRemoveDifferenceIcon />, text: "Unselect", on_click: () => {_canvas.to_selection_none()}},
+                                        {icon: <BucketIcon />, text: "Colorize dynamical", on_click: () => {_canvas.to_selection_changes(_current_color, false)}},
+                                        {icon: <SelectColorIcon />, text: "Get average color", on_click: () => {this._get_average_color_of_selection()}},
                                         {icon: <SelectInImageIcon />, text: "Shrink", on_click: () => {_canvas.to_selection_size(-1)}},
                                         {icon: <SelectInImageIcon />, text: "Grow", on_click: () => {_canvas.to_selection_size(1)}},
                                         {icon: <BorderBottomIcon />, text: "Border", on_click: () => {_canvas.to_selection_border()}},
@@ -1048,7 +1063,7 @@ class Pixel extends React.Component {
                                     ].map((item) => {
 
                                         return (
-                                            <ListItem button divider onClick={item.on_click}>
+                                            <ListItem key={item.text} button divider onClick={item.on_click}>
                                                 <ListItemIcon>
                                                     {item.icon}
                                                 </ListItemIcon>

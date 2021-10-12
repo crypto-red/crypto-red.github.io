@@ -114,7 +114,6 @@ const styles = theme => ({
         "& .MuiAvatar-img": {
             width: "auto",
             borderRadius: 2,
-            background: "repeating-conic-gradient(#80808055 0% 25%, #00000000 0% 50%) 50% / 8px 8px",
             imageRendering: "pixelated",
         },
         marginRight: theme.spacing(2),
@@ -221,7 +220,6 @@ class PixelToolboxSwipeableViews extends React.Component {
             layers !== new_props.layers ||
             layer_index !== new_props.layer_index ||
             is_image_import_mode !== new_props.is_image_import_mode ||
-            hide_canvas_content !== new_props.hide_canvas_content ||
             hide_canvas_content !== new_props.hide_canvas_content ||
             show_original_image_in_background !== new_props.show_original_image_in_background ||
             show_transparent_image_in_background !== new_props.show_transparent_image_in_background ||
@@ -434,6 +432,14 @@ class PixelToolboxSwipeableViews extends React.Component {
         }
     };
 
+    _get_average_color_of_selection = () => {
+
+        const { canvas } = this.state;
+        const color = canvas.get_average_color_of_selection();
+
+        this._handle_current_color_change(color);
+    };
+
     _change_active_layer = (index) => {
 
         const { canvas, layer_index, _layer_opened } = this.state;
@@ -644,9 +650,12 @@ class PixelToolboxSwipeableViews extends React.Component {
                         {icon: <BucketIcon />, disabled: !is_something_selected, text: "Bucket", on_click: () => {canvas.to_selection_bucket()}},
                         {icon: <SelectInImageIcon />, disabled: !is_something_selected, text: "Crop", on_click: () => {canvas.to_selection_crop()}},
                         {icon: <SelectInvertIcon />, disabled: !is_something_selected, text: "Invert", on_click: () => {canvas.to_selection_invert()}},
+                        {icon: <SelectRemoveDifferenceIcon />, disabled: !is_something_selected, text: "Unselect", on_click: () => {canvas.to_selection_none()}},
                         {icon: <CopyIcon />, disabled: !is_something_selected, text: "Copy", on_click: () => {canvas.copy_selection()}},
                         {icon: <CutIcon />, disabled: !is_something_selected, text: "Cut", on_click: () => {canvas.cut_selection()}},
                         {icon: <EraserIcon />, disabled: !is_something_selected, text: "Erase", on_click: () => {canvas.erase_selection()}},
+                        {icon: <BucketIcon />, disabled: !is_something_selected, text: "Colorize dynamical", on_click: () => {canvas.to_selection_changes(current_color, false)}},
+                        {icon: <SelectColorIcon />, disabled: !is_something_selected, text: "Get average color", on_click: () => {this._get_average_color_of_selection()}},
                     ]
                 },
             ],
@@ -734,7 +743,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                             className={layer_index === index_reverse_order ? classes.layerSelected: null}
                                                             button onClick={() => this._change_active_layer(index_reverse_order)}>
                                                             <ListItemAvatar>
-                                                                <Avatar variant="square" className={classes.layerThumbnail} src={layer.thumbnail} />
+                                                                <Avatar variant="square" className={classes.layerThumbnail} imgProps={{style: {background: `repeating-conic-gradient(rgb(248 248 248 / 100%) 0% 25%, rgb(224 224 224 / 100%) 0% 50%) left top 50% / calc(200% / ${width}) calc(200% / ${height})`}}} src={layer.thumbnail} />
                                                             </ListItemAvatar>
                                                             <ListItemText primary={layer.name} />
                                                             <ExpandMoreIcon  className={_layer_opened && layer_index === index_reverse_order ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
