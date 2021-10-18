@@ -24,6 +24,7 @@ import Settings from "./Settings";
 import Accounts from "./Accounts";
 import Coins from "./Coins";
 import Coin from "./Coin";
+import Gallery from "./Gallery";
 import Unknown from "./Unknown";
 
 import JamyAngry from "../icons/JamyAngry";
@@ -127,7 +128,7 @@ class Index extends React.Component {
         }
     }
 
-    _update_dimensions() {
+    _update_dimensions = () => {
 
         let w = window,
             d = document,
@@ -137,7 +138,7 @@ class Index extends React.Component {
             _height = w.innerHeight|| documentElement.clientHeight || body.clientHeight;
 
         this.setState({_width, _height});
-    }
+    };
 
     componentDidMount() {
 
@@ -146,7 +147,7 @@ class Index extends React.Component {
         this._update_login();
         dispatcher.register(this._handle_events.bind(this));
 
-        window.addEventListener("resize", this._update_dimensions.bind(this));
+        window.addEventListener("resize", this._update_dimensions);
         this._update_dimensions();
 
         /*setInterval(() => {
@@ -191,7 +192,7 @@ class Index extends React.Component {
     componentWillUnmount() {
 
         this.state._unlisten();
-        window.removeEventListener("resize", this._update_dimensions.bind(this));
+        window.removeEventListener("resize", this._update_dimensions);
     }
 
     _trigger_sound = (category, pack, name, volume) => {
@@ -403,7 +404,8 @@ class Index extends React.Component {
             settings: <Settings></Settings>,
             accounts: <Accounts></Accounts>,
             coin: <Coin pathname={pathname}></Coin>,
-            coins: <Coins></Coins>
+            coins: <Coins></Coins>,
+            gallery: <Gallery></Gallery>,
         };
 
         for(let i = 0; i < PAGE_ROUTES.length; i++) {

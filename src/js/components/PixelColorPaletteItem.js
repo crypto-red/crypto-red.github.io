@@ -3,6 +3,7 @@ import { withStyles } from "@material-ui/core/styles";
 import ButtonBase from "@material-ui/core/ButtonBase";
 import Fade from "@material-ui/core/Fade";
 import CheckBoldIcon from "../icons/CheckBold";
+import Tooltip from "@material-ui/core/Tooltip";
 
 const styles = theme => ({
     colorPaletteItem: {
@@ -25,6 +26,7 @@ class PixelColorPaletteItem extends React.Component {
             size: props.size || "inherit",
             full_width: props.full_width || false,
             icon: props.icon || null,
+            style: props.style || {}
         };
     };
 
@@ -60,25 +62,28 @@ class PixelColorPaletteItem extends React.Component {
 
     render() {
 
-        const { classes, full_width, selected, size, color, icon } = this.state;
+        const { classes, full_width, selected, size, color, icon, style } = this.state;
 
         let [r, g, b, a] = this._get_rgba_from_hex(color);
 
         const is_color_dark = a > 96 && (r + g + b) * (255 - a) / 255 < 192 * 3;
 
         return (
-            <ButtonBase
-                fulllWidth={full_width}
-                onClick={this.props.onClick ? this.props.onClick: null}
-                style={{
-                    background: color,
-                    boxShadow: `0px 2px 4px -1px rgb(${r} ${g} ${b} / 20%), 0px 4px 5px 0px rgb(${r} ${g} ${b} / 14%), 0px 1px 10px 0px rgb(${r} ${g} ${b} / 12%)`,
-                    width: full_width ? "100%": size,
-                    height: size,
-                }}
-                className={!full_width ? classes.colorPaletteItem: null}>
-                {selected ? <Fade in><CheckBoldIcon style={{color: is_color_dark ? "white": "black"}} /></Fade>: icon}
-            </ButtonBase>
+            <Tooltip title={color}>
+                <ButtonBase
+                    fulllWidth={full_width}
+                    onClick={this.props.onClick ? this.props.onClick: null}
+                    style={{
+                        background: color,
+                        boxShadow: `inset 0px 2px 4px -1px rgb(${0} ${0} ${0} / 20%), inset 0px 4px 5px 0px rgb(${0} ${0} ${0} / 14%), inset 0px 1px 10px 0px rgb(${0} ${0} ${0} / 12%)`,
+                        width: full_width ? "100%": size,
+                        height: size,
+                        ...style
+                    }}
+                    className={!full_width ? classes.colorPaletteItem: null}>
+                    {selected ? <Fade in><CheckBoldIcon style={{color: is_color_dark ? "white": "black"}} /></Fade>: icon}
+                </ButtonBase>
+            </Tooltip>
         );
     }
 }

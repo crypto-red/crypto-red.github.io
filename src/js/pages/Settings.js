@@ -14,6 +14,7 @@ import Fade from "@material-ui/core/Fade";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 
 import { LANGUAGES, LOCALES, CURRENCY_COUNTRIES } from "../utils/constants";
+import get_svg_in_b64 from "../utils/svgToBase64";
 import api from "../utils/api";
 import actions from "../actions/utils";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -257,7 +258,7 @@ class Settings extends React.Component {
                                     getOptionLabel={(option) => option.name || option.original.name}
                                     renderOption={(option) =>
                                         <div>
-                                            <img src={`https://flagcdn.com/w20/${option.original.code.split("-")[1].toLowerCase()}.png`} style={{marginRight: 8, verticalAlign: "middle"}}/>
+                                            <img src={get_svg_in_b64(option.original.svg, !LANGUAGES.includes(option.original.code.split("-")[0]))} style={{marginRight: 8, verticalAlign: "middle", height: 24}}/>
                                             <span
                                                 style={{color: LANGUAGES.includes(option.original.code.split("-")[0]) ? "#1c1882": "inherit"}}
                                                 dangerouslySetInnerHTML={{ __html: option.string }}>

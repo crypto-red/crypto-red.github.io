@@ -18,7 +18,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import DialogCloseButton from "../components/DialogCloseButton";
 
 import EmailIcon from "@material-ui/icons/Email"
-import CloseIcon from "@material-ui/icons/Close"
 import WhatsAppIcon from "../icons/WhatsApp";
 import PinterestIcon from "../icons/Pinterest";
 import LinkedInIcon from "../icons/LinkedIn";
@@ -26,6 +25,9 @@ import FacebookIcon from "../icons/Facebook";
 import BloggerIcon from "../icons/Blogger";
 import TwitterIcon from "../icons/Twitter";
 import RedditIcon from "../icons/Reddit";
+
+import BeerCheckEmojiSvg from "../twemoji/react/1F37B";
+import get_svg_in_b64 from "../utils/svgToBase64";
 
 import clipboard from "clipboard-polyfill";
 import actions from "../actions/utils";
@@ -248,7 +250,7 @@ class ShareDialog extends React.Component {
                                     />
                                 </FormControl>
                                 <DialogContentText className={classes.fontWeightBold}>
-                                    <p>{t( "components.share_dialog.thanks_for_sharing")}</p>
+                                    <p>{t( "components.share_dialog.thanks_for_sharing")} <img src={get_svg_in_b64(<BeerCheckEmojiSvg/>)} className="emoji"/></p>
                                 </DialogContentText>
                             </DialogContent>
                         </div>

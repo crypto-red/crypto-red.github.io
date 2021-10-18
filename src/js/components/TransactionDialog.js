@@ -19,6 +19,10 @@ import Table from "@material-ui/core/Table";
 import FileCopyIcon from "@material-ui/icons/FileCopy";
 import IconButton from "@material-ui/core/IconButton";
 
+import get_svg_in_b64 from "../utils/svgToBase64";
+import IdEmojiIcon from "../twemoji/react/1F194";
+const id_emoji_svg = get_svg_in_b64(<IdEmojiIcon />);
+
 import { HISTORY } from "../utils/constants";
 import api from "../utils/api";
 import price_formatter from "../utils/price-formatter";
@@ -222,7 +226,10 @@ class TransactionDialog extends React.Component {
                 {
                     Boolean(transaction) ?
                         <div className={classes.dialogBody}>
-                            <DialogTitle id="show-transaction-memo-dialog-title" className={classes.breakWord}>{t( "components.transaction_dialog.title", {transaction_id: transaction.id})}</DialogTitle>
+                            <DialogTitle id="show-transaction-memo-dialog-title" className={classes.breakWord}>
+                                <img src={id_emoji_svg} className="emoji" style={{marginRight: 8}}/>
+                                {t( "components.transaction_dialog.title", {transaction_id: transaction.id})}
+                            </DialogTitle>
                             <DialogContent className={classes.dialogBody} >
                                 <DialogContentText id="show-transaction-memo-dialog-description">
                                     <Table>

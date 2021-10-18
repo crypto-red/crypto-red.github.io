@@ -70,6 +70,7 @@ import SelectionEllipseIcon from "../icons/SelectionEllipse";
 import ImageMoveIcon from "../icons/ImageMove";
 import SelectInvertIcon from "../icons/SelectInvert";
 import CopyIcon from "@material-ui/icons/FileCopy";
+import PublishIcon from "@material-ui/icons/Publish";
 import CutIcon from "../icons/Cut";
 import EraserIcon from "../icons/Eraser";
 
@@ -94,6 +95,7 @@ import Jdenticon from "react-jdenticon";
 
 const styles = theme => ({
     listSubHeader: {
+        width: "100%",
         alignSelf: "flex-start",
         color: theme.palette.secondary.light,
         backgroundColor: "#e5e5e5",
@@ -127,7 +129,7 @@ const styles = theme => ({
         paddingRight: 12,
     },
     listOfTools: {
-        paddingTop: 0,
+        paddingTop: 0
     },
     chromePicker: {
         fontFamily: "Open Sans !important",
@@ -144,7 +146,55 @@ const styles = theme => ({
         "& .MuiTypography-colorTextSecondary": {
             color: "rgb(25 25 51 / 54%)"
         }
-    }
+    },
+    listItems: {
+        display: "flex",
+        flexWrap: "wrap",
+        alignContent: "stretch",
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        "& .MuiListItem-root": {
+            display: "block",
+            flexGrow: 0,
+            flexBasis: "25%",
+            textAlign: "center",
+            "& .MuiListItemIcon-root": {
+                minWidth: 0,
+            },
+            "& .MuiListItemText-root": {
+                "& .MuiListItemText-primary": {
+                    fontSize: "14px",
+                },
+                "& .MuiListItemText-secondary": {
+                    fontSize: "10px",
+                },
+            }
+        },
+        [theme.breakpoints.down("md")]: {
+            display: "flex",
+            justifyContent: "flex-start",
+            flexDirection: "row",
+            overflow: "overlay",
+            width: "100%",
+            flexFlow: "row",
+            "& .MuiListItem-root": {
+                display: "block",
+                maxWidth: 120,
+                textAlign: "center",
+                "& .MuiListItemIcon-root": {
+                    minWidth: 0,
+                },
+                "& .MuiListItemText-root": {
+                    "& .MuiListItemText-primary": {
+                        fontSize: "14px",
+                    },
+                    "& .MuiListItemText-secondary": {
+                        display: "none",
+                    },
+                }
+            },
+        },
+    },
 });
 
 
@@ -245,7 +295,7 @@ class PixelToolboxSwipeableViews extends React.Component {
             import_size !== new_props.import_size
         ) {
 
-            return true;
+            return new_props.should_update;
         }else {
 
             return false;
@@ -495,6 +545,15 @@ class PixelToolboxSwipeableViews extends React.Component {
         }
     };
 
+    _publish = () => {
+
+        if(this.props.on_request_publish) {
+
+            this.props.on_request_publish();
+        }
+
+    };
+
     render() {
         
         const {
@@ -540,14 +599,6 @@ class PixelToolboxSwipeableViews extends React.Component {
                     text: "Navigation",
                     tools: [
                         {icon: <MoveIcon />, disabled: tool === "MOVE", text: "Move", on_click: () => {this._set_tool("MOVE")}},
-                        {icon: <MagnifyPlusIcon />, text: "Zoom in", on_click: () => {canvas.zoom_of(1.5)}},
-                        {icon: <MagnifyMinusIcon />, text: "Zoom out", on_click: () => {canvas.zoom_of(0.75)}},
-                    ]
-                },
-                {
-                    icon: <HistoryIcon />,
-                    text: "History",
-                    tools: [
                         {icon: <ArrowBackIcon />, disabled: !can_undo ,text: "Undo", sub: "[CTRL + Z]", on_click: () => {canvas.undo()}},
                         {icon: <ArrowForwardIcon />, disabled: !can_redo , text: "Redo", sub: "[CTRL + Y]", on_click: () => {canvas.redo()}},
                     ]
@@ -579,8 +630,6 @@ class PixelToolboxSwipeableViews extends React.Component {
                         {icon: <LayerDeleteIcon />, text: "Delete layer", on_click: () => {canvas.delete_layer(layer_index)}},
                         {icon: <ContentDuplicateIcon />, text: "Duplicate layer", on_click: () => {canvas.duplicate_layer(layer_index)}},
                         {icon: <MergeIcon />, text: "Merge down layer", on_click: () => {canvas.merge_down_layer(layer_index)}},
-                        {icon: layers[layer_index].hidden ? <EyeIcon />: <EyeOffIcon />, text: layers[layer_index].hidden ? `Show`: `Hide`, on_click: () => {canvas.toggle_layer_visibility(layer_index)}},
-                        {icon: <OpacityIcon />, text: `Opacity: ${layers[layer_index].opacity} -> ${slider_value}`, on_click: () => {canvas.change_layer_opacity(layer_index)}},
                     ]
                 },
                 {
@@ -727,16 +776,16 @@ class PixelToolboxSwipeableViews extends React.Component {
             <SwipeableViews
                 containerStyle={{overflow: "visible"}}
                 animateHeight={false}
-                animateTransitions={false}
+                animateTransitions={true}
                 disableLazyLoading={true}
                 index={view_name_index}
                 onChangeIndex={this._handle_view_name_change}
-                disabled={true}
+                disabled={false}
             >
                 {
                     Object.entries(actions).map(a => a[1]).map((view, index) => {
 
-                        if(view_name_index !== index && previous_view_name_index !== index) { return <List style={{overflow: "visible"}} />; }
+                        //if(view_name_index !== index && previous_view_name_index !== index) { return <List style={{overflow: "visible"}} />; }
 
                         return (
                             <List key={index} style={{overflow: "visible", paddingTop: 0}} >
@@ -748,59 +797,64 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                 <span><AllLayersIcon /></span>
                                                 <span>All layers</span>
                                             </ListSubheader>
-                                            {[...layers].reverse().map((layer, index, array) => {
+                                            <div>
+                                                {[...layers].reverse().map((layer, index, array) => {
 
-                                                const index_reverse_order = (array.length - 1) - index;
-                                                layer.colors = layer.colors || [];
-                                                layer.data = layer.data || {};
+                                                    const index_reverse_order = (array.length - 1) - index;
+                                                    layer.colors = layer.colors || [];
+                                                    layer.data = layer.data || {};
 
-                                                return (
-                                                    <div key={index_reverse_order}>
-                                                        <ListItem
-                                                            divider
-                                                            className={layer_index === index_reverse_order ? classes.layerSelected: null}
-                                                            button onClick={() => this._change_active_layer(index_reverse_order)}>
-                                                            <ListItemAvatar>
-                                                                <Avatar variant="square" className={classes.layerThumbnail} imgProps={{style: {background: `repeating-conic-gradient(rgb(248 248 248 / 100%) 0% 25%, rgb(224 224 224 / 100%) 0% 50%) left top 50% / calc(200% / ${width}) calc(200% / ${height})`}}} src={layer.thumbnail} />
-                                                            </ListItemAvatar>
-                                                            <ListItemText primary={layer.name} />
-                                                            <ExpandMoreIcon  className={_layer_opened && layer_index === index_reverse_order ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
-                                                        </ListItem>
-                                                        {
-                                                            layer_index === index_reverse_order || _previous_layer_index === index_reverse_order ?
-                                                                <Collapse timeout={{ appear: 250, enter: 250, exit: 250 }} in={_layer_opened && layer_index === index_reverse_order} className={classes.layerSelected}>
-                                                                    <div style={{padding: "12px 0px 12px 32px"}}>
-                                                                        <span>Colours: ({layer.colors.length}/{layer.data.number_of_color})</span>
-                                                                        <PixelColorPalette
-                                                                            padding="12px 0px"
-                                                                            gap="8px"
-                                                                            colors={layer.colors}
-                                                                            selected_colors={[current_color]}
-                                                                            onColorClick={(event, color) => {this._handle_current_color_change(color)}}
-                                                                        />
-                                                                        {
-                                                                            layer.colors.length >= 2 ?
-                                                                                <div style={{padding: "12px 0px"}}>
-                                                                                    <Button color="primary"
-                                                                                            onClick={() => this._less_colors_stepped(1)}>...Less colors</Button>
-                                                                                </div>
-                                                                                : null
-                                                                        }
-                                                                    </div>
-                                                                    <Divider style={{marginLeft: 24}}/>
-                                                                    <div style={{padding: "12px 0px 12px 32px"}}>
-                                                                        <span>Actions:</span>
-                                                                        <div style={{padding: "12px 0px"}}>
-                                                                            <Button color="primary" onClick={() => {canvas.current_layer_up()}}>Move Layer up</Button>
-                                                                            <Button color="primary" onClick={() => {canvas.current_layer_down()}}>Move Layer down</Button>
+                                                    return (
+                                                        <div key={index_reverse_order}>
+                                                            <ListItem
+                                                                divider
+                                                                className={layer_index === index_reverse_order ? classes.layerSelected: null}
+                                                                button onClick={() => this._change_active_layer(index_reverse_order)}>
+                                                                <ListItemAvatar>
+                                                                    <Avatar variant="square" className={classes.layerThumbnail} imgProps={{style: {background: `repeating-conic-gradient(rgb(248 248 248 / 100%) 0% 25%, rgb(224 224 224 / 100%) 0% 50%) left top 50% / calc(200% / ${width}) calc(200% / ${height})`}}} src={layer.thumbnail} />
+                                                                </ListItemAvatar>
+                                                                <ListItemText primary={layer.name} />
+                                                                <ExpandMoreIcon  className={_layer_opened && layer_index === index_reverse_order ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
+                                                            </ListItem>
+                                                            {
+                                                                layer_index === index_reverse_order || _previous_layer_index === index_reverse_order ?
+                                                                    <Collapse timeout={{ appear: 250, enter: 250, exit: 250 }} in={_layer_opened && layer_index === index_reverse_order} className={classes.layerSelected}>
+                                                                        <div style={{padding: "12px 0px 12px 32px"}}>
+                                                                            <span>Colours: ({layer.colors.length}/{layer.data.number_of_color})</span>
+                                                                            <PixelColorPalette
+                                                                                transparent={true}
+                                                                                padding="12px 0px"
+                                                                                gap="8px"
+                                                                                colors={layer.colors}
+                                                                                selected_colors={[current_color]}
+                                                                                onColorClick={(event, color) => {this._handle_current_color_change(color)}}
+                                                                            />
+                                                                            {
+                                                                                layer.colors.length >= 2 ?
+                                                                                    <div style={{padding: "12px 0px"}}>
+                                                                                        <Button color="primary"
+                                                                                                onClick={() => this._less_colors_stepped(1)}>...Less colors</Button>
+                                                                                    </div>
+                                                                                    : null
+                                                                            }
                                                                         </div>
-                                                                    </div>
-                                                                </Collapse>:
-                                                                null
-                                                        }
-                                                    </div>
-                                                );
-                                            })}
+                                                                        <Divider style={{marginLeft: 24}}/>
+                                                                        <div style={{padding: "12px 0px 12px 32px"}}>
+                                                                            <span>Actions:</span>
+                                                                            <div style={{padding: "12px 0px"}}>
+                                                                                <Button color="primary" onClick={() => {canvas.current_layer_up()}}>UP</Button>
+                                                                                <Button color="primary" onClick={() => {canvas.current_layer_down()}}>DOWN</Button>
+                                                                                <Button color="primary" onClick={() => {canvas.toggle_layer_visibility(layer_index)}}>{layers[layer_index].hidden ? `SHOW`: `HIDE`}</Button>
+                                                                                <Button color="primary" onClick={() => {canvas.change_layer_opacity(layer_index, slider_value)}}>{`OPACITY: ${layers[layer_index].opacity} -> ${slider_value}`}</Button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </Collapse>:
+                                                                    null
+                                                            }
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
                                         </div>: null
                                 }
 
@@ -835,7 +889,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                 </Button>
                                             </div>
 
-                                            <div style={{padding: "8px 24px", position: "relative", overflow: "hidden", boxSizing: "border-box"}}>
+                                            <div style={{padding: "8px 24px", position: "relative", overflow: "hidden", boxSizing: "border-box", width: "100%"}}>
                                                 <Typography id="opacity-slider" gutterBottom>Opacity</Typography>
                                                 <Slider defaultValue={_opacity} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_opacity_from_slider} aria-labelledby="opacity-slider"/>
 
@@ -848,8 +902,10 @@ class PixelToolboxSwipeableViews extends React.Component {
                                             </div>
 
                                             <PixelColorPalette
+                                                transparent={true}
                                                 padding="24px"
                                                 gap="8px"
+                                                align="left"
                                                 colors={colors}
                                                 selected_colors={[current_color]}
                                                 onColorClick={(event, color) => {this._handle_current_color_change(color)}}
@@ -866,16 +922,18 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                     <span>{action_set.icon}</span>
                                                     <span>{action_set.text}</span>
                                                 </ListSubheader>
-                                                {action_set.tools.map((tool) => {
-                                                    return (
-                                                        <ListItem button divider disabled={tool.disabled || false} onClick={tool.on_click}>
-                                                            <ListItemIcon className={classes.listItemIcon}>
-                                                                {tool.icon}
-                                                            </ListItemIcon>
-                                                            <ListItemText className={classes.ListItemText} primary={tool.text} secondary={tool.sub}/>
-                                                        </ListItem>
-                                                    );
-                                                })}
+                                                <div className={classes.listItems}>
+                                                    {action_set.tools.map((tool) => {
+                                                        return (
+                                                            <ListItem button disabled={tool.disabled || false} onClick={tool.on_click}>
+                                                                <ListItemIcon className={classes.listItemIcon}>
+                                                                    {tool.icon}
+                                                                </ListItemIcon>
+                                                                <ListItemText className={classes.ListItemText} primary={tool.text} secondary={tool.sub}/>
+                                                            </ListItem>
+                                                        );
+                                                    })}
+                                                </div>
                                             </div>
                                         );
                                     })
@@ -885,76 +943,80 @@ class PixelToolboxSwipeableViews extends React.Component {
                                     view_names[index] === "image" ?
                                         <div>
                                             <ListSubheader className={classes.listSubHeader}>
+                                                <span><ImportIcon /></span>
+                                                <span>Upload</span>
+                                            </ListSubheader>
+                                            <div className={classes.listItems}>
+                                                <ListItem button onClick={() => {this._upload_image()}}>
+                                                    <ListItemIcon className={classes.listItemIcon}>
+                                                        <ImagePlusIcon />
+                                                    </ListItemIcon>
+                                                    <ListItemText className={classes.ListItemText} primary={"Open image"} secondary={"[CTRL + O]"}/>
+                                                </ListItem>
+                                            </div>
+                                            <FormLabel style={{padding: "24px 0px 12px 24px"}} component="legend">Estimate final size</FormLabel>
+                                            <div className={classes.listItems}>
+                                                <RadioGroup row name="Import size" onChange={this._set_import_size} value={import_size} style={{margin: "12px 11px"}}>
+                                                    <FormControlLabel
+                                                        value={"32"}
+                                                        control={<Radio color="primary" />}
+                                                        label="32px"
+                                                        labelPlacement="bottom"
+                                                    />
+                                                    <FormControlLabel
+                                                        value={"64"}
+                                                        control={<Radio color="primary" />}
+                                                        label="64px"
+                                                        labelPlacement="bottom"
+                                                    />
+                                                    <FormControlLabel
+                                                        value={"96"}
+                                                        control={<Radio color="primary" />}
+                                                        label="96px"
+                                                        labelPlacement="bottom"
+                                                    />
+                                                    <FormControlLabel
+                                                        value={"128"}
+                                                        control={<Radio color="primary" />}
+                                                        label="128px"
+                                                        labelPlacement="bottom"
+                                                    />
+                                                    <FormControlLabel
+                                                        value={"192"}
+                                                        control={<Radio color="primary" />}
+                                                        label="192px"
+                                                        labelPlacement="bottom"
+                                                    />
+                                                    <FormControlLabel
+                                                        value={"256"}
+                                                        control={<Radio color="primary" />}
+                                                        label="256px"
+                                                        labelPlacement="bottom"
+                                                    />
+                                                </RadioGroup>
+                                            </div>
+                                            <ListSubheader className={classes.listSubHeader}>
+                                                <span><ImportIcon /></span>
+                                                <span>Post on Hive</span>
+                                            </ListSubheader>
+                                            <div className={classes.listItems}>
+                                                <ListItem button onClick={() => {this._publish()}}>
+                                                    <ListItemIcon className={classes.listItemIcon}>
+                                                        <PublishIcon />
+                                                    </ListItemIcon>
+                                                    <ListItemText className={classes.ListItemText} primary={"Publish"}/>
+                                                </ListItem>
+                                            </div>
+                                            <ListSubheader className={classes.listSubHeader}>
                                                 <span><ImagePlusIcon /></span>
                                                 <span>Create new</span>
                                             </ListSubheader>
-                                            <div style={{padding: "8px 24px", position: "relative", overflow: "hidden", boxSizing: "border-box"}}>
+                                            <div style={{padding: "8px 24px", position: "relative", overflow: "hidden", boxSizing: "border-box", width: "100%"}}>
                                                 <Typography id="width-slider" gutterBottom>Width</Typography>
                                                 <Slider value={width} step={8} valueLabelDisplay="auto" min={0} max={width > 256 ? width: 256} onChangeCommitted={this._set_width_from_slider} aria-labelledby="width-slider"/>
                                                 <Typography id="height-slider" gutterBottom>Height</Typography>
                                                 <Slider value={height} step={8} valueLabelDisplay="auto" min={0} max={height > 256 ? height: 256} onChangeCommitted={this._set_height_from_slider} aria-labelledby="height-slider"/>
                                             </div>
-                                            <ListSubheader className={classes.listSubHeader}>
-                                                <span><ImportIcon /></span>
-                                                <span>Upload</span>
-                                            </ListSubheader>
-                                            <ListItem button divider onClick={() => {this._upload_image()}}>
-                                                <ListItemIcon className={classes.listItemIcon}>
-                                                    <ImagePlusIcon />
-                                                </ListItemIcon>
-                                                <ListItemText className={classes.ListItemText} primary={"Open image"} secondary={"[CTRL + O]"}/>
-                                            </ListItem>
-                                            <FormLabel style={{padding: "24px 0px 12px 24px"}} component="legend">Estimate final size</FormLabel>
-                                            <RadioGroup row name="Import size" onChange={this._set_import_size} value={import_size}>
-                                                <FormControlLabel
-                                                    value={"32"}
-                                                    control={<Radio color="primary" />}
-                                                    label="32px"
-                                                    labelPlacement="bottom"
-                                                />
-                                                <FormControlLabel
-                                                    value={"48"}
-                                                    control={<Radio color="primary" />}
-                                                    label="48px"
-                                                    labelPlacement="bottom"
-                                                />
-                                                <FormControlLabel
-                                                    value={"64"}
-                                                    control={<Radio color="primary" />}
-                                                    label="64px"
-                                                    labelPlacement="bottom"
-                                                />
-                                                <FormControlLabel
-                                                    value={"96"}
-                                                    control={<Radio color="primary" />}
-                                                    label="96px"
-                                                    labelPlacement="bottom"
-                                                />
-                                                <FormControlLabel
-                                                    value={"128"}
-                                                    control={<Radio color="primary" />}
-                                                    label="128px"
-                                                    labelPlacement="bottom"
-                                                />
-                                                <FormControlLabel
-                                                    value={"192"}
-                                                    control={<Radio color="primary" />}
-                                                    label="192px"
-                                                    labelPlacement="bottom"
-                                                />
-                                                <FormControlLabel
-                                                    value={"256"}
-                                                    control={<Radio color="primary" />}
-                                                    label="256px"
-                                                    labelPlacement="bottom"
-                                                />
-                                                <FormControlLabel
-                                                    value={"320"}
-                                                    control={<Radio color="primary" />}
-                                                    label="320px"
-                                                    labelPlacement="bottom"
-                                                />
-                                            </RadioGroup>
                                         </div>
                                         : null
                                 }

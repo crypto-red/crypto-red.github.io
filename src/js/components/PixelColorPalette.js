@@ -32,22 +32,18 @@ class PixelColorPalette extends React.Component {
             padding: props.padding || 24,
             gap: props.gap || 8,
             size: props.size || 32,
-            transparent: props.transparent || true,
+            transparent: props.transparent || false,
+            align: props.align || "center",
         };
     };
 
     componentWillReceiveProps(new_props) {
 
-        this.setState({
-            classes: new_props.classes,
-            colors: new_props.colors || [],
-            selected_colors:  new_props.selected_colors || [],
-            selected_colors_set: new Set([...new_props.selected_colors || null]),
-            padding: new_props.padding || 24,
-            gap: new_props.gap || 8,
-            size: new_props.size || 32,
-            transparent: new_props.transparent || true,
-        });
+        this.setState(new_props);
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return true;
     }
 
     _handle_color_item_click = (event, color) => {
@@ -58,27 +54,14 @@ class PixelColorPalette extends React.Component {
         }
     };
 
-    shouldComponentUpdate(new_props) {
-
-        const { colors, selected_colors, padding, gap, size } = this.state;
-
-        if(colors !== new_props.colors || selected_colors !== new_props.selected_colors || padding !== new_props.padding || gap !== new_props.gap || size !== new_props.size) {
-
-            return true;
-        }else {
-
-            return false;
-        }
-
-    }
-
     render() {
 
-        let { classes, selected_colors_set, colors, padding, gap, size } = this.state;
+        let { classes, selected_colors_set, colors, padding, gap, size, transparent, align } = this.state;
 
         return (
-            <div className={classes.colorPalette} style={{ padding: padding, gap: gap}}>
-                <PixelColorPaletteItem size={32}
+            <div className={classes.colorPalette} style={align === "center" ? {padding, gap}: align === "left" ? {justifyContent: "end", padding, gap}: {justifyContent: "start", padding, gap}}>
+                <PixelColorPaletteItem style={transparent ? {}: {display: "none"}}
+                                       size={32}
                                        className={classes.eraseButton}
                                        icon={<EraserIcon />}
                                        full_width={true}
@@ -87,11 +70,11 @@ class PixelColorPalette extends React.Component {
                                        onClick={(event) => {this._handle_color_item_click(event, "#00000000")}}/>
                 {colors.map((color, index) => {
 
-                    return <PixelColorPaletteItem key={index}
+                    return (<PixelColorPaletteItem key={index}
                                                   color={color}
                                                   size={size}
                                                   selected={selected_colors_set.has(color) || false}
-                                                  onClick={(event) => {this._handle_color_item_click(event, color)}} />
+                                                  onClick={(event) => {this._handle_color_item_click(event, color)}} />);
                 })}
             </div>
         );

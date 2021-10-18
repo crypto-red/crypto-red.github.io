@@ -14,19 +14,34 @@ import Grow from "@material-ui/core/Grow";
 
 import actions from "../actions/utils";
 
+import DollarEmojiSvg from "../twemoji/react/1F911";
+import AngelEmojiSvg from "../twemoji/react/1F607";
+import PrivacyEmojiSvg from "../twemoji/react/1F575";
+import HearthEmojiSvg from "../twemoji/react/2665";
+import EarthEmojiSvg from "../twemoji/react/1F30D";
+
+import get_svg_in_b64 from "../utils/svgToBase64";
+
 const quotes = t( "pages.home.quotes");
 const random_quote_index = Math.floor(Math.random() * quotes.length);
 
 const styles = theme => ({
+    root: {
+        position: "relative",
+    },
     backgroundImage: {
+        width: "100%",
         minHeight: "calc(100vh - 160px)",
         backgroundImage: "url(/src/images/investment-data.svg)",
-        position: "relative",
+        position: "absolute",
         backgroundSize: "contain",
         backgroundPosition: "center center",
         backgroundRepeat: "no-repeat",
         backgroundOrigin: "content-box",
-        padding: theme.spacing(8)
+        padding: theme.spacing(8),
+        [theme.breakpoints.down("sm")]: {
+            padding: theme.spacing(4)
+        },
     },
     flashInfoContainer: {
         padding: theme.spacing(2, 2, 0, 2),
@@ -58,6 +73,10 @@ const styles = theme => ({
                     opacity: 1,
                     transform: "scale(1)",
                 },
+                "50%": {
+                    opacity: 0,
+                    transform: "scale(1.6)",
+                },
                 "100%": {
                     opacity: 0,
                     transform: "scale(1.6)",
@@ -75,7 +94,7 @@ const styles = theme => ({
             backgroundColor: "inherit",
             borderRadius: "inherit",
             transition: "opacity .3s, transform .3s",
-            animation: "$pulse .8s cubic-bezier(0.4, 0, 0.2, 1) infinite",
+            animation: "$pulse 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite 4s",
             zIndex: -1,
         },
         "&:hover": {
@@ -85,7 +104,24 @@ const styles = theme => ({
         right: theme.spacing(2),
         "& svg": {
             marginRight: 4
-        }
+        },
+    },
+    headerContainer: {
+        position: "absolute",
+        marginTop: theme.spacing(-2),
+        color: "#000000",
+        [theme.breakpoints.down("sm")]: {
+            marginTop: theme.spacing(-4)
+        },
+    },
+    title: {
+        fontSize: 32,
+    },
+    subtitle: {
+        fontSize: 24,
+    },
+    blue: {
+        color: theme.palette.primary.actionLighter,
     },
 });
 
@@ -167,11 +203,15 @@ class Home extends React.Component {
 
 
         return (
-            <div>
+            <div className={classes.root}>
                 <div className={classes.flashInfoContainer}>
                     <FlashInfo image="/src/images/wallet.svg" text={t( "pages.home.ready_to_start_cta")} button={t( "words.accounts")} onClick={(event) => this._go_to_url(event, "/accounts")}/>
                 </div>
                 <div className={classes.backgroundImage}>
+                    <div className={classes.headerContainer}>
+                        <h1 className={classes.title}>The <span className={classes.blue}>free <img src={get_svg_in_b64(<DollarEmojiSvg />)} className="emoji bounce"/></span> and <span className={classes.blue}>open-source <img src={get_svg_in_b64(<AngelEmojiSvg />)} className="emoji"/></span> crypto wallet.</h1>
+                        <h2 className={classes.subtitle}>Made with <img src={get_svg_in_b64(<HearthEmojiSvg />)} className={"emoji pulse"}/>, since <img src={get_svg_in_b64(<PrivacyEmojiSvg />)} className="emoji"/> your <span style={{color: "#4c9221"}}>keys matters</span> <img src={get_svg_in_b64(<EarthEmojiSvg />)} className={"emoji"}/>.</h2>
+                    </div>
                     <div className={classes.quoteContainer}>
                         <blockquote>
                             “{_quote.text}”<br />

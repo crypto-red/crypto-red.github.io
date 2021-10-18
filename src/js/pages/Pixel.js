@@ -57,6 +57,8 @@ import ChangeHistoryIcon from "@material-ui/icons/ChangeHistory";
 import SelectColorIcon from "../icons/SelectColor";
 import SelectRemoveDifferenceIcon from "../icons/SelectRemoveDifference";
 
+import PixelDialogPost from "../components/PixelDialogPost";
+
 const styles = theme => ({
     green: {
         color: lightGreen[700],
@@ -93,17 +95,6 @@ const styles = theme => ({
         [theme.breakpoints.down("sm")]: {
             height: "calc(100vh - 56px)",
         },
-        animation: "$fade 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-        "@global": {
-            "@keyframes fade": {
-                "0%": {
-                    opacity: 0,
-                },
-                "100%": {
-                    opacity: 1,
-                },
-            }
-        }
     },
     contentDrawer: {
         overscrollBehavior: "none",
@@ -133,21 +124,22 @@ const styles = theme => ({
         borderRadius: "0px 0px 4px 4px",
         backgroundColor: "#f5f5f5",
         whiteSpace: "nowrap",
-        [theme.breakpoints.down("md")]: {
-            display: "none",
-        },
+    },
+    drawerModal: {
+        transform: "translateY(96px)"
     },
     contentDrawerFixed: {
         [theme.breakpoints.down("md")]: {
             display: "none",
         },
-        width: 360,
+        width: 480,
+        overscrollBehavior: "none",
         display: "flex",
     },
     drawerPaper: {
         boxShadow: "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)",
         border: "none",
-        width: 360,
+        width: 480,
         overflowX: "overlay",
         background: "#fafafa",
     },
@@ -155,23 +147,35 @@ const styles = theme => ({
         maxWidth: "100%",
         overscrollBehavior: "none",
         touchAction: "none",
+        overflow: "hidden",
+        paddingBottom: "96px",
     },
     drawerContainer: {
-        overflowY: "overlay",
-        overflowX: "hidden",
+        overflow: "overlay",
+        [theme.breakpoints.up("lg")]: {
+            overflowX: "hidden",
+        },
         "& > div": {
             overflowX: "auto !important",
             overflowY: "visible !important",
             display: "inline-table !important",
             width: "100% !important",
         },
-        '& div .react-swipeable-view-container > div[aria-hidden="false"]': {
+        '& div .react-swipeable-view-container > div': {
             overflow: "visible !important",
             alignItems: "normal",
         },
+        '& div .react-swipeable-view-container > div[aria-hidden=true]': {
+            overflow: "hidden !important",
+        },
+        '& div .react-swipeable-view-container > div[aria-hidden=false] > ul': {
+            [theme.breakpoints.down("md")]: {
+                paddingBottom: 96 + 16,
+            }
+        },
         '& > div > .react-swipeable-view-container': {
             display: "flex !important",
-            width: 360,
+            width: 480,
             [theme.breakpoints.down("md")]: {
                 width: "100vw",
                 height: "calc(100vh - 136px) !important"
@@ -295,6 +299,8 @@ class Pixel extends React.Component {
             _menu_event: null,
             _ripple_color: "#ffffffff",
             _ripple_opacity: 1,
+            _is_pixel_dialog_post_edit_open: false,
+            _base64_url: ""
         };
     };
 
@@ -305,10 +311,11 @@ class Pixel extends React.Component {
         document.addEventListener("keyup", this._handle_keyup);
         actions.trigger_loading_update(0);
 
+        actions.trigger_loading_update(0);
         setTimeout(() => {
 
             actions.trigger_loading_update(100);
-        }, 300);
+        }, 350);
     }
 
     componentWillUnmount() {
@@ -377,9 +384,9 @@ class Pixel extends React.Component {
 
     _handle_keydown = (event) => {
 
-        const { _tool, _view_name_index, _view_names } = this.state;
+        const { _tool, _view_name_index, _view_names, _is_pixel_dialog_post_edit_open } = this.state;
 
-        if (event) {
+        if (event && !_is_pixel_dialog_post_edit_open) {
 
             event.preventDefault();
             event.stopPropagation();
@@ -573,7 +580,6 @@ class Pixel extends React.Component {
             actions.trigger_snackbar("Do You Want To Share? Yes or No", 6000);
             actions.jamy_update("happy");
         }, 2000);
-
     };
 
     _handle_keyup = (event) => {
@@ -621,11 +627,12 @@ class Pixel extends React.Component {
 
         const { _canvas } = this.state;
         let img = new Image;
-        img.src = URL.createObjectURL(event.target.files[0] || event.path[0].files[0]);
+        const base64 = URL.createObjectURL(event.target.files[0] || event.path[0].files[0]);
+        img.src = base64
 
         img.onload = () => {
 
-            _canvas.import_image_on_canvas(img);
+            _canvas.import_image_on_canvas(img, base64);
             this._handle_menu_close();
         };
 
@@ -876,6 +883,20 @@ class Pixel extends React.Component {
         this._handle_current_color_change(color);
     };
 
+    _handle_pixel_dialog_post_edit_close = () => {
+
+        this.setState({_is_pixel_dialog_post_edit_open: false});
+    };
+
+    _handle_is_pixel_dialog_post_edit_open = () => {
+
+        const { _canvas } = this.state;
+        const base64_url = _canvas.get_base64_png_data_url(1)
+
+        this.setState({_base64_url: base64_url});
+        this.setState({_is_pixel_dialog_post_edit_open: true, _is_edit_drawer_open: false});
+    };
+
     render() {
 
         const {
@@ -914,6 +935,8 @@ class Pixel extends React.Component {
             _ripple_color,
             _ripple_opacity,
             _menu_event,
+            _is_pixel_dialog_post_edit_open,
+            _base64_url
         } = this.state;
 
         let x = _x === -1 ? "out": _x + 1;
@@ -922,94 +945,18 @@ class Pixel extends React.Component {
         _menu_data.pos_x = _menu_data.pos_x === -1 ? "out": _menu_data.pos_x;
         _menu_data.pos_y = _menu_data.pos_y === -1 ? "out": _menu_data.pos_y;
 
-        const drawer_content = (
-            <div style={{display: "contents"}}>
-                <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
-                    <div className={classes.drawerHeader}>
-                        <span className={classes.coordinate}>
-                            <span>{`FPS: ${Math.round((_fps + _prev_fps) / 2)}`}</span>
-                            <span>{` | X: ${x}, Y: ${y} | `}</span>
-                            <span className={_kb < 64 ? classes.green: classes.red}>{`[~${Math.round(_kb * 100) / 100} kB]`}</span>
-                        </span>
-                        <Typography id="strength-slider" gutterBottom>
-                            Effect strength:
-                        </Typography>
-                        <Slider
-                            defaultValue={_slider_value}
-                            step={1/32}
-                            min={0}
-                            max={1}
-                            onChangeCommitted={this._set_value_from_slider}
-                            aria-labelledby="strength-slider"
-                        />
-                    </div>
-                    <Tabs className={classes.tabs}
-                          indicatorColor="primary"
-                          textColor="primary"
-                          variant="fullWidth"
-                          selectionFollowsFocus
-                          value={_view_name_index}
-                          onChange={(event, index) => {this._handle_view_name_change(index)}}>
-                        <Tab className={classes.tab} icon={<PaletteIcon />} />
-                        <Tab className={classes.tab} icon={<ImageIcon />} />
-                        <Tab className={classes.tab} icon={<AllLayersIcon />} />
-                        <Tab className={classes.tab} icon={<ToolsIcon />} />
-                        <Tab className={classes.tab} icon={<SelectIcon />} />
-                        <Tab className={classes.tab} icon={<ImageEffectIcon />} />
-                        <Tab className={classes.tab} icon={<ImageFilterIcon />} />
-                    </Tabs>
-                </div>
-                <div className={classes.drawerContainer} onGotPointerCapture={(event) => {event.stopPropagation(); event.preventDefault();}}>
-                    <PixelToolboxSwipeableViews
-                        onActionClose={this._handle_edit_drawer_close}
-                        canvas={_canvas}
-                        view_class={classes.listOfTools}
-                        view_name_index={_view_name_index}
-                        previous_view_name_index={_previous_view_name_index}
-                        view_names={_view_names}
-                        layers={_layers}
-                        layer_index={_layer_index}
-                        is_image_import_mode={_is_image_import_mode}
-                        hide_canvas_content={_hide_canvas_content}
-                        show_original_image_in_background={_show_original_image_in_background}
-                        show_transparent_image_in_background={_show_transparent_image_in_background}
-                        can_undo={_can_undo}
-                        can_redo={_can_redo}
-                        hue={_hue}
-                        current_color={_current_color}
-                        second_color={_second_color}
-                        slider_value={_slider_value}
-                        tool={_tool}
-                        width={_width}
-                        height={_height}
-                        filters={_filters}
-                        select_mode={_select_mode}
-                        pencil_mirror_mode={_pencil_mirror_mode}
-                        is_something_selected={_is_something_selected}
-                        import_size={_import_size}
-
-                        set_tool={this._set_tool}
-                        set_select_mode={this._set_select_mode}
-                        set_pencil_mirror_mode={this._set_pencil_mirror_mode}
-                        set_width_from_slider={this._set_width_from_slider}
-                        set_height_from_slider={this._set_height_from_slider}
-                        set_import_size={this._set_import_size}
-                        switch_with_second_color={this._switch_with_second_color}
-                        show_hide_canvas_content={this._show_hide_canvas_content}
-                        show_hide_background_image={this._show_hide_background_image}
-                        show_hide_transparent_image={this._show_hide_transparent_image}
-                        on_current_color_change={this._handle_current_color_change}
-                        on_view_name_change={this._handle_view_name_change}
-                        on_upload_image={this._upload_image}
-                        on_import_image={this._import_image}
-                        on_download_image={this._download_image}
-                    />
-                </div>
-            </div>
-        );
-
         return (
             <div>
+                <PixelDialogPost
+                    post={{
+                        image: {
+                            base64: _base64_url
+                        }
+                    }}
+                    keepMounted={true}
+                    open={_is_pixel_dialog_post_edit_open}
+                    onClose={this._handle_pixel_dialog_post_edit_close}
+                    edit={true}/>
                 <Backdrop className={classes.backdrop} open={_loading} />
                 <Menu
                     className={classes.contextMenu}
@@ -1175,7 +1122,7 @@ class Pixel extends React.Component {
                 <Grow in>
                     <div className={classes.fabs}>
                         <Fab className={classes.fab} variant="extended" onClick={this._handle_edit_drawer_open}>
-                            <ImageEditIcon />
+                            <ImageEditIcon /> Modify
                         </Fab>
                     </div>
                 </Grow>
@@ -1188,6 +1135,9 @@ class Pixel extends React.Component {
                                     key={"canvas"}
                                     className={classes.contentCanvas}
                                     ref={this._set_canvas_ref}
+                                    no_actions={_is_pixel_dialog_post_edit_open}
+                                    dont_show_canvas_until_img_set={_is_pixel_dialog_post_edit_open}
+                                    dont_show_canvas={_is_pixel_dialog_post_edit_open}
                                     tool={_tool}
                                     hide_canvas_content={_hide_canvas_content}
                                     show_original_image_in_background={_show_original_image_in_background}
@@ -1237,13 +1187,93 @@ class Pixel extends React.Component {
                                 onOpen={this._handle_edit_drawer_open}
                                 onClose={this._handle_edit_drawer_close}
                                 classes={{
-                                    paper: classes.swipeableDrawerPaper
+                                    paper: classes.swipeableDrawerPaper,
+                                    modal: classes.drawerModal,
                                 }}
-                                variant="persistent"
+                                variant="temporary"
                                 anchor="bottom"
                             >
                                 <DialogCloseButton onClick={this._handle_edit_drawer_close} />
-                                {drawer_content}
+                                <div style={{display: "grid"}}>
+                                    <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
+                                        <div className={classes.drawerHeader}>
+                                            <Typography id="strength-slider" gutterBottom>
+                                                Effect strength:
+                                            </Typography>
+                                            <Slider
+                                                defaultValue={_slider_value}
+                                                step={1/32}
+                                                min={0}
+                                                max={1}
+                                                onChangeCommitted={this._set_value_from_slider}
+                                                aria-labelledby="strength-slider"
+                                            />
+                                        </div>
+                                        <Tabs className={classes.tabs}
+                                              indicatorColor="primary"
+                                              textColor="primary"
+                                              variant="fullWidth"
+                                              selectionFollowsFocus={false}
+                                              value={_view_name_index}
+                                              onChange={(event, index) => {this._handle_view_name_change(index)}}>
+                                            <Tab className={classes.tab} icon={<PaletteIcon />} />
+                                            <Tab className={classes.tab} icon={<ImageIcon />} />
+                                            <Tab className={classes.tab} icon={<AllLayersIcon />} />
+                                            <Tab className={classes.tab} icon={<ToolsIcon />} />
+                                            <Tab className={classes.tab} icon={<SelectIcon />} />
+                                            <Tab className={classes.tab} icon={<ImageEffectIcon />} />
+                                            <Tab className={classes.tab} icon={<ImageFilterIcon />} />
+                                        </Tabs>
+                                    </div>
+                                    <div className={classes.drawerContainer} onGotPointerCapture={(event) => {event.stopPropagation(); event.preventDefault();}}>
+                                        <PixelToolboxSwipeableViews
+                                            should_update={_is_edit_drawer_open}
+                                            onActionClose={this._handle_edit_drawer_close}
+                                            canvas={_canvas}
+                                            view_class={classes.listOfTools}
+                                            view_name_index={_view_name_index}
+                                            previous_view_name_index={_previous_view_name_index}
+                                            view_names={_view_names}
+                                            layers={_layers}
+                                            layer_index={_layer_index}
+                                            is_image_import_mode={_is_image_import_mode}
+                                            hide_canvas_content={_hide_canvas_content}
+                                            show_original_image_in_background={_show_original_image_in_background}
+                                            show_transparent_image_in_background={_show_transparent_image_in_background}
+                                            can_undo={_can_undo}
+                                            can_redo={_can_redo}
+                                            hue={_hue}
+                                            current_color={_current_color}
+                                            second_color={_second_color}
+                                            slider_value={_slider_value}
+                                            tool={_tool}
+                                            width={_width}
+                                            height={_height}
+                                            filters={_filters}
+                                            select_mode={_select_mode}
+                                            pencil_mirror_mode={_pencil_mirror_mode}
+                                            is_something_selected={_is_something_selected}
+                                            import_size={_import_size}
+
+                                            set_tool={this._set_tool}
+                                            set_select_mode={this._set_select_mode}
+                                            set_pencil_mirror_mode={this._set_pencil_mirror_mode}
+                                            set_width_from_slider={this._set_width_from_slider}
+                                            set_height_from_slider={this._set_height_from_slider}
+                                            set_import_size={this._set_import_size}
+                                            switch_with_second_color={this._switch_with_second_color}
+                                            show_hide_canvas_content={this._show_hide_canvas_content}
+                                            show_hide_background_image={this._show_hide_background_image}
+                                            show_hide_transparent_image={this._show_hide_transparent_image}
+                                            on_current_color_change={this._handle_current_color_change}
+                                            on_view_name_change={this._handle_view_name_change}
+                                            on_upload_image={this._upload_image}
+                                            on_import_image={this._import_image}
+                                            on_download_image={this._download_image}
+                                            on_request_publish={this._handle_is_pixel_dialog_post_edit_open}
+                                        />
+                                    </div>
+                                </div>
                             </SwipeableDrawer>
                             <Drawer
                                 className={classes.contentDrawerFixed}
@@ -1254,7 +1284,91 @@ class Pixel extends React.Component {
                                 }}
                             >
                                 <Toolbar />
-                                {drawer_content}
+                                <div style={{display: "contents"}}>
+                                    <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
+                                        <div className={classes.drawerHeader}>
+                                            <span className={classes.coordinate}>
+                                                <span>{`FPS: ${Math.round((_fps + _prev_fps) / 2)}`}</span>
+                                                <span>{` | X: ${x}, Y: ${y} | `}</span>
+                                                <span className={_kb < 64 ? classes.green: classes.red}>{`[~${Math.round(_kb * 100) / 100} kB]`}</span>
+                                            </span>
+                                            <Typography id="strength-slider" gutterBottom>
+                                                Effect strength:
+                                            </Typography>
+                                            <Slider
+                                                defaultValue={_slider_value}
+                                                step={1/32}
+                                                min={0}
+                                                max={1}
+                                                onChangeCommitted={this._set_value_from_slider}
+                                                aria-labelledby="strength-slider"
+                                            />
+                                        </div>
+                                        <Tabs className={classes.tabs}
+                                              indicatorColor="primary"
+                                              textColor="primary"
+                                              variant="fullWidth"
+                                              selectionFollowsFocus={false}
+                                              value={_view_name_index}
+                                              onChange={(event, index) => {this._handle_view_name_change(index)}}>
+                                            <Tab className={classes.tab} icon={<PaletteIcon />} />
+                                            <Tab className={classes.tab} icon={<ImageIcon />} />
+                                            <Tab className={classes.tab} icon={<AllLayersIcon />} />
+                                            <Tab className={classes.tab} icon={<ToolsIcon />} />
+                                            <Tab className={classes.tab} icon={<SelectIcon />} />
+                                            <Tab className={classes.tab} icon={<ImageEffectIcon />} />
+                                            <Tab className={classes.tab} icon={<ImageFilterIcon />} />
+                                        </Tabs>
+                                    </div>
+                                    <div className={classes.drawerContainer} onGotPointerCapture={(event) => {event.stopPropagation(); event.preventDefault();}}>
+                                        <PixelToolboxSwipeableViews
+                                            should_update={true}
+                                            onActionClose={this._handle_edit_drawer_close}
+                                            canvas={_canvas}
+                                            view_class={classes.listOfTools}
+                                            view_name_index={_view_name_index}
+                                            previous_view_name_index={_previous_view_name_index}
+                                            view_names={_view_names}
+                                            layers={_layers}
+                                            layer_index={_layer_index}
+                                            is_image_import_mode={_is_image_import_mode}
+                                            hide_canvas_content={_hide_canvas_content}
+                                            show_original_image_in_background={_show_original_image_in_background}
+                                            show_transparent_image_in_background={_show_transparent_image_in_background}
+                                            can_undo={_can_undo}
+                                            can_redo={_can_redo}
+                                            hue={_hue}
+                                            current_color={_current_color}
+                                            second_color={_second_color}
+                                            slider_value={_slider_value}
+                                            tool={_tool}
+                                            width={_width}
+                                            height={_height}
+                                            filters={_filters}
+                                            select_mode={_select_mode}
+                                            pencil_mirror_mode={_pencil_mirror_mode}
+                                            is_something_selected={_is_something_selected}
+                                            import_size={_import_size}
+
+                                            set_tool={this._set_tool}
+                                            set_select_mode={this._set_select_mode}
+                                            set_pencil_mirror_mode={this._set_pencil_mirror_mode}
+                                            set_width_from_slider={this._set_width_from_slider}
+                                            set_height_from_slider={this._set_height_from_slider}
+                                            set_import_size={this._set_import_size}
+                                            switch_with_second_color={this._switch_with_second_color}
+                                            show_hide_canvas_content={this._show_hide_canvas_content}
+                                            show_hide_background_image={this._show_hide_background_image}
+                                            show_hide_transparent_image={this._show_hide_transparent_image}
+                                            on_current_color_change={this._handle_current_color_change}
+                                            on_view_name_change={this._handle_view_name_change}
+                                            on_upload_image={this._upload_image}
+                                            on_import_image={this._import_image}
+                                            on_download_image={this._download_image}
+                                            on_request_publish={this._handle_is_pixel_dialog_post_edit_open}
+                                        />
+                                    </div>
+                                </div>
                             </Drawer>
                         </div>
                     </div>
