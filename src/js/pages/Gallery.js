@@ -48,9 +48,14 @@ class MasonryExtended extends Masonry {
 
 const styles = theme => ({
     root: {
+        width: "100%",
+        height: "calc(100vh - 56px)",
+        [theme.breakpoints.up("md")]: {
+            height: "calc(100vh - 64px)",
+            width: "calc(100% - 256px)",
+        },
         display: "flex",
-        flexWrap: "wrap",
-        justifyContent: "space-around",
+        position: "fixed",
         overflow: "hidden",
         backgroundColor: theme.palette.primary.darker,
     },
@@ -111,13 +116,14 @@ const styles = theme => ({
     },
     masonry: {
         overflow: "overlay",
-        "& .ReactVirtualized__Masonry": {
-            overflow: "overlay !important",
-            padding: "88px 16px 0px 16px",
+        "& > .ReactVirtualized__Masonry": {
+            position: "absolute",
+            padding: "88px 16px 32px 16px",
             margin: 0,
             scrollBehavior: "smooth",
-            "& .ReactVirtualized__Masonry__innerScrollContainer": {
-
+            overflow: "overlay",
+            "& > .ReactVirtualized__Masonry__innerScrollContainer": {
+                overflow: "hidden",
             }
         }
     },
@@ -158,8 +164,8 @@ class Gallery extends React.Component {
             _post_closed_at: 0,
             _selected_post_index: 0,
             _scrolling_reset_time_interval: 300,
-            _min_col_width: 36,
-            _max_col_width: 360,
+            _min_col_width: 10,
+            _max_col_width: 1000,
             _root_width: 0,
             _root_height: 0,
             _root: null,
@@ -175,8 +181,8 @@ class Gallery extends React.Component {
             _start_permlink: null,
             _column_count: 4,
             _column_width: 356,
-            _load_more_threshold: 1200,
-            _overscan_by_pixels: 784,
+            _load_more_threshold: 3000,
+            _overscan_by_pixels: 2000,
             _cell_positioner: null,
             _masonry: null,
 
@@ -219,7 +225,7 @@ class Gallery extends React.Component {
     _load_more = () => {
 
         const { _sorting, _tag, _limit } = this.state;
-
+        this._updated_dimensions();
     };
 
     _handle_sorting_change = (_sorting) => {
@@ -274,8 +280,8 @@ class Gallery extends React.Component {
 
         this.setState({_column_width, _column_count}, () => {
 
-            this._reset_cell_positioner();
             this.state._cell_measurer_cache.clearAll();
+            this._reset_cell_positioner();
             this._init_cell_positioner();
         });
     }
@@ -303,7 +309,7 @@ class Gallery extends React.Component {
 
         return (
             <CellMeasurer cache={_cell_measurer_cache} index={index} key={key} parent={parent}>
-                <div style={{
+                <div draggable={"false"} style={{
                     ...style,
                     width: _column_width,
                 }}>
@@ -333,30 +339,36 @@ class Gallery extends React.Component {
 
             this.setState({_cell_positioner})
         }
-
     }
 
-    _updated_dimensions = () => {
-
-        let w = window,
-            d = document,
-            documentElement = d.documentElement,
-            body = d.getElementsByTagName('body')[0],
-            _window_width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
-            _window_height = w.innerHeight|| documentElement.clientHeight || body.clientHeight;
+    _updated_dimensions = (do_not_refresh_after = false) => {
 
         const { _root } = this.state;
 
         if(_root !== null) {
 
-            const root_rect = _root.getBoundingClientRect();
-            this.setState({_window_width, _window_height, _root_width: root_rect.width, _root_height: root_rect.height}, () => {
+            setTimeout(() => {
 
-                this._calculate_column_count();
-            })
+                let w = window,
+                    d = document,
+                    documentElement = d.documentElement,
+                    body = d.getElementsByTagName('body')[0],
+                    _window_width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
+                    _window_height = w.innerHeight|| documentElement.clientHeight || body.clientHeight;
+
+                const root_rect = _root.getBoundingClientRect();
+                this.setState({_window_width, _window_height, _root_width: root_rect.width, _root_height: root_rect.height}, () => {
+
+                    this._calculate_column_count();
+
+                    if(!do_not_refresh_after) {
+
+                        this._updated_dimensions(true);
+                    }
+                });
+            }, do_not_refresh_after ? 0: 500);
         }else {
 
-            this.setState({_window_width, _window_height});
             setTimeout(() => {
 
                 this._updated_dimensions();
@@ -408,13 +420,7 @@ class Gallery extends React.Component {
         setTimeout(() => {
 
             this._updated_dimensions();
-        }, 1000);
-
-        setTimeout(() => {
-
-            this._updated_dimensions();
-        }, 3000);
-
+        }, 500);
     };
 
     _handle_art_open = (post, event) => {
@@ -640,7 +646,7 @@ class Gallery extends React.Component {
                 overscanByPixels={_overscan_by_pixels}
                 ref={this._set_masonry_ref}
                 width={page_width}
-            />: null;
+            ></MasonryExtended>: null;
 
         return (
             <div className={classes.root} ref={this._set_root_ref}>

@@ -26,14 +26,12 @@ const angel_emoji_svg = get_svg_in_b64(<AngelEmojiSvg />);
 const fire_earth_emoji_svg = get_svg_in_b64(<FireHearthEmojiSvg />);
 
 const styles = theme => ({
-    root: {
-        position: "initial"
-    },
     card: {
-        position: "initial",
+        overflow: "visible",
+        position: "relative",
         boxSizing: "border-box",
         width: "100%",
-        height: "calc(100% - 0px)",
+        height: "100%",
         borderRadius: 4,
         backgroundColor: "transparent",
         "&::before": {
@@ -177,33 +175,31 @@ class PixelArtCard extends React.Component {
         const { classes, post, selected } = this.state;
 
         return (
-            <div className={classes.root}>
-                <Card className={classes.card} score={100} dataselected={selected ? "true": "false"}>
-                    <CardActionArea>
-                        <CardMedia
-                            onClick={(event) => {this.props.on_card_media_click(post, event)}}
-                            className={classes.cardMedia}
-                            component="img"
-                            alt="Demo only"
-                            image={post.image.base64}
-                            title="Demo only"
-                        />
-                        <CardContent datatags={"Category"} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
-                            <Typography gutterBottom variant="h5" component="h2">
-                                Demo only
-                            </Typography>
-                            <Typography variant="body2" color="textSecondary" component="p">
-                                Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-                                across all continents except Antarctica. (It will be coming soon.)
-                            </Typography>
-                        </CardContent>
-                    </CardActionArea>
-                    <CardActions className={classes.cardActions}>
-                        <span className={classes.postValue}>CHF 152.15 / 225 Votes</span>
-                    </CardActions>
-                    <span onClick={this.props.on_reaction_click} className={classes.cardAfterElement}></span>
-                </Card>
-            </div>
+            <Card elevation={0} className={classes.card} score={100} dataselected={selected ? "true": "false"}>
+                <CardActionArea>
+                    <CardMedia
+                        onClick={(event) => {this.props.on_card_media_click(post, event)}}
+                        className={classes.cardMedia}
+                        component="img"
+                        alt="Demo only"
+                        image={post.image.base64}
+                        title="Demo only"
+                    />
+                    <CardContent datatags={"Category"} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
+                        <Typography gutterBottom variant="h5" component="h2">
+                            Demo only
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                            Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
+                            across all continents except Antarctica. (It will be coming soon.)
+                        </Typography>
+                    </CardContent>
+                </CardActionArea>
+                <CardActions className={classes.cardActions}>
+                    <span className={classes.postValue}>CHF 152.15 / 225 Votes / @Author</span>
+                </CardActions>
+                <span onClick={this.props.on_reaction_click} className={classes.cardAfterElement}></span>
+            </Card>
         );
     }
 }

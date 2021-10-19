@@ -92,6 +92,9 @@ const overrides = {
                     content: "none",
                 }
             },
+            ".MuiDrawer-paperAnchorBottom": {
+                clipPath: "polygon(calc(32px) 0, calc(200px) 0, calc(200px) calc(16px), calc(100% - 100px) calc(16px), calc(100% - 76px) 0, 100% 0, 100% 100%, 0 100%, 0 calc(16px))",
+            },
             ".MuiFab-root.MuiFab-extended": {
                 borderRadius: 4,
             },

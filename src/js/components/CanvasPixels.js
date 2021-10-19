@@ -7128,9 +7128,10 @@ class CanvasPixels extends React.Component {
         let shadow = this._get_shadow(Math.round(shadow_depth * 3));
 
         return (
-            <div ref={this._set_canvas_container_ref} style={{boxSizing: "border-box", position: "relative", overflow: "hidden", transform: `translateZ(0px)`, touchAction: "none", pointerEvents: "none"}} className={className}>
+            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{boxSizing: "border-box", position: "relative", overflow: "hidden", transform: `translateZ(0px)`, touchAction: "none", pointerEvents: "none"}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
                      className={"Canvas-Wrapper-Overflow"}
+                     draggable={"false"}
                      style={{
                          transition: `opacity ${animation ? animation_duration / 2: 0}ms cubic-bezier(0, 0, 0.2, 1) 200ms`,
                          opacity: _hidden ? 0: 1,
@@ -7143,6 +7144,7 @@ class CanvasPixels extends React.Component {
                          pointerEvents: "all",
                      }}>
                     <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
+                         draggable={"false"}
                          style={{
                              borderWidth: canvas_wrapper_border_width,
                              borderStyle: "solid",
@@ -7162,6 +7164,7 @@ class CanvasPixels extends React.Component {
                          }}
                          ref={this._set_canvas_wrapper_ref}>
                         <canvas
+                            draggable={"false"}
                             style={{
                                 position: "absolute",
                                 touchAction: "none",

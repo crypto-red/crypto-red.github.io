@@ -107,6 +107,7 @@ const styles = theme => ({
         },
     },
     headerContainer: {
+        fontFamily: "'Saira'",
         position: "absolute",
         marginTop: theme.spacing(-2),
         color: "#000000",
@@ -115,10 +116,16 @@ const styles = theme => ({
         },
     },
     title: {
-        fontSize: 32,
+        fontSize: 56,
+        [theme.breakpoints.down("sm")]: {
+            fontSize: 36,
+        },
     },
     subtitle: {
-        fontSize: 24,
+        fontSize: 32,
+        [theme.breakpoints.down("sm")]: {
+            fontSize: 24,
+        },
     },
     blue: {
         color: theme.palette.primary.actionLighter,
@@ -209,8 +216,15 @@ class Home extends React.Component {
                 </div>
                 <div className={classes.backgroundImage}>
                     <div className={classes.headerContainer}>
-                        <h1 className={classes.title}>The <span className={classes.blue}>free <img src={get_svg_in_b64(<DollarEmojiSvg />)} className="emoji bounce"/></span> and <span className={classes.blue}>open-source <img src={get_svg_in_b64(<AngelEmojiSvg />)} className="emoji"/></span> crypto wallet.</h1>
-                        <h2 className={classes.subtitle}>Made with <img src={get_svg_in_b64(<HearthEmojiSvg />)} className={"emoji pulse"}/>, since <img src={get_svg_in_b64(<PrivacyEmojiSvg />)} className="emoji"/> your <span style={{color: "#4c9221"}}>keys matters</span> <img src={get_svg_in_b64(<EarthEmojiSvg />)} className={"emoji"}/>.</h2>
+                        <h1 className={classes.title}>
+                            <span>The <span className={classes.blue}>100% free </span></span><img src={get_svg_in_b64(<DollarEmojiSvg />)} className="emoji bounce"/><br />
+                            <span>and <span className={classes.blue}>open-source</span></span><br />
+                            <span><img src={get_svg_in_b64(<AngelEmojiSvg />)} className="emoji"/> crypto wallet.</span>
+                        </h1>
+                        <h2 className={classes.subtitle}>
+                            Made with <img className={"emoji pulse"} src={get_svg_in_b64(<HearthEmojiSvg />)}/>, since <img src={get_svg_in_b64(<PrivacyEmojiSvg />)} className="emoji"/><br />
+                            your <span className={classes.blue}>keys matters</span> <img src={get_svg_in_b64(<EarthEmojiSvg />)} className={"emoji"}/>.
+                        </h2>
                     </div>
                     <div className={classes.quoteContainer}>
                         <blockquote>

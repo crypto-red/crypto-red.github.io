@@ -38,7 +38,7 @@ import FeedbackIcon from "@material-ui/icons/Feedback";
 import ForumIcon from "@material-ui/icons/Forum";
 import PaintingEmojiIcon from "../twemoji/react/1F3De";
 import MoneyEmojiIcon from "../twemoji/react/1F4B5";
-import AnonymousEmojiIcon from "../twemoji/react/1F575";
+import ToolsEmojiIcon from "../twemoji/react/1F6E0";
 import DownasaurIcon from "../icons/Downasaur";
 import ViewCarouselIcon from "@material-ui/icons/ViewCarousel";
 
@@ -473,7 +473,7 @@ class DrawerContent extends React.Component {
                             </List>
                         </Collapse>
                         <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "tools")}>
-                            <AnonymousEmojiIcon className={classes.iconLeft}/>
+                            <ToolsEmojiIcon className={classes.iconLeft}/>
                             <ListItemText primary={t( "components.drawer_content.menu.tools.tools")} />
                             <ExpandMoreIcon  className={_menu_expanded === "tools" ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
                         </ListItem>
