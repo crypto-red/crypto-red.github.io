@@ -28,9 +28,8 @@ class PixelColorPalette extends React.Component {
             classes: props.classes,
             colors: props.colors || [],
             selected_colors:  props.selected_colors || [],
-            selected_colors_set: new Set([...props.selected_colors || null]),
             padding: props.padding || 24,
-            gap: props.gap || 8,
+            gap: props.gap || 0,
             size: props.size || 32,
             transparent: props.transparent || false,
             align: props.align || "center",
@@ -56,7 +55,8 @@ class PixelColorPalette extends React.Component {
 
     render() {
 
-        let { classes, selected_colors_set, colors, padding, gap, size, transparent, align } = this.state;
+        let { classes, colors, padding, gap, size, transparent, align, selected_colors } = this.state;
+        const selected_colors_set = new Set([...selected_colors]);
 
         return (
             <div className={classes.colorPalette} style={align === "center" ? {padding, gap}: align === "left" ? {justifyContent: "end", padding, gap}: {justifyContent: "start", padding, gap}}>

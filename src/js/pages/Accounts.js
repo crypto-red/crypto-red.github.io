@@ -25,6 +25,9 @@ import actions from "../actions/utils";
 import { HISTORY } from "../utils/constants";
 import api from "../utils/api";
 
+import AccountDialogThanks from "../components/AccountDialogThanks";
+import ShareDialog from "../components/ShareDialog";
+
 const styles = theme => ({
     root: {
         flexGrow: 1
@@ -55,7 +58,7 @@ const styles = theme => ({
         [theme.breakpoints.down("xs")]: {
             padding: theme.spacing(1, 0)
         }
-    }
+    },
 });
 
 
@@ -76,11 +79,13 @@ class Accounts extends React.Component {
             _is_account_dialog_delete_open: false,
             _is_account_dialog_create_open: false,
             _is_account_dialog_backup_open: false,
+            _is_dialog_thanks_open: false,
             _is_hive_dialog_open: false,
             _login_error: false,
             _selected_locales_code: null,
             _selected_currency: null,
-            _coins_id: COINS.map(c => c.id)
+            _coins_id: COINS.map(c => c.id),
+            _is_dialog_share_open: false,
         };
     };
 
@@ -308,7 +313,7 @@ class Accounts extends React.Component {
     _on_account_dialog_create_complete = () => {
 
         this._get_accounts();
-        this.setState({_is_account_dialog_create_open: false});
+        this.setState({_is_account_dialog_create_open: false, _is_dialog_thanks_open: true});
         actions.trigger_sfx("hero_decorative-celebration-01");
         actions.jamy_update("happy");
     }
@@ -333,10 +338,28 @@ class Accounts extends React.Component {
         actions.jamy_update("happy");
     }
 
+    _handle_thanks_close = () => {
+
+        this.setState({_is_dialog_thanks_open: false});
+    };
+
+    _handle_accept_invite = () => {
+
+        this.setState({_is_dialog_share_open: true, _is_dialog_thanks_open: false});
+    };
+
+    _handle_share_dialog_close = () => {
+
+        this.setState({_is_dialog_share_open: false});
+    };
+
     render() {
 
-        const { classes, _selected_account, _logged_account, _accounts, _selected_locales_code, _selected_currency, _login_error , _coins_markets, _no_accounts_db } = this.state;
+        const { classes, _selected_account, _logged_account, _accounts, _selected_locales_code, _selected_currency, _login_error , _coins_markets, _no_accounts_db, _is_dialog_share_open } = this.state;
         const { _is_account_dialog_close_open, _is_account_dialog_open_open, _is_account_dialog_delete_open, _is_account_dialog_create_open, _is_account_dialog_backup_open, _is_hive_dialog_open } = this.state;
+
+        // _is_dialog_thanks_open doesn't work, yet close don't trigger AND account creation complete event trigger WTF
+        const { _is_dialog_thanks_open } = this.state;
 
         const logged_account_name = Boolean(_logged_account) ? _logged_account.name: null;
 
@@ -407,6 +430,8 @@ class Accounts extends React.Component {
                                      onError={this._on_hive_dialog_error}
                                      onComplete={this._on_hive_dialog_complete}
                 />
+                <AccountDialogThanks accept={this._handle_accept_invite} open={_is_dialog_thanks_open} onClose={this._handle_thanks_close}/>
+                <ShareDialog open={_is_dialog_share_open} onClose={this._handle_share_dialog_close}/>
             </div>
         );
     }

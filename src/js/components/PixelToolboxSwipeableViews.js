@@ -195,6 +195,13 @@ const styles = theme => ({
             },
         },
     },
+    sliderContainer: {
+        display: "flex",
+        overflow: "visible",
+    },
+    sliderLabel: {
+        marginRight: theme.spacing(2),
+    }
 });
 
 
@@ -876,7 +883,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                               disableAlpha={false}/>
                                             </Menu>
 
-                                            <div>
+                                            <div style={{textAlign: "center"}}>
                                                 <Button variant={"contained"}
                                                         style={{fontWeight: "bold", color: is_current_color_dark ? "white": "black", boxShadow: `0px 2px 4px -1px rgb(${r_1} ${g_1} ${b_1} / 20%), 0px 4px 5px 0px rgb(${r_1} ${g_1} ${b_1} / 14%), 0px 1px 10px 0px rgb(${r_1} ${g_1} ${b_1} / 12%)`, margin: 24, boxSizing: "content-box", background: current_color, borderRadius: 4, height: 48, width: 96}}
                                                         onClick={(event) => {this._handle_color_menu_open(event, current_color)}}>
@@ -889,21 +896,24 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                 </Button>
                                             </div>
 
-                                            <div style={{padding: "8px 24px", position: "relative", overflow: "hidden", boxSizing: "border-box", width: "100%"}}>
-                                                <Typography id="opacity-slider" gutterBottom>Opacity</Typography>
-                                                <Slider defaultValue={_opacity} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_opacity_from_slider} aria-labelledby="opacity-slider"/>
-
-                                                <Typography id="luminosity-slider" gutterBottom>Luminosity</Typography>
-                                                <Slider defaultValue={_luminosity} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_luminosity_from_slider} aria-labelledby="luminosity-slider"/>
-
-                                                <Typography id="saturation-slider" gutterBottom>Saturation</Typography>
-                                                <Slider defaultValue={_saturation} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_saturation_from_slider} aria-labelledby="strength-slider"
-                                                />
+                                            <div style={{padding: "8px 24px", position: "relative", overflow: "visible", boxSizing: "border-box", width: "100%"}}>
+                                                <div className={classes.sliderContainer}>
+                                                    <Typography className={classes.sliderLabel} id="opacity-slider" gutterBottom>α</Typography>
+                                                    <Slider defaultValue={_opacity} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_opacity_from_slider} aria-labelledby="opacity-slider"/>
+                                                </div>
+                                                <div className={classes.sliderContainer}>
+                                                    <Typography className={classes.sliderLabel} id="luminosity-slider" gutterBottom>L</Typography>
+                                                    <Slider defaultValue={_luminosity} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_luminosity_from_slider} aria-labelledby="luminosity-slider"/>
+                                                </div>
+                                                <div className={classes.sliderContainer}>
+                                                    <Typography className={classes.sliderLabel} id="saturation-slider" gutterBottom>S</Typography>
+                                                    <Slider defaultValue={_saturation} step={10} valueLabelDisplay="auto" min={0} max={100} onChangeCommitted={this._set_saturation_from_slider} aria-labelledby="strength-slider"/>
+                                                </div>
                                             </div>
 
                                             <PixelColorPalette
                                                 transparent={true}
-                                                padding="24px"
+                                                padding="12px 24px 24px 24px"
                                                 gap="8px"
                                                 align="left"
                                                 colors={colors}

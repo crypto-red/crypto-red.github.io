@@ -27,6 +27,7 @@ import CoolEmojiSvg from "../twemoji/react/1F60E";
 import LoveEmojiSvg from "../twemoji/react/1F60D";
 import AngelEmojiSvg from "../twemoji/react/1F607";
 import get_svg_in_b64 from "../utils/svgToBase64";
+import AccountDialogProfileHive from "../components/AccountDialogProfileHive";
 
 class MasonryExtended extends Masonry {
     _getEstimatedTotalHeight() {
@@ -199,6 +200,8 @@ class Gallery extends React.Component {
 
             _reaction_menu_x: null,
             _reaction_menu_y: null,
+
+            _selected_account: null,
         };
     };
 
@@ -316,12 +319,18 @@ class Gallery extends React.Component {
                     <PixelArtCard
                         selected={_selected_post_index === index}
                         post={post}
+                        on_author_click={this._handle_set_selected_account}
                         on_card_media_click={this._handle_art_open}
                         on_card_content_click={this._handle_art_focus}
                         on_reaction_click={this._handle_art_reaction}/>
                 </div>
             </CellMeasurer>
         );
+    };
+
+    _handle_set_selected_account = () => {
+
+        this.setState({_selected_account: "@mes"});
     };
 
     _init_cell_positioner() {
@@ -615,11 +624,16 @@ class Gallery extends React.Component {
         const {_selected_post_index, _posts} = this.state;
 
         this.setState({_post: _posts[_selected_post_index]});
+    };
+
+    _handle_reset_selected_account = () => {
+
+        this.setState({_selected_account: null});
     }
 
     render() {
 
-        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval } = this.state;
+        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _selected_account } = this.state;
         const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_menu_x, _reaction_menu_y } = this.state;
 
         const width = _window_width;
@@ -715,6 +729,7 @@ class Gallery extends React.Component {
                     open={Boolean(_post)}
                     onClose={this._handle_pixel_dialog_post_close}/>
 
+                <AccountDialogProfileHive open={_selected_account !== null} onClose={this._handle_reset_selected_account}/>
             </div>
         );
     }

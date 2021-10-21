@@ -501,6 +501,11 @@ class CanvasPixels extends React.Component {
                 has_shown_canvas_once: false,
             }, () => {
 
+                if(this.props.on_elevation_change) {
+
+                    this.props.on_elevation_change(this.state._moves_speed_average_now);
+                }
+
                 this._update_screen_zoom_ratio(true);
             });
         } else if(
@@ -1798,6 +1803,11 @@ class CanvasPixels extends React.Component {
                         _moves_speed_average_now: 8,
                         _hidden: false
                     }, () => {
+
+                        if(this.props.on_elevation_change) {
+
+                            this.props.on_elevation_change(this.state._moves_speed_average_now);
+                        }
 
                         this._request_force_update();
                     });
@@ -6983,6 +6993,11 @@ class CanvasPixels extends React.Component {
             _moves_speed_average_now: (new_scale !== null && new_scale > scale) ? 8: (new_scale !== null && new_scale < scale) ? 0: _moves_speed_average,
         }, () => {
 
+            if(this.props.on_elevation_change) {
+
+                this.props.on_elevation_change(this.state._moves_speed_average_now);
+            }
+
             this._request_force_update(true);
         });
     };
@@ -7016,6 +7031,11 @@ class CanvasPixels extends React.Component {
                 _moves_speed_average_now: new_moves_speed_average_now,
                 _scale_move_speed_timestamp: now,
             }, () => {
+
+                if(this.props.on_elevation_change) {
+
+                    this.props.on_elevation_change(this.state._moves_speed_average_now);
+                }
 
                 if(new_moves_speed_average_now !== _moves_speed_average_now && this.state._scale_move_speed_timestamp === now) {
 

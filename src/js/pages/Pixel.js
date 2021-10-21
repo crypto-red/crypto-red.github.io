@@ -58,6 +58,10 @@ import SelectColorIcon from "../icons/SelectColor";
 import SelectRemoveDifferenceIcon from "../icons/SelectRemoveDifference";
 
 import PixelDialogPost from "../components/PixelDialogPost";
+import Dialog from "@material-ui/core/Dialog";
+import CardContent from "@material-ui/core/CardContent";
+import IconButton from "@material-ui/core/IconButton";
+import InfoIcon from "@material-ui/icons/Info";
 
 const styles = theme => ({
     green: {
@@ -246,6 +250,12 @@ const styles = theme => ({
             animation: "MuiTouchRipple-keyframes-enter 200ms cubic-bezier(0.4, 0, 0.2, 1)"
         }
     },
+    infoIcon: {
+        position: "absolute",
+    },
+    blue: {
+        color: theme.palette.secondary.lighter,
+    }
 });
 
 
@@ -260,6 +270,7 @@ class Pixel extends React.Component {
             _previous_view_name_index: 1,
             _view_names: ["palette", "image", "layers", "tools", "selection", "effects", "filters"],
             _canvas: null,
+            _canvas_elevation: 8,
             _loading: false,
             _can_undo: false,
             _can_redo: false,
@@ -897,11 +908,27 @@ class Pixel extends React.Component {
         this.setState({_is_pixel_dialog_post_edit_open: true, _is_edit_drawer_open: false});
     };
 
+    _handle_elevation_change = (elevation) => {
+
+        this.setState({_canvas_elevation: elevation});
+    };
+
+    _handle_dialog_info_close = () => {
+
+        this.setState({_is_dialog_info_open: false});
+    };
+
+    _handle_dialog_info_open = () => {
+
+        this.setState({_is_dialog_info_open: true});
+    };
+
     render() {
 
         const {
             classes,
             _canvas,
+            _canvas_elevation,
             _view_name_index,
             _previous_view_name_index,
             _loading,
@@ -936,7 +963,8 @@ class Pixel extends React.Component {
             _ripple_opacity,
             _menu_event,
             _is_pixel_dialog_post_edit_open,
-            _base64_url
+            _base64_url,
+            _is_dialog_info_open
         } = this.state;
 
         let x = _x === -1 ? "out": _x + 1;
@@ -944,6 +972,8 @@ class Pixel extends React.Component {
 
         _menu_data.pos_x = _menu_data.pos_x === -1 ? "out": _menu_data.pos_x;
         _menu_data.pos_y = _menu_data.pos_y === -1 ? "out": _menu_data.pos_y;
+
+        const rgb = 245 - Math.floor(Math.abs(_canvas_elevation) / 2);
 
         return (
             <div>
@@ -1128,7 +1158,7 @@ class Pixel extends React.Component {
                 </Grow>
                 <div className={classes.root}>
                     <div className={classes.content}>
-                        <div className={classes.contentInner} style={{background: `linear-gradient(90deg, #f5f5f5 30px, transparent 1%) center, linear-gradient(#f5f5f5 30px, transparent 1%) center, #afafaf`}}>
+                        <div className={classes.contentInner} style={{background: `linear-gradient(90deg, rgb(${rgb}, ${rgb}, ${rgb}) 30px, transparent 1%) center, linear-gradient(rgb(${rgb}, ${rgb}, ${rgb}) 30px, transparent 1%) center, rgb(${rgb-70}, ${rgb-70}, ${rgb-70})`}}>
                             <div className={classes.contentCanvas}>
                                 <CanvasPixels
                                     onContextMenu={(e) => {e.preventDefault()}}
@@ -1157,6 +1187,7 @@ class Pixel extends React.Component {
                                     onImageImportModeChange={this._handle_image_import_mode_change}
                                     on_kb_change={this._handle_kb_change}
                                     on_fps_change={this._handle_fps_change}
+                                    on_elevation_change={this._handle_elevation_change}
                                     onPositionChange={this._handle_position_change}
                                     onLayersChange={this._handle_layers_change}
                                     onGameEnd={this._handle_game_end}
@@ -1373,6 +1404,15 @@ class Pixel extends React.Component {
                         </div>
                     </div>
                 </div>
+                <IconButton className={classes.infoIcon} onClick={this._handle_dialog_info_open}>
+                    <InfoIcon/>
+                </IconButton>
+                <Dialog open={_is_dialog_info_open} onClose={this._handle_dialog_info_close}>
+                    <CardContent>
+                        <p>We hope you will soon find new friends on the blockchain technology using Wallet Crypto Red; some of whom may wish to join forces with you to form powerful dreams. Plan your next moves together, conceive elaborate investment strategies and build your “team”, develop your passion, and learn about fascinating things! Support each other with the powers of the pixel art by making custom donation with your artworks. Defend your true will by concentrating, and by strategically moving your efforts and using tools and bots we are developing. United you are strong, and you can expand your horizon; transactions by transactions, pixel by pixel, NFT by NFT, and share by sharing; but also in real life with the profit you make.</p>
+                        <p className={classes.blue}>Uniquely we are free, together we are strong!</p>
+                    </CardContent>
+                </Dialog>
             </div>
         );
     }

@@ -36,7 +36,7 @@ import LockIcon from "@material-ui/icons/Lock";
 import AtmIcon from "@material-ui/icons/Atm";
 import FeedbackIcon from "@material-ui/icons/Feedback";
 import ForumIcon from "@material-ui/icons/Forum";
-import PaintingEmojiIcon from "../twemoji/react/1F3De";
+import PenEmojiIcon from "../twemoji/react/270F";
 import MoneyEmojiIcon from "../twemoji/react/1F4B5";
 import ToolsEmojiIcon from "../twemoji/react/1F6E0";
 import DownasaurIcon from "../icons/Downasaur";
@@ -431,7 +431,7 @@ class DrawerContent extends React.Component {
                             </List>
                         </Collapse>
                         <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "nft")}>
-                            <PaintingEmojiIcon className={classes.iconLeft}/>
+                            <PenEmojiIcon className={classes.iconLeft}/>
                             <ListItemText primary={"NFT"} />
                             <ExpandMoreIcon  className={_menu_expanded === "nft" ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
                         </ListItem>

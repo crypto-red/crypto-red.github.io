@@ -8,7 +8,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 const styles = theme => ({
     colorPaletteItem: {
         padding: 0,
-        borderRadius: 2,
+        borderRadius: 0,
         height: 32,
         width: 32
     },
@@ -75,7 +75,7 @@ class PixelColorPaletteItem extends React.Component {
                     onClick={this.props.onClick ? this.props.onClick: null}
                     style={{
                         background: color,
-                        boxShadow: `inset 0px 2px 4px -1px rgb(${0} ${0} ${0} / 20%), inset 0px 4px 5px 0px rgb(${0} ${0} ${0} / 14%), inset 0px 1px 10px 0px rgb(${0} ${0} ${0} / 12%)`,
+                        /*boxShadow: `inset 0px 2px 4px -1px rgb(${0} ${0} ${0} / 20%), inset 0px 4px 5px 0px rgb(${0} ${0} ${0} / 14%), inset 0px 1px 10px 0px rgb(${0} ${0} ${0} / 12%)`,*/
                         width: full_width ? "100%": size,
                         height: size,
                         ...style
