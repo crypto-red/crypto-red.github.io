@@ -35,7 +35,10 @@ import ReactMarkdown from "react-markdown";
 import Fab from "@material-ui/core/Fab";
 import EditIcon from "@material-ui/icons/Edit";
 import Grow from "@material-ui/core/Grow";
-import FastNavScroller from "./FastNavScroller";
+import Chip from "@material-ui/core/Chip";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
+import * as toxicity from "@tensorflow-models/toxicity";
 
 const styles = theme => ({
     root: {
@@ -232,13 +235,10 @@ const styles = theme => ({
     },
     bottomDesktopFabs: {
         display: "none",
-        pointerEvents: "none",
         position: "fixed",
         bottom: theme.spacing(2),
-        right: theme.spacing(2),
         left: theme.spacing(62),
         gap: 16,
-        width: `calc(100vw - 480px - ${theme.spacing(4)}px)`,
         height: 48,
         [theme.breakpoints.up("lg")]: {
             display: "flex",
@@ -255,6 +255,26 @@ const styles = theme => ({
             marginRight: 4
         },
     },
+    chip: {
+        marginRight: 4,
+        marginBottom: 8,
+    },
+    tensorflowContainer: {
+        display: "block",
+        alignItems: "center",
+    },
+    tensorflowWrapper: {
+        margin: "8px 0px",
+        position: "relative",
+    },
+    tensorflowButtonProgress: {
+        color: theme.palette.primary.contrastText,
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        marginTop: -12,
+        marginLeft: -12,
+    }
 });
 
 
@@ -268,8 +288,8 @@ class PixelDialogPost extends React.Component {
             open: props.open,
             post: props.post,
             edit: props.edit || false,
-            title: "",
-            description: "",
+            _title_input: "",
+            _description_input: "",
             _canvas: null,
             _width: 32,
             _height: 32,
@@ -292,6 +312,9 @@ class PixelDialogPost extends React.Component {
             _drawer_open: false,
             _dont_show_canvas: true,
             _swiped_at: 0,
+            _title_prediction: null,
+            _description_prediction: null,
+            _is_prediction_loading: false,
         };
     };
 
@@ -349,17 +372,18 @@ class PixelDialogPost extends React.Component {
 
         if(post) {
 
-            event.preventDefault();
-
             switch (event.keyCode) {
 
                 case 40:
+                    event.preventDefault();
                     this.props.onClose();
                     break;
                 case 37:
+                    event.preventDefault();
                     if(this.props.on_previous) { this.props.on_previous()}
                     break;
                 case 39:
+                    event.preventDefault();
                     if(this.props.on_next) { this.props.on_next()}
                     break;
             }
@@ -562,18 +586,18 @@ class PixelDialogPost extends React.Component {
         });
     }
 
-    _handle_description_change = (event) => {
+    _handle_description_input_change = (event) => {
 
         const description = event.target.value;
-        this.setState({description}, () => {
+        this.setState({_description_input: description}, () => {
             this.forceUpdate();
         });
     };
 
-    _handle_title_change = (event) => {
+    _handle_title_input_change = (event) => {
 
         const title = event.target.value;
-        this.setState({title}, () => {
+        this.setState({_title_input: title}, () => {
             this.forceUpdate();
         });
     };
@@ -588,14 +612,50 @@ class PixelDialogPost extends React.Component {
         }
     };
 
+    _evaluate_content_with_tensorflow = () => {
+
+        // The minimum prediction confidence.
+        const { _title_input, _description_input } = this.state;
+        const threshold = 0.9;
+
+        // Load the model. Users optionally pass in a threshold and an array of
+        // labels to include.
+
+        this.setState({_is_prediction_loading: true}, () => {
+
+            toxicity.load(threshold).then(model => {
+                const sentences = [_title_input, _description_input];
+
+                model.classify(sentences).then(predictions => {
+                    // `predictions` is an array of objects, one for each prediction head,
+                    // that contains the raw probabilities for each input along with the
+                    // final prediction in `match` (either `true` or `false`).
+                    // If neither prediction exceeds the threshold, `match` is `null`.
+
+                    let _title_prediction = [];
+                    let _description_prediction = [];
+
+                    predictions.forEach((p) => {
+
+                        _title_prediction[p.label] = p.results[0].probabilities[1];
+                        _description_prediction[p.label] = p.results[1].probabilities[1];
+                    });
+
+                    this.setState({_is_prediction_loading: false, _title_prediction, _description_prediction});
+                });
+            });
+        });
+    };
+
     _handle_send_click = (event) => {
 
-        const { title, description, base64_url } = this.state;
+        const { _title_input, _description_input, base64_url } = this.state;
+
         if(this.props.onRequestSend) {
 
             this.props.onRequestSend({
-                title,
-                description,
+                _title_input,
+                _description_input,
                 base64_url,
             });
         }
@@ -648,8 +708,11 @@ class PixelDialogPost extends React.Component {
             classes,
             open,
             edit,
-            title,
-            description,
+            _title_input,
+            _title_prediction,
+            _is_prediction_loading,
+            _description_input,
+            _description_prediction,
             _width,
             _height,
             _window_width,
@@ -764,11 +827,30 @@ class PixelDialogPost extends React.Component {
                                                         id="title_textfield"
                                                         fullWidth
                                                         label="Title"
-                                                        value={title}
-                                                        onChange={this._handle_title_change}
+                                                        value={_title_input}
+                                                        onChange={this._handle_title_input_change}
                                                         style={{marginBottom: 12}}
                                                     />:
-                                                    <Typography gutterBottom variant="h4" component="h3">{title}</Typography>
+                                                    <Typography gutterBottom variant="h4" component="h3">Demo only title</Typography>
+                                            }
+                                            {
+                                                _title_prediction ?
+                                                    <div>
+                                                        {
+                                                            Object.entries(_title_prediction).map((entry) => {
+
+                                                                const [ prediction_tag, prediction_value ] = entry;
+                                                                const percent_true_value = Math.round(prediction_value * 100);
+
+                                                                return (
+                                                                    <Chip size={"small"}
+                                                                          className={classes.chip}
+                                                                          style={{backgroundColor: `hsl(${100 - percent_true_value}deg 60% 60%)`}}
+                                                                          label={`${prediction_tag.replace("_", " ")} ${Math.round(prediction_value * 100)}%`}/>
+                                                                );
+                                                            })
+                                                        }
+                                                    </div> : null
                                             }
                                             {
                                                 edit ?
@@ -777,16 +859,52 @@ class PixelDialogPost extends React.Component {
                                                         label="Description"
                                                         multiline
                                                         fullWidth
-                                                        value={description}
-                                                        onChange={this._handle_description_change}
+                                                        value={_description_input}
+                                                        onChange={this._handle_description_input_change}
                                                         size="small"
                                                         style={{marginBottom: 12}}
                                                     />:
                                                     <div>
                                                         <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>
-                                                            {description}
+                                                            Demo only **description**.
                                                         </ReactMarkdown>
                                                     </div>
+                                            }
+                                            {
+                                                _description_prediction ?
+                                                    <div>
+                                                        {
+                                                            Object.entries(_description_prediction).map((entry) => {
+
+                                                                const [ prediction_tag, prediction_value ] = entry;
+                                                                const percent_true_value = Math.round(prediction_value * 100);
+
+                                                                return (
+                                                                    <Chip size={"small"}
+                                                                          className={classes.chip}
+                                                                          style={{backgroundColor: `hsl(${100 - percent_true_value}deg 60% 60%)`}}
+                                                                          label={`${prediction_tag.replace("_", " ")} ${percent_true_value}%`}/>
+                                                                );
+                                                            })
+                                                        }
+                                                    </div> : null
+                                            }
+                                            {
+                                                edit ?
+                                                    <div className={classes.tensorflowContainer}>
+                                                        <p>Discover with TensorFlow's machine learning, what's the intention of your writing, get ready for it.</p>
+                                                        <div className={classes.tensorflowWrapper}>
+                                                            <Button
+                                                                variant="contained"
+                                                                color="primary"
+                                                                disabled={_is_prediction_loading}
+                                                                onClick={this._evaluate_content_with_tensorflow}
+                                                            >
+                                                                What's kind
+                                                            </Button>
+                                                            {_is_prediction_loading && <CircularProgress size={24} className={classes.tensorflowButtonProgress} />}
+                                                        </div>
+                                                    </div>: null
                                             }
                                         </CardContent>
                                         <CardContent>
