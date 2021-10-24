@@ -7,17 +7,24 @@ import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import images from "../utils/images";
+import PixelArtCard from "../components/PixelArtCard";
+import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
 
 const styles = theme => ({
     dialogPaper: {
+        overflow: "overlay",
         "& .MuiDialog-paper": {
             borderRadius: 0,
-            maxWidth: 800,
             width: "100%",
             backgroundColor: "transparent",
+            display: "block",
         },
     },
     card: {
+        margin: "32px auto 0 auto",
+        maxWidth: 800,
+        width: "100%",
     },
     cardHeader: {
         background: theme.palette.secondary.main,
@@ -45,9 +52,11 @@ const styles = theme => ({
 
     },
     cardImageBox: {
-        width: "50%",
+        width: "100%",
         position: "absolute",
-        transform: "translate(calc(100% - 64px), -50%)",
+        transform: "translate(0, -50%)",
+        textAlign: "center",
+        left: 0,
     },
     cardImage: {
         width: 128,
@@ -78,7 +87,20 @@ const styles = theme => ({
         textAlign: "center",
     },
     cardTabsContainer: {
-
+        width: "100%",
+    },
+    posts: {
+        maxWidth: 800,
+        margin: "auto",
+        width: "100%",
+        display: "grid",
+        gridAutoRows: "min-content",
+        gridTemplateColumns: "1fr",
+        marginTop: 12,
+        gap: 12,
+        "& > div": {
+            height: "min-content",
+        }
     },
 });
 
@@ -90,20 +112,84 @@ class AccountDialogProfileHive extends React.Component {
         this.state = {
             classes: props.classes,
             open: props.open || false,
+            _images: images,
+            _posts: [],
+            _reaction_click_event: null,
         };
     };
+
+    componentDidMount() {
+
+        this._load_images();
+    }
 
     componentWillReceiveProps(new_props) {
 
         this.setState({...new_props});
     }
 
+    _load_images = () => {
+
+        this.state._images.forEach((base64) => {
+
+            const img = new Image();
+
+            img.onload = () => {
+                const width = img.width;
+                const height = img.height;
+
+                this._push_loaded_image({base64, width, height});
+            };
+
+            img.src = base64;
+        });
+    };
+
+    _push_loaded_image = (loaded_image) =>{
+
+        let { _images, _posts } = this.state;
+
+        _posts.push({
+            image: loaded_image,
+        });
+
+        const all_images_loaded = (_images.length === _posts.length);
+
+        if(all_images_loaded) {
+
+            this.setState({_posts}, () => {
+
+                this._on_all_images_loaded();
+            });
+        }else {
+
+            this.setState({_posts});
+        }
+    };
+
+    _on_all_images_loaded = () => {};
+
+    _set_reaction_click_event = (event) => {
+
+        this.setState({_reaction_click_event: {...event}});
+    }
+
+    _set_reaction_click_event_null = () => {
+
+        this.setState({_reaction_click_event: null});
+    }
+
     render() {
 
-        const { classes, open } = this.state;
+        const { classes, open, _posts, _reaction_click_event } = this.state;
 
         return (
-            <Dialog open={open} onClose={(event) => {this.props.onClose(event)}} className={classes.dialogPaper}>
+            <Dialog PaperComponent={"div"}
+                    fullScreen
+                    open={open}
+                    onClose={(event) => {this.props.onClose(event)}}
+                    className={classes.dialogPaper}
+                    keepMounted>
                 <Card className={classes.card}>
                     <CardHeader className={classes.cardHeader}>
                         <div className={classes.cardHeaderTop}></div>
@@ -120,12 +206,25 @@ class AccountDialogProfileHive extends React.Component {
                         <div className={classes.cardContentUserDescription}>007 agent for life</div>
                     </CardContent>
                     <div className={classes.cardTabsContainer}>
-                        <Tabs>
-                            <Tab>About</Tab>
-                            <Tab>Posts</Tab>
+                        <Tabs variant="fullWidth" textColor="primary" value={0}>
+                            <Tab label={"Owner"}></Tab>
+                            <Tab label={"Author"}></Tab>
                         </Tabs>
                     </div>
                 </Card>
+                <div className={classes.posts}>
+                    {
+                        _posts.map((post) => {
+
+                            return (
+                                <div>
+                                    <PixelArtCard on_reaction_click={this._set_reaction_click_event} post={post} selected={false}/>
+                                </div>
+                            );
+                        })
+                    }
+                </div>
+                <MenuReactionPixelPost event={_reaction_click_event} on_close={this._set_reaction_click_event_null}/>
             </Dialog>
         );
     }

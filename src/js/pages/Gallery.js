@@ -14,20 +14,12 @@ import actions from "../actions/utils";
 
 import PixelArtCard from "../components/PixelArtCard";
 
-import { Masonry, CellMeasurer, CellMeasurerCache, AutoSizer, createMasonryCellPositioner } from "react-virtualized";
+import { Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from "react-virtualized";
 import AppBar from "@material-ui/core/AppBar";
 import PixelDialogPost from "../components/PixelDialogPost";
 
-import Menu from "@material-ui/core/Menu";
-import IconButton from "@material-ui/core/IconButton";
-
-import RedAngryEmojiSvg from "../twemoji/react/1F621";
-import AngryEmojiSvg from "../twemoji/react/1F624";
-import CoolEmojiSvg from "../twemoji/react/1F60E";
-import LoveEmojiSvg from "../twemoji/react/1F60D";
-import AngelEmojiSvg from "../twemoji/react/1F607";
-import get_svg_in_b64 from "../utils/svgToBase64";
 import AccountDialogProfileHive from "../components/AccountDialogProfileHive";
+import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
 
 class MasonryExtended extends Masonry {
     _getEstimatedTotalHeight() {
@@ -198,9 +190,7 @@ class Gallery extends React.Component {
             _top_scroll_of_el_by_index: [],
             _height_of_el_by_index: [],
 
-            _reaction_menu_x: null,
-            _reaction_menu_y: null,
-
+            _reaction_click_event: null,
             _selected_account: null,
         };
     };
@@ -443,18 +433,12 @@ class Gallery extends React.Component {
     
     _handle_art_reaction = (event) => {
 
-        this.setState({
-            _reaction_menu_x: event.clientX - 120,
-            _reaction_menu_y: event.clientY - 20,
-        });
+        this.setState({_reaction_click_event: {...event}});
     };
 
     _handle_reaction_menu_close = () => {
 
-        this.setState({
-            _reaction_menu_x: null,
-            _reaction_menu_y: null,
-        });
+        this.setState({_reaction_click_event: null});
     };
 
     _handle_art_focus = (post, event) => {
@@ -634,7 +618,7 @@ class Gallery extends React.Component {
     render() {
 
         const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _selected_account } = this.state;
-        const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_menu_x, _reaction_menu_y } = this.state;
+        const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event } = this.state;
 
         const width = _window_width;
         const height = _window_height;
@@ -682,43 +666,7 @@ class Gallery extends React.Component {
                     {masonry_element}
                 </div>
 
-                <Menu
-                    className={classes.reactionMenu}
-                    PaperProps={{
-                        style: {
-                            height: 48,
-                            width: 240,
-                            overflowY: "overlay"
-                        },
-                    }}
-                    keepMounted={false}
-                    open={_reaction_menu_y !== null}
-                    onClose={this._handle_reaction_menu_close}
-                    anchorReference="anchorPosition"
-                    anchorPosition={
-                        _reaction_menu_y !== null && _reaction_menu_x !== null
-                            ? { top: _reaction_menu_y, left: _reaction_menu_x }
-                            : undefined
-                    }
-                >
-                    <div>
-                        <IconButton className={classes.reactionMenuIconButton}>
-                            <RedAngryEmojiSvg />
-                        </IconButton>
-                        <IconButton className={classes.reactionMenuIconButton}>
-                            <AngryEmojiSvg />
-                        </IconButton>
-                        <IconButton className={classes.reactionMenuIconButton}>
-                            <CoolEmojiSvg />
-                        </IconButton>
-                        <IconButton className={classes.reactionMenuIconButton}>
-                            <LoveEmojiSvg />
-                        </IconButton>
-                        <IconButton className={classes.reactionMenuIconButton}>
-                            <AngelEmojiSvg />
-                        </IconButton>
-                    </div>
-                </Menu>
+                <MenuReactionPixelPost event={_reaction_click_event} on_close={this._handle_reaction_menu_close} />
 
                 <PixelDialogPost
                     on_next={this._next_current_post}

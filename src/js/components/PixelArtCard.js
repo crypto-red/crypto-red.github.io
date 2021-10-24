@@ -31,7 +31,7 @@ const styles = theme => ({
         position: "relative",
         boxSizing: "border-box",
         width: "100%",
-        height: "100%",
+        height: "auto",
         borderRadius: 4,
         backgroundColor: "transparent",
         "&::before": {

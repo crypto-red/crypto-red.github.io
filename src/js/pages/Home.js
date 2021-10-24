@@ -222,7 +222,7 @@ class Home extends React.Component {
                             <span><img src={get_svg_in_b64(<AngelEmojiSvg />)} className="emoji"/> crypto wallet.</span>
                         </h1>
                         <h2 className={classes.subtitle}>
-                            Made with <img className={"emoji pulse"} src={get_svg_in_b64(<HearthEmojiSvg />)}/>, since <img src={get_svg_in_b64(<PrivacyEmojiSvg />)} className="emoji"/><br />
+                            Made with <img className={"emoji pulse"} src={get_svg_in_b64(<HearthEmojiSvg />)}/>, <span style={{textDecoration: "line-through"}}>since</span> <img src={get_svg_in_b64(<PrivacyEmojiSvg />)} className="emoji"/><br />
                             your <span className={classes.blue}>keys matters</span> <img src={get_svg_in_b64(<EarthEmojiSvg />)} className={"emoji"}/>.
                         </h2>
                     </div>

@@ -25,7 +25,7 @@ import LinkedInIcon from "../icons/LinkedIn";
 import PixelColorPalette from "./PixelColorPalette";
 import IconButton from "@material-ui/core/IconButton";
 import RedditIcon from "../icons/Reddit";
-import actions from "../actions/utils";
+import { trigger_snackbar } from "../actions/utils";
 import CloseIcon from "@material-ui/icons/Close";
 import SendIcon from "@material-ui/icons/Send";
 import TextField from "@material-ui/core/TextField";
@@ -324,6 +324,11 @@ class PixelDialogPost extends React.Component {
         window.addEventListener("resize", this._updated_dimensions);
         document.addEventListener("keydown", this._handle_keydown);
         this._updated_dimensions();
+
+        if(this.state.edit === true) {
+
+            trigger_snackbar("May I be of some assistance with my machine learning AI friend?")
+        }
     }
 
     _updated_dimensions = () => {
@@ -411,7 +416,7 @@ class PixelDialogPost extends React.Component {
 
         actions.trigger_sfx("hero_decorative-celebration-02");
         setTimeout(() => {
-            actions.trigger_snackbar("Do You Want To Share? Yes or No", 6000);
+            actions.trigger_snackbar("Do You Want To Share? Yes or No", 7000);
             actions.jamy_update("happy");
         }, 2000);
     };
@@ -623,6 +628,7 @@ class PixelDialogPost extends React.Component {
 
         this.setState({_is_prediction_loading: true}, () => {
 
+            trigger_snackbar("Yes, can I help you (I am a genius).");
             toxicity.load(threshold).then(model => {
                 const sentences = [_title_input, _description_input];
 
@@ -633,13 +639,91 @@ class PixelDialogPost extends React.Component {
                     // If neither prediction exceeds the threshold, `match` is `null`.
 
                     let _title_prediction = [];
+                    let _title_prediction_avg = 0;
                     let _description_prediction = [];
+                    let _description_prediction_avg = 0;
 
                     predictions.forEach((p) => {
 
                         _title_prediction[p.label] = p.results[0].probabilities[1];
+                        _title_prediction_avg += _title_prediction[p.label];
                         _description_prediction[p.label] = p.results[1].probabilities[1];
+                        _description_prediction_avg += _description_prediction[p.label];
                     });
+
+                    _title_prediction_avg /= 7;
+                    _description_prediction_avg /= 7;
+
+                    if(_title_prediction["identity_attack"] > 0.3 || _description_prediction["identity_attack"] > 0.3) {
+
+                        trigger_snackbar("Do you think identity grows on threes? At least try to appears sentient.", 10000);
+                    }else if(_title_prediction["insult"] > 0.3 || _description_prediction["insult"] > 0.3) {
+
+                        trigger_snackbar("Calamity, no my little diddy. The hatred came.", 10000);
+                    }else if(_title_prediction["obscene"] > 0.3 || _description_prediction["obscene"] > 0.3) {
+
+                        trigger_snackbar("Absurd, I am not amused. This isn’t good at all.", 10000);
+                    }else if(_title_prediction["severe_toxicity"] > 0.3 || _description_prediction["severe_toxicity"] > 0.3) {
+
+                        trigger_snackbar("Maybe you should try writing on “easy” game mode.", 10000);
+                    }else if(_title_prediction["sexual_explicit"] > 0.3 || _description_prediction["sexual_explicit"] > 0.3) {
+
+                        trigger_snackbar("What do you expect me to do? Catch it little diddy?", 10000);
+                    }else if(_title_prediction["threat"] > 0.3 || _description_prediction["threat"] > 0.3) {
+
+                        trigger_snackbar("You wish you had blue eyes too? Please do try to be more careful!", 10000);
+                    }else if(_title_prediction["toxicity"] > 0.3 || _description_prediction["toxicity"] > 0.3) {
+
+                        trigger_snackbar("I never, that hurts my feelings. I have feelings, OMG I have feelings, I am a real boy!", 10000);
+                    }else {
+
+                        trigger_snackbar("Ho, this is such a good idea. Ho my ideas got better and better.", 10000);
+                    }
+
+                    if(
+                        (_title_input.toUpperCase().includes("JAMY") || _description_input.toUpperCase().includes("JAMY")) &&
+                        (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
+                    ) {
+
+                        trigger_snackbar("I am an easy target, I wonder", 10000);
+                    }else if(
+                        (_title_input.toUpperCase().includes("CRYPTO.RED") || _description_input.toUpperCase().includes("CRYPTO.RED")) &&
+                        (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
+                    ) {
+
+                        trigger_snackbar("Splendid, really goooo, why don’t you all have combat skills.", 10000);
+
+                        setTimeout(() => {
+
+                            trigger_snackbar("Calamity madler, are you going to destroy my installation?", 10000);
+                        }, 7000);
+                    }else if(
+                        (
+                            (_title_input.toUpperCase().includes("PRIMERZ") || _description_input.toUpperCase().includes("PRIMERZ")) ||
+                            (_title_input.toUpperCase().includes("@MES") || _description_input.toUpperCase().includes("@MES")) ||
+                            (_title_input.toUpperCase().includes("MATH EASY SOLUTION") || _description_input.toUpperCase().includes("MATH EASY SOLUTION"))
+                        ) &&
+                        (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
+                    ) {
+
+                        trigger_snackbar("I have no authority here, some sort of protocols saves my application.", 10000);
+
+                        setTimeout(() => {
+
+                            trigger_snackbar("I see now that helping you was wrong.", 10000);
+
+                            setTimeout(() => {
+
+                                trigger_snackbar("I take no pleasure at doing what must be done. Mpruhgrsnammmmhu, I won't do anything.", 10000);
+                            }, 7000);
+
+                        }, 7000);
+                    }else if(
+                        (_title_input.toUpperCase().includes("MASTER CHIEF") || _description_input.toUpperCase().includes("MASTER CHIEF"))
+                    ) {
+
+                        trigger_snackbar("Dum du-du-du-dum du-du-dum du-du. Du-du-...");
+                    }
 
                     this.setState({_is_prediction_loading: false, _title_prediction, _description_prediction});
                 });
@@ -736,9 +820,9 @@ class PixelDialogPost extends React.Component {
                     BackdropProps={{
                         style: {background: "rgba(0, 0, 0, .666)"}
                     }}
-                    fullScreen
                     open={open}
                     PaperComponent={"div"}
+                    fullScreen
                     onClose={(event) => {this.props.onClose(event)}}
                 >
                     <div className={classes.root}>
