@@ -9,7 +9,6 @@ import TimeIcon from "../icons/Time";
 import HotIcon from "../icons/Hot";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 
-import images from "../utils/images";
 import actions from "../actions/utils";
 
 import PixelArtCard from "../components/PixelArtCard";
@@ -20,6 +19,8 @@ import PixelDialogPost from "../components/PixelDialogPost";
 
 import AccountDialogProfileHive from "../components/AccountDialogProfileHive";
 import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
+
+import { get_hive_posts } from "../utils/api-hive"
 
 class MasonryExtended extends Masonry {
     _getEstimatedTotalHeight() {
@@ -120,12 +121,6 @@ const styles = theme => ({
             }
         }
     },
-    imageListItem: {
-
-    },
-    image: {
-        imageRendering: "pixelated",
-    },
     reactionMenu: {
         "& .MuiList-root": {
             padding: 0,
@@ -164,7 +159,6 @@ class Gallery extends React.Component {
             _root: null,
             _window_width: 0,
             _window_height: 0,
-            _images: images,
             _posts: [],
             _average_img_ratio: 1,
             _sorting_tab_index: 0,
@@ -206,7 +200,22 @@ class Gallery extends React.Component {
             actions.trigger_loading_update(100);
         }, 250);
 
-        this._load_images();
+
+        get_hive_posts({limit: 30, tag: "pixel-art", sorting: "trending"}, (err, data) => {
+
+            if(data.posts){
+
+
+                this.setState({_posts: [...data.posts]}, () => {
+
+                    console.log(data.posts);
+                    this._updated_dimensions();
+                });
+            }else {
+
+
+            }
+        });
     }
 
     componentWillUnmount() {
@@ -374,53 +383,6 @@ class Gallery extends React.Component {
             }, 100);
         }
     }
-
-    _load_images = () => {
-
-        this.state._images.forEach((base64) => {
-
-            const img = new Image();
-
-            img.onload = () => {
-                const width = img.width;
-                const height = img.height;
-
-                this._push_loaded_image({base64, width, height});
-            };
-
-            img.src = base64;
-        });
-    };
-
-    _push_loaded_image = (loaded_image) =>{
-
-        let { _images, _posts } = this.state;
-
-        _posts.push({
-            image: loaded_image,
-        });
-
-        const all_images_loaded = (_images.length === _posts.length);
-
-        if(all_images_loaded) {
-
-            this.setState({_posts}, () => {
-
-                this._on_all_images_loaded();
-            });
-        }else {
-
-            this.setState({_posts});
-        }
-    };
-
-    _on_all_images_loaded = () => {
-
-        setTimeout(() => {
-
-            this._updated_dimensions();
-        }, 500);
-    };
 
     _handle_art_open = (post, event) => {
 

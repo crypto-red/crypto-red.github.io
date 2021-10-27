@@ -1,6 +1,6 @@
 {
   "name": "wallet.crypto.red",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "C.R.W application",
   "main": "/index.html",
   "dependencies": {
@@ -113,6 +113,7 @@
       "./src/images/404-dark-2.svg",
       "./src/images/analytics.svg",
       "./src/images/account.svg",
+      "./src/images/account-add.svg",
       "./src/images/hacker.svg",
       "./src/images/wallet-green.svg",
       "./src/images/404-dark.svg",

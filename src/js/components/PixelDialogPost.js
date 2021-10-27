@@ -39,6 +39,8 @@ import Chip from "@material-ui/core/Chip";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import * as toxicity from "@tensorflow-models/toxicity";
+import {lookup_accounts_name} from "../utils/api-hive";
+import TimeAgo from "javascript-time-ago";
 
 const styles = theme => ({
     root: {
@@ -315,6 +317,7 @@ class PixelDialogPost extends React.Component {
             _title_prediction: null,
             _description_prediction: null,
             _is_prediction_loading: false,
+            _author_account: null,
         };
     };
 
@@ -352,8 +355,11 @@ class PixelDialogPost extends React.Component {
     componentWillReceiveProps(new_props) {
 
         let set_canvas_again = true;
+        let get_author_again = true;
+
         if(new_props.post && this.state.post) {
-            set_canvas_again = this.state.post.image.base64 !== new_props.post.image.base64;
+            set_canvas_again = this.state.post.image !== new_props.post.image;
+            get_author_again = new_props.post.author && this.state.post.author !== new_props.post.author;
         }
 
         this.setState(new_props, () => {
@@ -363,6 +369,11 @@ class PixelDialogPost extends React.Component {
 
                 this._set_canvas_image();
             }
+
+            if(get_author_again) {
+
+                this._get_author_account();
+            }
         });
     }
 
@@ -370,6 +381,22 @@ class PixelDialogPost extends React.Component {
 
         return false;
     }
+
+    _get_author_account = () => {
+
+        const { post } = this.state;
+
+        if(post) {
+
+            lookup_accounts_name([this.state.post.author], (error, results) => {
+
+                if(!error) {
+
+                    this.setState({_author_account: results[0]});
+                }
+            });
+        }
+    };
 
     _handle_keydown = (event) => {
 
@@ -426,7 +453,7 @@ class PixelDialogPost extends React.Component {
         const { _canvas, post } = this.state;
         if(_canvas === null || (!base64_url && !post)) {return}
 
-        base64_url = base64_url === null ? this.state.post.image.base64: base64_url;
+        base64_url = base64_url === null ? this.state.post.image: base64_url;
         let img = new Image;
 
         img.onload = () => {
@@ -490,6 +517,7 @@ class PixelDialogPost extends React.Component {
             _drawer_open: false,
             _dont_show_canvas: true,
             _base64_url: "",
+            _author_account: null,
         }, () => {
 
             this.forceUpdate();
@@ -807,11 +835,16 @@ class PixelDialogPost extends React.Component {
             _image_details,
             _drawer_open,
             keepMounted,
-            post,
         } = this.state;
+
+        const post = this.state.post || {};
+        const author_account = this.state._author_account || {};
 
         const layers = _layers || [];
         const layer = layers[0] || {colors: []};
+
+        const vote_number = post.active_votes ? post.active_votes.length: 0;
+        const tags = post.tags ? post.tags: [];
 
         return (
             <div>
@@ -847,11 +880,15 @@ class PixelDialogPost extends React.Component {
                                         <CardHeader
                                             avatar={
                                                 <Avatar aria-label="Author" className={classes.avatar}>
-                                                    R
+                                                    {
+                                                        author_account.metadata ?
+                                                            <img src={author_account.metadata.profile.profile_image} />:
+                                                            (post.author || "").slice(0, 1)
+                                                    }
                                                 </Avatar>
                                             }
-                                            title="The author"
-                                            subheader="A few minutes ago..."
+                                            title={"@" + post.author}
+                                            subheader={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null}
                                             action={
                                                 <IconButton>
                                                     <MoreVertIcon />
@@ -915,7 +952,7 @@ class PixelDialogPost extends React.Component {
                                                         onChange={this._handle_title_input_change}
                                                         style={{marginBottom: 12}}
                                                     />:
-                                                    <Typography gutterBottom variant="h4" component="h3">Demo only title</Typography>
+                                                    <Typography gutterBottom variant="h4" component="h3">{post.title}</Typography>
                                             }
                                             {
                                                 _title_prediction ?
@@ -950,7 +987,7 @@ class PixelDialogPost extends React.Component {
                                                     />:
                                                     <div>
                                                         <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>
-                                                            Demo only **description**.
+                                                            {post.description}
                                                         </ReactMarkdown>
                                                     </div>
                                             }

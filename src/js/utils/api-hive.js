@@ -2,6 +2,24 @@ import hiveJS from "@hiveio/hive-js";
 import { ChainTypes, makeBitMaskFilter } from "@hiveio/hive-js/lib/auth/serializer";
 import vsys from "@virtualeconomy/js-v-sdk";
 
+function _get_pixel_art_data_from_content(content) {
+
+    let data_regex = /((.|\n)+)(\!\[[a-zA-Z0-9 \"\'\#\*\&]+\]\((data:image\/png;base64,[a-zA-Z0-9\/+\=]+)\))$/gm;
+
+    let match = data_regex.exec(content);
+
+    if(match.length) {
+
+        return {
+            content: match[1].replace(/\n+/gm, "\n\n").replace(/\u200B/g,""),
+            image: match[4],
+        };
+    }else {
+
+        return null;
+    }
+}
+
 function _format_account(account) {
 
     let parsed_json_metadata = {};
@@ -57,6 +75,79 @@ function _format_account(account) {
     };
 
     return account_formatted;
+}
+
+
+function _format_post(post) {
+
+    const post_body_data = _get_pixel_art_data_from_content(post.body);
+    if(post_body_data === null) {return;}
+
+    const { image, content } = post_body_data;
+
+    const key = post.author + "_" + post.permlink;
+    const dollar_payout = Number(post.pending_payout_value.split(" ")[0]) + Number(post.total_payout_value.split(" ")[0]);
+    const metadata = JSON.parse(post.json_metadata) || {};
+    const metadata_language = metadata.language || "unknown";
+
+    const app = metadata.app || "unknown";
+    const images = metadata.image || [];
+    const description = content.substr(0, 777);
+    const title = post.title;
+    let metadata_tags = metadata.tags || [post.category];
+    metadata_tags = metadata_tags.map(function(tag){
+        return tag.replace(/[^a-zA-Z0-9-]/g, "").toLowerCase();
+    });
+
+    let positive_vote_rshares = 1;
+    let positive_votes = 0;
+    let negative_vote_rshares = 1;
+    let negative_votes = 0;
+
+    for(let i = 0; i < post.active_votes.length; i++) {
+
+        const vote = post.active_votes[i];
+        const rshares = Number(vote.rshares);
+
+        if(rshares) {
+            positive_vote_rshares += rshares;
+            positive_votes ++;
+        }else {
+            negative_vote_rshares += rshares;
+            negative_votes ++;
+        }
+    }
+    const voting_ratio = Math.round(((positive_vote_rshares) / (positive_vote_rshares - negative_vote_rshares)) * 100);
+
+    console.log(post);
+    return {
+        id: post.id,
+        timestamp: new Date(post.created) - new Date().getTimezoneOffset() * 60 * 1000,
+        key,
+        title,
+        content,
+        image,
+        root_title: post.root_title,
+        description,
+        active_reposts: post.reblogged_by,
+        comments: post.children,
+        tags: metadata_tags,
+        author: post.author,
+        category: post.category,
+        dollar_payout,
+        permlink: post.permlink,
+        updated: post.active,
+        url: post.url,
+        active_votes: post.active_votes,
+        positive_votes,
+        negative_votes,
+        voting_ratio,
+        metadata: {
+            language: metadata_language,
+            images: images,
+            app: app
+        }
+    };
 }
 
 function _format_transaction(transaction) {
@@ -292,6 +383,48 @@ function get_hive_public_key(hive_username, hive_password) {
     return owner_public_key;
 }
 
+function get_hive_posts(parameters, callback_function) {
+
+    let { limit, tag, sorting } = parameters;
+    let query = { limit, tag };
+
+    let fun = function(){};
+
+    switch (sorting.toUpperCase()) {
+
+        case "TRENDING":
+            fun = hiveJS.api.getDiscussionsByTrending;
+            break;
+        case "HOT":
+            fun = hiveJS.api.getDiscussionsByHot;
+            break;
+        case "ACTIVE":
+            fun = hiveJS.api.getDiscussionsByHot;
+            break;
+        case "CREATED":
+            fun = hiveJS.api.getDiscussionsByCreated;
+            break;
+    }
+
+    fun(query, function(err, data) {
+
+        if(data) {
+
+            let posts = [];
+            data.forEach((p) => {
+
+                const pn = _format_post(p);
+                posts.push(pn);
+            });
+
+            callback_function(null, {posts, last_post_permlink: data[data.length-1].permlink});
+        }else {
+
+            callback_function("Cannot get more posts", null);
+        }
+    });
+}
+
 module.exports = {
     lookup_accounts: lookup_accounts,
     lookup_accounts_name: lookup_accounts_name,
@@ -305,4 +438,5 @@ module.exports = {
     estimate_hive_transaction_fee: estimate_hive_transaction_fee,
     get_hive_private_key: get_hive_private_key,
     get_hive_public_key: get_hive_public_key,
+    get_hive_posts: get_hive_posts,
 };

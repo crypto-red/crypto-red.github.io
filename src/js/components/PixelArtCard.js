@@ -173,6 +173,8 @@ class PixelArtCard extends React.Component {
     render() {
 
         const { classes, post, selected } = this.state;
+        const vote_number = post.active_votes ? post.active_votes.length: 0;
+        const tags = post.tags ? post.tags: [];
 
         return (
             <Card elevation={0} className={classes.card} score={100} dataselected={selected ? "true": "false"}>
@@ -182,24 +184,23 @@ class PixelArtCard extends React.Component {
                         className={classes.cardMedia}
                         component="img"
                         alt="Demo only"
-                        image={post.image.base64}
+                        image={post.image}
                         title="Demo only"
                     />
-                    <CardContent datatags={"Category"} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
+                    <CardContent datatags={tags[1] || tags[0]} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
                         <Typography gutterBottom variant="h5" component="h2">
-                            Demo only
+                            {post.title}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
-                            Lizards are a widespread group of squamate reptiles, with over 6,000 species, ranging
-                            across all continents except Antarctica. (It will be coming soon.)
+                            {post.description}
                         </Typography>
                     </CardContent>
                 </CardActionArea>
                 <CardActions className={classes.cardActions}>
                     <span className={classes.postValue}>
-                        <span>CHF 152.15</span> /
-                        <span>225 Votes</span> /
-                        <span onClick={this.props.on_author_click}>@Author</span>
+                        <span>USD {post.dollar_payout}</span> /
+                        <span> {vote_number} Votes</span> /
+                        <span onClick={this.props.on_author_click}> @{post.author}</span>
                     </span>
                 </CardActions>
                 <span onClick={this.props.on_reaction_click} className={classes.cardAfterElement}></span>

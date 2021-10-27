@@ -19,6 +19,7 @@ const styles = theme => ({
             width: "100%",
             backgroundColor: "transparent",
             display: "block",
+            zIndex: "-1 !important",
         },
     },
     card: {
@@ -207,8 +208,9 @@ class AccountDialogProfileHive extends React.Component {
                     </CardContent>
                     <div className={classes.cardTabsContainer}>
                         <Tabs variant="fullWidth" textColor="primary" value={0}>
-                            <Tab label={"Owner"}></Tab>
                             <Tab label={"Author"}></Tab>
+                            <Tab disabled label={"Highlighted"}></Tab>
+                            <Tab disabled label={"Owner"}></Tab>
                         </Tabs>
                     </div>
                 </Card>
