@@ -63,6 +63,8 @@ import CardContent from "@material-ui/core/CardContent";
 import IconButton from "@material-ui/core/IconButton";
 import InfoIcon from "@material-ui/icons/Info";
 
+import { post_hive_pixel_art } from "../utils/api-hive";
+
 const styles = theme => ({
     green: {
         color: lightGreen[700],
@@ -311,7 +313,8 @@ class Pixel extends React.Component {
             _ripple_color: "#ffffffff",
             _ripple_opacity: 1,
             _is_pixel_dialog_post_edit_open: false,
-            _base64_url: ""
+            _base64_url: "",
+            _logged_account: {},
         };
     };
 
@@ -360,12 +363,26 @@ class Pixel extends React.Component {
 
     };
 
+    _process_is_logged_result = (error, result) => {
+
+        const _logged_account = error ? null: result;
+        this.setState({_logged_account});
+    };
+
+    _is_logged = () => {
+
+        api.is_logged(this._process_is_logged_result);
+    };
+
     _process_settings_query_result = (error, settings) => {
 
         // Set new settings from query result
         const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: false;
 
-        this.setState({ _sfx_enabled });
+        this.setState({ _sfx_enabled }, () => {
+
+            this._is_logged();
+        });
     };
 
     _update_settings() {
@@ -923,6 +940,38 @@ class Pixel extends React.Component {
         this.setState({_is_dialog_info_open: true});
     };
 
+    _handle_post_pixel_art = (data) => {
+
+        const { _logged_account } = this.state;
+        const {title, description, image} = data;
+
+        if(_logged_account.hive_username) {
+
+            post_hive_pixel_art(title, image, description, [], _logged_account.hive_username, _logged_account.hive_password, (err, res) => {
+
+                if(!err) {
+
+                    this._handle_pixel_dialog_post_edit_close();
+                    actions.trigger_snackbar("You've successfully published a pixel art post");
+                    actions.trigger_sfx("navigation_selection-complete-celebration");
+                    actions.jamy_update("happy");
+                }else {
+
+                    console.log(err);
+                    actions.trigger_snackbar("Unable to publish a pixel art post");
+                    actions.trigger_sfx("alert_error-01");
+                    actions.jamy_update("angry");
+                }
+            });
+        }else {
+
+            actions.trigger_snackbar("You are not logged onto Hive");
+            actions.trigger_sfx("alert_error-01");
+            actions.jamy_update("sad");
+        }
+
+    };
+
     render() {
 
         const {
@@ -964,7 +1013,8 @@ class Pixel extends React.Component {
             _menu_event,
             _is_pixel_dialog_post_edit_open,
             _base64_url,
-            _is_dialog_info_open
+            _is_dialog_info_open,
+            _logged_account,
         } = this.state;
 
         let x = _x === -1 ? "out": _x + 1;
@@ -979,13 +1029,13 @@ class Pixel extends React.Component {
             <div>
                 <PixelDialogPost
                     post={{
-                        image: {
-                            base64: _base64_url
-                        }
+                        image: _base64_url,
+                        author: _logged_account.hive_username || "undefined",
                     }}
                     keepMounted={true}
                     open={_is_pixel_dialog_post_edit_open}
                     onClose={this._handle_pixel_dialog_post_edit_close}
+                    onRequestSend={this._handle_post_pixel_art}
                     edit={true}/>
                 <Backdrop className={classes.backdrop} open={_loading} />
                 <Menu

@@ -425,6 +425,91 @@ function get_hive_posts(parameters, callback_function) {
     });
 }
 
+function post_hive_pixel_art(title, image, description, tags, username, master_key, callback_function) {
+
+    const body =
+        description + "\n\n" +
+        "![" + tags[0] + "](" + image + ")\n\n" +
+        "--- \n\n" +
+        "Made with the [pixel art editor](https://wallet.crypto.red/pixel) of wallet.crypto.red ([view post in WCR](https://wallet.crypto.red/gallery)).";
+
+    tags.unshift("pixel-art");
+    post_hive_post(title, body, tags, username, master_key, callback_function);
+}
+
+function post_hive_post(title, body, tags, username, master_key, callback_function) {
+
+    const APPLICATION_RELEASE = "CRYPTO.RED 0.0.4";
+    const REWARD_BENEFICIARIES = [
+        {
+            "account": "crypto.red",
+            "weight": 2500
+        }
+    ];
+
+    const permlink = new Date().toISOString().replace(/[^a-zA-Z0-9]+/g, '').toLowerCase() + "-viper";
+    const category = tags[0];
+    const metadata = {
+        tags: tags,
+        image: [],
+        app: APPLICATION_RELEASE
+    };
+
+    function option_callback_function(error, result) {
+
+        const max_accepted_payout = "1000000.000 HBD";
+        const percent_hive_dollars = 10000;
+        const allow_votes = true;
+        const allow_curation_rewards = true;
+        const extensions = [
+            [
+                0,
+                {
+                    "beneficiaries": REWARD_BENEFICIARIES
+                }
+            ]
+        ];
+
+
+
+        if(error) {
+
+            callback_function(error, null);
+        }else {
+
+            hiveJS.broadcast.commentOptions(
+                _get_account_keys(username, master_key).posting_private_key,
+                username,
+                permlink,
+                max_accepted_payout,
+                percent_hive_dollars,
+                allow_votes,
+                allow_curation_rewards,
+                extensions,
+                callback_function
+            );
+        }
+    }
+
+    if(username && master_key) {
+
+        hiveJS.broadcast.comment(
+            _get_account_keys(username, master_key).posting_private_key,
+            '',
+            category,
+            username,
+            permlink,
+            title,
+            body,
+            metadata,
+            option_callback_function
+        );
+    }else {
+
+        callback_function("login", null);
+    }
+}
+
 module.exports = {
     lookup_accounts: lookup_accounts,
     lookup_accounts_name: lookup_accounts_name,
@@ -439,4 +524,6 @@ module.exports = {
     get_hive_private_key: get_hive_private_key,
     get_hive_public_key: get_hive_public_key,
     get_hive_posts: get_hive_posts,
+    post_hive_post: post_hive_post,
+    post_hive_pixel_art: post_hive_pixel_art,
 };

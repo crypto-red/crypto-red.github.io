@@ -761,14 +761,14 @@ class PixelDialogPost extends React.Component {
 
     _handle_send_click = (event) => {
 
-        const { _title_input, _description_input, base64_url } = this.state;
+        const { _title_input, _description_input, post } = this.state;
 
         if(this.props.onRequestSend) {
 
             this.props.onRequestSend({
-                _title_input,
-                _description_input,
-                base64_url,
+                title: _title_input,
+                description: _description_input,
+                image: post.image,
             });
         }
     }
