@@ -212,6 +212,7 @@ class PixelToolboxSwipeableViews extends React.Component {
         this.state = {
             classes: props.classes,
             canvas: props.canvas,
+            is_connected_to_hive: props.is_connected_to_hive,
             view_names: props.view_names,
             view_name_index: props.view_name_index,
             current_color: props.current_color,
@@ -253,6 +254,7 @@ class PixelToolboxSwipeableViews extends React.Component {
     shouldComponentUpdate(new_props) {
 
         const {
+            is_connected_to_hive,
             view_name_index,
             previous_view_name_index,
             view_names,
@@ -278,6 +280,7 @@ class PixelToolboxSwipeableViews extends React.Component {
         } = this.state;
 
         if (
+            is_connected_to_hive !== new_props.is_connected_to_hive ||
             view_name_index !== new_props.view_name_index ||
             previous_view_name_index !== new_props.previous_view_name_index ||
             view_names !== new_props.view_names ||
@@ -596,6 +599,7 @@ class PixelToolboxSwipeableViews extends React.Component {
             default_width,
             default_height,
             import_size,
+            is_connected_to_hive,
         } = this.state;
 
         const actions = {
@@ -1007,10 +1011,10 @@ class PixelToolboxSwipeableViews extends React.Component {
                                             </div>
                                             <ListSubheader className={classes.listSubHeader}>
                                                 <span><ImportIcon /></span>
-                                                <span>Post on Hive</span>
+                                                <span>{is_connected_to_hive ? "Post on Hive": "Please loggin onto Hive"}</span>
                                             </ListSubheader>
                                             <div className={classes.listItems}>
-                                                <ListItem button onClick={() => {this._publish()}}>
+                                                <ListItem disabled={!is_connected_to_hive} button onClick={() => {this._publish()}}>
                                                     <ListItemIcon className={classes.listItemIcon}>
                                                         <PublishIcon />
                                                     </ListItemIcon>

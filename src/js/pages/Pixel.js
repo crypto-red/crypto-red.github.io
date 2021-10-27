@@ -365,7 +365,7 @@ class Pixel extends React.Component {
 
     _process_is_logged_result = (error, result) => {
 
-        const _logged_account = error ? null: result;
+        const _logged_account = error ? {}: result;
         this.setState({_logged_account});
     };
 
@@ -1404,6 +1404,7 @@ class Pixel extends React.Component {
                                     <div className={classes.drawerContainer} onGotPointerCapture={(event) => {event.stopPropagation(); event.preventDefault();}}>
                                         <PixelToolboxSwipeableViews
                                             should_update={true}
+                                            is_connected_to_hive={Boolean(_logged_account.hive_username)}
                                             onActionClose={this._handle_edit_drawer_close}
                                             canvas={_canvas}
                                             view_class={classes.listOfTools}

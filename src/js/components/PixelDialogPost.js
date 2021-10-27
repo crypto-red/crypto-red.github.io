@@ -400,9 +400,9 @@ class PixelDialogPost extends React.Component {
 
     _handle_keydown = (event) => {
 
-        let { post } = this.state;
+        let { post, edit } = this.state;
 
-        if(post) {
+        if(post && !edit) {
 
             switch (event.keyCode) {
 
