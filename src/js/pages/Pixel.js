@@ -1014,8 +1014,10 @@ class Pixel extends React.Component {
             _is_pixel_dialog_post_edit_open,
             _base64_url,
             _is_dialog_info_open,
-            _logged_account,
         } = this.state;
+
+        let { _logged_account } = this.state;
+        _logged_account = _logged_account || {};
 
         let x = _x === -1 ? "out": _x + 1;
         let y = _y === -1 ? "out": _y + 1;
@@ -1024,6 +1026,8 @@ class Pixel extends React.Component {
         _menu_data.pos_y = _menu_data.pos_y === -1 ? "out": _menu_data.pos_y;
 
         const rgb = 245 - Math.floor(Math.abs(_canvas_elevation) / 2);
+
+
 
         return (
             <div>

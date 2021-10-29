@@ -164,6 +164,7 @@ class Gallery extends React.Component {
             _sorting_tab_index: 0,
 
             _gutter_size: 16,
+            _sorting: "trending",
             _start_author: null,
             _start_permlink: null,
             _column_count: 4,
@@ -200,15 +201,19 @@ class Gallery extends React.Component {
             actions.trigger_loading_update(100);
         }, 250);
 
+        this._load_more_posts();
+    };
 
-        get_hive_posts({limit: 30, tag: "pixel-art", sorting: "trending"}, (err, data) => {
+    _load_more_posts = () => {
+
+        const { _start_author, _start_permlink, _sorting } = this.state;
+        get_hive_posts({limit: 30, tag: "pixel-art", sorting: _sorting, start_author: _start_author, start_permlink: _start_permlink}, (err, data) => {
 
             if(data.posts){
 
 
-                this.setState({_posts: [...data.posts]}, () => {
+                this.setState({_posts: [...data.posts], _start_author: data.end_author, _start_permlink: data.end_permlink}, () => {
 
-                    console.log(data.posts);
                     this._updated_dimensions();
                 });
             }else {
@@ -216,19 +221,13 @@ class Gallery extends React.Component {
 
             }
         });
-    }
+    };
 
     componentWillUnmount() {
 
         window.removeEventListener("resize", this._updated_dimensions);
         document.removeEventListener("keydown", this._handle_keydown);
     }
-
-    _load_more = () => {
-
-        const { _sorting, _tag, _limit } = this.state;
-        this._updated_dimensions();
-    };
 
     _handle_sorting_change = (_sorting) => {
 
@@ -327,9 +326,9 @@ class Gallery extends React.Component {
         );
     };
 
-    _handle_set_selected_account = () => {
+    _handle_set_selected_account = (author) => {
 
-        this.setState({_selected_account: "@mes"});
+        this.setState({_selected_account: author});
     };
 
     _init_cell_positioner() {
@@ -639,7 +638,7 @@ class Gallery extends React.Component {
                     open={Boolean(_post)}
                     onClose={this._handle_pixel_dialog_post_close}/>
 
-                <AccountDialogProfileHive open={_selected_account !== null} onClose={this._handle_reset_selected_account}/>
+                <AccountDialogProfileHive account_name={_selected_account} open={_selected_account !== null} onClose={this._handle_reset_selected_account}/>
             </div>
         );
     }

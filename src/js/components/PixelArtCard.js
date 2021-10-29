@@ -200,7 +200,7 @@ class PixelArtCard extends React.Component {
                     <span className={classes.postValue}>
                         <span>USD {post.dollar_payout}</span> /
                         <span> {vote_number} Votes</span> /
-                        <span onClick={this.props.on_author_click}> @{post.author}</span>
+                        <span onClick={() => {this.props.on_author_click(post.author)}}> @{post.author}</span>
                     </span>
                 </CardActions>
                 <span onClick={this.props.on_reaction_click} className={classes.cardAfterElement}></span>

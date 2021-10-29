@@ -10,6 +10,7 @@ import Tab from "@material-ui/core/Tab";
 import images from "../utils/images";
 import PixelArtCard from "../components/PixelArtCard";
 import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
+import {lookup_accounts_name} from "../utils/api-hive";
 
 const styles = theme => ({
     dialogPaper: {
@@ -19,10 +20,10 @@ const styles = theme => ({
             width: "100%",
             backgroundColor: "transparent",
             display: "block",
-            zIndex: "-1 !important",
         },
     },
     card: {
+        zIndex: "1305",
         margin: "32px auto 0 auto",
         maxWidth: 800,
         width: "100%",
@@ -91,6 +92,7 @@ const styles = theme => ({
         width: "100%",
     },
     posts: {
+        zIndex: "1305",
         maxWidth: 800,
         margin: "auto",
         width: "100%",
@@ -113,20 +115,30 @@ class AccountDialogProfileHive extends React.Component {
         this.state = {
             classes: props.classes,
             open: props.open || false,
+            account_name: props.account_name,
+            _account: {},
             _images: images,
             _posts: [],
-            _reaction_click_event: null,
+            _reaction_click_event: null
         };
     };
 
     componentDidMount() {
 
-        this._load_images();
     }
 
     componentWillReceiveProps(new_props) {
 
-        this.setState({...new_props});
+        let get_account = new_props.account_name !== this.state.account_name;
+
+        this.setState({...new_props}, () => {
+
+            if(get_account) {
+
+                this._get_account();
+            }
+
+        });
     }
 
     _load_images = () => {
@@ -180,9 +192,25 @@ class AccountDialogProfileHive extends React.Component {
         this.setState({_reaction_click_event: null});
     }
 
+    _get_account = () => {
+
+        const { account_name } = this.state;
+
+        if(account_name) {
+
+            lookup_accounts_name([account_name], (error, results) => {
+
+                if(!error) {
+
+                    this.setState({_account: results[0]});
+                }
+            });
+        }
+    };
+
     render() {
 
-        const { classes, open, _posts, _reaction_click_event } = this.state;
+        const { classes, open, _posts, _account, account_name, _reaction_click_event } = this.state;
 
         return (
             <Dialog PaperComponent={"div"}
@@ -192,7 +220,7 @@ class AccountDialogProfileHive extends React.Component {
                     className={classes.dialogPaper}
                     keepMounted>
                 <Card className={classes.card}>
-                    <CardHeader className={classes.cardHeader}>
+                    <CardHeader className={classes.cardHeader} style={{backgroundSize: "cover !important", backgroundImage: _account.metadata ? `url(${_account.metadata.profile.cover_image})`: ""}}>
                         <div className={classes.cardHeaderTop}></div>
                         <div className={classes.cardHeaderBottom}>
                             <div className={classes.cardHeaderBottomLeft}></div>
@@ -200,11 +228,11 @@ class AccountDialogProfileHive extends React.Component {
                         </div>
                     </CardHeader>
                     <div className={classes.cardImageBox}>
-                        <div className={classes.cardImage}></div>
+                        <div className={classes.cardImage} style={{backgroundSize: "cover !important", backgroundImage: _account.metadata ? `url(${_account.metadata.profile.profile_image})`: ""}}></div>
                     </div>
                     <CardContent className={classes.cardContent}>
-                        <div className={classes.cardContentUserame}>@user</div>
-                        <div className={classes.cardContentUserDescription}>007 agent for life</div>
+                        <div className={classes.cardContentUserame}>{"@" + account_name}</div>
+                        <div className={classes.cardContentUserDescription}>{_account.metadata ? _account.metadata.profile.about: "..."}</div>
                     </CardContent>
                     <div className={classes.cardTabsContainer}>
                         <Tabs variant="fullWidth" textColor="primary" value={0}>

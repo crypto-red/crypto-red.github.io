@@ -38,9 +38,9 @@ function _format_account(account) {
 
     parsed_json_metadata.profile = typeof parsed_json_metadata.profile === "undefined" ? {}: parsed_json_metadata.profile;
     parsed_json_metadata.profile.profile_image = typeof parsed_json_metadata.profile.profile_image === "undefined" ? "": parsed_json_metadata.profile.profile_image;
-    parsed_json_metadata.profile.profile_image = parsed_json_metadata.profile.profile_image.match(/(https:\/\/)([/|.|\w|\s])*\.(?:jpg|jpeg|gif|png)/) === null ? "": "https://images.hive.blog/64x64/" + parsed_json_metadata.profile.profile_image;
+    parsed_json_metadata.profile.profile_image = parsed_json_metadata.profile.profile_image.match(/(https:\/\/)([/|.|\w|\s])*\.(?:jpg|jpeg|gif|png)/) === null ? "": "https://images.hive.blog/256x256/" + parsed_json_metadata.profile.profile_image;
     parsed_json_metadata.profile.cover_image = typeof parsed_json_metadata.profile.cover_image === "undefined" ? "": parsed_json_metadata.profile.cover_image;
-    parsed_json_metadata.profile.cover_image = parsed_json_metadata.profile.profile_image.match(/(https:\/\/)([/|.|\w|\s])*\.(?:jpg|jpeg|gif|png)/) === null ? "": "https://images.hive.blog/64x64/" + parsed_json_metadata.profile.cover_image;
+    parsed_json_metadata.profile.cover_image = parsed_json_metadata.profile.cover_image.match(/(https:\/\/)([/|.|\w|\s])*\.(?:jpg|jpeg|gif|png)/) === null ? "": "https://images.hive.blog/1280x540/" + parsed_json_metadata.profile.cover_image;
     parsed_json_metadata.profile.about = typeof parsed_json_metadata.profile.about === "undefined" ? "": parsed_json_metadata.profile.about;
     parsed_json_metadata.profile.name = typeof parsed_json_metadata.profile.name === "undefined" ? "": parsed_json_metadata.profile.name;
     parsed_json_metadata.profile.location = typeof parsed_json_metadata.profile.location === "undefined" ? "": parsed_json_metadata.profile.location;
@@ -385,8 +385,8 @@ function get_hive_public_key(hive_username, hive_password) {
 
 function get_hive_posts(parameters, callback_function) {
 
-    let { limit, tag, sorting } = parameters;
-    let query = { limit, tag };
+    let { limit, tag, sorting, start_author, start_permlink } = parameters;
+    let query = { limit, tag, start_author, start_permlink };
 
     let fun = function(){};
 
@@ -417,7 +417,7 @@ function get_hive_posts(parameters, callback_function) {
                 posts.push(pn);
             });
 
-            callback_function(null, {posts, last_post_permlink: data[data.length-1].permlink});
+            callback_function(null, {posts, end_author: data[data.length-1].author, end_permlink: data[data.length-1].permlink});
         }else {
 
             callback_function("Cannot get more posts", null);
