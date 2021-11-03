@@ -17,6 +17,7 @@ import AngelEmojiSvg from "../twemoji/react/1F607";
 import FireHearthEmojiSvg from "../twemoji/react/2764Fe0F200D1F525";
 
 import get_svg_in_b64 from "../utils/svgToBase64";
+import price_formatter from "../utils/price-formatter";
 
 const red_angry_emoji_svg = get_svg_in_b64(<RedAngryEmojiSvg />);
 const angry_emoji_svg = get_svg_in_b64(<AngryEmojiSvg />);
@@ -157,6 +158,9 @@ class PixelArtCard extends React.Component {
             classes: props.classes,
             post: props.post,
             selected: props.selected,
+            hbd_market: props.hbd_market,
+            selected_currency: props.selected_currency,
+            selected_locales_code: props.selected_locales_code,
         };
     };
 
@@ -172,12 +176,15 @@ class PixelArtCard extends React.Component {
 
     render() {
 
-        const { classes, post, selected } = this.state;
+        const { classes, post, selected, selected_currency, selected_locales_code, hbd_market } = this.state;
         const vote_number = post.active_votes ? post.active_votes.length: 0;
         const tags = post.tags ? post.tags: [];
 
+        const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
+        const balance_fiat = (post.dollar_payout || 0) * hbd_price;
+
         return (
-            <Card elevation={0} className={classes.card} score={100} dataselected={selected ? "true": "false"}>
+            <Card elevation={0} className={classes.card} score={Math.round(post.voting_ratio / 10) * 10} dataselected={selected ? "true": "false"}>
                 <CardActionArea>
                     <CardMedia
                         onClick={(event) => {this.props.on_card_media_click(post, event)}}
@@ -198,9 +205,9 @@ class PixelArtCard extends React.Component {
                 </CardActionArea>
                 <CardActions className={classes.cardActions}>
                     <span className={classes.postValue}>
-                        <span>USD {post.dollar_payout}</span> /
+                        <span>{price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span> /
                         <span> {vote_number} Votes</span> /
-                        <span onClick={() => {this.props.on_author_click(post.author)}}> @{post.author}</span>
+                        <span style={{cursor: "pointer"}} onClick={() => {this.props.on_author_click(post.author)}}> @{post.author}</span>
                     </span>
                 </CardActions>
                 <span onClick={this.props.on_reaction_click} className={classes.cardAfterElement}></span>

@@ -198,7 +198,7 @@ class AccountDialogProfileHive extends React.Component {
 
         if(account_name) {
 
-            lookup_accounts_name([account_name], (error, results) => {
+            lookup_accounts_name([account_name.replace("@", "")], (error, results) => {
 
                 if(!error) {
 
@@ -231,7 +231,7 @@ class AccountDialogProfileHive extends React.Component {
                         <div className={classes.cardImage} style={{backgroundSize: "cover !important", backgroundImage: _account.metadata ? `url(${_account.metadata.profile.profile_image})`: ""}}></div>
                     </div>
                     <CardContent className={classes.cardContent}>
-                        <div className={classes.cardContentUserame}>{"@" + account_name}</div>
+                        <div className={classes.cardContentUserame}>{"@" + (account_name || "").replace("@", "")}</div>
                         <div className={classes.cardContentUserDescription}>{_account.metadata ? _account.metadata.profile.about: "..."}</div>
                     </CardContent>
                     <div className={classes.cardTabsContainer}>

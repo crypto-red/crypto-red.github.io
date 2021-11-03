@@ -8,7 +8,7 @@ function _get_pixel_art_data_from_content(content) {
 
     let match = data_regex.exec(content);
 
-    if(match.length) {
+    if(match !== null) {
 
         return {
             content: match[1].replace(/\n+/gm, "\n\n").replace(/\u200B/g,""),
@@ -86,7 +86,7 @@ function _format_post(post) {
     const { image, content } = post_body_data;
 
     const key = post.author + "_" + post.permlink;
-    const dollar_payout = Number(post.pending_payout_value.split(" ")[0]) + Number(post.total_payout_value.split(" ")[0]);
+    const dollar_payout = Number(post.pending_payout_value.split(" ")[0]) + Number((post.author_payout_value || "0 HBD").split(" ")[0]) + + Number((post.curator_payout_value || "0 HBD").split(" ")[0]);
     const metadata = JSON.parse(post.json_metadata) || {};
     const metadata_language = metadata.language || "unknown";
 
@@ -99,9 +99,9 @@ function _format_post(post) {
         return tag.replace(/[^a-zA-Z0-9-]/g, "").toLowerCase();
     });
 
-    let positive_vote_rshares = 1;
+    let positive_vote_rshares = 0;
     let positive_votes = 0;
-    let negative_vote_rshares = 1;
+    let negative_vote_rshares = 0;
     let negative_votes = 0;
 
     for(let i = 0; i < post.active_votes.length; i++) {
@@ -109,7 +109,7 @@ function _format_post(post) {
         const vote = post.active_votes[i];
         const rshares = Number(vote.rshares);
 
-        if(rshares) {
+        if(rshares >= 0) {
             positive_vote_rshares += rshares;
             positive_votes ++;
         }else {
@@ -117,11 +117,10 @@ function _format_post(post) {
             negative_votes ++;
         }
     }
-    const voting_ratio = Math.round(((positive_vote_rshares) / (positive_vote_rshares - negative_vote_rshares)) * 100);
+    const voting_ratio = Math.round(((positive_vote_rshares || 1) / ((positive_vote_rshares + -negative_vote_rshares) || 1)) * 100);
 
-    console.log(post);
     return {
-        id: post.id,
+        id: post.post_id,
         timestamp: new Date(post.created) - new Date().getTimezoneOffset() * 60 * 1000,
         key,
         title,
@@ -383,6 +382,24 @@ function get_hive_public_key(hive_username, hive_password) {
     return owner_public_key;
 }
 
+function get_hive_post(parameters, callback_function) {
+
+    let { author, permlink } = parameters;
+    author = author.replace("@", "");
+
+    hiveJS.api.getContent(author, permlink, function (err, data) {
+
+        if(data) {
+
+            const post = _format_post(data);
+            callback_function(null, post);
+        }else {
+
+            callback_function("Cannot get this post", null);
+        }
+    });
+}
+
 function get_hive_posts(parameters, callback_function) {
 
     let { limit, tag, sorting, start_author, start_permlink } = parameters;
@@ -414,7 +431,10 @@ function get_hive_posts(parameters, callback_function) {
             data.forEach((p) => {
 
                 const pn = _format_post(p);
-                posts.push(pn);
+                if(pn) {
+
+                    posts.push(pn);
+                }
             });
 
             callback_function(null, {posts, end_author: data[data.length-1].author, end_permlink: data[data.length-1].permlink});
@@ -427,17 +447,18 @@ function get_hive_posts(parameters, callback_function) {
 
 function post_hive_pixel_art(title, image, description, tags, username, master_key, callback_function) {
 
+    const permlink = new Date().toISOString().replace(/[^a-zA-Z0-9]+/g, '').toLowerCase() + "-crypto-red";
     const body =
         description + "\n\n" +
         "![" + tags[0] + "](" + image + ")\n\n" +
         "--- \n\n" +
-        "Made with the [pixel art editor](https://wallet.crypto.red/pixel) of wallet.crypto.red ([view post in WCR](https://wallet.crypto.red/gallery)).";
+        "Made with the [pixel art editor](https://wallet.crypto.red/pixel) of wallet.crypto.red ([view post in W.C.R.](https://wallet.crypto.red/gallery/created/@" + username + "/" + permlink + ")).";
 
     tags.unshift("pixel-art");
-    post_hive_post(title, body, tags, username, master_key, callback_function);
+    post_hive_post(title, body, tags, username, permlink, master_key, callback_function);
 }
 
-function post_hive_post(title, body, tags, username, master_key, callback_function) {
+function post_hive_post(title, body, tags, username, permlink, master_key, callback_function) {
 
     const APPLICATION_RELEASE = "CRYPTO.RED 0.0.4";
     const REWARD_BENEFICIARIES = [
@@ -447,7 +468,6 @@ function post_hive_post(title, body, tags, username, master_key, callback_functi
         }
     ];
 
-    const permlink = new Date().toISOString().replace(/[^a-zA-Z0-9]+/g, '').toLowerCase() + "-viper";
     const category = tags[0];
     const metadata = {
         tags: tags,
@@ -524,6 +544,7 @@ module.exports = {
     get_hive_private_key: get_hive_private_key,
     get_hive_public_key: get_hive_public_key,
     get_hive_posts: get_hive_posts,
+    get_hive_post: get_hive_post,
     post_hive_post: post_hive_post,
     post_hive_pixel_art: post_hive_pixel_art,
 };

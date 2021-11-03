@@ -57,98 +57,99 @@ setInterval(function(){
 
 }, 250);
 
+const loop = (render, do_not_cancel_animation, force_update) => {
+
+    try {
+
+        let skip_frame_rate = 30;
+
+        let now = Date.now();
+        let running_smoothly = true;
+
+        let deltaT = now - last_raf_time;
+        // do not render frame when deltaT is too high
+        if ( deltaT > 1000 / (skip_frame_rate * 2/3)) {
+            running_smoothly = false;
+        }
+
+        if(force_update) {
+
+            caf(caf_id);
+            caf_id = null;
+
+            if(do_not_cancel_animation) {
+
+                raf(render);
+            }else {
+
+                caf_id = raf(render);
+            }
+
+            cpaf_frames++;
+            last_raf_time = now;
+
+        }else if ( caf_id === null) { // Best
+
+            if(do_not_cancel_animation) {
+
+                raf(render);
+            }else {
+
+                caf_id = raf(render);
+            }
+            last_raf_time = now;
+            cpaf_frames++;
+
+        }else if(!running_smoothly && caf_id !== null && deltaT > 1000 / (skip_frame_rate * 6/3) ) { // Average
+
+            caf(caf_id);
+            caf_id = null;
+            last_raf_time = now;
+
+            if(!do_not_cancel_animation) {
+
+                caf_id = raf(render);
+                cpaf_frames++;
+
+            }else {
+
+                raf(render);
+            }
+
+        }else if(!running_smoothly){ // Low
+
+            caf(caf_id);
+            caf_id = null;
+
+            if(do_not_cancel_animation) {
+
+                raf(render);
+            }else {
+
+                caf_id = raf(render);
+            }
+
+            cpaf_frames++;
+            last_raf_time = now;
+
+        }else if(deltaT < 1000 / (skip_frame_rate * 2)){
+
+            setTimeout(() => {loop(render, do_not_cancel_animation, force_update)}, 1000 / (skip_frame_rate * 8));
+        }else if(force_update || do_not_cancel_animation) {
+
+            setTimeout(() => {loop(render, do_not_cancel_animation, force_update)}, 1000 / (skip_frame_rate * 8));
+        }else if(deltaT < 1000 / (skip_frame_rate / 2)) {
+
+            caf(caf_id);
+        }
+    }catch(e){
+        console.log(e)
+    }
+}
+
 const anim_loop = ( render, do_not_cancel_animation = false, force_update = false ) => {
 
-    const loop = () => {
-
-        try {
-
-            let skip_frame_rate = 30;
-
-            let now = Date.now();
-            let running_smoothly = true;
-
-            let deltaT = now - last_raf_time;
-            // do not render frame when deltaT is too high
-            if ( deltaT > 1000 / (skip_frame_rate * 2/3)) {
-                running_smoothly = false;
-            }
-
-            if(force_update) {
-
-                caf(caf_id);
-                caf_id = null;
-
-                if(do_not_cancel_animation) {
-
-                    raf(render);
-                }else {
-
-                    caf_id = raf(render);
-                }
-
-                cpaf_frames++;
-                last_raf_time = now;
-
-            }else if ( caf_id === null) { // Best
-
-                if(do_not_cancel_animation) {
-
-                    raf(render);
-                }else {
-
-                    caf_id = raf(render);
-                }
-                last_raf_time = now;
-                cpaf_frames++;
-
-            }else if(!running_smoothly && caf_id !== null && deltaT > 1000 / (skip_frame_rate * 6/3) ) { // Average
-
-                caf(caf_id);
-                caf_id = null;
-                last_raf_time = now;
-
-                if(!do_not_cancel_animation) {
-
-                    caf_id = raf(render);
-                    cpaf_frames++;
-
-                }else {
-
-                    raf(render);
-                }
-
-            }else if(!running_smoothly){ // Low
-
-                caf(caf_id);
-                caf_id = null;
-
-                if(do_not_cancel_animation) {
-
-                    raf(render);
-                }else {
-
-                    caf_id = raf(render);
-                }
-
-                cpaf_frames++;
-                last_raf_time = now;
-
-            }else if(deltaT < 1000 / (skip_frame_rate * 2)){
-
-                setTimeout(() => {loop(render, do_not_cancel_animation, force_update)}, 1000 / (skip_frame_rate * 8));
-            }else if(deltaT < 1000 / skip_frame_rate && (force_update || do_not_cancel_animation)) {
-
-                setTimeout(() => {loop(render, do_not_cancel_animation, force_update)}, 1000 / (skip_frame_rate * 8));
-            }else if(deltaT < 1000 / (skip_frame_rate / 2)) {
-
-                caf(caf_id);
-            }
-        }catch(e){
-            console.log(e)
-        }
-    }
-    loop();
+    loop(render, do_not_cancel_animation, force_update);
 };
 
 import React from "react";
@@ -506,6 +507,7 @@ class CanvasPixels extends React.Component {
                     this.props.on_elevation_change(this.state._moves_speed_average_now);
                 }
 
+                this._update_canvas(true);
                 this._update_screen_zoom_ratio(true);
             });
         } else if(
@@ -519,7 +521,7 @@ class CanvasPixels extends React.Component {
 
             this.setState(new_props, () =>{
 
-                    this._update_canvas(true, true);
+                    this._request_force_update(false);
             });
 
         }else {
@@ -1984,7 +1986,7 @@ class CanvasPixels extends React.Component {
 
                 if(_mouse_down !== true) {
 
-                    this._request_force_update(true);
+                    this._request_force_update(false);
                 }
             });
         }else if(event_which === 3) {
@@ -3516,7 +3518,6 @@ class CanvasPixels extends React.Component {
                         _mouse_inside: true
                     }, () => {
 
-                        //this._request_force_update( true);
                         this._notify_position_change(event, {x:pos_x, y: pos_y});
                     });
                 }
@@ -3823,7 +3824,7 @@ class CanvasPixels extends React.Component {
 
         this.setState({_mouse_inside: false, _pxls_hovered: -1}, () => {
 
-            this._request_force_update(true);
+            this._request_force_update(false);
         });
 
         this._notify_position_change(null, {x:-1, y: -1});
@@ -4300,7 +4301,8 @@ class CanvasPixels extends React.Component {
                 const pixel_hover_exception = tool === "ELLIPSE" && pxl_indexes_of_current_shape.size > 0;
 
                 if (
-                    (is_there_new_dimension || !has_shown_canvas_once) ||
+                    is_there_new_dimension ||
+                    !has_shown_canvas_once ||
                     is_in_pencil_mirror_axes_hover_indexes ||
                     is_in_pencil_mirror_axes_indexes ||
                     (is_current_selection_hovered_changes && is_in_the_current_selection) ||
@@ -4318,98 +4320,92 @@ class CanvasPixels extends React.Component {
                     is_in_image_imported_resizer && (_selection_pair_highlight !== _old_selection_pair_highlight)
                 ) {
 
-                    if(true) {
+                    let layer_pixel_colors = [];
+                    let start_i = -1;
+                    start_i++;
 
-                        let layer_pixel_colors = [];
-                        let start_i = -1;
-                        start_i++;
+                    for (let i = _s_pxl_colors.length - 1; i >= 0; i--) {
 
-                        for (let i = _s_pxl_colors.length - 1; i >= 0; i--) {
+                        const layer_pixel_color = _s_pxl_colors[i][_s_pxls[i][index]];
+                        layer_pixel_colors[i] = layer_pixel_color;
+                        const [r, g, b, a] = layer_pixel_color;
 
-                            const layer_pixel_color = _s_pxl_colors[i][_s_pxls[i][index]];
-                            layer_pixel_colors[i] = layer_pixel_color;
-                            const [r, g, b, a] = layer_pixel_color;
+                        if(a === 255 && _layers[i].opacity === 1) {
 
-                            if(a === 255 && _layers[i].opacity === 1) {
-
-                                start_i = i;
-                                break;
-                            }
-
+                            start_i = i;
+                            break;
                         }
 
-                        let pixel_color_hex = "#00000000";
-
-                        for (let i = start_i; i < _s_pxl_colors.length; i++) {
-
-                            if(!_layers[i].hidden) {
-
-                                const layer_pixel_color = layer_pixel_colors[i];
-
-                                pixel_color_hex = this._blend_colors(pixel_color_hex, layer_pixel_color, _layers[i].opacity, false);
-
-                                if(is_in_image_imported && i === _layer_index) {
-
-                                    pixel_color_hex = this._blend_colors(pixel_color_hex, _imported_image_pxl_colors[imported_image_pxls_positioned[index]], 1, false);
-                                }
-                            }
-
-                            if(is_in_explosion && i === _layers.length -1) {
-
-                                pixel_color_hex = this._blend_colors(pixel_color_hex, _pxl_colors_explosion[mine_explosion_frame][explosion_pxls_positioned[index]], 1, false);
-                            }
-                        }
-
-                        let color =
-                            (is_there_new_dimension || !has_shown_canvas_once) || (!hide_canvas_content && _was_canvas_content_hidden) ||
-                            is_in_pencil_mirror_axes_hover_indexes ||
-                            is_in_pencil_mirror_axes_indexes ||
-                            (is_pixel_hovered || is_mine_player_index) ||
-                            (_mouse_inside && is_in_the_current_shape) ||
-                            (is_in_the_current_selection && !is_in_the_old_selection_drawn) ||
-                            (is_a_new_pixel_to_paint && is_in_the_current_selection) ||
-                            is_selected_and_hovered_recently ?
-                                is_pixel_hovered || is_mine_player_index || is_in_pencil_mirror_axes_indexes ?
-                                    this._blend_colors(pixel_color_hex, "hover", 2/3, false):
-                                    this._blend_colors(pixel_color_hex, "hover", 1/3, false)
-                                : pixel_color_hex;
-
-                        if(is_the_old_mine_player_index_to_paint || is_ancient_selected_pixel_waiting_to_update || (is_a_new_pixel_to_paint && !is_in_the_current_selection && !is_pixel_hovered && !is_in_pencil_mirror_axes_indexes)) {
-
-                            color = pixel_color_hex;
-                        }
-
-                        if((is_in_image_imported_resizer)) {
-
-                            const opacity = is_pixel_hovered ?
-                                2/3 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 3:
-                                1/3 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 3;
-                            color = this._blend_colors(pixel_color_hex, "hover", opacity, false);
-                        }
-
-                        if(is_in_the_current_selection && !is_in_the_current_shape && !is_pixel_hovered) {
-
-                            const opacity = 0 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 5;
-                            color = this._blend_colors(pixel_color_hex, "hover", opacity, false);
-                        }
-
-                        // We need to clear the pixel that won't totally be opaque because it can merge colors accidentally
-                        const [r, g, b, a] = this._get_rgba_from_hex(color);
-
-                        image_data.data[index * 4 + 0] = r;
-                        image_data.data[index * 4 + 1] = g;
-                        image_data.data[index * 4 + 2] = b;
-                        image_data.data[index * 4 + 3] = a;
-
-                        //_ctx.clearRect(pos_x * px_per_px, pos_y * px_per_px, px_per_px, px_per_px);
-                        // Paint the square of real pixels from the virtual ones along with the resolution
-                        //_ctx.fillStyle = color;
-                        //_ctx.fillRect(pos_x * px_per_px, pos_y * px_per_px, px_per_px, px_per_px);
-                        pixel_updated++;
-                    }else {
-
-                        pixel_updated = _s_pxls[0].length;
                     }
+
+                    let pixel_color_hex = "#00000000";
+
+                    for (let i = start_i; i < _s_pxl_colors.length; i++) {
+
+                        if(!_layers[i].hidden) {
+
+                            const layer_pixel_color = layer_pixel_colors[i];
+
+                            pixel_color_hex = this._blend_colors(pixel_color_hex, layer_pixel_color, _layers[i].opacity, false);
+
+                            if(is_in_image_imported && i === _layer_index) {
+
+                                pixel_color_hex = this._blend_colors(pixel_color_hex, _imported_image_pxl_colors[imported_image_pxls_positioned[index]], 1, false);
+                            }
+                        }
+
+                        if(is_in_explosion && i === _layers.length -1) {
+
+                            pixel_color_hex = this._blend_colors(pixel_color_hex, _pxl_colors_explosion[mine_explosion_frame][explosion_pxls_positioned[index]], 1, false);
+                        }
+                    }
+
+                    let color =
+                        (is_there_new_dimension || !has_shown_canvas_once) || (!hide_canvas_content && _was_canvas_content_hidden) ||
+                        is_in_pencil_mirror_axes_hover_indexes ||
+                        is_in_pencil_mirror_axes_indexes ||
+                        (is_pixel_hovered || is_mine_player_index) ||
+                        (_mouse_inside && is_in_the_current_shape) ||
+                        (is_in_the_current_selection && !is_in_the_old_selection_drawn) ||
+                        (is_a_new_pixel_to_paint && is_in_the_current_selection) ||
+                        is_selected_and_hovered_recently ?
+                            is_pixel_hovered || is_mine_player_index || is_in_pencil_mirror_axes_indexes ?
+                                this._blend_colors(pixel_color_hex, "hover", 2/3, false):
+                                this._blend_colors(pixel_color_hex, "hover", 1/3, false)
+                            : pixel_color_hex;
+
+                    if(is_the_old_mine_player_index_to_paint || is_ancient_selected_pixel_waiting_to_update || (is_a_new_pixel_to_paint && !is_in_the_current_selection && !is_pixel_hovered && !is_in_pencil_mirror_axes_indexes)) {
+
+                        color = pixel_color_hex;
+                    }
+
+                    if((is_in_image_imported_resizer)) {
+
+                        const opacity = is_pixel_hovered ?
+                            2/3 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 3:
+                            1/3 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 3;
+                        color = this._blend_colors(pixel_color_hex, "hover", opacity, false);
+                    }
+
+                    if(is_in_the_current_selection && !is_in_the_current_shape && !is_pixel_hovered) {
+
+                        const opacity = 0 + (0 + ((pos_x + pos_y + (_selection_pair_highlight ? 1: 0)) % 2)) / 5;
+                        color = this._blend_colors(pixel_color_hex, "hover", opacity, false);
+                    }
+
+                    // We need to clear the pixel that won't totally be opaque because it can merge colors accidentally
+                    const [r, g, b, a] = this._get_rgba_from_hex(color);
+
+                    image_data.data[index * 4 + 0] = r;
+                    image_data.data[index * 4 + 1] = g;
+                    image_data.data[index * 4 + 2] = b;
+                    image_data.data[index * 4 + 3] = a;
+
+                    //_ctx.clearRect(pos_x * px_per_px, pos_y * px_per_px, px_per_px, px_per_px);
+                    // Paint the square of real pixels from the virtual ones along with the resolution
+                    //_ctx.fillStyle = color;
+                    //_ctx.fillRect(pos_x * px_per_px, pos_y * px_per_px, px_per_px, px_per_px);
+                    pixel_updated++;
                 }
             });
 
@@ -4444,7 +4440,7 @@ class CanvasPixels extends React.Component {
                         has_shown_canvas_once: true,
                     });
 
-                }, do_not_cancel_animation, force_update || do_not_cancel_animation); // Enable to cancel in order to know that a frame has not been drawn
+                }, false, force_update || do_not_cancel_animation); // Enable to cancel in order to know that a frame has not been drawn
             }
         }
     };
@@ -4689,11 +4685,17 @@ class CanvasPixels extends React.Component {
 
                 this.setState({_original_image_index});
 
-                this._notify_size_change();
                 this._notify_layers_and_compute_thumbnails_change();
                 this._notify_can_undo_redo_change();
                 this._notify_is_something_selected();
-                this._update_canvas(true, true);
+                if(has_new_dimension) {
+
+                    this._notify_size_change();
+                }
+                this._request_force_update(false, () => {
+
+                    this._update_canvas(true);
+                });
             });
         }
     };
@@ -4740,11 +4742,17 @@ class CanvasPixels extends React.Component {
 
                 this.setState({_original_image_index});
 
-                this._notify_size_change();
                 this._notify_layers_and_compute_thumbnails_change();
                 this._notify_can_undo_redo_change();
                 this._notify_is_something_selected();
-                this._update_canvas(true, true);
+                if(has_new_dimension) {
+
+                    this._notify_size_change();
+                }
+                this._request_force_update(false, () => {
+
+                    this._update_canvas(true);
+                });
             });
 
         }
@@ -6361,7 +6369,10 @@ class CanvasPixels extends React.Component {
                 _last_action_timestamp: Date.now()
             }, () => {
 
-                this._request_force_update();
+                this._request_force_update(false, () => {
+
+                    this._update_canvas(true);
+                });
                 this._notify_size_change();
             });
         }
@@ -6998,7 +7009,14 @@ class CanvasPixels extends React.Component {
                 this.props.on_elevation_change(this.state._moves_speed_average_now);
             }
 
-            this._request_force_update(true);
+            const has_new_scale = scale !== this.state.scale;
+            this._request_force_update(!has_new_scale, () => {
+
+                if(has_new_scale) {
+
+                    this._update_canvas(true);
+                }
+            });
         });
     };
 
@@ -7008,14 +7026,14 @@ class CanvasPixels extends React.Component {
         const now = Date.now();
 
         const ago = can_be_cancelable ? !is_mobile_or_tablet ? 1000 / 60: 1000 / 1: 1000 / 1;
-        let force_update = (_force_updated_timestamp < now - ago || !can_be_cancelable);
+        const do_not_cancel_animation = (_force_updated_timestamp < now - ago || !can_be_cancelable);
 
         anim_loop(() => {
 
             this.forceUpdate(() => {
                 callback_function();
             });
-        }, !can_be_cancelable, force_update || !can_be_cancelable);
+        }, do_not_cancel_animation, false);
     }
 
     set_move_speed_average_now = () => {
@@ -7039,7 +7057,7 @@ class CanvasPixels extends React.Component {
 
                 if(new_moves_speed_average_now !== _moves_speed_average_now && this.state._scale_move_speed_timestamp === now) {
 
-                    this._request_force_update(true);
+                    this._request_force_update(false);
                 }
             });
         }
@@ -7078,6 +7096,7 @@ class CanvasPixels extends React.Component {
 
             this._request_force_update(false, () => {
 
+                this._update_canvas(true);
                 if(align_center_middle) {
 
                     this._to_canvas_middle();

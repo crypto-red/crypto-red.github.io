@@ -405,7 +405,7 @@ class Index extends React.Component {
             accounts: <Accounts></Accounts>,
             coin: <Coin pathname={pathname}></Coin>,
             coins: <Coins></Coins>,
-            gallery: <Gallery></Gallery>,
+            gallery: <Gallery pathname={pathname}></Gallery>,
         };
 
         for(let i = 0; i < PAGE_ROUTES.length; i++) {

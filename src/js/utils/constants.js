@@ -56,7 +56,7 @@ const PAGE_ROUTES = [
         tabs: ""
     },
     {
-        page_regex: /\/(gallery)$/,
+        page_regex: /\/(gallery)(\/created|\/active|\/hot|\/trending)?(\/\@[a-z0-9\-\.]+)?(\/[a-zA-Z0-9\-]+)?$/,
         page_name: "gallery",
         tabs: ""
     },

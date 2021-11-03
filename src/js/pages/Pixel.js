@@ -600,12 +600,12 @@ class Pixel extends React.Component {
 
         let a = document.createElement("a"); //Create <a>
         a.href = "" + _canvas.get_base64_png_data_url(size); //Image Base64 Goes here
-        a.download = "Image.png"; //File name Here
+        a.download = `Pixel art n°${Date.now()} from WCR (x${size}).png`; //File name Here
         a.click();
 
         actions.trigger_sfx("hero_decorative-celebration-02");
         setTimeout(() => {
-            actions.trigger_snackbar("Do You Want To Share? Yes or No", 6000);
+            actions.trigger_snackbar("Do you want to share (Instagram, Pinterest, ...)? Yes or No :)", 6000);
             actions.jamy_update("happy");
         }, 2000);
     };
@@ -1171,6 +1171,12 @@ class Pixel extends React.Component {
                         </ListItemIcon>
                         <ListItemText primary="Increase contrast" />
                     </ListItem>
+                    <ListItem button divider onClick={(event) => this._handle_edit_drawer_open(null,6)}>
+                        <ListItemIcon>
+                            <ImageFilterIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Add a filter" />
+                    </ListItem>
                     <ListItem button divider onClick={(event) => this._less_colors_stepped(2)}>
                         <ListItemIcon>
                             <LessColorIcon />
@@ -1182,12 +1188,6 @@ class Pixel extends React.Component {
                             <ImageSmoothIcon />
                         </ListItemIcon>
                         <ListItemText primary="Smooth a bit" />
-                    </ListItem>
-                    <ListItem button divider onClick={(event) => this._handle_edit_drawer_open(null,6)}>
-                        <ListItemIcon>
-                            <ImageFilterIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Add a filter" />
                     </ListItem>
                     <ListSubheader className={classes.contextMenuSubheader}>Load</ListSubheader>
                     <ListItem button divider onClick={(event) => this._upload_image()}>

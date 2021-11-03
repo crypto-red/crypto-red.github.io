@@ -20,7 +20,9 @@ import PixelDialogPost from "../components/PixelDialogPost";
 import AccountDialogProfileHive from "../components/AccountDialogProfileHive";
 import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
 
-import { get_hive_posts } from "../utils/api-hive"
+import { get_hive_posts, get_hive_post } from "../utils/api-hive"
+import api from "../utils/api";
+import {HISTORY} from "../utils/constants";
 
 class MasonryExtended extends Masonry {
     _getEstimatedTotalHeight() {
@@ -140,6 +142,7 @@ const styles = theme => ({
     },
 });
 
+const SORTING_MODE = ["created", "active", "hot", "trending"];
 
 class Gallery extends React.Component {
 
@@ -148,6 +151,16 @@ class Gallery extends React.Component {
 
         this.state = {
             classes: props.classes,
+            _history: HISTORY,
+            _sorting_mode: SORTING_MODE,
+            _sorting: props.pathname.split("/")[2] || "created",
+            _sorting_tab_index: SORTING_MODE.indexOf(props.pathname.split("/")[2] || "created"),
+            _selected_locales_code: null,
+            _selected_currency: null,
+            _hbd_market: null,
+            _logged_account: null,
+            _post_author: props.pathname.split("/")[3] || null,
+            _post_permlink: props.pathname.split("/")[4] || null,
             _post: null,
             _post_closed_at: 0,
             _selected_post_index: 0,
@@ -161,10 +174,8 @@ class Gallery extends React.Component {
             _window_height: 0,
             _posts: [],
             _average_img_ratio: 1,
-            _sorting_tab_index: 0,
 
             _gutter_size: 16,
-            _sorting: "trending",
             _start_author: null,
             _start_permlink: null,
             _column_count: 4,
@@ -186,9 +197,49 @@ class Gallery extends React.Component {
             _height_of_el_by_index: [],
 
             _reaction_click_event: null,
-            _selected_account: null,
         };
     };
+
+    componentWillReceiveProps(new_props) {
+
+        const state = {
+            classes: new_props.classes,
+            _sorting: new_props.pathname.split("/")[2] || "created",
+            _sorting_tab_index: SORTING_MODE.indexOf(new_props.pathname.split("/")[2] || "created"),
+            _post_author: new_props.pathname.split("/")[3] || null,
+            _post_permlink: new_props.pathname.split("/")[4] || null,
+        };
+
+        let get_post = false;
+        let closed_post = false;
+
+        if(state._post_author && state._post_permlink) {
+
+            if(state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink || !this.state._post) {
+
+                get_post = true;
+            }
+        }
+
+        if(this.state._post_author && this.state._post_permlink) {
+
+            if(!state._post_author && !state._post_permlink) {
+
+                closed_post = true;
+            }
+        }
+
+        this.setState(state, () => {
+
+            if(get_post) {
+
+                this._get_post();
+            }else if(closed_post) {
+
+                this._handle_pixel_dialog_post_closed();
+            }
+        });
+    }
 
     componentDidMount() {
 
@@ -201,13 +252,70 @@ class Gallery extends React.Component {
             actions.trigger_loading_update(100);
         }, 250);
 
+        this._update_settings();
         this._load_more_posts();
+    };
+
+    _update_settings() {
+
+        api.get_settings(this._process_settings_query_result);
+    }
+
+    _process_settings_query_result = (error, settings) => {
+
+        if(!error) {
+
+            // Set new settings from query result
+            const _selected_locales_code =  typeof settings.locales !== "undefined" ? settings.locales: "en-US";
+            const _selected_currency = typeof settings.currency !== "undefined" ? settings.currency: "USD";
+
+            this.setState({  _selected_locales_code, _selected_currency }, () => {
+
+                this._is_logged();
+                api.get_coins_markets(["hive_dollar"], _selected_currency.toLowerCase(), this._set_coins_markets);
+            });
+        }
+    };
+
+    _set_coins_markets = (error, data) => {
+
+        if(!error && data)  {
+
+            this.setState({_hbd_market: data[0]});
+        }
+    };
+
+    _process_is_logged_result = (error, result) => {
+
+        const _logged_account = error ? null: result;
+        this.setState({_logged_account});
+    };
+
+    _is_logged = () => {
+
+        api.is_logged(this._process_is_logged_result);
+    };
+
+    _get_post = () => {
+
+        const { _post_author, _post_permlink } = this.state;
+
+        if(_post_author && _post_permlink) {
+
+            get_hive_post({author: _post_author, permlink: _post_permlink}, (err, data) => {
+
+                if(data) {
+
+                    this.setState({_post: data});
+                }
+            });
+        }
     };
 
     _load_more_posts = () => {
 
         const { _start_author, _start_permlink, _sorting } = this.state;
-        get_hive_posts({limit: 30, tag: "pixel-art", sorting: _sorting, start_author: _start_author, start_permlink: _start_permlink}, (err, data) => {
+        get_hive_posts({limit: 21, tag: "pixel-art", sorting: _sorting, start_author: _start_author, start_permlink: _start_permlink}, (err, data) => {
 
             if(data.posts){
 
@@ -229,9 +337,14 @@ class Gallery extends React.Component {
         document.removeEventListener("keydown", this._handle_keydown);
     }
 
-    _handle_sorting_change = (_sorting) => {
+    _handle_sorting_change = (event, _sorting_tab_index) => {
 
+        const { _history, _sorting_mode } = this.state;
 
+        const _sorting = _sorting_mode[_sorting_tab_index];
+
+        const new_pathname = "/gallery/" + _sorting;
+        _history.push(new_pathname);
     };
 
     _reset_cell_positioner = () => {
@@ -300,8 +413,10 @@ class Gallery extends React.Component {
 
     _cell_renderer = ({index, key, parent, style}) => {
 
-        const { _selected_post_index, _posts, _column_width, _cell_measurer_cache } = this.state;
+        const { _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _posts, _column_width, _cell_measurer_cache } = this.state;
         const post = _posts[index];
+        const selected = _selected_post_index === index;
+        style.width = _column_width;
 
         let {_top_scroll_of_el_by_index, _height_of_el_by_index} = this.state;
         _top_scroll_of_el_by_index[index] = style.top;
@@ -310,16 +425,16 @@ class Gallery extends React.Component {
 
         return (
             <CellMeasurer cache={_cell_measurer_cache} index={index} key={key} parent={parent}>
-                <div draggable={"false"} style={{
-                    ...style,
-                    width: _column_width,
-                }}>
+                <div draggable={"false"} style={style}>
                     <PixelArtCard
-                        selected={_selected_post_index === index}
+                        selected={selected}
                         post={post}
+                        hbd_market={_hbd_market}
+                        selected_currency={_selected_currency}
+                        selected_locales_code={_selected_locales_code}
                         on_author_click={this._handle_set_selected_account}
                         on_card_media_click={this._handle_art_open}
-                        on_card_content_click={this._handle_art_focus}
+                        on_card_content_click={selected ? this._handle_art_open: this._handle_art_focus}
                         on_reaction_click={this._handle_art_reaction}/>
                 </div>
             </CellMeasurer>
@@ -328,7 +443,10 @@ class Gallery extends React.Component {
 
     _handle_set_selected_account = (author) => {
 
-        this.setState({_selected_account: author});
+        const { _history, _sorting } = this.state;
+
+        const new_pathname = "/gallery/" + _sorting + "/@" + author;
+        _history.push(new_pathname);
     };
 
     _init_cell_positioner() {
@@ -385,10 +503,10 @@ class Gallery extends React.Component {
 
     _handle_art_open = (post, event) => {
 
-        this.setState({_post: post}, () => {
+        const { _history, _sorting } = this.state;
 
-            this._update_selected_post_index();
-        });
+        const new_pathname = "/gallery/" + _sorting + "/@" + post.author + "/" + post.permlink;
+        _history.push(new_pathname);
         actions.trigger_sfx("alert_high-intensity");
     };
     
@@ -412,10 +530,18 @@ class Gallery extends React.Component {
     };
 
 
-    _handle_pixel_dialog_post_close = () => {
+    _handle_pixel_dialog_post_closed = () => {
 
         this.setState({_post: null, _post_closed_at: Date.now()});
         actions.trigger_sfx("state-change_confirm-down");
+    };
+
+    _handle_pixel_dialog_post_close = () => {
+
+        const { _history, _sorting } = this.state;
+
+        const new_pathname = "/gallery/" + _sorting;
+        _history.push(new_pathname);
     };
 
     _next_current_post = () => {
@@ -573,12 +699,15 @@ class Gallery extends React.Component {
 
     _handle_reset_selected_account = () => {
 
-        this.setState({_selected_account: null});
+        const { _history, _sorting } = this.state;
+
+        const new_pathname = "/gallery/" + _sorting;
+        _history.push(new_pathname);
     }
 
     render() {
 
-        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _selected_account } = this.state;
+        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _post_author, _post_permlink } = this.state;
         const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event } = this.state;
 
         const width = _window_width;
@@ -638,7 +767,7 @@ class Gallery extends React.Component {
                     open={Boolean(_post)}
                     onClose={this._handle_pixel_dialog_post_close}/>
 
-                <AccountDialogProfileHive account_name={_selected_account} open={_selected_account !== null} onClose={this._handle_reset_selected_account}/>
+                <AccountDialogProfileHive account_name={_post_author} open={_post_author !== null && _post_permlink === null} onClose={this._handle_reset_selected_account}/>
             </div>
         );
     }

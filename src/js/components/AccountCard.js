@@ -156,7 +156,6 @@ class AccountCard extends React.Component {
             _full_balance_length: COINS.length,
             _history: HISTORY,
             _account_menu_anchor_element: null,
-            _price_formatter: price_formatter
         };
     };
 
@@ -235,7 +234,7 @@ class AccountCard extends React.Component {
 
     render() {
 
-        const { classes, account, current, coins_markets, selected_locales_code, selected_currency, _full_balance_length, _account_menu_anchor_element, _price_formatter, display_after_ms, _balance } = this.state;
+        const { classes, account, current, coins_markets, selected_locales_code, selected_currency, _full_balance_length, _account_menu_anchor_element, display_after_ms, _balance } = this.state;
 
         let balance_fiat = 0;
         let balance_length = 0;
@@ -348,7 +347,7 @@ class AccountCard extends React.Component {
                                 current ?
                                     <h2 className={classes.balanceActive}>
                                         {Boolean(coins_markets) ?
-                                            <Fade timeout={display_after_ms+50} in><span>{_price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span></Fade>
+                                            <Fade timeout={display_after_ms+50} in><span>{price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span></Fade>
                                             :
                                             t("sentence.loading", {FLC: true})
                                         }

@@ -157,6 +157,7 @@ const styles = theme => ({
             display: "block",
             flexGrow: 0,
             flexBasis: "25%",
+            width: "25%",
             textAlign: "center",
             "& .MuiListItemIcon-root": {
                 minWidth: 0,
@@ -936,7 +937,15 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                     <span>{action_set.icon}</span>
                                                     <span>{action_set.text}</span>
                                                 </ListSubheader>
-                                                <div className={classes.listItems}>
+                                                <div className={classes.listItems}
+                                                     style={
+                                                         action_set.text.toLowerCase().includes("filter") ?
+                                                             {flexWrap: "wrap",
+                                                             alignContent: "stretch",
+                                                             flexDirection: "row",
+                                                             justifyContent: "flex-start"}
+                                                             : {}
+                                                     }>
                                                     {action_set.tools.map((tool) => {
                                                         return (
                                                             <ListItem button disabled={tool.disabled || false} onClick={tool.on_click}>

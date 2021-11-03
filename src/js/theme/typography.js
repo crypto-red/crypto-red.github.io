@@ -1,48 +1,48 @@
 const typography = {
     h1: {
-        fontFamily: "Source Sans Pro"
+        fontFamily: "Noto Sans"
     },
     h2: {
-        fontFamily: "Source Sans Pro"
+        fontFamily: "Noto Sans"
     },
     h3: {
-        fontFamily: "Source Sans Pro"
+        fontFamily: "Noto Sans"
     },
     h4: {
-        fontFamily: "Source Sans Pro"
+        fontFamily: "Noto Sans"
     },
     h5: {
-        fontFamily: "Source Sans Pro"
+        fontFamily: "Noto Sans"
     },
     h6: {
-        fontFamily: "Source Sans Pro"
+        fontFamily: "Noto Sans"
     },
     subtitle1: {
-        fontFamily: "Source Sans Pro"
+        fontFamily: "Noto Sans"
     },
     subtitle2: {
-        fontFamily: "Source Sans Pro"
+        fontFamily: "Noto Sans"
     },
     body1: {
-        fontFamily: "Open Sans"
+        fontFamily: "Noto Sans"
     },
     body2: {
-        fontFamily: "Open Sans"
+        fontFamily: "Noto Sans"
     },
     button: {
-        fontFamily: "Open Sans"
+        fontFamily: "Noto Sans"
     },
     caption: {
-        fontFamily: "Open Sans"
+        fontFamily: "Noto Sans"
     },
     overline: {
-        fontFamily: "Open Sans"
+        fontFamily: "Noto Sans"
     },
     text: {
-        fontFamily: "Open Sans"
+        fontFamily: "Noto Sans"
     },
     label: {
-        fontFamily: "Open Sans"
+        fontFamily: "Noto Sans"
     },
 }
 

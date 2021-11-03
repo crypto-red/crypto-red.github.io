@@ -1,11 +1,11 @@
 {
   "manifest_version": 2,
-  "version": "0.22.8",
+  "version": "0.22.9",
   "name": "WALLET.CRYPTO.RED",
   "start_url": "/",
   "scope": "/",
   "serviceworker": {
-    "src": "service-worker.js",
+    "src": "/service-worker.js",
     "scope": "/"
   },
   "short_name": "W.C.R.",

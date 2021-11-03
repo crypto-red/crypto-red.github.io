@@ -3,12 +3,13 @@ const overrides = {
         "@global": {
             html: {
                 overflow: "overlay",
+                fontFamily: "Noto Sans"
             },
             body: {
                 backgroundColor: "#FAFAFA",
-                touchAction: "none",
                 width: "100vw",
                 height: "100vh",
+                overflow: "overlay",
             },
             ".emoji": {
                 verticalAlign: "middle",
