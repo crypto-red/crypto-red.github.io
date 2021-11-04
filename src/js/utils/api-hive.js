@@ -1,10 +1,12 @@
 import hiveJS from "@hiveio/hive-js";
 import { ChainTypes, makeBitMaskFilter } from "@hiveio/hive-js/lib/auth/serializer";
 import vsys from "@virtualeconomy/js-v-sdk";
+import {postJSON} from "./load-json";
+import {clean_json_text} from "./json";
 
 function _get_pixel_art_data_from_content(content) {
 
-    let data_regex = /((.|\n)+)(\!\[[a-zA-Z0-9 \"\'\#\*\&]+\]\((data:image\/png;base64,[a-zA-Z0-9\/+\=]+)\))$/gm;
+    let data_regex = /((.|\n)+)(\!\[[a-zA-Z0-9 \-\"\'\#\*\&]+\]\((data:image\/png;base64,[a-zA-Z0-9\/+\=]+)\))$/gm;
 
     let match = data_regex.exec(content);
 
@@ -552,7 +554,48 @@ function vote_on_hive_post(author, permlink, weight, username, master_key, callb
                 callback_function("Cannot vote on this post right now", null);
             }
     });
+}
 
+function search_on_hive(terms, author, tags, sorting, page, callback_function) {
+
+    postJSON("https://hivesearcher.com/api/search", {q:`${terms} author:${author} tag:${tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
+
+        if(!err && res) {
+
+            try {
+
+                let all_posts = [];
+                let post_processed = 0;
+
+                const data = JSON.parse(clean_json_text(res));
+                data.results.forEach((post) => {
+
+                    const { author, permlink } = post;
+                    get_hive_post({author, permlink}, (err_sp, res_sp) => {
+
+                        post_processed++;
+
+                        if(res_sp) {
+
+                            all_posts.push(res_sp);
+                        }
+
+                        if(data.results.length === post_processed) {
+
+                            callback_function(null, all_posts);
+                        }
+                    });
+
+                });
+            }catch(error) {
+
+                callback_function("Unreadable response from server", null);
+            }
+        }else {
+
+            callback_function("Response from server unavailable", null);
+        }
+    });
 }
 
 module.exports = {
@@ -573,4 +616,5 @@ module.exports = {
     post_hive_post: post_hive_post,
     post_hive_pixel_art: post_hive_pixel_art,
     vote_on_hive_post: vote_on_hive_post,
+    search_on_hive: search_on_hive,
 };

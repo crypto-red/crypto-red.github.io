@@ -108,7 +108,34 @@ function postDATA(url, data, callback_function) {
     }
 }
 
+function postJSON(url, payload, callback_function) {
+
+    let headers = new Headers();
+    headers.append("Content-Type", "application/x-www-form-urlencoded");
+
+    let urlencoded = new URLSearchParams();
+
+    Object.entries(payload).forEach((entry) => {
+
+        const [key, value] = entry;
+        urlencoded.append(key, value);
+    });
+
+    let request_options = {
+        method: 'POST',
+        headers: headers,
+        body: urlencoded,
+        redirect: 'follow'
+    };
+
+    fetch("https://thingproxy.freeboard.io/fetch/" + url, request_options)
+        .then(response => response.text())
+        .then(result => callback_function(null, result))
+        .catch(error => callback_function(error, null));
+}
+
 module.exports = {
     loadJSON: loadJSON,
+    postJSON: postJSON,
     postDATA: postDATA
 };

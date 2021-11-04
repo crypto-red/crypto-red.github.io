@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "0.22.11",
+  "version": "0.22.12",
   "name": "WALLET.CRYPTO.RED",
   "start_url": "/",
   "scope": "/",
@@ -8,6 +8,9 @@
     "src": "/service-worker.js",
     "scope": "/"
   },
+  "permissions": [
+    "https://api.hivesearcher.com/*"
+  ],
   "short_name": "W.C.R.",
   "description": "Fast and very simple cryptocurrency wallet. Invest in various cryptocurrencies anonymously now.",
   "display": "standalone",

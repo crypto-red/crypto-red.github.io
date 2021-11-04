@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v22.11";
+var CACHE = "network-or-cache-v22.12";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -10,7 +10,7 @@ self.addEventListener("install", function(evt) {
     cache.addAll([
       "/",
       "/404.html",
-      "/client.min.js?v=22.11",
+      "/client.min.js?v=22.12",
       "/src/fonts/NotoSans-Regular.ttf",
       "/src/fonts/NotoSansMono-Regular.ttf",
       "/src/fonts/Saira-Regular.ttf",
@@ -88,6 +88,9 @@ self.addEventListener("fetch", function(event) {
 
     // Return the same index.html page for all navigation query
     event.respondWith( caches.match("/") || fetch(event.request));
+  }else {
+
+    event.respondWith( fetch(event.request));
   }
 
 });

@@ -138,7 +138,7 @@ const loop = (render, do_not_cancel_animation, force_update) => {
         }else if(force_update || do_not_cancel_animation) {
 
             setTimeout(() => {loop(render, do_not_cancel_animation, force_update)}, 1000 / (skip_frame_rate * 8));
-        }else if(deltaT < 1000 / (skip_frame_rate / 2)) {
+        }else {
 
             caf(caf_id);
         }
@@ -521,7 +521,7 @@ class CanvasPixels extends React.Component {
 
             this.setState(new_props, () =>{
 
-                    this._request_force_update(false);
+                    this._request_force_update();
             });
 
         }else {
@@ -1748,7 +1748,7 @@ class CanvasPixels extends React.Component {
 
         this.setState({_canvas: element}, () => {
 
-            this._request_force_update(false);
+            this._request_force_update();
         });
     };
 
@@ -1986,7 +1986,7 @@ class CanvasPixels extends React.Component {
 
                 if(_mouse_down !== true) {
 
-                    this._request_force_update(false);
+                    this._request_force_update();
                 }
             });
         }else if(event_which === 3) {
@@ -3095,7 +3095,7 @@ class CanvasPixels extends React.Component {
 
             this.setState({_canvas_event_target: canvas_event_target}, () => {
 
-                this._request_force_update(true);
+                this._request_force_update();
             });
         }
 
@@ -3145,7 +3145,7 @@ class CanvasPixels extends React.Component {
 
                     this.setState({_previous_single_pointer_down_x_y: [event.pageX, event.pageY]}, () => {
 
-                        this._request_force_update(true);
+                        this._request_force_update();
                     });
                 }
                 if(canvas_event_target === "CANVAS"){
@@ -3187,7 +3187,7 @@ class CanvasPixels extends React.Component {
 
                 this.setState({_previous_single_pointer_down_x_y: [event.pageX, event.pageY]}, () => {
 
-                    this._request_force_update(true);
+                    this._request_force_update();
                 });
 
                 this._handle_canvas_pointer_down(event, canvas_event_target);
@@ -3824,7 +3824,7 @@ class CanvasPixels extends React.Component {
 
         this.setState({_mouse_inside: false, _pxls_hovered: -1}, () => {
 
-            this._request_force_update(false);
+            this._request_force_update();
         });
 
         this._notify_position_change(null, {x:-1, y: -1});
@@ -3842,7 +3842,7 @@ class CanvasPixels extends React.Component {
 
             if(_mouse_down !== false) {
 
-                this._request_force_update(false);
+                this._request_force_update();
             }
         });
 
@@ -4692,10 +4692,7 @@ class CanvasPixels extends React.Component {
 
                     this._notify_size_change();
                 }
-                this._request_force_update(false, () => {
-
-                    this._update_canvas(true);
-                });
+                this._request_force_update();
             });
         }
     };
@@ -4749,10 +4746,7 @@ class CanvasPixels extends React.Component {
 
                     this._notify_size_change();
                 }
-                this._request_force_update(false, () => {
-
-                    this._update_canvas(true);
-                });
+                this._request_force_update();
             });
 
         }
@@ -5161,6 +5155,7 @@ class CanvasPixels extends React.Component {
                         }, () => {
 
                             this._notify_size_change();
+                            this._request_force_update();
                         });
                     })
                 };
@@ -5178,6 +5173,7 @@ class CanvasPixels extends React.Component {
                 }, () => {
 
                     this._notify_size_change();
+                    this._request_force_update();
                 });
 
             }
@@ -6347,6 +6343,7 @@ class CanvasPixels extends React.Component {
                     }, () => {
 
                         this._notify_size_change();
+                        this._request_force_update();
                     });
                 });
 
@@ -6369,11 +6366,8 @@ class CanvasPixels extends React.Component {
                 _last_action_timestamp: Date.now()
             }, () => {
 
-                this._request_force_update(false, () => {
-
-                    this._update_canvas(true);
-                });
                 this._notify_size_change();
+                this._request_force_update();
             });
         }
     };
@@ -7009,14 +7003,7 @@ class CanvasPixels extends React.Component {
                 this.props.on_elevation_change(this.state._moves_speed_average_now);
             }
 
-            const has_new_scale = scale !== this.state.scale;
-            this._request_force_update(!has_new_scale, () => {
-
-                if(has_new_scale) {
-
-                    this._update_canvas(true);
-                }
-            });
+            this._request_force_update();
         });
     };
 
@@ -7031,6 +7018,7 @@ class CanvasPixels extends React.Component {
         anim_loop(() => {
 
             this.forceUpdate(() => {
+                this._update_canvas(true, true);
                 callback_function();
             });
         }, do_not_cancel_animation, false);
@@ -7057,7 +7045,7 @@ class CanvasPixels extends React.Component {
 
                 if(new_moves_speed_average_now !== _moves_speed_average_now && this.state._scale_move_speed_timestamp === now) {
 
-                    this._request_force_update(false);
+                    this._request_force_update();
                 }
             });
         }
@@ -7096,7 +7084,6 @@ class CanvasPixels extends React.Component {
 
             this._request_force_update(false, () => {
 
-                this._update_canvas(true);
                 if(align_center_middle) {
 
                     this._to_canvas_middle();

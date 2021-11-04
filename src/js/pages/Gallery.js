@@ -20,10 +20,9 @@ import PixelDialogPost from "../components/PixelDialogPost";
 import AccountDialogProfileHive from "../components/AccountDialogProfileHive";
 import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
 
-import { get_hive_posts, get_hive_post, vote_on_hive_post } from "../utils/api-hive"
+import { search_on_hive, get_hive_posts, get_hive_post, vote_on_hive_post } from "../utils/api-hive"
 import api from "../utils/api";
 import {HISTORY} from "../utils/constants";
-import {t} from "../utils/t";
 
 class MasonryExtended extends Masonry {
     _getEstimatedTotalHeight() {
@@ -182,8 +181,8 @@ class Gallery extends React.Component {
             _start_permlink: null,
             _column_count: 4,
             _column_width: 356,
-            _load_more_threshold: 3000,
-            _overscan_by_pixels: 2000,
+            _load_more_threshold: 4000,
+            _overscan_by_pixels: 3000,
             _cell_positioner: null,
             _masonry: null,
 
@@ -268,6 +267,11 @@ class Gallery extends React.Component {
 
         this._update_settings();
         this._load_more_posts();
+
+        /*search_on_hive("pixel art", "rafirzm", ["pixel-art"], "relevance", "1", (err, res) => {
+
+            console.log(err, res);
+        });*/
     };
 
     _update_settings() {
