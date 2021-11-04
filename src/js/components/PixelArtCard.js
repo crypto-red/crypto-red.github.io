@@ -4,7 +4,7 @@ import { withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
-import Button from "@material-ui/core/Button";
+import LinearProgress from "@material-ui/core/LinearProgress";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
@@ -147,6 +147,16 @@ const styles = theme => ({
         cursor: "pointer",
         bottom: -8,
         zIndex: 2,
+    },
+    progress: {
+        marginBottom: -4,
+        transform: "translate(0px, -2px)",
+        zIndex: 1,
+        "& .MuiLinearProgress-barColorPrimary": {
+            backgroundColor: theme.palette.primary.action
+        },
+        opacity: 1,
+        backgroundColor: "#3729c177",
     }
 });
 
@@ -157,6 +167,7 @@ class PixelArtCard extends React.Component {
         this.state = {
             classes: props.classes,
             post: props.post,
+            is_loading: props.is_loading || false,
             selected: props.selected,
             hbd_market: props.hbd_market,
             selected_currency: props.selected_currency,
@@ -166,7 +177,11 @@ class PixelArtCard extends React.Component {
 
     shouldComponentUpdate(new_props) {
 
-        return (new_props.post !== this.state.post || new_props.selected !== this.state.selected);
+        return (
+            new_props.post !== this.state.post ||
+            new_props.selected !== this.state.selected ||
+            new_props.is_loading !== this.state.is_loading
+        );
     }
 
     componentWillReceiveProps(new_props) {
@@ -176,8 +191,11 @@ class PixelArtCard extends React.Component {
 
     render() {
 
-        const { classes, post, selected, selected_currency, selected_locales_code, hbd_market } = this.state;
-        const vote_number = post.active_votes ? post.active_votes.length: 0;
+        const { classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading } = this.state;
+
+        if(!post){ return <div></div>;}
+
+        const vote_number = (post.positive_votes || 0) + (post.negative_votes || 0);
         const tags = post.tags ? post.tags: [];
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
@@ -202,6 +220,7 @@ class PixelArtCard extends React.Component {
                             {post.description}
                         </Typography>
                     </CardContent>
+                    {is_loading ? <LinearProgress color="primary" variant="indeterminate" className={classes.progress}/>: null}
                 </CardActionArea>
                 <CardActions className={classes.cardActions}>
                     <span className={classes.postValue}>
@@ -210,7 +229,7 @@ class PixelArtCard extends React.Component {
                         <span style={{cursor: "pointer"}} onClick={() => {this.props.on_author_click(post.author)}}> @{post.author}</span>
                     </span>
                 </CardActions>
-                <span onClick={this.props.on_reaction_click} className={classes.cardAfterElement}></span>
+                <span onClick={(event) => {this.props.on_reaction_click(event, post)}} className={classes.cardAfterElement}></span>
             </Card>
         );
     }

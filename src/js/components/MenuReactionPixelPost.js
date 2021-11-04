@@ -1,8 +1,6 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import { Masonry } from "react-virtualized";
-
 import Menu from "@material-ui/core/Menu";
 import IconButton from "@material-ui/core/IconButton";
 
@@ -11,6 +9,7 @@ import AngryEmojiSvg from "../twemoji/react/1F624";
 import CoolEmojiSvg from "../twemoji/react/1F60E";
 import LoveEmojiSvg from "../twemoji/react/1F60D";
 import AngelEmojiSvg from "../twemoji/react/1F607";
+import get_svg_in_b64 from "../utils/svgToBase64";
 
 const styles = theme => ({
     reactionMenu: {
@@ -40,6 +39,7 @@ class MenuReactionPixelPost extends React.Component {
 
         this.state = {
             classes: props.classes,
+            voted_result: props.voted_result || null,
             _reaction_menu_x: props.event ? props.event.clientX - 120: null,
             _reaction_menu_y: props.event ? props.event.clientY - 20: null,
         };
@@ -48,11 +48,13 @@ class MenuReactionPixelPost extends React.Component {
     componentWillReceiveProps(new_props) {
 
         const state = {
+            classes: new_props.classes,
+            voted_result: new_props.voted_result || null,
             _reaction_menu_x: new_props.event ? new_props.event.clientX - 120: null,
             _reaction_menu_y: new_props.event ? new_props.event.clientY - 20: null,
         };
 
-        this.setState({...state});
+        this.setState(state);
     }
 
     _handle_reaction_menu_close = () => {
@@ -66,7 +68,9 @@ class MenuReactionPixelPost extends React.Component {
     render() {
 
         const { classes } = this.state;
-        const { _reaction_menu_x, _reaction_menu_y } = this.state;
+        const { _reaction_menu_x, _reaction_menu_y, voted_result } = this.state;
+
+        const voted_percent = Math.round((voted_result / 10000) * 4) / 4;
 
         return (
             <Menu
@@ -89,20 +93,20 @@ class MenuReactionPixelPost extends React.Component {
                 }
             >
                 <div>
-                    <IconButton className={classes.reactionMenuIconButton}>
-                        <RedAngryEmojiSvg />
+                    <IconButton className={classes.reactionMenuIconButton} onClick={() => {this.props.on_vote(voted_percent !== -1 ? -1: 0)}}>
+                        <img src={get_svg_in_b64(<RedAngryEmojiSvg />, voted_percent === -1)}/>
                     </IconButton>
-                    <IconButton className={classes.reactionMenuIconButton}>
-                        <AngryEmojiSvg />
+                    <IconButton className={classes.reactionMenuIconButton} onClick={() => {this.props.on_vote(voted_percent !== -0.5 ? -0.5: 0)}}>
+                        <img src={get_svg_in_b64(<AngryEmojiSvg />, voted_percent === -0.5)}/>
                     </IconButton>
-                    <IconButton className={classes.reactionMenuIconButton}>
-                        <CoolEmojiSvg />
+                    <IconButton className={classes.reactionMenuIconButton} onClick={() => {this.props.on_vote(voted_percent !== 0.5 ? 0.5: 0)}}>
+                        <img src={get_svg_in_b64(<CoolEmojiSvg />, voted_percent === 0.5)}/>
                     </IconButton>
-                    <IconButton className={classes.reactionMenuIconButton}>
-                        <LoveEmojiSvg />
+                    <IconButton className={classes.reactionMenuIconButton} onClick={() => {this.props.on_vote(voted_percent !== 0.75 ? 0.75: 0)}}>
+                        <img src={get_svg_in_b64(<LoveEmojiSvg />, voted_percent === 0.75)}/>
                     </IconButton>
-                    <IconButton className={classes.reactionMenuIconButton}>
-                        <AngelEmojiSvg />
+                    <IconButton className={classes.reactionMenuIconButton} onClick={() => {this.props.on_vote(voted_percent !== 1 ? 1: 0)}}>
+                        <img src={get_svg_in_b64(<AngelEmojiSvg />, voted_percent === 1)}/>
                     </IconButton>
                 </div>
             </Menu>

@@ -107,12 +107,13 @@ function _format_post(post) {
     for(let i = 0; i < post.active_votes.length; i++) {
 
         const vote = post.active_votes[i];
-        const rshares = Number(vote.rshares);
+        const rshares = parseInt(vote.rshares, 10);
+        const percent = parseInt(vote.percent, 10);
 
-        if(rshares >= 0) {
+        if(percent > 0) {
             positive_vote_rshares += rshares;
             positive_votes ++;
-        }else {
+        }else if(percent < 0) {
             negative_vote_rshares += rshares;
             negative_votes ++;
         }
@@ -120,7 +121,7 @@ function _format_post(post) {
     const voting_ratio = Math.round(((positive_vote_rshares || 1) / ((positive_vote_rshares + -negative_vote_rshares) || 1)) * 100);
 
     return {
-        id: post.post_id,
+        id: post.post_id || post.id,
         timestamp: new Date(post.created) - new Date().getTimezoneOffset() * 60 * 1000,
         key,
         title,
@@ -530,6 +531,28 @@ function post_hive_post(title, body, tags, username, permlink, master_key, callb
     }
 }
 
+function vote_on_hive_post(author, permlink, weight, username, master_key, callback_function) {
+
+    hiveJS.broadcast.vote(
+        _get_account_keys(username, master_key).posting_private_key,
+        username,
+        author,
+        permlink,
+        weight * 10000,
+        function(err, result) {
+
+            if(!err) {
+
+                console.log(result);
+                callback_function(null, true);
+            }else {
+
+                callback_function("Cannot vote on this post right now", null);
+            }
+    });
+
+}
+
 module.exports = {
     lookup_accounts: lookup_accounts,
     lookup_accounts_name: lookup_accounts_name,
@@ -547,4 +570,5 @@ module.exports = {
     get_hive_post: get_hive_post,
     post_hive_post: post_hive_post,
     post_hive_pixel_art: post_hive_pixel_art,
+    vote_on_hive_post: vote_on_hive_post,
 };

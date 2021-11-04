@@ -38,7 +38,7 @@ import lightGreen from "@material-ui/core/colors/lightGreen";
 import red from "@material-ui/core/colors/red";
 import PixelToolboxSwipeableViews from "../components/PixelToolboxSwipeableViews";
 import api from "../utils/api";
-import {ListItem} from "@material-ui/core";
+import ListItem from "@material-ui/core/ListItem";
 import FileImportIcon from "../icons/FileImport";
 import ContrastCircleIcon from "../icons/ContrastCircle";
 import LessColorIcon from "../icons/LessColor";
@@ -59,11 +59,15 @@ import SelectRemoveDifferenceIcon from "../icons/SelectRemoveDifference";
 
 import PixelDialogPost from "../components/PixelDialogPost";
 import Dialog from "@material-ui/core/Dialog";
-import CardContent from "@material-ui/core/CardContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
 import IconButton from "@material-ui/core/IconButton";
 import InfoIcon from "@material-ui/icons/Info";
 
 import { post_hive_pixel_art } from "../utils/api-hive";
+import ShufflingSpanText from "../components/ShufflingSpanText";
+import Button from "@material-ui/core/Button";
+import {t} from "../utils/t";
 
 const styles = theme => ({
     green: {
@@ -255,8 +259,10 @@ const styles = theme => ({
     infoIcon: {
         position: "absolute",
     },
-    blue: {
+    blueCenter: {
         color: theme.palette.secondary.lighter,
+        textAlign: "center",
+        minWidth: "100%",
     }
 });
 
@@ -1463,10 +1469,17 @@ class Pixel extends React.Component {
                     <InfoIcon/>
                 </IconButton>
                 <Dialog open={_is_dialog_info_open} onClose={this._handle_dialog_info_close}>
-                    <CardContent>
-                        <p>We hope you will soon make new friends on the blockchain technology using Wallet Crypto Red; some of whom may wish to join some forces with you to form powerful dreams. Plan your next moves together, conceive elaborate investment strategies and build your “team”, develop your passion, and learn about fascinating things! Support each other with the powers of the pixel art by making custom donation with your artworks. Defend your true will by concentrating, and by strategically moving your efforts and using tools and bots we are developing. United, you are strong, and you can expand your horizon; transaction by transaction, pixel by pixel, NFT by NFT, and share by sharing; but also in real life with the profit you make.</p>
-                        <p className={classes.blue}>Uniquely we are free, together we are strong!</p>
-                    </CardContent>
+                    <DialogContent>
+                        <h2>DISCLAIMER! BECAUSE <ShufflingSpanText text={"ULTIMATELY"} animation_delay_ms={333} animation_duration_ms={666}/>:</h2>
+                        <p>We hope you will soon make new friends on the blockchain technology using Wallet Crypto Red; some of whom may wish to join some forces with you to form one's powerful dreams.</p>
+                        <p>Plan your next moves together, conceive elaborate investment strategies and build your “team”, develop your passion, and learn about fascinating things! <br />Support each other with the powers of donating pixel art to your friends and the causes you do care about.</p>
+                        <p>Defend your true will by concentrating, and by strategically moving your efforts, using tools and bots we are enjoying developing. <b>United, we love to stand strong, and through a ride on the W.C.R. application you can expand your horizon</b>; transaction by transaction, pixel by pixel, NFT by NFT, and share by daring; but also in real life with the profit you can make.</p>
+                        <p className={classes.blueCenter}><ShufflingSpanText  animation_delay_ms={666} animation_duration_ms={1111} style={{fontFamily: "Noto Sans Mono"}} pre={"+ - "} app={" - +"} text={"Uniquely, we are free. Together we are strong!"}/></p>
+                        <p><blockquote style={{color: "#666"}}>Jamy (the assistant) told its developers to forge not works of art but swords of technology, he cares of what we don't so here we have this useless informative dialog and for therein lies great art...</blockquote></p>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button variant="text" color="primary" autoFocus onClick={this._handle_dialog_info_close}><ShufflingSpanText animation_delay_ms={444} animation_duration_ms={999} text={t( "words.close" )}/></Button>
+                    </DialogActions>
                 </Dialog>
             </div>
         );

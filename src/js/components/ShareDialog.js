@@ -172,7 +172,7 @@ class ShareDialog extends React.Component {
 
         const { classes, open } = this.state;
 
-        const url = "https://wallet.crypto.red/";
+        const url = window.location.href;
 
         return (
             <div>
@@ -195,7 +195,7 @@ class ShareDialog extends React.Component {
                                         </IconButton>
                                     </Tooltip>
                                     <Tooltip title="Facebook" aria-label="Facebook">
-                                        <IconButton className={classes.shareIconButtonFacebook} onClick={(event) => {this._open_url(event, `https://www.facebook.com/dialog/share?href=${url}&display=popup`)}}>
+                                        <IconButton className={classes.shareIconButtonFacebook} onClick={(event) => {this._open_url(event, `https://www.facebook.com/sharer/sharer.php?u=${url}`)}}>
                                             <FacebookIcon fontSize="large" />
                                         </IconButton>
                                     </Tooltip>

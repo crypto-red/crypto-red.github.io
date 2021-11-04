@@ -20,9 +20,10 @@ import PixelDialogPost from "../components/PixelDialogPost";
 import AccountDialogProfileHive from "../components/AccountDialogProfileHive";
 import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
 
-import { get_hive_posts, get_hive_post } from "../utils/api-hive"
+import { get_hive_posts, get_hive_post, vote_on_hive_post } from "../utils/api-hive"
 import api from "../utils/api";
 import {HISTORY} from "../utils/constants";
+import {t} from "../utils/t";
 
 class MasonryExtended extends Masonry {
     _getEstimatedTotalHeight() {
@@ -119,7 +120,8 @@ const styles = theme => ({
             scrollBehavior: "smooth",
             overflow: "overlay",
             "& > .ReactVirtualized__Masonry__innerScrollContainer": {
-                overflow: "hidden",
+                overflow: "visible !important",
+                transform: "translateZ(0px)",
             }
         }
     },
@@ -158,7 +160,7 @@ class Gallery extends React.Component {
             _selected_locales_code: null,
             _selected_currency: null,
             _hbd_market: null,
-            _logged_account: null,
+            _logged_account: {},
             _post_author: props.pathname.split("/")[3] || null,
             _post_permlink: props.pathname.split("/")[4] || null,
             _post: null,
@@ -197,6 +199,9 @@ class Gallery extends React.Component {
             _height_of_el_by_index: [],
 
             _reaction_click_event: null,
+            _reaction_selected_post: {},
+            _reaction_voted_result: null,
+            _reaction_selected_post_loading: false,
         };
     };
 
@@ -210,6 +215,7 @@ class Gallery extends React.Component {
             _post_permlink: new_props.pathname.split("/")[4] || null,
         };
 
+        const sorting_changed = this.state._sorting !== state._sorting;
         let get_post = false;
         let closed_post = false;
 
@@ -237,6 +243,14 @@ class Gallery extends React.Component {
             }else if(closed_post) {
 
                 this._handle_pixel_dialog_post_closed();
+            }
+
+            if(sorting_changed) {
+
+                this.setState({_posts: [], _start_author: null, _start_permlink: null}, () => {
+
+                    this._load_more_posts();
+                });
             }
         });
     }
@@ -287,7 +301,7 @@ class Gallery extends React.Component {
 
     _process_is_logged_result = (error, result) => {
 
-        const _logged_account = error ? null: result;
+        const _logged_account = error || !result ? {}: result;
         this.setState({_logged_account});
     };
 
@@ -413,9 +427,14 @@ class Gallery extends React.Component {
 
     _cell_renderer = ({index, key, parent, style}) => {
 
-        const { _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _posts, _column_width, _cell_measurer_cache } = this.state;
-        const post = _posts[index];
+        const { _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _reaction_selected_post, _reaction_selected_post_loading, _posts, _column_width, _cell_measurer_cache } = this.state;
+        const post = _posts[index] || {};
+
+        if(!post.id) { return <div></div>; }
+
         const selected = _selected_post_index === index;
+        const is_loading = Boolean(_reaction_selected_post.id === post.id) && _reaction_selected_post_loading;
+
         style.width = _column_width;
 
         let {_top_scroll_of_el_by_index, _height_of_el_by_index} = this.state;
@@ -429,6 +448,7 @@ class Gallery extends React.Component {
                     <PixelArtCard
                         selected={selected}
                         post={post}
+                        is_loading={is_loading}
                         hbd_market={_hbd_market}
                         selected_currency={_selected_currency}
                         selected_locales_code={_selected_locales_code}
@@ -509,15 +529,90 @@ class Gallery extends React.Component {
         _history.push(new_pathname);
         actions.trigger_sfx("alert_high-intensity");
     };
-    
-    _handle_art_reaction = (event) => {
 
-        this.setState({_reaction_click_event: {...event}});
+    _handle_vote = (weight) => {
+
+        const { _logged_account, _reaction_selected_post } = this.state;
+
+        if(_logged_account.hive_username) {
+
+            vote_on_hive_post(_reaction_selected_post.author, _reaction_selected_post.permlink, weight, _logged_account.hive_username, _logged_account.hive_password, (err, res) => {
+
+                if(!err) {
+
+                    let { _posts } = this.state;
+
+                    this.setState({_reaction_selected_post_loading: true}, () => {
+
+                        this.state._masonry.forceUpdate();
+
+                        setTimeout(() => {
+
+                            get_hive_post({author: _reaction_selected_post.author, permlink: _reaction_selected_post.permlink}, (err, data) => {
+
+                                if(data) {
+
+                                    _posts = _posts.map((post, index) => {
+
+                                        if(post.id === data.id) { return data; }
+                                        return post;
+                                    });
+
+                                    this.setState({_posts, _reaction_selected_post_loading: false}, () => {
+
+                                        this.state._masonry.forceUpdate();
+                                    });
+                                    this._handle_art_reaction({...this.state._reaction_click_event}, data);
+                                }
+                            });
+
+                        }, 12 * 1000);
+                    });
+
+                    actions.trigger_snackbar("You voted!");
+                    actions.trigger_sfx("hero_decorative-celebration-03");
+                    actions.jamy_update("happy");
+                    this._handle_reaction_menu_close();
+                }else {
+
+                    actions.trigger_snackbar(err);
+                    actions.trigger_sfx("alert_error-01");
+                    actions.jamy_update("angry");
+                }
+            });
+        }else {
+
+            actions.trigger_snackbar("Please connect to Hive first.");
+            actions.trigger_sfx("alert_error-01");
+            actions.jamy_update("sad");
+        }
+
+    };
+    
+    _handle_art_reaction = (event, post) => {
+
+        if(post) {
+
+            const { _logged_account } = this.state;
+            const hive_username = _logged_account.hive_username || "";
+            const votes = post.active_votes;
+            let _reaction_voted_result = 0;
+
+            votes.forEach((vote) => {
+
+                if(vote.voter === hive_username) {
+
+                    _reaction_voted_result = parseInt(vote.percent, 10);
+                }
+            });
+
+            this.setState({_reaction_click_event: {...event}, _reaction_selected_post: post, _reaction_voted_result});
+        }
     };
 
     _handle_reaction_menu_close = () => {
 
-        this.setState({_reaction_click_event: null});
+        this.setState({_reaction_click_event: null, _reaction_selected_post: {}, _reaction_voted_result: null});
     };
 
     _handle_art_focus = (post, event) => {
@@ -708,7 +803,7 @@ class Gallery extends React.Component {
     render() {
 
         const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _post_author, _post_permlink } = this.state;
-        const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event } = this.state;
+        const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result } = this.state;
 
         const width = _window_width;
         const height = _window_height;
@@ -752,11 +847,15 @@ class Gallery extends React.Component {
                     </AppBar>
                 </div>
 
-                <div className={classes.masonry} style={{transform: "translateZ(0px)"}}>
+                <div className={classes.masonry}>
                     {masonry_element}
                 </div>
 
-                <MenuReactionPixelPost event={_reaction_click_event} on_close={this._handle_reaction_menu_close} />
+                <MenuReactionPixelPost
+                    event={_reaction_click_event}
+                    voted_result={_reaction_voted_result}
+                    on_close={this._handle_reaction_menu_close}
+                    on_vote={this._handle_vote} />
 
                 <PixelDialogPost
                     on_next={this._next_current_post}

@@ -814,6 +814,11 @@ class PixelDialogPost extends React.Component {
         }
     };
 
+    _open_url = (event, full_link) => {
+
+        window.open(full_link, "_blank");
+    };
+
     render() {
 
         const {
@@ -845,6 +850,7 @@ class PixelDialogPost extends React.Component {
 
         const vote_number = post.active_votes ? post.active_votes.length: 0;
         const tags = post.tags ? post.tags: [];
+        const url = window.location.href;
 
         return (
             <div>
@@ -903,7 +909,7 @@ class PixelDialogPost extends React.Component {
                                                     </Button>
                                                 </Tooltip>
                                                 <Tooltip title="Facebook" aria-label="Facebook">
-                                                    <Button className={classes.shareIconButtonFacebook} onClick={(event) => {this._open_url(event, `https://www.facebook.com/dialog/share?href=${url}&display=popup`)}}>
+                                                    <Button className={classes.shareIconButtonFacebook} onClick={(event) => {this._open_url(event, `https://www.facebook.com/sharer/sharer.php?u=${url}`)}}>
                                                         <FacebookIcon fontSize="small" />
                                                     </Button>
                                                 </Tooltip>
