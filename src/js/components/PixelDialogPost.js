@@ -25,7 +25,6 @@ import LinkedInIcon from "../icons/LinkedIn";
 import PixelColorPalette from "./PixelColorPalette";
 import IconButton from "@material-ui/core/IconButton";
 import RedditIcon from "../icons/Reddit";
-import { trigger_snackbar } from "../actions/utils";
 import CloseIcon from "@material-ui/icons/Close";
 import SendIcon from "@material-ui/icons/Send";
 import TextField from "@material-ui/core/TextField";
@@ -41,6 +40,8 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 import * as toxicity from "@tensorflow-models/toxicity";
 import {lookup_accounts_name} from "../utils/api-hive";
 import TimeAgo from "javascript-time-ago";
+import ChipInput from "material-ui-chip-input";
+import actions from "../actions/utils";
 
 const styles = theme => ({
     root: {
@@ -318,6 +319,8 @@ class PixelDialogPost extends React.Component {
             _description_prediction: null,
             _is_prediction_loading: false,
             _author_account: null,
+            _tags_input: ["pixel-art"],
+            _tags_input_error: "",
         };
     };
 
@@ -330,7 +333,7 @@ class PixelDialogPost extends React.Component {
 
         if(this.state.edit === true) {
 
-            trigger_snackbar("May I be of some assistance with my machine learning AI friend?")
+            actions.trigger_snackbar("May I be of some assistance with my machine learning AI friend?")
         }
     }
 
@@ -438,7 +441,7 @@ class PixelDialogPost extends React.Component {
 
         let a = document.createElement("a"); //Create <a>
         a.href = "" + _canvas.get_base64_png_data_url(size); //Image Base64 Goes here
-        a.download = "Image.png"; //File name Here
+        a.download = `Pixel art n°${Date.now()} from WCR (x${size}).png`; //File name Here
         a.click();
 
         actions.trigger_sfx("hero_decorative-celebration-02");
@@ -518,6 +521,8 @@ class PixelDialogPost extends React.Component {
             _dont_show_canvas: true,
             _base64_url: "",
             _author_account: null,
+            _tags_input: ["pixel-art"],
+            _tags_input_error: "",
         }, () => {
 
             this.forceUpdate();
@@ -656,7 +661,7 @@ class PixelDialogPost extends React.Component {
 
         this.setState({_is_prediction_loading: true}, () => {
 
-            trigger_snackbar("Yes, can I help you (I am a genius).");
+            actions.trigger_snackbar("Yes, can I help you (I am a genius).");
             toxicity.load(threshold).then(model => {
                 const sentences = [_title_input, _description_input];
 
@@ -684,28 +689,28 @@ class PixelDialogPost extends React.Component {
 
                     if(_title_prediction["identity_attack"] > 0.3 || _description_prediction["identity_attack"] > 0.3) {
 
-                        trigger_snackbar("Do you think identity grows on threes? At least try to appears sentient.", 10000);
+                        actions.trigger_snackbar("Do you think identity grows on threes? At least try to appears sentient.", 10000);
                     }else if(_title_prediction["insult"] > 0.3 || _description_prediction["insult"] > 0.3) {
 
-                        trigger_snackbar("Calamity, no my little diddy. The hatred came.", 10000);
+                        actions.trigger_snackbar("Calamity, no my little diddy. The hatred came.", 10000);
                     }else if(_title_prediction["obscene"] > 0.3 || _description_prediction["obscene"] > 0.3) {
 
-                        trigger_snackbar("Absurd, I am not amused. This isn’t good at all.", 10000);
+                        actions.trigger_snackbar("Absurd, I am not amused. This isn’t good at all.", 10000);
                     }else if(_title_prediction["severe_toxicity"] > 0.3 || _description_prediction["severe_toxicity"] > 0.3) {
 
-                        trigger_snackbar("Maybe you should try writing on “easy” game mode.", 10000);
+                        actions.trigger_snackbar("Maybe you should try writing on “easy” game mode.", 10000);
                     }else if(_title_prediction["sexual_explicit"] > 0.3 || _description_prediction["sexual_explicit"] > 0.3) {
 
-                        trigger_snackbar("What do you expect me to do? Catch it little diddy?", 10000);
+                        actions.trigger_snackbar("What do you expect me to do? Catch it little diddy?", 10000);
                     }else if(_title_prediction["threat"] > 0.3 || _description_prediction["threat"] > 0.3) {
 
-                        trigger_snackbar("You wish you had blue eyes too? Please do try to be more careful!", 10000);
+                        actions.trigger_snackbar("You wish you had blue eyes too? Please do try to be more careful!", 10000);
                     }else if(_title_prediction["toxicity"] > 0.3 || _description_prediction["toxicity"] > 0.3) {
 
-                        trigger_snackbar("I never, that hurts my feelings. I have feelings, OMG I have feelings, I am a real boy!", 10000);
+                        actions.trigger_snackbar("I never, that hurts my feelings. I have feelings, OMG I have feelings, I am a real boy!", 10000);
                     }else {
 
-                        trigger_snackbar("Ho, this is such a good idea. Ho my ideas got better and better.", 10000);
+                        actions.trigger_snackbar("Ho, this is such a good idea. Ho my ideas got better and better.", 10000);
                     }
 
                     if(
@@ -713,17 +718,17 @@ class PixelDialogPost extends React.Component {
                         (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
                     ) {
 
-                        trigger_snackbar("I am an easy target, I wonder", 10000);
+                        actions.trigger_snackbar("I am an easy target, I wonder", 10000);
                     }else if(
                         (_title_input.toUpperCase().includes("CRYPTO.RED") || _description_input.toUpperCase().includes("CRYPTO.RED")) &&
                         (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
                     ) {
 
-                        trigger_snackbar("Splendid, really goooo, why don’t you all have combat skills.", 10000);
+                        actions.trigger_snackbar("Splendid, really goooo, why don’t you all have combat skills.", 10000);
 
                         setTimeout(() => {
 
-                            trigger_snackbar("Calamity madler, are you going to destroy my installation?", 10000);
+                            actions.trigger_snackbar("Calamity madler, are you going to destroy my installation?", 10000);
                         }, 7000);
                     }else if(
                         (
@@ -734,15 +739,15 @@ class PixelDialogPost extends React.Component {
                         (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
                     ) {
 
-                        trigger_snackbar("I have no authority here, some sort of protocols saves my application.", 10000);
+                        actions.trigger_snackbar("I have no authority here, some sort of protocols saves my application.", 10000);
 
                         setTimeout(() => {
 
-                            trigger_snackbar("I see now that helping you was wrong.", 10000);
+                            actions.trigger_snackbar("I see now that helping you was wrong.", 10000);
 
                             setTimeout(() => {
 
-                                trigger_snackbar("I take no pleasure at doing what must be done. Mpruhgrsnammmmhu, I won't do anything.", 10000);
+                                actions.trigger_snackbar("I take no pleasure at doing what must be done. Mpruhgrsnammmmhu, I won't do anything.", 10000);
                             }, 7000);
 
                         }, 7000);
@@ -750,7 +755,7 @@ class PixelDialogPost extends React.Component {
                         (_title_input.toUpperCase().includes("MASTER CHIEF") || _description_input.toUpperCase().includes("MASTER CHIEF"))
                     ) {
 
-                        trigger_snackbar("Dum du-du-du-dum du-du-dum du-du. Du-du-...");
+                        actions.trigger_snackbar("Dum du-du-du-dum du-du-dum du-du. Du-du-...");
                     }
 
                     this.setState({_is_prediction_loading: false, _title_prediction, _description_prediction});
@@ -761,7 +766,7 @@ class PixelDialogPost extends React.Component {
 
     _handle_send_click = (event) => {
 
-        const { _title_input, _description_input, post } = this.state;
+        const { _title_input, _description_input, _tags_input, post } = this.state;
 
         if(this.props.onRequestSend) {
 
@@ -769,6 +774,7 @@ class PixelDialogPost extends React.Component {
                 title: _title_input,
                 description: _description_input,
                 image: post.image,
+                tags: _tags_input,
             });
         }
     }
@@ -819,12 +825,64 @@ class PixelDialogPost extends React.Component {
         window.open(full_link, "_blank");
     };
 
+    _handle_tags_input_change = (chips) => {
+
+        this.setState({ _tags_input: chips || ["pixel-art"], _tags_input_error: false});
+    };
+
+    _handle_tags_input_delete = ( chip ) => {
+
+        if(chip !== "pixel-art") {
+
+            let {  _tags_input } = this.state;
+
+            _tags_input.splice( _tags_input.indexOf(chip), 1);
+
+            this.setState({_tags_input, _tags_input_error: false}, () => {
+
+                this.forceUpdate();
+            });
+        }
+    };
+
+    _handle_tags_input_add = (chip) => {
+
+        let {  _tags_input } = this.state;
+        let _tags_input_error = false;
+
+        _tags_input = _tags_input.concat(
+            chip.toLowerCase()
+                .replaceAll(",", " ")
+                .replaceAll("　", " ")
+                .split(" ")
+        );
+
+        let new_tags_input = [];
+        _tags_input.forEach((tag) => {
+
+            if(!/^([a-z0-9-]+)$/g.test(tag)) {
+
+                _tags_input_error = "Please only use letters, numbers, and hyphens."
+            }else {
+
+                new_tags_input.push(tag);
+            }
+        });
+
+        this.setState({_tags_input: new_tags_input.slice(0, 5), _tags_input_error}, () => {
+
+            this.forceUpdate();
+        });
+    };
+
     render() {
 
         const {
             classes,
             open,
             edit,
+            _tags_input,
+            _tags_input_error,
             _title_input,
             _title_prediction,
             _is_prediction_loading,
@@ -948,6 +1006,22 @@ class PixelDialogPost extends React.Component {
                                     </div>
                                     <div className={classes.contentDrawer}>
                                         <CardContent>
+                                            {
+                                                edit ?
+                                                    <form noValidate autoComplete="off">
+                                                        <ChipInput
+                                                            value={_tags_input}
+                                                            onChange={(chips) => {this._handle_tags_input_change(chips)}}
+                                                            onDelete={(value) => {this._handle_tags_input_delete(value)}}
+                                                            onAdd={(value) => {this._handle_tags_input_add(value)}}
+                                                            error={ Boolean(_tags_input_error) }
+                                                            helperText={_tags_input_error}
+                                                            allowDuplicates={false}
+                                                            fullWidth
+                                                            label="Enter up to six tags"
+                                                        />
+                                                    </form>: null
+                                            }
                                             {
                                                 edit ?
                                                     <TextField

@@ -96,7 +96,22 @@ const styles = theme => ({
         "&[score='100']::after": {backgroundImage: `url('${fire_earth_emoji_svg}')`},
     },
     cardMedia: {
-        imageRendering: "pixelated"
+        imageRendering: "pixelated",
+        transition: "transform 250ms cubic-bezier(0.4, 0, 0.2, 1)",
+        transform: "scale(1)",
+        "&:hover": {
+            transform: "scale(1.25)"
+        }
+    },
+    cardMediaOverlay: {
+        position: "absolute",
+        pointerEvents: "none",
+        touchAction: "none",
+        width: "100%",
+        height: "100%",
+        top: 0,
+        left: 0,
+        background: "linear-gradient(to top, rgb(0 0 0 / 48%) 16px, rgb(0 0 0 / 0%) calc(16px + 16%))",
     },
     cardContent: {
         position: "relative",
@@ -204,14 +219,17 @@ class PixelArtCard extends React.Component {
         return (
             <Card elevation={0} className={classes.card} score={Math.round(post.voting_ratio / 10) * 10} dataselected={selected ? "true": "false"}>
                 <CardActionArea>
-                    <CardMedia
-                        onClick={(event) => {this.props.on_card_media_click(post, event)}}
-                        className={classes.cardMedia}
-                        component="img"
-                        alt="Demo only"
-                        image={post.image}
-                        title="Demo only"
-                    />
+                    <div style={{position: "relative", overflow: "hidden"}}>
+                        <CardMedia
+                            onClick={(event) => {this.props.on_card_media_click(post, event)}}
+                            className={classes.cardMedia}
+                            component="img"
+                            alt={post.title}
+                            image={post.image}
+                            title={post.title}
+                        />
+                        <div className={classes.cardMediaOverlay}></div>
+                    </div>
                     <CardContent datatags={tags[1] || tags[0]} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
                         <Typography gutterBottom variant="h5" component="h2">
                             {post.title}

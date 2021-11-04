@@ -30,7 +30,7 @@ const styles = theme => ({
             backgroundColor: theme.palette.secondary.lighter,
         },
         color: theme.palette.secondary.contrastText,
-        /*"&::before": {
+        "&::before": {
             display: "flex",
             top: 0,
             left: 0,
@@ -40,7 +40,8 @@ const styles = theme => ({
             width: "30%",
             background: "linear-gradient(to right, transparent, rgba(13, 50, 199, 0.27), transparent)",
             animation: "$innerToolbarCyberPunkAnimation 7.7s linear alternate infinite",
-        },*/
+        },
+        boxShadow: "inset 0px 0px 12px #0035ff17, inset 0px 0px 24px #9eaaf12b, inset 0px 0px 48px #95a8ff17",
         "&::-webkit-scrollbar": {
             display: "none"
         }

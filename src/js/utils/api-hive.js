@@ -448,6 +448,8 @@ function get_hive_posts(parameters, callback_function) {
 
 function post_hive_pixel_art(title, image, description, tags, username, master_key, callback_function) {
 
+    tags.splice(tags.indexOf("pixel-art"), 1);
+
     const permlink = new Date().toISOString().replace(/[^a-zA-Z0-9]+/g, '').toLowerCase() + "-crypto-red";
     const body =
         description + "\n\n" +

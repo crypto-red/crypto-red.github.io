@@ -618,20 +618,25 @@ class Pixel extends React.Component {
 
     _handle_keyup = (event) => {
 
-        event.preventDefault();
-        event.stopPropagation();
+        const { _is_pixel_dialog_post_edit_open } = this.state;
 
-        const { _tool, _memory_tool, _previous_tool_timestamp } = this.state;
+        if (event && !_is_pixel_dialog_post_edit_open) {
 
-        if(_memory_tool && _memory_tool !== _tool && Date.now() - 10 * 1000 < _previous_tool_timestamp) {
+            event.preventDefault();
+            event.stopPropagation();
 
-            this.setState({_previous_tool_timestamp: 1/0});
-            this._set_tool(_memory_tool);
+            const { _tool, _memory_tool, _previous_tool_timestamp } = this.state;
 
-        }else if(_previous_tool_timestamp < Date.now() && _tool.includes("SELECT")) {
+            if(_memory_tool && _memory_tool !== _tool && Date.now() - 10 * 1000 < _previous_tool_timestamp) {
 
-            this.setState({_previous_tool_timestamp: 1/0});
-            this._set_select_mode("REPLACE");
+                this.setState({_previous_tool_timestamp: 1/0});
+                this._set_tool(_memory_tool);
+
+            }else if(_previous_tool_timestamp < Date.now() && _tool.includes("SELECT")) {
+
+                this.setState({_previous_tool_timestamp: 1/0});
+                this._set_select_mode("REPLACE");
+            }
         }
     }
 
@@ -949,11 +954,11 @@ class Pixel extends React.Component {
     _handle_post_pixel_art = (data) => {
 
         const { _logged_account } = this.state;
-        const {title, description, image} = data;
+        const {title, description, image, tags} = data;
 
         if(_logged_account.hive_username) {
 
-            post_hive_pixel_art(title, image, description, [], _logged_account.hive_username, _logged_account.hive_password, (err, res) => {
+            post_hive_pixel_art(title, image, description, tags, _logged_account.hive_username, _logged_account.hive_password, (err, res) => {
 
                 if(!err) {
 

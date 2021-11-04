@@ -551,9 +551,9 @@ class AccountDialogCreate extends React.Component {
                     <form noValidate autoComplete="off">
                         <ChipInput
                             value={ _account_mnemonic_input}
-                            onChange={(chips) => this._handle_private_mnemonic_input_change(chips)}
-                            onDelete={(value) => this._handle_private_mnemonic_input_delete(value)}
-                            onAdd={(value) => this._handle_private_mnemonic_input_add(value)}
+                            onChange={(chips) => {this._handle_private_mnemonic_input_change(chips)}}
+                            onDelete={(value) => {this._handle_private_mnemonic_input_delete(value)}}
+                            onAdd={(value) => {this._handle_private_mnemonic_input_add(value)}}
                             error={ _is_account_mnemonic_input_error}
                             helperText={( _is_account_mnemonic_input_error) ? t( "sentences.something is incorrect"): ""}
                             allowDuplicates

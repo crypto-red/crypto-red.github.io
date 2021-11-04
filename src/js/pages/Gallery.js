@@ -525,6 +525,7 @@ class Gallery extends React.Component {
 
         const { _history, _sorting } = this.state;
 
+        this._handle_art_focus(post, event);
         const new_pathname = "/gallery/" + _sorting + "/@" + post.author + "/" + post.permlink;
         _history.push(new_pathname);
         actions.trigger_sfx("alert_high-intensity");
@@ -620,7 +621,6 @@ class Gallery extends React.Component {
         const { _posts } = this.state;
 
         const selected_post_index = _posts.indexOf(post);
-
         this._update_selected_post_index(selected_post_index);
     };
 
