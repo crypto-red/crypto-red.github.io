@@ -128,7 +128,7 @@ function postJSON(url, payload, callback_function) {
         redirect: 'follow'
     };
 
-    fetch("https://thingproxy.freeboard.io/fetch/" + url, request_options)
+    fetch(url, request_options)
         .then(response => response.text())
         .then(result => callback_function(null, result))
         .catch(error => callback_function(error, null));

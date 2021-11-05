@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import { withStyles } from "@material-ui/core/styles";
 
 import Tabs from "@material-ui/core/Tabs";
@@ -7,6 +8,7 @@ import Tab from "@material-ui/core/Tab";
 import ClockIcon from "../icons/Clock";
 import TimeIcon from "../icons/Time";
 import HotIcon from "../icons/Hot";
+import EyeIcon from "../icons/Eye";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 
 import actions from "../actions/utils";
@@ -143,7 +145,8 @@ const styles = theme => ({
     },
 });
 
-const SORTING_MODE = ["created", "active", "hot", "trending"];
+const SORTING_MODES = ["created", "active", "hot", "trending"];
+const SEARCH_SORTING_MODES = ["newest", "relevance", "popularity"];
 
 class Gallery extends React.Component {
 
@@ -153,15 +156,21 @@ class Gallery extends React.Component {
         this.state = {
             classes: props.classes,
             _history: HISTORY,
-            _sorting_mode: SORTING_MODE,
-            _sorting: props.pathname.split("/")[2] || "created",
-            _sorting_tab_index: SORTING_MODE.indexOf(props.pathname.split("/")[2] || "created"),
+            _sorting_modes: SORTING_MODES,
+            _sorting_tab_index: SORTING_MODES.indexOf(props.pathname.split("/")[2] || "created"),
             _selected_locales_code: null,
             _selected_currency: null,
             _hbd_market: null,
             _logged_account: {},
             _post_author: props.pathname.split("/")[3] || null,
             _post_permlink: props.pathname.split("/")[4] || null,
+            _is_search_mode: props.pathname.split("/")[3] === "search",
+            _search_sorting_modes: SEARCH_SORTING_MODES,
+            _search_sorting_tab_index: SEARCH_SORTING_MODES.indexOf(props.pathname.split("/")[2] || "newest"),
+            _old_search_mode_query_data: {saved: Date.now(), query: ""},
+            _search_mode_query: decodeURI(props.pathname.split("/")[4] || ""),
+            _search_mode_query_page: 0,
+            _search_mode_query_pages: 1,
             _post: null,
             _post_closed_at: 0,
             _selected_post_index: 0,
@@ -206,21 +215,29 @@ class Gallery extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
+        const { _sorting_modes, _search_sorting_modes } = this.state;
+
         const state = {
             classes: new_props.classes,
-            _sorting: new_props.pathname.split("/")[2] || "created",
-            _sorting_tab_index: SORTING_MODE.indexOf(new_props.pathname.split("/")[2] || "created"),
-            _post_author: new_props.pathname.split("/")[3] || null,
-            _post_permlink: new_props.pathname.split("/")[4] || null,
+            _sorting_tab_index: _sorting_modes.indexOf(new_props.pathname.split("/")[2] || "created"),
+            _post_author: (new_props.pathname.split("/")[3] || "").includes("@") ? new_props.pathname.split("/")[3]: null,
+            _post_permlink: (new_props.pathname.split("/")[3] || "").includes("@") ? new_props.pathname.split("/")[4] || null: null,
+            _is_search_mode: new_props.pathname.split("/")[3] === "search",
+            _old_search_mode_query_data: {saved: Date.now(), query: this.state._search_mode_query},
+            _search_mode_query: decodeURI(new_props.pathname.split("/")[4] || ""),
+            _search_sorting_tab_index: _search_sorting_modes.indexOf(new_props.pathname.split("/")[2] || "newest"),
         };
 
-        const sorting_changed = this.state._sorting !== state._sorting;
+        const sorting_changed = this.state._sorting_tab_index !== state._sorting_tab_index;
+        const search_sorting_changed = this.state._search_sorting_tab_index !== state._search_sorting_tab_index;
+        const search_mode_query_changed = state._old_search_mode_query_data.query !== state._search_mode_query;
+
         let get_post = false;
         let closed_post = false;
 
         if(state._post_author && state._post_permlink) {
 
-            if(state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink || !this.state._post) {
+            if((state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink) && !this.state._post) {
 
                 get_post = true;
             }
@@ -244,12 +261,26 @@ class Gallery extends React.Component {
                 this._handle_pixel_dialog_post_closed();
             }
 
-            if(sorting_changed) {
+            if(sorting_changed && !state._is_search_mode) {
 
                 this.setState({_posts: [], _start_author: null, _start_permlink: null}, () => {
 
                     this._load_more_posts();
                 });
+            }
+
+            if(search_sorting_changed && state._is_search_mode) {
+
+                this.setState({_posts: [], _start_author: null, _start_permlink: null, _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
+
+                    this._search_more_posts();
+                });
+            }else if(search_mode_query_changed) {
+
+                setTimeout(() => {
+
+                    this._is_new_query_maybe_search_post();
+                }, 125);
             }
         });
     }
@@ -257,21 +288,17 @@ class Gallery extends React.Component {
     componentDidMount() {
 
         window.addEventListener("resize", this._updated_dimensions);
-        document.addEventListener("keydown", this._handle_keydown);
-
-        actions.trigger_loading_update(0);
-        setTimeout(() => {
-
-            actions.trigger_loading_update(100);
-        }, 250);
+        ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 
         this._update_settings();
-        this._load_more_posts();
 
-        /*search_on_hive("pixel art", "rafirzm", ["pixel-art"], "relevance", "1", (err, res) => {
+        if(this.state._is_search_mode) {
 
-            console.log(err, res);
-        });*/
+            this._search_more_posts();
+        }else {
+
+            this._load_more_posts();
+        }
     };
 
     _update_settings() {
@@ -320,27 +347,50 @@ class Gallery extends React.Component {
 
         if(_post_author && _post_permlink) {
 
+            actions.trigger_loading_update(0);
+
             get_hive_post({author: _post_author, permlink: _post_permlink}, (err, data) => {
 
                 if(data) {
 
-                    this.setState({_post: data});
+                    this.setState({_post: data}, () => {
+
+                        actions.trigger_loading_update(100);
+                    });
                 }
             });
         }
     };
 
+    _load_more = () => {
+
+        const {_is_search_mode} = this.state;
+
+        if(_is_search_mode) {
+
+            this._search_more_posts();
+        }else {
+
+            this._load_more_posts();
+        }
+
+    };
+
     _load_more_posts = () => {
 
-        const { _start_author, _start_permlink, _sorting } = this.state;
-        get_hive_posts({limit: 21, tag: "pixel-art", sorting: _sorting, start_author: _start_author, start_permlink: _start_permlink}, (err, data) => {
+        const { _posts, _start_author, _start_permlink, _sorting_modes, _sorting_tab_index } = this.state;
+        actions.trigger_loading_update(0);
+
+        get_hive_posts({limit: 21, tag: "pixel-art", sorting: _sorting_modes[_sorting_tab_index], start_author: _start_author, start_permlink: _start_permlink}, (err, data) => {
 
             if(data.posts){
 
+                const posts = _start_author && _start_permlink ? _posts.concat(data.posts): data.posts;
 
-                this.setState({_posts: [...data.posts], _start_author: data.end_author, _start_permlink: data.end_permlink}, () => {
+                this.setState({_posts: posts, _start_author: data.end_author, _start_permlink: data.end_permlink}, () => {
 
                     this._updated_dimensions();
+                    actions.trigger_loading_update(100);
                 });
             }else {
 
@@ -349,19 +399,70 @@ class Gallery extends React.Component {
         });
     };
 
+    _is_new_query_maybe_search_post = () => {
+
+        const { _old_search_mode_query_data, _search_mode_query, _history, pathname } = this.state;
+
+        if(_old_search_mode_query_data.query !== _search_mode_query) {
+
+            this.setState({_posts: [], _search_mode_query_page: 0, _search_mode_query_pages: 1, _old_search_mode_query_data: {saved: Date.now(), query: _search_mode_query}}, () => {
+
+                this._search_more_posts();
+                _history.push(pathname);
+            });
+        }
+    };
+
+    _search_more_posts = () => {
+
+        const { _posts, _search_mode_query, _search_sorting_modes, _search_sorting_tab_index, _search_mode_query_pages } = this.state;
+        let { _search_mode_query_page } = this.state;
+
+        if(_search_mode_query_page < _search_mode_query_pages) {
+
+            _search_mode_query_page++;
+
+            actions.trigger_loading_update(0);
+
+            search_on_hive(_search_mode_query, "", ["pixel-art"], _search_sorting_modes[_search_sorting_tab_index], _search_mode_query_page.toString(), (err, data) => {
+
+                if((data || {}).posts){
+
+                    const posts = _search_mode_query_page > 1 ? _posts.concat(data.posts): data.posts;
+
+                    this.setState({_posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
+
+                        this._updated_dimensions();
+                        actions.trigger_loading_update(100);
+                    });
+                }else {
+
+                    console.log(err);
+
+                }
+            });
+        }
+    };
+
     componentWillUnmount() {
 
         window.removeEventListener("resize", this._updated_dimensions);
-        document.removeEventListener("keydown", this._handle_keydown);
+        ReactDOM.findDOMNode(this).removeEventListener("keydown", this._handle_keydown);
     }
 
     _handle_sorting_change = (event, _sorting_tab_index) => {
 
-        const { _history, _sorting_mode } = this.state;
+        const { _history, _sorting_modes } = this.state;
 
-        const _sorting = _sorting_mode[_sorting_tab_index];
+        const new_pathname = "/gallery/" + _sorting_modes[_sorting_tab_index];
+        _history.push(new_pathname);
+    };
 
-        const new_pathname = "/gallery/" + _sorting;
+    _handle_search_sorting_change = (event, _search_sorting_tab_index) => {
+
+        const { _history, _search_sorting_modes, _search_mode_query } = this.state;
+
+        const new_pathname = "/gallery/" + _search_sorting_modes[_search_sorting_tab_index] + "/search/" + _search_mode_query;
         _history.push(new_pathname);
     };
 
@@ -467,9 +568,9 @@ class Gallery extends React.Component {
 
     _handle_set_selected_account = (author) => {
 
-        const { _history, _sorting } = this.state;
+        const { _history, _sorting_modes, _sorting_tab_index } = this.state;
 
-        const new_pathname = "/gallery/" + _sorting + "/@" + author;
+        const new_pathname = "/gallery/" + _sorting_modes[_sorting_tab_index] + "/@" + author;
         _history.push(new_pathname);
     };
 
@@ -527,10 +628,10 @@ class Gallery extends React.Component {
 
     _handle_art_open = (post, event) => {
 
-        const { _history, _sorting } = this.state;
+        const { _history, _sorting_modes, _sorting_tab_index } = this.state;
 
         this._handle_art_focus(post, event);
-        const new_pathname = "/gallery/" + _sorting + "/@" + post.author + "/" + post.permlink;
+        const new_pathname = "/gallery/" + _sorting_modes[_sorting_tab_index] + "/@" + post.author + "/" + post.permlink;
         _history.push(new_pathname);
         actions.trigger_sfx("alert_high-intensity");
     };
@@ -637,9 +738,9 @@ class Gallery extends React.Component {
 
     _handle_pixel_dialog_post_close = () => {
 
-        const { _history, _sorting } = this.state;
+        const { _history, _sorting_modes, _sorting_tab_index } = this.state;
 
-        const new_pathname = "/gallery/" + _sorting;
+        const new_pathname = "/gallery/" + _sorting_modes[_sorting_tab_index];
         _history.push(new_pathname);
     };
 
@@ -798,16 +899,16 @@ class Gallery extends React.Component {
 
     _handle_reset_selected_account = () => {
 
-        const { _history, _sorting } = this.state;
+        const { _history, _sorting_modes, _sorting_tab_index } = this.state;
 
-        const new_pathname = "/gallery/" + _sorting;
+        const new_pathname = "/gallery/" + _sorting_modes[_sorting_tab_index];
         _history.push(new_pathname);
     }
 
     render() {
 
         const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _post_author, _post_permlink } = this.state;
-        const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result } = this.state;
+        const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index } = this.state;
 
         const width = _window_width;
         const height = _window_height;
@@ -838,17 +939,30 @@ class Gallery extends React.Component {
         return (
             <div className={classes.root} ref={this._set_root_ref}>
                 <div className={classes.appBarContainer}>
-                    <AppBar position="static" className={classes.AppBar}>
-                        <Tabs className={classes.tabs}
-                              variant="fullWidth"
-                              onChange={this._handle_sorting_change}
-                              value={_sorting_tab_index}>
-                            <Tab icon={<ClockIcon />} label={<span>Created</span>} className={classes.tab}/>
-                            <Tab icon={<TimeIcon />} label={<span>Active</span>} className={classes.tab}/>
-                            <Tab icon={<HotIcon />} label={<span>Hot</span>} className={classes.tab}/>
-                            <Tab icon={<TrendingUpIcon />} label={<span>Trending</span>} className={classes.tab}/>
-                        </Tabs>
-                    </AppBar>
+                    {
+                        _is_search_mode ?
+                            <AppBar position="static" className={classes.AppBar}>
+                                <Tabs className={classes.tabs}
+                                      variant="fullWidth"
+                                      onChange={this._handle_search_sorting_change}
+                                      value={_search_sorting_tab_index}>
+                                    <Tab icon={<ClockIcon />} label={<span>Newest</span>} className={classes.tab}/>
+                                    <Tab icon={<EyeIcon />} label={<span>Relevance</span>} className={classes.tab}/>
+                                    <Tab icon={<HotIcon />} label={<span>Popularity</span>} className={classes.tab}/>
+                                </Tabs>
+                            </AppBar>:
+                            <AppBar position="static" className={classes.AppBar}>
+                                <Tabs className={classes.tabs}
+                                      variant="fullWidth"
+                                      onChange={this._handle_sorting_change}
+                                      value={_sorting_tab_index}>
+                                    <Tab icon={<ClockIcon />} label={<span>Created</span>} className={classes.tab}/>
+                                    <Tab icon={<TimeIcon />} label={<span>Active</span>} className={classes.tab}/>
+                                    <Tab icon={<HotIcon />} label={<span>Hot</span>} className={classes.tab}/>
+                                    <Tab icon={<TrendingUpIcon />} label={<span>Trending</span>} className={classes.tab}/>
+                                </Tabs>
+                            </AppBar>
+                    }
                 </div>
 
                 <div className={classes.masonry}>

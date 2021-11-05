@@ -558,7 +558,7 @@ function vote_on_hive_post(author, permlink, weight, username, master_key, callb
 
 function search_on_hive(terms, author, tags, sorting, page, callback_function) {
 
-    postJSON("https://hivesearcher.com/api/search", {q:`${terms} author:${author} tag:${tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
+    postJSON("https://thingproxy.freeboard.io/fetch/https://hivesearcher.com/api/search", {q:`${terms} ${author ? "author:" + author: ""} tag:${tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
 
         if(!err && res) {
 
@@ -582,7 +582,13 @@ function search_on_hive(terms, author, tags, sorting, page, callback_function) {
 
                         if(data.results.length === post_processed) {
 
-                            callback_function(null, all_posts);
+                            if(all_posts.length === 0 && data.pages > page){
+
+                                search_on_hive(terms, author, tags, sorting, page+1, callback_function);
+                            }else {
+
+                                callback_function(null, {posts: all_posts, pages: data.pages, page});
+                            }
                         }
                     });
 
