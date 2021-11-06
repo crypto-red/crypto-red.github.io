@@ -558,7 +558,7 @@ function vote_on_hive_post(author, permlink, weight, username, master_key, callb
 
 function search_on_hive(terms = "", author = "", tags = ["pixel-art"], sorting = ["relevance"], page = "1", callback_function) {
 
-    postJSON("https://thingproxy.freeboard.io/fetch/https://hivesearcher.com/api/search", {q:`${terms} ${author.length ? ("author:" + author): ""} tag:${tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
+    postJSON("https://cors-anywhere.crypto-red.workers.dev/https://hivesearcher.com/api/search", {q:`${terms} ${author.length ? ("author:" + author): ""} tag:${tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
 
         if(!err && res) {
 

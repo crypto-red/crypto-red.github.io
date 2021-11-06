@@ -913,7 +913,7 @@ class PixelDialogPost extends React.Component {
             const lang = selected_locales_code.split("-")[0];
             this.setState({_has_translation_started: true}, () => {
 
-                postJSON("https://thingproxy.freeboard.io/fetch/https://translate.argosopentech.com/translate", {q: this.state.post.description, source: "auto", target: lang, format: "text"}, (err, res) => {
+                postJSON("https://cors-anywhere.crypto-red.workers.dev/https://translate.argosopentech.com/translate", {q: this.state.post.description, source: "auto", target: lang, format: "text"}, (err, res) => {
 
                     if(!err && res) {
 
@@ -932,7 +932,7 @@ class PixelDialogPost extends React.Component {
                     }
                 }, "application/json");
 
-                postJSON("https://thingproxy.freeboard.io/fetch/https://translate.argosopentech.com/translate", {q: this.state.post.title, source: "auto", target: lang, format: "text"}, (err, res) => {
+                postJSON("https://cors-anywhere.crypto-red.workers.dev/https://translate.argosopentech.com/translate", {q: this.state.post.title, source: "auto", target: lang, format: "text"}, (err, res) => {
 
                     if(!err && res) {
 

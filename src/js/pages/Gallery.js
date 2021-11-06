@@ -433,6 +433,7 @@ class Gallery extends React.Component {
 
                 search_on_hive(_search_mode_query, "", ["pixel-art"], (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]), _search_mode_query_page.toString(), (err, data) => {
 
+                    console.log(err, data);
                     if((data || {}).posts){
 
                         const posts = _search_mode_query_page > 1 ? _posts.concat(data.posts): data.posts;
