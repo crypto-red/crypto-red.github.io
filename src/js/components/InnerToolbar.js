@@ -233,7 +233,7 @@ class InnerToolbar extends React.Component {
         
         return (
             <div className={classes.root}>
-                <Button className={classes.innerToolbar}>
+                <Button className={classes.innerToolbar} disableFocusRipple>
                     <span className={classes.innerToolbarTextWrapperContainer}>
                         <span className={classes.innerToolbarTextWrapper}>
                             <div className={classes.innerToolbarProgress}>
@@ -253,6 +253,7 @@ class InnerToolbar extends React.Component {
                                 _is_search_bar_active && pathname.includes("gallery") ?
                                     <InputBase
                                         autoFocus
+                                        selectionFollowsFocus={false}
                                         className={classes.innerToolbarInput}
                                         placeholder="search…"
                                         classes={{

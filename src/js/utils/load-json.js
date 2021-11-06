@@ -113,7 +113,6 @@ function postJSON(url, payload, callback_function, content_type = "application/x
     let headers = new Headers();
 
     headers.append("Content-Type", content_type);
-    headers.append("Access-Control-Allow-Origin", new URL(window.location.href).origin);
 
     let bodyencoded = content_type === "multipart/form-data" ? new FormData(): new URLSearchParams();
 
@@ -124,7 +123,8 @@ function postJSON(url, payload, callback_function, content_type = "application/x
     });
 
     let request_options = {
-        method: 'POST',
+        method: "POST",
+        redirect: "follow",
         headers: headers,
         body: content_type === "application/json" ? JSON.stringify(payload): bodyencoded,
     };
