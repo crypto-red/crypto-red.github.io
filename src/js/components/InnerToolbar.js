@@ -186,19 +186,16 @@ class InnerToolbar extends React.Component {
         const { _history, _pathname_before_search, pathname } = this.state;
         if(this.state._is_search_bar_active) {
 
-            this.setState({_is_search_bar_active: false}, () => {
+            if(_pathname_before_search) {
 
-                if(_pathname_before_search) {
+                _history.push(_pathname_before_search)
+            }else {
 
-                    _history.push(_pathname_before_search)
-                }else {
-
-                    _history.push("/gallery")
-                }
-            });
+                _history.push("/gallery")
+            }
         }else {
 
-            this.setState({_pathname_before_search: pathname, _is_search_bar_active: true}, () => {
+            this.setState({_pathname_before_search: pathname}, () => {
 
                 _history.push("/gallery/relevance/search/");
             });
@@ -257,7 +254,7 @@ class InnerToolbar extends React.Component {
                                     <InputBase
                                         autoFocus
                                         className={classes.innerToolbarInput}
-                                        placeholder="Search…"
+                                        placeholder="search…"
                                         classes={{
                                             root: classes.inputRoot,
                                             input: classes.inputInput,

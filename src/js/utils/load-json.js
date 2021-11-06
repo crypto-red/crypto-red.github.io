@@ -108,24 +108,24 @@ function postDATA(url, data, callback_function) {
     }
 }
 
-function postJSON(url, payload, callback_function) {
+function postJSON(url, payload, callback_function, content_type = "application/x-www-form-urlencoded") {
 
     let headers = new Headers();
-    headers.append("Content-Type", "application/x-www-form-urlencoded");
 
-    let urlencoded = new URLSearchParams();
+    headers.append("Content-Type", content_type);
+
+    let bodyencoded = content_type === "multipart/form-data" ? new FormData(): new URLSearchParams();
 
     Object.entries(payload).forEach((entry) => {
 
         const [key, value] = entry;
-        urlencoded.append(key, value);
+        bodyencoded.append(key, value);
     });
 
     let request_options = {
         method: 'POST',
         headers: headers,
-        body: urlencoded,
-        redirect: 'follow'
+        body: content_type === "application/json" ? JSON.stringify(payload): bodyencoded,
     };
 
     fetch(url, request_options)

@@ -556,9 +556,9 @@ function vote_on_hive_post(author, permlink, weight, username, master_key, callb
     });
 }
 
-function search_on_hive(terms, author, tags, sorting, page, callback_function) {
+function search_on_hive(terms = "", author = "", tags = ["pixel-art"], sorting = ["relevance"], page = "1", callback_function) {
 
-    postJSON("https://thingproxy.freeboard.io/fetch/https://hivesearcher.com/api/search", {q:`${terms} ${author ? "author:" + author: ""} tag:${tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
+    postJSON("https://thingproxy.freeboard.io/fetch/https://hivesearcher.com/api/search", {q:`${terms} ${author.length ? ("author:" + author): ""} tag:${tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
 
         if(!err && res) {
 
@@ -568,6 +568,12 @@ function search_on_hive(terms, author, tags, sorting, page, callback_function) {
                 let post_processed = 0;
 
                 const data = JSON.parse(clean_json_text(res));
+
+                if(data.results.length === 0) {
+
+                    callback_function(null, {posts: [], pages: 1, page: 1});
+                }
+
                 data.results.forEach((post) => {
 
                     const { author, permlink } = post;

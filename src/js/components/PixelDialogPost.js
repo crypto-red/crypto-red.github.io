@@ -22,6 +22,8 @@ import FacebookIcon from "../icons/Facebook";
 import TwitterIcon from "../icons/Twitter";
 import PinterestIcon from "../icons/Pinterest";
 import LinkedInIcon from "../icons/LinkedIn";
+import TranslateIcon from "../icons/Translate";
+import TranslateOffIcon from "../icons/TranslateOff";
 import PixelColorPalette from "./PixelColorPalette";
 import IconButton from "@material-ui/core/IconButton";
 import RedditIcon from "../icons/Reddit";
@@ -42,6 +44,10 @@ import {lookup_accounts_name} from "../utils/api-hive";
 import TimeAgo from "javascript-time-ago";
 import ChipInput from "material-ui-chip-input";
 import actions from "../actions/utils";
+import {postJSON} from "../utils/load-json";
+import {clean_json_text} from "../utils/json";
+
+const TRANSLATION_AVAILABLE = ["en", "ar", "zh", "nl", "fi", "fr", "de", "hi", "hu", "id", "ga", "it", "ja", "ko", "pl", "pt", "ru", "es", "sv", "tr", "uk", "vi"];
 
 const styles = theme => ({
     root: {
@@ -277,7 +283,15 @@ const styles = theme => ({
         left: "50%",
         marginTop: -12,
         marginLeft: -12,
-    }
+    },
+    buttonProgress: {
+        color: theme.palette.primary.actionLighter,
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        marginTop: -12,
+        marginLeft: -12,
+    },
 });
 
 
@@ -291,6 +305,7 @@ class PixelDialogPost extends React.Component {
             open: props.open,
             post: props.post,
             edit: props.edit || false,
+            selected_locales_code: props.selected_locales_code || "en-US",
             _title_input: "",
             _description_input: "",
             _canvas: null,
@@ -321,6 +336,9 @@ class PixelDialogPost extends React.Component {
             _author_account: null,
             _tags_input: ["pixel-art"],
             _tags_input_error: "",
+            _translated_description: "",
+            _translated_title: "",
+            _has_translation_started: false,
         };
     };
 
@@ -523,6 +541,9 @@ class PixelDialogPost extends React.Component {
             _author_account: null,
             _tags_input: ["pixel-art"],
             _tags_input_error: "",
+            _translated_description: "",
+            _translated_title: "",
+            _has_translation_started: false,
         }, () => {
 
             this.forceUpdate();
@@ -875,6 +896,64 @@ class PixelDialogPost extends React.Component {
         });
     };
 
+    _toggle_translate_everything = () => {
+
+        const { selected_locales_code, _translated_title, _translated_description, _has_translation_started } = this.state;
+
+        const has_translated = _translated_title.length && _translated_description.length && _has_translation_started;
+
+        if(has_translated) {
+
+            this.setState({ _translated_title: "", _translated_description: "", _has_translation_started: false}, () => {
+
+                this.forceUpdate();
+            });
+        }else {
+
+            const lang = selected_locales_code.split("-")[0];
+            this.setState({_has_translation_started: true}, () => {
+
+                postJSON("https://thingproxy.freeboard.io/fetch/https://translate.argosopentech.com/translate", {q: this.state.post.description, source: "auto", target: lang, format: "text"}, (err, res) => {
+
+                    if(!err && res) {
+
+                        try {
+
+                            const data = JSON.parse(clean_json_text(res));
+
+                            if(data) {
+
+                                this.setState({_translated_description: data.translatedText}, () => {this.forceUpdate();});
+                            }
+
+                        }catch (e) {
+
+                        }
+                    }
+                }, "application/json");
+
+                postJSON("https://thingproxy.freeboard.io/fetch/https://translate.argosopentech.com/translate", {q: this.state.post.title, source: "auto", target: lang, format: "text"}, (err, res) => {
+
+                    if(!err && res) {
+
+                        try {
+
+                            const data = JSON.parse(clean_json_text(res));
+
+                            if(data) {
+
+                                this.setState({_translated_title: data.translatedText}, () => {this.forceUpdate();});
+                            }
+
+                        }catch (e) {
+
+                        }
+                    }
+                }, "application/json");
+            });
+        }
+    };
+
     render() {
 
         const {
@@ -888,6 +967,9 @@ class PixelDialogPost extends React.Component {
             _is_prediction_loading,
             _description_input,
             _description_prediction,
+            _translated_description,
+            _has_translation_started,
+            _translated_title,
             _width,
             _height,
             _window_width,
@@ -898,6 +980,7 @@ class PixelDialogPost extends React.Component {
             _image_details,
             _drawer_open,
             keepMounted,
+            selected_locales_code,
         } = this.state;
 
         const post = this.state.post || {};
@@ -909,6 +992,10 @@ class PixelDialogPost extends React.Component {
         const vote_number = post.active_votes ? post.active_votes.length: 0;
         const tags = post.tags ? post.tags: [];
         const url = window.location.href;
+
+        const has_translated = _translated_title.length && _translated_description.length;
+        const is_translating = _has_translation_started && !has_translated;
+        const lang = selected_locales_code.split("-")[0];
 
         return (
             <div>
@@ -1007,7 +1094,15 @@ class PixelDialogPost extends React.Component {
                                     <div className={classes.contentDrawer}>
                                         <CardContent>
                                             {
-                                                edit ?
+                                                !edit && TRANSLATION_AVAILABLE.includes(lang) &&
+                                                    <Button disabled={is_translating} onClick={this._toggle_translate_everything}
+                                                            startIcon={has_translated ? <TranslateOffIcon />: <TranslateIcon />}>
+                                                        {has_translated ? "Show original ": "Translate "}
+                                                        {is_translating && <CircularProgress size={24} className={classes.buttonProgress} />}
+                                                    </Button>
+                                            }
+                                            {
+                                                edit &&
                                                     <form noValidate autoComplete="off">
                                                         <ChipInput
                                                             value={_tags_input}
@@ -1020,7 +1115,7 @@ class PixelDialogPost extends React.Component {
                                                             fullWidth
                                                             label="Enter up to six tags"
                                                         />
-                                                    </form>: null
+                                                    </form>
                                             }
                                             {
                                                 edit ?
@@ -1032,10 +1127,12 @@ class PixelDialogPost extends React.Component {
                                                         onChange={this._handle_title_input_change}
                                                         style={{marginBottom: 12}}
                                                     />:
-                                                    <Typography gutterBottom variant="h4" component="h3">{post.title}</Typography>
+                                                    <Typography gutterBottom variant="h4" component="h3">
+                                                        {_translated_title.length ? _translated_title: post.title}
+                                                    </Typography>
                                             }
                                             {
-                                                _title_prediction ?
+                                                _title_prediction &&
                                                     <div>
                                                         {
                                                             Object.entries(_title_prediction).map((entry) => {
@@ -1051,7 +1148,7 @@ class PixelDialogPost extends React.Component {
                                                                 );
                                                             })
                                                         }
-                                                    </div> : null
+                                                    </div>
                                             }
                                             {
                                                 edit ?
@@ -1067,12 +1164,12 @@ class PixelDialogPost extends React.Component {
                                                     />:
                                                     <div>
                                                         <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>
-                                                            {post.description}
+                                                            {_translated_description.length ? _translated_description: post.description}
                                                         </ReactMarkdown>
                                                     </div>
                                             }
                                             {
-                                                _description_prediction ?
+                                                _description_prediction &&
                                                     <div>
                                                         {
                                                             Object.entries(_description_prediction).map((entry) => {
@@ -1088,10 +1185,10 @@ class PixelDialogPost extends React.Component {
                                                                 );
                                                             })
                                                         }
-                                                    </div> : null
+                                                    </div>
                                             }
                                             {
-                                                edit ?
+                                                edit &&
                                                     <div className={classes.tensorflowContainer}>
                                                         <p>Discover with TensorFlow's machine learning, what's the intention of your writing, get ready for it.</p>
                                                         <div className={classes.tensorflowWrapper}>
@@ -1105,7 +1202,7 @@ class PixelDialogPost extends React.Component {
                                                             </Button>
                                                             {_is_prediction_loading && <CircularProgress size={24} className={classes.tensorflowButtonProgress} />}
                                                         </div>
-                                                    </div>: null
+                                                    </div>
                                             }
                                         </CardContent>
                                         <CardContent>

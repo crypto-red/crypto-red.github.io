@@ -4,6 +4,8 @@ import { withStyles } from "@material-ui/core/styles";
 
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
+import AppBar from "@material-ui/core/AppBar";
+import Fade from "@material-ui/core/Fade";
 
 import ClockIcon from "../icons/Clock";
 import TimeIcon from "../icons/Time";
@@ -11,18 +13,15 @@ import HotIcon from "../icons/Hot";
 import EyeIcon from "../icons/Eye";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 
-import actions from "../actions/utils";
-
-import PixelArtCard from "../components/PixelArtCard";
-
 import { Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from "react-virtualized";
-import AppBar from "@material-ui/core/AppBar";
-import PixelDialogPost from "../components/PixelDialogPost";
 
+import PixelDialogPost from "../components/PixelDialogPost";
+import PixelArtCard from "../components/PixelArtCard";
 import AccountDialogProfileHive from "../components/AccountDialogProfileHive";
 import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
 
 import { search_on_hive, get_hive_posts, get_hive_post, vote_on_hive_post } from "../utils/api-hive"
+import actions from "../actions/utils";
 import api from "../utils/api";
 import {HISTORY} from "../utils/constants";
 
@@ -126,6 +125,15 @@ const styles = theme => ({
             }
         }
     },
+    noPosts: {
+        width: "100%",
+        display: "flex",
+        padding: "88px 16px 32px 16px",
+        justifyContent: "center",
+        flexDirection: "column",
+        textAlign: "center",
+        color: "#d7dbffbb"
+    },
     reactionMenu: {
         "& .MuiList-root": {
             padding: 0,
@@ -157,21 +165,22 @@ class Gallery extends React.Component {
             classes: props.classes,
             _history: HISTORY,
             _sorting_modes: SORTING_MODES,
-            _sorting_tab_index: SORTING_MODES.indexOf(props.pathname.split("/")[2] || "created"),
+            _sorting_tab_index: -1,
             _selected_locales_code: null,
             _selected_currency: null,
             _hbd_market: null,
             _logged_account: {},
-            _post_author: props.pathname.split("/")[3] || null,
-            _post_permlink: props.pathname.split("/")[4] || null,
+            _post_author: null,
+            _post_permlink: null,
             _is_search_mode: props.pathname.split("/")[3] === "search",
             _search_sorting_modes: SEARCH_SORTING_MODES,
-            _search_sorting_tab_index: SEARCH_SORTING_MODES.indexOf(props.pathname.split("/")[2] || "newest"),
+            _search_sorting_tab_index: -1,
             _old_search_mode_query_data: {saved: Date.now(), query: ""},
-            _search_mode_query: decodeURI(props.pathname.split("/")[4] || ""),
+            _search_mode_query: "",
             _search_mode_query_page: 0,
             _search_mode_query_pages: 1,
             _post: null,
+            _loading_posts: false,
             _post_closed_at: 0,
             _selected_post_index: 0,
             _scrolling_reset_time_interval: 300,
@@ -220,17 +229,16 @@ class Gallery extends React.Component {
         const state = {
             classes: new_props.classes,
             _sorting_tab_index: _sorting_modes.indexOf(new_props.pathname.split("/")[2] || "created"),
-            _post_author: (new_props.pathname.split("/")[3] || "").includes("@") ? new_props.pathname.split("/")[3]: null,
-            _post_permlink: (new_props.pathname.split("/")[3] || "").includes("@") ? new_props.pathname.split("/")[4] || null: null,
+            _post_author: (new_props.pathname.split("/")[3] || "").includes("@") ? new_props.pathname.split("/")[3]: (new_props.pathname.split("/")[5] || "").includes("@") ? new_props.pathname.split("/")[5]: null,
+            _post_permlink: (new_props.pathname.split("/")[3] || "").includes("@") ? new_props.pathname.split("/")[4] || null: (new_props.pathname.split("/")[5] || "").includes("@") ? new_props.pathname.split("/")[6] || null: null,
             _is_search_mode: new_props.pathname.split("/")[3] === "search",
-            _old_search_mode_query_data: {saved: Date.now(), query: this.state._search_mode_query},
             _search_mode_query: decodeURI(new_props.pathname.split("/")[4] || ""),
             _search_sorting_tab_index: _search_sorting_modes.indexOf(new_props.pathname.split("/")[2] || "newest"),
         };
 
         const sorting_changed = this.state._sorting_tab_index !== state._sorting_tab_index;
         const search_sorting_changed = this.state._search_sorting_tab_index !== state._search_sorting_tab_index;
-        const search_mode_query_changed = state._old_search_mode_query_data.query !== state._search_mode_query;
+        const search_mode_query_changed = this.state._old_search_mode_query_data.query !== state._search_mode_query;
 
         let get_post = false;
         let closed_post = false;
@@ -243,9 +251,9 @@ class Gallery extends React.Component {
             }
         }
 
-        if(this.state._post_author && this.state._post_permlink) {
+        if(!state._post_author && !state._post_permlink) {
 
-            if(!state._post_author && !state._post_permlink) {
+            if(this.state._post_author && this.state._post_permlink) {
 
                 closed_post = true;
             }
@@ -261,26 +269,24 @@ class Gallery extends React.Component {
                 this._handle_pixel_dialog_post_closed();
             }
 
-            if(sorting_changed && !state._is_search_mode) {
+            if(sorting_changed && !this.state._is_search_mode) {
 
                 this.setState({_posts: [], _start_author: null, _start_permlink: null}, () => {
 
                     this._load_more_posts();
                 });
-            }
-
-            if(search_sorting_changed && state._is_search_mode) {
+            }else if(search_sorting_changed && this.state._is_search_mode) {
 
                 this.setState({_posts: [], _start_author: null, _start_permlink: null, _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
 
                     this._search_more_posts();
                 });
-            }else if(search_mode_query_changed) {
+            }else if(search_mode_query_changed && this.state._is_search_mode) {
 
                 setTimeout(() => {
 
-                    this._is_new_query_maybe_search_post();
-                }, 125);
+                    this._is_not_new_query_maybe_search_post();
+                }, 963);
             }
         });
     }
@@ -291,14 +297,6 @@ class Gallery extends React.Component {
         ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 
         this._update_settings();
-
-        if(this.state._is_search_mode) {
-
-            this._search_more_posts();
-        }else {
-
-            this._load_more_posts();
-        }
     };
 
     _update_settings() {
@@ -380,36 +378,43 @@ class Gallery extends React.Component {
 
         const { _posts, _start_author, _start_permlink, _sorting_modes, _sorting_tab_index } = this.state;
         actions.trigger_loading_update(0);
+        this.setState({_loading_posts: true}, () => {
 
-        get_hive_posts({limit: 21, tag: "pixel-art", sorting: _sorting_modes[_sorting_tab_index], start_author: _start_author, start_permlink: _start_permlink}, (err, data) => {
+            get_hive_posts({limit: 21, tag: "pixel-art", sorting: (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]), start_author: _start_author, start_permlink: _start_permlink}, (err, data) => {
 
-            if(data.posts){
+                if(data.posts){
 
-                const posts = _start_author && _start_permlink ? _posts.concat(data.posts): data.posts;
+                    const posts = _start_author && _start_permlink ? _posts.concat(data.posts): data.posts;
 
-                this.setState({_posts: posts, _start_author: data.end_author, _start_permlink: data.end_permlink}, () => {
+                    this.setState({_loading_posts: false, _posts: posts, _start_author: data.end_author, _start_permlink: data.end_permlink}, () => {
 
-                    this._updated_dimensions();
+                        this._updated_dimensions();
+                        actions.trigger_loading_update(100);
+                    });
+                }else {
+
+                    this.setState({_loading_posts: false});
                     actions.trigger_loading_update(100);
-                });
-            }else {
+                }
+            });
 
-
-            }
         });
     };
 
-    _is_new_query_maybe_search_post = () => {
+    _is_not_new_query_maybe_search_post = () => {
 
         const { _old_search_mode_query_data, _search_mode_query, _history, pathname } = this.state;
 
-        if(_old_search_mode_query_data.query !== _search_mode_query) {
+        if(_old_search_mode_query_data.query === _search_mode_query) {
 
             this.setState({_posts: [], _search_mode_query_page: 0, _search_mode_query_pages: 1, _old_search_mode_query_data: {saved: Date.now(), query: _search_mode_query}}, () => {
 
                 this._search_more_posts();
                 _history.push(pathname);
             });
+        }else {
+
+            this.setState({_old_search_mode_query_data: {saved: Date.now(), query: this.state._search_mode_query}});
         }
     };
 
@@ -423,23 +428,25 @@ class Gallery extends React.Component {
             _search_mode_query_page++;
 
             actions.trigger_loading_update(0);
+            this.setState({_loading_posts: true}, () => {
 
-            search_on_hive(_search_mode_query, "", ["pixel-art"], _search_sorting_modes[_search_sorting_tab_index], _search_mode_query_page.toString(), (err, data) => {
+                search_on_hive(_search_mode_query, "", ["pixel-art"], (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]), _search_mode_query_page.toString(), (err, data) => {
 
-                if((data || {}).posts){
+                    if((data || {}).posts){
 
-                    const posts = _search_mode_query_page > 1 ? _posts.concat(data.posts): data.posts;
+                        const posts = _search_mode_query_page > 1 ? _posts.concat(data.posts): data.posts;
 
-                    this.setState({_posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
+                        this.setState({_loading_posts: false, _posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
 
-                        this._updated_dimensions();
+                            this._updated_dimensions();
+                            actions.trigger_loading_update(100);
+                        });
+                    }else {
+
                         actions.trigger_loading_update(100);
-                    });
-                }else {
-
-                    console.log(err);
-
-                }
+                        this.setState({_loading_posts: false});
+                    }
+                });
             });
         }
     };
@@ -454,7 +461,7 @@ class Gallery extends React.Component {
 
         const { _history, _sorting_modes } = this.state;
 
-        const new_pathname = "/gallery/" + _sorting_modes[_sorting_tab_index];
+        const new_pathname = "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]);
         _history.push(new_pathname);
     };
 
@@ -462,7 +469,7 @@ class Gallery extends React.Component {
 
         const { _history, _search_sorting_modes, _search_mode_query } = this.state;
 
-        const new_pathname = "/gallery/" + _search_sorting_modes[_search_sorting_tab_index] + "/search/" + _search_mode_query;
+        const new_pathname = "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + _search_mode_query;
         _history.push(new_pathname);
     };
 
@@ -570,7 +577,7 @@ class Gallery extends React.Component {
 
         const { _history, _sorting_modes, _sorting_tab_index } = this.state;
 
-        const new_pathname = "/gallery/" + _sorting_modes[_sorting_tab_index] + "/@" + author;
+        const new_pathname = "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]) + "/@" + author;
         _history.push(new_pathname);
     };
 
@@ -628,10 +635,12 @@ class Gallery extends React.Component {
 
     _handle_art_open = (post, event) => {
 
-        const { _history, _sorting_modes, _sorting_tab_index } = this.state;
+        const { _history, _is_search_mode, _sorting_modes, _sorting_tab_index, _search_sorting_modes, _search_sorting_tab_index, _search_mode_query } = this.state;
 
         this._handle_art_focus(post, event);
-        const new_pathname = "/gallery/" + _sorting_modes[_sorting_tab_index] + "/@" + post.author + "/" + post.permlink;
+        const new_pathname = !_is_search_mode ?
+            "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]) + "/@" + post.author + "/" + post.permlink:
+            "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + _search_mode_query + "/@" + post.author + "/" + post.permlink;
         _history.push(new_pathname);
         actions.trigger_sfx("alert_high-intensity");
     };
@@ -738,9 +747,11 @@ class Gallery extends React.Component {
 
     _handle_pixel_dialog_post_close = () => {
 
-        const { _history, _sorting_modes, _sorting_tab_index } = this.state;
+        const { _history, _is_search_mode, _sorting_modes, _sorting_tab_index, _search_sorting_modes, _search_sorting_tab_index, _search_mode_query } = this.state;
 
-        const new_pathname = "/gallery/" + _sorting_modes[_sorting_tab_index];
+        const new_pathname = !_is_search_mode ?
+            "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]):
+            "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + _search_mode_query;
         _history.push(new_pathname);
     };
 
@@ -901,13 +912,13 @@ class Gallery extends React.Component {
 
         const { _history, _sorting_modes, _sorting_tab_index } = this.state;
 
-        const new_pathname = "/gallery/" + _sorting_modes[_sorting_tab_index];
+        const new_pathname = "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]);
         _history.push(new_pathname);
     }
 
     render() {
 
-        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _post_author, _post_permlink } = this.state;
+        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _post_author, _post_permlink, _loading_posts, _selected_locales_code } = this.state;
         const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index } = this.state;
 
         const width = _window_width;
@@ -965,9 +976,23 @@ class Gallery extends React.Component {
                     }
                 </div>
 
-                <div className={classes.masonry}>
-                    {masonry_element}
-                </div>
+                {
+                    _posts.length ?
+                        <div className={classes.masonry}>
+                            {masonry_element}
+                        </div>:
+                        <div className={classes.noPosts} style={{height: post_list_height}}>
+                            {
+                                _loading_posts ?
+                                    <Fade in timeout={75}>
+                                        <div><h1>Please wait...</h1><h5>Powered in partnership with Ecency.com</h5></div>
+                                    </Fade>:
+                                    <Fade in timeout={75}>
+                                        <div><h1>Nothing to show you.</h1></div>
+                                    </Fade>
+                            }
+                        </div>
+                }
 
                 <MenuReactionPixelPost
                     event={_reaction_click_event}
@@ -976,12 +1001,13 @@ class Gallery extends React.Component {
                     on_vote={this._handle_vote} />
 
                 <PixelDialogPost
+                    selected_locales_code={_selected_locales_code}
                     on_next={this._next_current_post}
                     on_previous={this._previous_current_post}
                     on_image_load_complete={() => {setTimeout(() => {this._scroll_to_index()}, 5)}}
                     keepMounted={true}
                     post={_post}
-                    open={Boolean(_post)}
+                    open={_post !== null}
                     onClose={this._handle_pixel_dialog_post_close}/>
 
                 <AccountDialogProfileHive account_name={_post_author} open={_post_author !== null && _post_permlink === null} onClose={this._handle_reset_selected_account}/>
