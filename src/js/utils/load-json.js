@@ -110,6 +110,8 @@ function postDATA(url, data, callback_function) {
 
 function postJSON(url, payload, callback_function, content_type = "application/x-www-form-urlencoded") {
 
+    url = "https://cors-anywhere.crypto-red.workers.dev/?" + url;
+
     let headers = new Headers();
 
     headers.append("Content-Type", content_type);

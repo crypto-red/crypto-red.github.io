@@ -1,8 +1,86 @@
 import hiveJS from "@hiveio/hive-js";
 import { ChainTypes, makeBitMaskFilter } from "@hiveio/hive-js/lib/auth/serializer";
-import vsys from "@virtualeconomy/js-v-sdk";
+import PouchDB from "pouchdb";
 import {postJSON} from "./load-json";
 import {clean_json_text} from "./json";
+import {get_btc_dash_doge_ltc_transaction_by_id} from "./api-btc-dash-doge-ltc";
+
+const hive_posts_db = new PouchDB("hive_posts_db", {revs_limit: 0, auto_compaction: false});
+const hive_accounts_db = new PouchDB("hive_posts_db", {revs_limit: 0, auto_compaction: false});
+const hive_queries_db = new PouchDB("hive_queries_db", {revs_limit: 0, auto_compaction: false});
+
+function _cache_data(database, cache_time_ms, query_id, api_function, api_parameters, callback_function, response_to_data_formatter = (response) => {return response}) {
+
+    let data_in_db = null;
+
+    // Get data and store it
+    function gather_data(rev) {
+
+        function insert_response_in_db(error, response) {
+
+            if(!error) {
+
+                if(typeof response.error === "undefined") {
+
+                    const data = response_to_data_formatter(response);
+
+                    database.put({
+                        _id: query_id,
+                        _rev: rev,
+                        timestamp: Date.now(),
+                        data: JSON.stringify(data)
+                    }, {force: true});
+
+                    callback_function(null, data);
+                }else {
+
+                    if(data_in_db) {
+
+                        callback_function(null, data_in_db);
+                    }else {
+
+                        callback_function(response.error, null);
+                    }
+                }
+            }else {
+
+                if(data_in_db) {
+
+                    callback_function(null, data_in_db);
+                }else {
+
+                    callback_function(error, null);
+                }
+            }
+
+        }
+
+
+        api_function(api_parameters, insert_response_in_db);
+    }
+
+    // Look for data into the DB
+    database.get(query_id, function(err, doc) {
+        if (!err) {
+
+            // Test if recent or if cache time equals 0 (force refresh) or navigator offline
+            if((doc.timestamp + cache_time_ms >= Date.now() && cache_time_ms !== 0) || !navigator.onLine) {
+
+                data_in_db = JSON.parse(clean_json_text(doc.data));
+
+                callback_function(null, data_in_db);
+            }else { // if old update
+
+                gather_data(doc._rev);
+            }
+
+        }else {
+
+            // Get data from network
+            gather_data("1-A");
+        }
+    });
+}
 
 function _get_pixel_art_data_from_content(content) {
 
@@ -170,19 +248,46 @@ function _format_transaction(transaction) {
     return formatted_transaction;
 }
 
-function lookup_accounts(input, limit, callback_function) {
+function cached_lookup_hive_accounts(input, limit, callback_function) {
 
     input = input.replace("@", "");
     limit = Math.max(Math.min(25, limit), 0);
 
+    _cache_data(
+        hive_queries_db,
+        60 * 1000,
+        "lookup_hive_accounts-input-"+input+"-limit-"+limit,
+        lookup_hive_accounts,
+        {input, limit},
+        callback_function
+    );
+}
+
+function lookup_hive_accounts(parameters, callback_function) {
+
+    const {input, limit} = parameters;
     hiveJS.api.lookupAccounts(input, limit, callback_function);
 }
-function lookup_accounts_name(names, callback_function) {
+
+function cached_lookup_hive_accounts_name(names, callback_function) {
 
     names = names.map(function(name){
         return name.replace("@", "");
     });
 
+    _cache_data(
+        hive_queries_db,
+        60 * 1000,
+        "lookup_hive_accounts_name-names-"+names.join("-"),
+        lookup_hive_accounts,
+        {names},
+        callback_function
+    );
+}
+
+function lookup_hive_accounts_name(parameters, callback_function) {
+
+    const { names } = parameters;
     hiveJS.api.lookupAccountNames(names, function (error, results){
 
         if(!error) {
@@ -201,22 +306,21 @@ function lookup_accounts_name(names, callback_function) {
     });
 }
 
-function lookup_accounts_with_details(input, limit, callback_function) {
+function cached_lookup_hive_accounts_with_details(input, limit, callback_function) {
 
-    lookup_accounts(input, limit, function(error, names) {
+    cached_lookup_hive_accounts(input, limit, function(error, names) {
 
         if(!error) {
 
-            lookup_accounts_name(names, callback_function);
+            cached_lookup_hive_accounts_name(names, callback_function);
         }else {
 
             callback_function(error, null);
         }
     });
-
 }
 
-function _get_account_keys(username = "", master_key = "") {
+function _get_hive_account_keys(username = "", master_key = "") {
 
     const key_result = hiveJS.auth.getPrivateKeys(username, master_key, ['posting', 'active', 'owner', 'memo']);
 
@@ -235,7 +339,7 @@ function _get_account_keys(username = "", master_key = "") {
 }
 
 
-function get_account_keys(username = "", master_key = "", callback_function) {
+function get_hive_account_keys(username = "", master_key = "", callback_function) {
 
     // Get private keys
     function process_public_account_callback(error, result){
@@ -243,7 +347,7 @@ function get_account_keys(username = "", master_key = "", callback_function) {
         if(!error && typeof result[0] !== "undefined") {
 
             let account = result[0];
-            const keys = _get_account_keys(username, master_key);
+            const keys = _get_hive_account_keys(username, master_key);
 
             // Verify private and public key match (password)
             if(keys.memo_public_key === account.memo_key) {
@@ -262,7 +366,7 @@ function get_account_keys(username = "", master_key = "", callback_function) {
     }
 
     // Get public account
-    lookup_accounts_name([username], process_public_account_callback);
+    lookup_hive_accounts_name([username], process_public_account_callback);
 }
 
 function get_hive_send_transaction_info() {
@@ -278,7 +382,7 @@ function get_hive_address_by_username(username) {
     return "" + username;
 }
 
-function get_hive_account_balance_by_username(parameters, callback_function) {
+function cached_get_hive_account_balance_by_username(parameters, callback_function) {
 
     const { hive_username, coin_id } = parameters;
 
@@ -288,7 +392,7 @@ function get_hive_account_balance_by_username(parameters, callback_function) {
 
     }else {
 
-        lookup_accounts_name([hive_username], (err, res) => {
+        cached_lookup_hive_accounts_name([hive_username], (err, res) => {
 
             if(err && typeof res[0] === "undefined") {
 
@@ -346,7 +450,7 @@ function get_hive_account_transactions_by_username(parameters, callback_function
 
 function send_hive_transaction(hive_username, hive_password, address, amount, coin_id, memo, callback_function) {
 
-    const { active_private_key } = _get_account_keys(hive_username, hive_password);
+    const { active_private_key } = _get_hive_account_keys(hive_username, hive_password);
     const asset = coin_id === "hive" ? "HIVE": "HBD";
     const amount_formatted = hiveJS.formatter.amount(parseFloat(amount), asset);
 
@@ -375,20 +479,35 @@ function estimate_hive_transaction_fee(hive_username, hive_password, address, am
 
 function get_hive_private_key(hive_username, hive_password) {
 
-    const { owner_private_key } = _get_account_keys(hive_username, hive_password);
+    const { owner_private_key } = _get_hive_account_keys(hive_username, hive_password);
     return owner_private_key;
 }
 
 function get_hive_public_key(hive_username, hive_password) {
 
-    const { owner_public_key } = _get_account_keys(hive_username, hive_password);
+    const { owner_public_key } = _get_hive_account_keys(hive_username, hive_password);
     return owner_public_key;
+}
+
+function cached_get_hive_post(parameters, callback_function) {
+
+    const force_query = parameters.force_query || false;
+    let { author, permlink } = parameters;
+    author = author.replace("@", "");
+
+    _cache_data(
+        hive_posts_db,
+        force_query ? 0: 1 * 60 * 60 * 1000,
+        "author-@"+author+"_permlink-"+permlink,
+        get_hive_post,
+        { author, permlink },
+        callback_function
+    );
 }
 
 function get_hive_post(parameters, callback_function) {
 
-    let { author, permlink } = parameters;
-    author = author.replace("@", "");
+    let {author, permlink} = parameters;
 
     hiveJS.api.getContent(author, permlink, function (err, data) {
 
@@ -401,6 +520,52 @@ function get_hive_post(parameters, callback_function) {
             callback_function("Cannot get this post", null);
         }
     });
+}
+
+function cached_get_hive_posts(parameters, callback_function) {
+
+    function pre_callback_function(err, data) {
+
+        if(data) {
+
+            let post_processed = 0;
+            let posts = [];
+
+            data.posts.forEach((p) => {
+
+                cached_get_hive_post({author: p.author, permlink: p.permlink}, function(err2, p2) {
+
+                    if(!err2 && p2) {
+
+                        posts.push(p2);
+                    }
+
+                    post_processed++;
+
+                    if(post_processed === data.posts.length) {
+
+                        data.posts = posts;
+                        callback_function(null, data);
+                    }
+                });
+            });
+
+        }else {
+
+            callback_function("Cannot get more posts", null);
+        }
+    }
+
+    let { limit, tag, sorting, start_author, start_permlink } = parameters;
+
+    _cache_data(
+        hive_queries_db,
+        12 * 1000,
+        "get_hive_posts-tag"+tag+"-sorting-"+sorting+"-author"+start_author+"permlink-"+start_permlink+"-limit"+limit,
+        get_hive_posts,
+        { limit, tag, sorting, start_author, start_permlink },
+        pre_callback_function
+    );
 }
 
 function get_hive_posts(parameters, callback_function) {
@@ -436,11 +601,22 @@ function get_hive_posts(parameters, callback_function) {
                 const pn = _format_post(p);
                 if(pn) {
 
+                    _cache_data(
+                        hive_posts_db,
+                        1 * 60 * 60 * 1000,
+                        "author-@"+pn.author+"_permlink-"+pn.permlink,
+                        function (post) {
+                            return post;
+                        },
+                        {post: pn},
+                        function (){}
+                    );
                     posts.push(pn);
                 }
             });
 
-            callback_function(null, {posts, end_author: data[data.length-1].author, end_permlink: data[data.length-1].permlink});
+            posts = posts.map((p) => {return {author: p.author, permlink: p.permlink}});
+            callback_function(err, {posts, end_author: data[data.length-1].author, end_permlink: data[data.length-1].permlink});
         }else {
 
             callback_function("Cannot get more posts", null);
@@ -503,7 +679,7 @@ function post_hive_post(title, body, tags, username, permlink, master_key, callb
         }else {
 
             hiveJS.broadcast.commentOptions(
-                _get_account_keys(username, master_key).posting_private_key,
+                _get_hive_account_keys(username, master_key).posting_private_key,
                 username,
                 permlink,
                 max_accepted_payout,
@@ -519,7 +695,7 @@ function post_hive_post(title, body, tags, username, permlink, master_key, callb
     if(username && master_key) {
 
         hiveJS.broadcast.comment(
-            _get_account_keys(username, master_key).posting_private_key,
+            _get_hive_account_keys(username, master_key).posting_private_key,
             '',
             category,
             username,
@@ -538,7 +714,7 @@ function post_hive_post(title, body, tags, username, permlink, master_key, callb
 function vote_on_hive_post(author, permlink, weight, username, master_key, callback_function) {
 
     hiveJS.broadcast.vote(
-        _get_account_keys(username, master_key).posting_private_key,
+        _get_hive_account_keys(username, master_key).posting_private_key,
         username,
         author,
         permlink,
@@ -556,18 +732,16 @@ function vote_on_hive_post(author, permlink, weight, username, master_key, callb
     });
 }
 
-function search_on_hive(terms = "", author = "", tags = ["pixel-art"], sorting = ["relevance"], page = "1", callback_function) {
+function cached_search_on_hive(terms = "", author = "", tags = ["pixel-art"], sorting = "relevance", page = "1", callback_function) {
 
-    postJSON("https://cors-anywhere.crypto-red.workers.dev/https://hivesearcher.com/api/search", {q:`${terms} ${author.length ? ("author:" + author): ""} tag:${tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
+    function pre_callback_function(err, data) {
 
-        if(!err && res) {
+        if(!err && data) {
 
             try {
 
                 let all_posts = [];
                 let post_processed = 0;
-
-                const data = JSON.parse(clean_json_text(res));
 
                 if(data.results.length === 0) {
 
@@ -577,7 +751,7 @@ function search_on_hive(terms = "", author = "", tags = ["pixel-art"], sorting =
                 data.results.forEach((post) => {
 
                     const { author, permlink } = post;
-                    get_hive_post({author, permlink}, (err_sp, res_sp) => {
+                    cached_get_hive_post({author, permlink}, (err_sp, res_sp) => {
 
                         post_processed++;
 
@@ -607,26 +781,58 @@ function search_on_hive(terms = "", author = "", tags = ["pixel-art"], sorting =
 
             callback_function("Response from server unavailable", null);
         }
+
+    }
+
+    _cache_data(
+        hive_queries_db,
+        1 * 60 * 60 * 1000,
+        "search_on_hive-terms"+terms+"-author-"+author+"-tags-"+tags.join(",")+"-sorting-"+sorting+"-page-"+page,
+        search_on_hive,
+        { terms, author, tags, sorting, page },
+        pre_callback_function
+    );
+}
+
+function search_on_hive(parameters, callback_function) {
+
+    let { terms, author, tags, sorting, page } = parameters;
+
+    postJSON("https://hivesearcher.com/api/search", {q:`${terms} ${author.length ? ("author:" + author): ""} tag:${tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
+
+        if(res) {
+
+            let data = JSON.parse(clean_json_text(res));
+                data.results = data.results.map((r) => {
+
+                return {author: r.author, permlink: r.permlink};
+            });
+
+            callback_function(err, data);
+        }else {
+
+            callback_function(err, null)
+        }
     });
 }
 
 module.exports = {
-    lookup_accounts: lookup_accounts,
-    lookup_accounts_name: lookup_accounts_name,
-    lookup_accounts_with_details: lookup_accounts_with_details,
-    get_account_keys: get_account_keys,
+    lookup_hive_accounts: lookup_hive_accounts,
+    lookup_hive_accounts_name: lookup_hive_accounts_name,
+    lookup_hive_accounts_with_details: cached_lookup_hive_accounts_with_details,
+    get_hive_account_keys: get_hive_account_keys,
     get_hive_send_transaction_info: get_hive_send_transaction_info,
     get_hive_address_by_username: get_hive_address_by_username,
-    get_hive_account_balance_by_username: get_hive_account_balance_by_username,
+    get_hive_account_balance_by_username: cached_get_hive_account_balance_by_username,
     get_hive_account_transactions_by_username: get_hive_account_transactions_by_username,
     send_hive_transaction: send_hive_transaction,
     estimate_hive_transaction_fee: estimate_hive_transaction_fee,
     get_hive_private_key: get_hive_private_key,
     get_hive_public_key: get_hive_public_key,
-    get_hive_posts: get_hive_posts,
-    get_hive_post: get_hive_post,
+    get_hive_posts: cached_get_hive_posts,
+    get_hive_post: cached_get_hive_post,
     post_hive_post: post_hive_post,
     post_hive_pixel_art: post_hive_pixel_art,
     vote_on_hive_post: vote_on_hive_post,
-    search_on_hive: search_on_hive,
+    search_on_hive: cached_search_on_hive,
 };

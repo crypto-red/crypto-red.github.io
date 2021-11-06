@@ -64,7 +64,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import IconButton from "@material-ui/core/IconButton";
 import InfoIcon from "@material-ui/icons/Info";
 
-import { post_hive_pixel_art } from "../utils/api-hive";
+import { post_hive_pixel_art } from "../utils/api";
 import ShufflingSpanText from "../components/ShufflingSpanText";
 import Button from "@material-ui/core/Button";
 import {t} from "../utils/t";

@@ -9,6 +9,8 @@ import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
 
+import EyeIcon from "../icons/Eye";
+
 import RedAngryEmojiSvg from "../twemoji/react/1F621";
 import AngryEmojiSvg from "../twemoji/react/1F624";
 import CoolEmojiSvg from "../twemoji/react/1F60E";
@@ -94,24 +96,39 @@ const styles = theme => ({
         "&[score='80']::after": {backgroundImage: `url('${love_emoji_svg}')`},
         "&[score='90']::after": {backgroundImage: `url('${angel_emoji_svg}')`},
         "&[score='100']::after": {backgroundImage: `url('${fire_earth_emoji_svg}')`},
+        "& > .MuiCardActionArea-root > div:hover > img, &[dataselected='true'] > .MuiCardActionArea-root > div > img": {
+            transform: "scale(1.25)"
+        },
+        "& > .MuiCardActionArea-root > div:hover > div, &[dataselected='true'] > .MuiCardActionArea-root > div > div": {
+            background: `linear-gradient(to top, rgb(0 0 0 / 48%) 12px, rgb(0 0 0 / 0%) calc(12px + 12%))`,
+            "& svg": {
+                opacity: 1,
+                transform: "scale(4)",
+            }
+        },
     },
     cardMedia: {
         imageRendering: "pixelated",
         transition: "transform 250ms cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "scale(1)",
-        "&:hover": {
-            transform: "scale(1.25)"
-        }
     },
     cardMediaOverlay: {
+        background: `linear-gradient(to top, rgb(0 0 0 / 48%) 24px, rgb(0 0 0 / 0%) calc(24px + 12%))`,
+        transition: "background 250ms cubic-bezier(0.4, 0, 0.2, 1)",
         position: "absolute",
-        pointerEvents: "none",
-        touchAction: "none",
+        top: "50%;",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        "& > svg": {
+            transform: "scale(1)",
+            transition: "transform 250ms cubic-bezier(0.4, 0, 0.2, 1), opacity 250ms cubic-bezier(0.4, 0, 0.2, 1)",
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            opacity: 0,
+        },
         width: "100%",
         height: "100%",
-        top: 0,
-        left: 0,
-        background: "linear-gradient(to top, rgb(0 0 0 / 48%) 16px, rgb(0 0 0 / 0%) calc(16px + 16%))",
     },
     cardContent: {
         position: "relative",
@@ -134,7 +151,14 @@ const styles = theme => ({
         },
         "&[dataselected='true']": {
             backgroundColor: "#d7dbff",
-        }
+        },
+        "& > *": {
+            opacity: .5,
+            transition: "opacity 140ms cubic-bezier(0.4, 0, 0.2, 1)"
+        },
+        "&[dataselected='true'] > *, &:hover > *": {
+            opacity: 1,
+        },
     },
     cardActions: {
         borderTop: `1px solid #d7dbff`,
@@ -221,21 +245,24 @@ class PixelArtCard extends React.Component {
                 <CardActionArea>
                     <div style={{position: "relative", overflow: "hidden"}}>
                         <CardMedia
-                            onClick={(event) => {this.props.on_card_media_click(post, event)}}
                             className={classes.cardMedia}
                             component="img"
                             alt={post.title}
                             image={post.image}
                             title={post.title}
                         />
-                        <div className={classes.cardMediaOverlay}></div>
+                        <div className={classes.cardMediaOverlay}
+                             onClick={(event) => {this.props.on_card_media_click(post, event)}}>
+                            <EyeIcon style={{color: "#ffffff"}} width={36} height={36}/>
+                        </div>
                     </div>
                     <CardContent datatags={tags[1] || tags[0]} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
                         <Typography gutterBottom variant="h5" component="h2">
                             {post.title}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
-                            {post.description}
+                            {post.description.slice(0, 192)}
+                            {post.description.length > 192 && "..."}
                         </Typography>
                     </CardContent>
                     {is_loading ? <LinearProgress color="primary" variant="indeterminate" className={classes.progress}/>: null}

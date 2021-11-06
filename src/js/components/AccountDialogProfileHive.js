@@ -10,7 +10,7 @@ import Tab from "@material-ui/core/Tab";
 import images from "../utils/images";
 import PixelArtCard from "../components/PixelArtCard";
 import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
-import {lookup_accounts_name} from "../utils/api-hive";
+import {lookup_hive_accounts_name} from "../utils/api";
 
 const styles = theme => ({
     dialogPaper: {
@@ -198,7 +198,7 @@ class AccountDialogProfileHive extends React.Component {
 
         if(account_name) {
 
-            lookup_accounts_name([account_name.replace("@", "")], (error, results) => {
+            lookup_hive_accounts_name([account_name.replace("@", "")], (error, results) => {
 
                 if(!error) {
 

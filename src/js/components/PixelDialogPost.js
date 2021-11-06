@@ -40,7 +40,7 @@ import Chip from "@material-ui/core/Chip";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
 import * as toxicity from "@tensorflow-models/toxicity";
-import {lookup_accounts_name} from "../utils/api-hive";
+import {lookup_hive_accounts_name} from "../utils/api";
 import TimeAgo from "javascript-time-ago";
 import ChipInput from "material-ui-chip-input";
 import actions from "../actions/utils";
@@ -409,7 +409,7 @@ class PixelDialogPost extends React.Component {
 
         if(post) {
 
-            lookup_accounts_name([this.state.post.author], (error, results) => {
+            lookup_hive_accounts_name([this.state.post.author], (error, results) => {
 
                 if(!error) {
 
@@ -913,7 +913,7 @@ class PixelDialogPost extends React.Component {
             const lang = selected_locales_code.split("-")[0];
             this.setState({_has_translation_started: true}, () => {
 
-                postJSON("https://cors-anywhere.crypto-red.workers.dev/https://translate.argosopentech.com/translate", {q: this.state.post.description, source: "auto", target: lang, format: "text"}, (err, res) => {
+                postJSON("https://translate.argosopentech.com/translate", {q: this.state.post.description, source: "auto", target: lang, format: "text"}, (err, res) => {
 
                     if(!err && res) {
 
@@ -932,7 +932,7 @@ class PixelDialogPost extends React.Component {
                     }
                 }, "application/json");
 
-                postJSON("https://cors-anywhere.crypto-red.workers.dev/https://translate.argosopentech.com/translate", {q: this.state.post.title, source: "auto", target: lang, format: "text"}, (err, res) => {
+                postJSON("https://translate.argosopentech.com/translate", {q: this.state.post.title, source: "auto", target: lang, format: "text"}, (err, res) => {
 
                     if(!err && res) {
 

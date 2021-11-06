@@ -20,7 +20,7 @@ import PixelArtCard from "../components/PixelArtCard";
 import AccountDialogProfileHive from "../components/AccountDialogProfileHive";
 import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
 
-import { search_on_hive, get_hive_posts, get_hive_post, vote_on_hive_post } from "../utils/api-hive"
+import { search_on_hive, get_hive_posts, get_hive_post, vote_on_hive_post } from "../utils/api"
 import actions from "../actions/utils";
 import api from "../utils/api";
 import {HISTORY} from "../utils/constants";
@@ -433,7 +433,6 @@ class Gallery extends React.Component {
 
                 search_on_hive(_search_mode_query, "", ["pixel-art"], (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]), _search_mode_query_page.toString(), (err, data) => {
 
-                    console.log(err, data);
                     if((data || {}).posts){
 
                         const posts = _search_mode_query_page > 1 ? _posts.concat(data.posts): data.posts;
@@ -665,7 +664,7 @@ class Gallery extends React.Component {
 
                         setTimeout(() => {
 
-                            get_hive_post({author: _reaction_selected_post.author, permlink: _reaction_selected_post.permlink}, (err, data) => {
+                            get_hive_post({author: _reaction_selected_post.author, permlink: _reaction_selected_post.permlink, force_query: true}, (err, data) => {
 
                                 if(data) {
 
@@ -679,7 +678,8 @@ class Gallery extends React.Component {
 
                                         this.state._masonry.forceUpdate();
                                     });
-                                    this._handle_art_reaction({...this.state._reaction_click_event}, data);
+
+                                    this._handle_art_reaction(null, data);
                                 }
                             });
 
@@ -708,7 +708,7 @@ class Gallery extends React.Component {
     
     _handle_art_reaction = (event, post) => {
 
-        if(post) {
+        if(event && post) {
 
             const { _logged_account } = this.state;
             const hive_username = _logged_account.hive_username || "";
@@ -724,6 +724,9 @@ class Gallery extends React.Component {
             });
 
             this.setState({_reaction_click_event: {...event}, _reaction_selected_post: post, _reaction_voted_result});
+        }else {
+
+            this._handle_reaction_menu_close();
         }
     };
 

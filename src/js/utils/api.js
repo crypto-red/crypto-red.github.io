@@ -9,18 +9,6 @@ import { loadJSON } from "../utils/load-json";
 import get_browser_locales from "../utils/locales";
 
 import {
-    get_account_keys,
-    get_hive_send_transaction_info,
-    get_hive_address_by_username,
-    get_hive_account_balance_by_username,
-    get_hive_account_transactions_by_username,
-    send_hive_transaction,
-    estimate_hive_transaction_fee,
-    get_hive_private_key,
-    get_hive_public_key,
-} from "../utils/api-hive";
-
-import {
     get_vsys_address_by_seed,
     get_vsys_account_balance_by_seed,
     get_vsys_account_transactions_by_seed,
@@ -41,6 +29,27 @@ import {
     get_btc_dash_doge_ltc_public_key_by_seed,
     get_btc_dash_doge_ltc_private_key_by_seed
 } from "./api-btc-dash-doge-ltc";
+
+import {
+    get_hive_account_keys,
+    get_hive_send_transaction_info,
+    get_hive_address_by_username,
+    get_hive_account_balance_by_username,
+    get_hive_account_transactions_by_username,
+    send_hive_transaction,
+    estimate_hive_transaction_fee,
+    get_hive_private_key,
+    get_hive_public_key,
+    lookup_hive_accounts,
+    lookup_hive_accounts_name,
+    lookup_hive_accounts_with_details,
+    get_hive_posts,
+    get_hive_post,
+    post_hive_post,
+    post_hive_pixel_art,
+    vote_on_hive_post,
+    search_on_hive,
+} from "./api-hive";
 
 const query_db = new PouchDB("query_db", {revs_limit: 0, auto_compaction: false});
 const settings_db = new PouchDB("settings_db", {revs_limit: 0, auto_compaction: false});
@@ -546,7 +555,7 @@ function login(name, password, persistent = true, callback_function) {
 
 function add_hive_master_key(username, master_key, callback_function) {
 
-    get_account_keys(username, master_key, (error, result) => {
+    get_hive_account_keys(username, master_key, (error, result) => {
 
         if(error || logged_account === null) {
 
@@ -1165,7 +1174,6 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
             callback_function("No function", null);
             break;
     }
-
 }
 
 function _cache_data(database, cache_time_ms, query_id, api_function, api_parameters, callback_function, response_to_data_formatter = (response) => {return response}) {
@@ -1239,7 +1247,6 @@ function _cache_data(database, cache_time_ms, query_id, api_function, api_parame
             gather_data("1-A");
         }
     });
-
 }
 
 module.exports = {
@@ -1264,5 +1271,14 @@ module.exports = {
     get_balance_by_seed: get_balance_by_seed,
     get_transactions_by_seed: get_transactions_by_seed,
     get_transactions_by_id: get_transactions_by_id,
-    get_send_transaction_info: get_send_transaction_info
+    get_send_transaction_info: get_send_transaction_info,
+    lookup_hive_accounts,
+    lookup_hive_accounts_name,
+    lookup_hive_accounts_with_details,
+    get_hive_posts,
+    get_hive_post,
+    post_hive_post,
+    post_hive_pixel_art,
+    vote_on_hive_post,
+    search_on_hive,
 }
