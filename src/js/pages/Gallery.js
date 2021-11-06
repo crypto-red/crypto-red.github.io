@@ -45,6 +45,7 @@ class MasonryExtended extends Masonry {
 
 const styles = theme => ({
     root: {
+        zindex: 1201,
         width: "100%",
         height: "calc(100vh - 56px)",
         [theme.breakpoints.up("md")]: {
@@ -985,7 +986,10 @@ class Gallery extends React.Component {
                             {
                                 _loading_posts ?
                                     <Fade in timeout={75}>
-                                        <div><h1>Please wait...</h1><h5>Powered in partnership with Ecency.com</h5></div>
+                                        <div>
+                                            <h1>Please wait...</h1>
+                                            {_is_search_mode && <h5>Powered in partnership with Ecency.com</h5>}
+                                        </div>
                                     </Fade>:
                                     <Fade in timeout={75}>
                                         <div><h1>Nothing to show you.</h1></div>
