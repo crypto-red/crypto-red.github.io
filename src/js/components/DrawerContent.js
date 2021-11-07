@@ -37,10 +37,6 @@ import AtmIcon from "@material-ui/icons/Atm";
 import FeedbackIcon from "@material-ui/icons/Feedback";
 import ForumIcon from "@material-ui/icons/Forum";
 import ChemistryEmojiIcon from "../twemoji/react/1F9Ea";
-import MoneyEmojiIcon from "../twemoji/react/1F4B5";
-import ToolsEmojiIcon from "../twemoji/react/1F6E0";
-import DownasaurIcon from "../icons/Downasaur";
-import ViewCarouselIcon from "@material-ui/icons/ViewCarousel";
 
 import QrCodeScanIcon from "../icons/QrCodeScan";
 import CryptDialog from "../components/CryptDialog";
@@ -418,6 +414,10 @@ class DrawerContent extends React.Component {
                         <ListItem button onClick={this._open_dashboard_page}>
                             <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />
                         </ListItem>
+                        <ListItem button onClick={this._open_gallery_page}>
+                            <ChemistryEmojiIcon className={classes.iconLeft}/>
+                            <ListItemText primary={"NFTs"} />
+                        </ListItem>
                         <ListItem button onClick={this._open_coins_page}>
                             <ListItemText primary={t( "components.drawer_content.menu.all_coins")} />
                         </ListItem>
@@ -430,25 +430,7 @@ class DrawerContent extends React.Component {
                                 {coinListItem}
                             </List>
                         </Collapse>
-                        <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "nft")}>
-                            <ChemistryEmojiIcon className={classes.iconLeft}/>
-                            <ListItemText primary={"NFT"} />
-                            <ExpandMoreIcon  className={_menu_expanded === "nft" ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
-                        </ListItem>
-                        <Collapse in={_menu_expanded === "nft"} timeout="auto" unmountOnExit>
-                            <List button component="div" disablePadding>
-                                <ListItem button className={classes.nested} onClick={this._open_pixel_page}>
-                                    <ListItemIcon><DownasaurIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary={"Editor"} />
-                                </ListItem>
-                                <ListItem button className={classes.nested} onClick={this._open_gallery_page}>
-                                    <ListItemIcon><ViewCarouselIcon className={classes.iconColor} /></ListItemIcon>
-                                    <ListItemText primary={"Gallery"} />
-                                </ListItem>
-                            </List>
-                        </Collapse>
                         <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "trade")}>
-                            <MoneyEmojiIcon className={classes.iconLeft}/>
                             <ListItemText primary={t( "components.drawer_content.menu.trade.trade")} />
                             <ExpandMoreIcon  className={_menu_expanded === "trade" ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
                         </ListItem>
@@ -473,7 +455,6 @@ class DrawerContent extends React.Component {
                             </List>
                         </Collapse>
                         <ListItem button onClick={(event) => this._handle_menu_expanded_change(event, "tools")}>
-                            <ToolsEmojiIcon className={classes.iconLeft}/>
                             <ListItemText primary={t( "components.drawer_content.menu.tools.tools")} />
                             <ExpandMoreIcon  className={_menu_expanded === "tools" ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
                         </ListItem>

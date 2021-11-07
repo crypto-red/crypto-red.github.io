@@ -1,3 +1,6 @@
+import { CORS_PROXY_URL } from "../utils/constants";
+import {clean_json_text} from "./json";
+
 function loadJSON(url, callback_function) {
 
     let data_file = url;
@@ -110,7 +113,7 @@ function postDATA(url, data, callback_function) {
 
 function postJSON(url, payload, callback_function, content_type = "application/x-www-form-urlencoded") {
 
-    url = "https://cors-anywhere.crypto-red.workers.dev/?" + url;
+    url = CORS_PROXY_URL + url;
 
     let headers = new Headers();
 
@@ -128,7 +131,7 @@ function postJSON(url, payload, callback_function, content_type = "application/x
         method: "POST",
         redirect: "follow",
         headers: headers,
-        body: content_type === "application/json" ? JSON.stringify(payload): bodyencoded,
+        body: content_type === "application/json" ? clean_json_text(JSON.stringify(payload)): bodyencoded,
     };
 
     fetch(url, request_options)

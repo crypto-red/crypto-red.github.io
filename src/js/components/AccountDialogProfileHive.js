@@ -198,11 +198,11 @@ class AccountDialogProfileHive extends React.Component {
 
         if(account_name) {
 
-            lookup_hive_accounts_name([account_name.replace("@", "")], (error, results) => {
+            lookup_hive_accounts_name(account_name.replace("@", ""), (error, result) => {
 
                 if(!error) {
 
-                    this.setState({_account: results[0]});
+                    this.setState({_account: result});
                 }
             });
         }

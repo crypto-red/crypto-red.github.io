@@ -3,10 +3,11 @@ import { ChainTypes, makeBitMaskFilter } from "@hiveio/hive-js/lib/auth/serializ
 import PouchDB from "pouchdb";
 import {postJSON} from "./load-json";
 import {clean_json_text} from "./json";
-import {get_btc_dash_doge_ltc_transaction_by_id} from "./api-btc-dash-doge-ltc";
+
+import { IMAGE_PROXY_URL } from "../utils/constants";
 
 const hive_posts_db = new PouchDB("hive_posts_db", {revs_limit: 0, auto_compaction: false});
-const hive_accounts_db = new PouchDB("hive_posts_db", {revs_limit: 0, auto_compaction: false});
+const hive_accounts_db = new PouchDB("hive_accounts_db", {revs_limit: 0, auto_compaction: false});
 const hive_queries_db = new PouchDB("hive_queries_db", {revs_limit: 0, auto_compaction: false});
 
 function _cache_data(database, cache_time_ms, query_id, api_function, api_parameters, callback_function, response_to_data_formatter = (response) => {return response}) {
@@ -18,7 +19,7 @@ function _cache_data(database, cache_time_ms, query_id, api_function, api_parame
 
         function insert_response_in_db(error, response) {
 
-            if(!error) {
+            if(!error && response) {
 
                 if(typeof response.error === "undefined") {
 
@@ -106,21 +107,19 @@ function _format_account(account) {
 
     try {
 
-        parsed_json_metadata = JSON.parse(account.json_metadata);
+        parsed_json_metadata = {...parsed_json_metadata, ...JSON.parse(account.json_metadata)};
+    } catch(e){}
 
-    } catch(e){
+    try {
 
-        try {
-
-            parsed_json_metadata = JSON.parse(account.posting_json_metadata);
-        }catch(e2) {}
-    }
+        parsed_json_metadata = {...parsed_json_metadata, ...JSON.parse(account.posting_json_metadata)};
+    }catch(e2) {}
 
     parsed_json_metadata.profile = typeof parsed_json_metadata.profile === "undefined" ? {}: parsed_json_metadata.profile;
-    parsed_json_metadata.profile.profile_image = typeof parsed_json_metadata.profile.profile_image === "undefined" ? "": parsed_json_metadata.profile.profile_image;
-    parsed_json_metadata.profile.profile_image = parsed_json_metadata.profile.profile_image.match(/(https:\/\/)([/|.|\w|\s])*\.(?:jpg|jpeg|gif|png)/) === null ? "": "https://images.hive.blog/256x256/" + parsed_json_metadata.profile.profile_image;
-    parsed_json_metadata.profile.cover_image = typeof parsed_json_metadata.profile.cover_image === "undefined" ? "": parsed_json_metadata.profile.cover_image;
-    parsed_json_metadata.profile.cover_image = parsed_json_metadata.profile.cover_image.match(/(https:\/\/)([/|.|\w|\s])*\.(?:jpg|jpeg|gif|png)/) === null ? "": "https://images.hive.blog/1280x540/" + parsed_json_metadata.profile.cover_image;
+    parsed_json_metadata.profile.profile_image = typeof parsed_json_metadata.profile.profile_image === "undefined" ? "": IMAGE_PROXY_URL + parsed_json_metadata.profile.profile_image;
+    parsed_json_metadata.profile.profile_image = parsed_json_metadata.profile.profile_image.match(/(https:\/\/)([/|.|\w|\s])*\.(?:jpg|jpeg|gif|png)/) === null ? "": IMAGE_PROXY_URL + parsed_json_metadata.profile.profile_image;
+    parsed_json_metadata.profile.cover_image = typeof parsed_json_metadata.profile.cover_image === "undefined" ? "": IMAGE_PROXY_URL + parsed_json_metadata.profile.cover_image;
+    parsed_json_metadata.profile.cover_image = parsed_json_metadata.profile.cover_image.match(/(https:\/\/)([/|.|\w|\s])*\.(?:jpg|jpeg|gif|png)/) === null ? "": IMAGE_PROXY_URL + parsed_json_metadata.profile.cover_image;
     parsed_json_metadata.profile.about = typeof parsed_json_metadata.profile.about === "undefined" ? "": parsed_json_metadata.profile.about;
     parsed_json_metadata.profile.name = typeof parsed_json_metadata.profile.name === "undefined" ? "": parsed_json_metadata.profile.name;
     parsed_json_metadata.profile.location = typeof parsed_json_metadata.profile.location === "undefined" ? "": parsed_json_metadata.profile.location;
@@ -134,7 +133,6 @@ function _format_account(account) {
 
     const account_formatted = {
         name: account.name,
-        raw: account,
         memo_key: account.memo_key,
         metadata: {
             profile: {
@@ -157,6 +155,35 @@ function _format_account(account) {
     return account_formatted;
 }
 
+function _preprocess_text(content) {
+
+    let origin = window.location.origin;
+
+    /* PROXY IMAGE */
+    const images_text_link_regex = /https?\:\/\/[a-zA-Z0-9.\+\-\=\?\&\_\%\/\:\/]+(png|jpg|jpeg|gif)/gm;
+    content = content.replace(images_text_link_regex, function(match){
+
+        return IMAGE_PROXY_URL + match;
+    });
+
+    /* RENDER TAGS */
+    const tag_text_regex = / #[a-zA-Z0-9-]+/gm;
+    content = content.replace(tag_text_regex, function(match){
+
+        const url = "/newest/search/tag:" + match.toLowerCase().replace("#", "").replace(" ", "");
+        return` [${origin}/gallery${url}](${match.replaceAll(" ", "")})`;
+    });
+
+    /* RENDER USERNAME */
+    const username_text_regex = / @[a-zA-Z0-9-.]+/gm;
+    content = content.replace(username_text_regex, function(match){
+
+        const url = "/@" + match.toLowerCase().replace("@", "").replace(" ", "");
+        return` [${origin}/gallery/recent${url}](${match.replaceAll(" ", "")})`;
+    });
+
+    return content;
+}
 
 function _format_post(post) {
 
@@ -171,8 +198,7 @@ function _format_post(post) {
     const metadata_language = metadata.language || "unknown";
 
     const app = metadata.app || "unknown";
-    const images = metadata.image || [];
-    const description = content.substr(0, 777);
+    const description = _preprocess_text(content);
     const title = post.title;
     let metadata_tags = metadata.tags || [post.category];
     metadata_tags = metadata_tags.map(function(tag){
@@ -224,7 +250,6 @@ function _format_post(post) {
         voting_ratio,
         metadata: {
             language: metadata_language,
-            images: images,
             app: app
         }
     };
@@ -269,35 +294,35 @@ function lookup_hive_accounts(parameters, callback_function) {
     hiveJS.api.lookupAccounts(input, limit, callback_function);
 }
 
-function cached_lookup_hive_accounts_name(names, callback_function) {
+function cached_lookup_hive_accounts_name(name, callback_function) {
 
-    names = names.map(function(name){
-        return name.replace("@", "");
-    });
+    name = name.replace("@", "");
 
     _cache_data(
-        hive_queries_db,
+        hive_accounts_db,
         60 * 1000,
-        "lookup_hive_accounts_name-names-"+names.join("-"),
-        lookup_hive_accounts,
-        {names},
+        "hive_account-name-@"+name,
+        lookup_hive_accounts_name,
+        {name},
         callback_function
     );
 }
 
 function lookup_hive_accounts_name(parameters, callback_function) {
 
-    const { names } = parameters;
-    hiveJS.api.lookupAccountNames(names, function (error, results){
+    const { name } = parameters;
+
+    hiveJS.api.lookupAccountNames([name], function (error, results){
 
         if(!error) {
 
             results = results.map(function(account){
 
-                return _format_account(account);
+                account = _format_account(account);
+                return account;
             });
 
-            callback_function(error, results);
+            callback_function(error, results[0]);
 
         }else {
 
@@ -312,7 +337,24 @@ function cached_lookup_hive_accounts_with_details(input, limit, callback_functio
 
         if(!error) {
 
-            cached_lookup_hive_accounts_name(names, callback_function);
+            let accounts = [];
+            names.forEach((name) => {
+
+                cached_lookup_hive_accounts_name(name, (err, res) => {
+
+                    if(err) {
+
+                        callback_function("Error accounts can not be found", null)
+                    }else {
+
+                        accounts.push(res);
+                        if(accounts.length === names.length){
+
+                            callback_function(null, accounts);
+                        }
+                    }
+                });
+            });
         }else {
 
             callback_function(error, null);
@@ -798,7 +840,18 @@ function search_on_hive(parameters, callback_function) {
 
     let { terms, author, tags, sorting, page } = parameters;
 
-    postJSON("https://hivesearcher.com/api/search", {q:`${terms} ${author.length ? ("author:" + author): ""} tag:${tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
+    let tags_in_terms = [];
+    const tag_text_regex = /tag(s)?:[a-zA-Z0-9-\,]+/gm;
+    terms = terms.replace(tag_text_regex, function(match){
+
+        const tags_list = match.replaceAll(/tag(s)?:/gm, "").split(",");
+        tags_in_terms = tags_in_terms.concat(tags_list);
+
+        return ""; //tags_list.join(" ").replaceAll("pixel-art", "");
+    });
+
+    const all_tags = [...new Set([...tags, ...tags_in_terms])];
+    postJSON("https://hivesearcher.com/api/search", {q:`${terms.length ? terms: 'I'} ${author.length ? ("author:" + author): ""} tag:${all_tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
 
         if(res) {
 
@@ -817,8 +870,8 @@ function search_on_hive(parameters, callback_function) {
 }
 
 module.exports = {
-    lookup_hive_accounts: lookup_hive_accounts,
-    lookup_hive_accounts_name: lookup_hive_accounts_name,
+    lookup_hive_accounts: cached_lookup_hive_accounts,
+    lookup_hive_accounts_name: cached_lookup_hive_accounts_name,
     lookup_hive_accounts_with_details: cached_lookup_hive_accounts_with_details,
     get_hive_account_keys: get_hive_account_keys,
     get_hive_send_transaction_info: get_hive_send_transaction_info,

@@ -160,10 +160,54 @@ class InnerToolbar extends React.Component {
             _search_bar_value: decodeURI(props.pathname.split("/")[4] || ""),
             _history: HISTORY,
             _pathname_before_search: null,
+            _search_input_ref: null,
         };
     };
 
     componentDidMount() {
+
+    }
+
+    _set_search_input_ref = (element) => {
+
+        if(element) {
+
+            console.log(element);
+            element.addEventListener("keydown", this._handle_search_input_keydown)
+            this.setState({_search_input_ref: element});
+        }
+    }
+
+    componentWillUnmount() {
+
+        this.state._search_input_ref.removeEventListener("keydown", this._handle_search_input_keydown)
+    }
+
+    _handle_search_input_keydown = (event) => {
+
+        const { _search_bar_value, _history, pathname } = this.state;
+
+        const key_id = event.keyCode;
+        switch(key_id) {
+            case 8:
+                if(_search_bar_value === "") {
+
+                    this._toggle_search_bar_activation();
+                }
+                break;
+            case 46:
+                if(_search_bar_value === "") {
+
+                    this._toggle_search_bar_activation();
+                }else {
+
+                    const search_sorting_mode = /(newest|relevance|popularity)/g.test(pathname.split("/")[2]) ? pathname.split("/")[2]: "relevance";
+                    _history.replace("/gallery/" + search_sorting_mode + "/search/", _history.location.state);
+                }
+                break;
+            default:
+                break;
+        }
 
     }
 
@@ -197,7 +241,7 @@ class InnerToolbar extends React.Component {
 
             this.setState({_pathname_before_search: pathname}, () => {
 
-                _history.push("/gallery/relevance/search/");
+                _history.push("/gallery/newest/search/");
             });
         }
     };
@@ -208,7 +252,6 @@ class InnerToolbar extends React.Component {
         const value = event.target.value;
 
         const search_sorting_mode = /(newest|relevance|popularity)/g.test(pathname.split("/")[2]) ? pathname.split("/")[2]: "relevance";
-
         _history.replace("/gallery/" + search_sorting_mode + "/search/" + encodeURI(value).slice(0, 64), _history.location.state);
     }
 
@@ -252,6 +295,10 @@ class InnerToolbar extends React.Component {
                             {
                                 _is_search_bar_active && pathname.includes("gallery") ?
                                     <InputBase
+                                        inputProps={{
+                                            "aria-label": "search"
+                                        }}
+                                        inputRef={this._set_search_input_ref}
                                         autoFocus
                                         selectionFollowsFocus={false}
                                         className={classes.innerToolbarInput}
@@ -260,7 +307,6 @@ class InnerToolbar extends React.Component {
                                             root: classes.inputRoot,
                                             input: classes.inputInput,
                                         }}
-                                        inputProps={{ 'aria-label': 'search' }}
                                         onChange={this._handle_search_input_change}
                                         value={_search_bar_value}
                                     />:

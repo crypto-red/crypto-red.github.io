@@ -256,7 +256,7 @@ class PixelArtCard extends React.Component {
                             <EyeIcon style={{color: "#ffffff"}} width={36} height={36}/>
                         </div>
                     </div>
-                    <CardContent datatags={tags[1] || tags[0]} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
+                    <CardContent datatags={"#" + (tags[1] || tags[0])} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
                         <Typography gutterBottom variant="h5" component="h2">
                             {post.title}
                         </Typography>

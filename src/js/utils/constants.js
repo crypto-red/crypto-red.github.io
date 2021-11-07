@@ -443,7 +443,10 @@ const FIRST_WEEK_DAY_BY_COUNTRY = {
     "YE": "sun",
     "ZA": "sun",
     "ZW": "sun"
-}
+};
+
+const IMAGE_PROXY_URL = "https://steemitimages.com/0x0/";
+const CORS_PROXY_URL = "https://cors-anywhere.crypto-red.workers.dev/?";
 
 module.exports = {
     LANGUAGES: LANGUAGES,
@@ -455,4 +458,6 @@ module.exports = {
     LOCALES: LOCALES,
     CURRENCY_COUNTRIES: CURRENCY_COUNTRIES,
     FIRST_WEEK_DAY_BY_COUNTRY: FIRST_WEEK_DAY_BY_COUNTRY,
+    IMAGE_PROXY_URL: IMAGE_PROXY_URL,
+    CORS_PROXY_URL: CORS_PROXY_URL,
 };

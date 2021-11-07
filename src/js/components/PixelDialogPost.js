@@ -2,6 +2,7 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
 import Dialog from "@material-ui/core/Dialog";
+import Collapse from '@material-ui/core/Collapse';
 import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
@@ -41,6 +42,7 @@ import CircularProgress from "@material-ui/core/CircularProgress";
 
 import * as toxicity from "@tensorflow-models/toxicity";
 import {lookup_hive_accounts_name} from "../utils/api";
+import {HISTORY} from "../utils/constants";
 import TimeAgo from "javascript-time-ago";
 import ChipInput from "material-ui-chip-input";
 import actions from "../actions/utils";
@@ -116,15 +118,23 @@ const styles = theme => ({
         },
         background: "#fafafa",
     },
+    headerTitle: {
+        color: "#333333",
+    },
+    headerAuthor: {
+        color: theme.palette.primary.action,
+        cursor: "pointer",
+    },
+    headerCategory: {
+        color: theme.palette.primary.actionLighter,
+        cursor: "pointer",
+    },
     description: {
-        minHeight: 64,
-        height: "auto",
+        boxShadow: "rgba(0, 0, 0, 0.35) 0px 0px 0px 0px inset",
     },
     descriptionCollapsed: {
-        minHeight: "0 !important",
-        height: "auto !important",
-        maxHeight: "64px !important",
-        boxShadow: "inset 0px -21px 21px -21px rgb(0 0 0 / 20%)",
+        boxShadow: "rgba(0, 0, 0, 0.35) 0px -50px 36px -28px inset",
+        transition: "box-shadow 175ms cubic-bezier(0.4, 0, 0.2, 1)",
     },
     shareIconButtonWhatsApp: {
         color: "#fff",
@@ -339,6 +349,8 @@ class PixelDialogPost extends React.Component {
             _translated_description: "",
             _translated_title: "",
             _has_translation_started: false,
+            _is_description_collapsed: true,
+            _history: HISTORY,
         };
     };
 
@@ -409,11 +421,11 @@ class PixelDialogPost extends React.Component {
 
         if(post) {
 
-            lookup_hive_accounts_name([this.state.post.author], (error, results) => {
+            lookup_hive_accounts_name(this.state.post.author, (error, result) => {
 
                 if(!error) {
 
-                    this.setState({_author_account: results[0]});
+                    this.setState({_author_account: result});
                 }
             });
         }
@@ -544,6 +556,7 @@ class PixelDialogPost extends React.Component {
             _translated_description: "",
             _translated_title: "",
             _has_translation_started: false,
+            _is_description_collapsed: true,
         }, () => {
 
             this.forceUpdate();
@@ -913,17 +926,34 @@ class PixelDialogPost extends React.Component {
             const lang = selected_locales_code.split("-")[0];
             this.setState({_has_translation_started: true}, () => {
 
-                postJSON("https://translate.argosopentech.com/translate", {q: this.state.post.description, source: "auto", target: lang, format: "text"}, (err, res) => {
+                postJSON("https://translate.argosopentech.com/detect", {q: this.state.post.description.slice(0, 256)}, (err, res) => {
 
                     if(!err && res) {
 
                         try {
 
-                            const data = JSON.parse(clean_json_text(res));
+                            const data = JSON.parse(clean_json_text(res))[0] || {};
 
                             if(data) {
 
-                                this.setState({_translated_description: data.translatedText}, () => {this.forceUpdate();});
+                                postJSON("https://translate.argosopentech.com/translate", {q: this.state.post.description, source: data.language, target: lang, format: "text"}, (err2, res2) => {
+
+                                    if(!err2 && res2) {
+
+                                        try {
+
+                                            const data2 = JSON.parse(clean_json_text(res2));
+
+                                            if(data2) {
+
+                                                this.setState({_translated_description: data2.translatedText || ""}, () => {this.forceUpdate();});
+                                            }
+
+                                        }catch (e) {
+
+                                        }
+                                    }
+                                }, "application/json");
                             }
 
                         }catch (e) {
@@ -931,6 +961,7 @@ class PixelDialogPost extends React.Component {
                         }
                     }
                 }, "application/json");
+
 
                 postJSON("https://translate.argosopentech.com/translate", {q: this.state.post.title, source: "auto", target: lang, format: "text"}, (err, res) => {
 
@@ -942,7 +973,7 @@ class PixelDialogPost extends React.Component {
 
                             if(data) {
 
-                                this.setState({_translated_title: data.translatedText}, () => {this.forceUpdate();});
+                                this.setState({_translated_title: data.translatedText || ""}, () => {this.forceUpdate();});
                             }
 
                         }catch (e) {
@@ -952,6 +983,21 @@ class PixelDialogPost extends React.Component {
                 }, "application/json");
             });
         }
+    };
+
+    _open_profile = () => {
+
+        const {_history} = this.state;
+        const pathname = window.location.pathname;
+        _history.push(pathname.replaceAll(/(\/[a-zA-Z0-9\_\-\%]+)$/gm, ""));
+    };
+
+    _open_tag = () => {
+
+        const {_history, post} = this.state;
+
+        const tags = post.tags || [];
+        _history.push(`/gallery/newest/search/tag:${(tags[1] || tags[0])}`);
     };
 
     render() {
@@ -981,6 +1027,7 @@ class PixelDialogPost extends React.Component {
             _drawer_open,
             keepMounted,
             selected_locales_code,
+            _is_description_collapsed,
         } = this.state;
 
         const post = this.state.post || {};
@@ -1038,7 +1085,13 @@ class PixelDialogPost extends React.Component {
                                                     }
                                                 </Avatar>
                                             }
-                                            title={"@" + post.author}
+                                            title={
+                                                <span className={classes.headerTitle}>
+                                                    <span className={classes.headerAuthor} onClick={this._open_profile}>{`@${post.author}`}</span>
+                                                    <span> in </span>
+                                                    <span className={classes.headerCategory} onClick={this._open_tag}>{`#${(tags[1] || tags[0])}`}</span>
+                                                </span>
+                                            }
                                             subheader={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null}
                                             action={
                                                 <IconButton>
@@ -1162,11 +1215,18 @@ class PixelDialogPost extends React.Component {
                                                         size="small"
                                                         style={{marginBottom: 12}}
                                                     />:
-                                                    <div>
-                                                        <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>
-                                                            {_translated_description.length ? _translated_description: post.description}
-                                                        </ReactMarkdown>
-                                                    </div>
+                                                    <Collapse
+                                                        onClick={this._handle_toggle_description}
+                                                        in={!_is_description_collapsed || (post.description || "").length <= 1000}
+                                                        timeout="auto"
+                                                        collapsedHeight={"128px"}
+                                                        className={_is_description_collapsed && (post.description || "").length > 1000 ? classes.descriptionCollapsed: classes.description}>
+                                                        <div>
+                                                            <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>
+                                                                {_translated_description.length ? _translated_description: post.description}
+                                                            </ReactMarkdown>
+                                                        </div>
+                                                    </Collapse>
                                             }
                                             {
                                                 _description_prediction &&
