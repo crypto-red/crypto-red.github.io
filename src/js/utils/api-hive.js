@@ -539,7 +539,7 @@ function cached_get_hive_post(parameters, callback_function) {
 
     _cache_data(
         hive_posts_db,
-        force_query ? 0: 1 * 60 * 60 * 1000,
+        force_query ? 0: 5 * 60 * 1000,
         "author-@"+author+"_permlink-"+permlink,
         get_hive_post,
         { author, permlink },
@@ -645,7 +645,7 @@ function get_hive_posts(parameters, callback_function) {
 
                     _cache_data(
                         hive_posts_db,
-                        1 * 60 * 60 * 1000,
+                        5 * 60 * 1000,
                         "author-@"+pn.author+"_permlink-"+pn.permlink,
                         function (post) {
                             return post;
