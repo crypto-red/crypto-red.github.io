@@ -29,7 +29,7 @@ The emoji graphics are licensed under the CC-BY 4.0 by Twitter. Thanks to their 
 
 They not only want to deny the art but as the global delusional/delirious state of mind spreads more and more in existence, we say it as widely to achieve together, as in other words , computing (information technology), that is to say the fact of: **"making daily life a creative experience, continually original-delusional-ecstatic"**, is a difficult process and a powerful lever. Just as if we were in a crypto-bank stated cold-war, our technological and engineering competence were to be exploited to the maximum. And with it,
 
-Whoever you may be, a yakuza or a former bankster, You can enjoy this platform through this site with ease.
+Whoever you may be, a yakuza or a former bankster, You can enjoy this platform through this site with ease when.
 
 **And with it, we, as contributors, started to:**
 
@@ -37,5 +37,6 @@ Whoever you may be, a yakuza or a former bankster, You can enjoy this platform t
  * Displace FIAT currency.
  * Disrupt theoretical monopoly over mainstream social media.
  * Bring back power to the people trough autonomy and algorithms.
- * Not be denied.
+ * Not be denied with fear not belonging to a pure frequency.
+
 With you.
