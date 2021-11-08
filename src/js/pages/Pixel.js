@@ -643,7 +643,10 @@ class Pixel extends React.Component {
     _upload_image = () => {
 
         let input = document.createElement("input");
+        input.setAttribute("style", "pointer-events: none; touch-actions: none; position: absolute; opacity: 0;");
+        document.body.appendChild(input);
         input.addEventListener("change", (event) => {this._handle_file_upload(event)});
+        document.body.removeChild(input);
         input.setAttribute("type", "file");
         input.click();
     };
@@ -680,7 +683,10 @@ class Pixel extends React.Component {
     _import_image = () => {
 
         let input = document.createElement("input");
+        input.setAttribute("style", "pointer-events: none; touch-actions: none; position: absolute; opacity: 0;");
+        document.body.appendChild(input);
         input.addEventListener("change", (event) => {this._handle_file_import(event)});
+        document.body.removeChild(input);
         input.setAttribute("type", "file");
         input.click();
     };
@@ -1324,6 +1330,7 @@ class Pixel extends React.Component {
                                     <div className={classes.drawerContainer} onGotPointerCapture={(event) => {event.stopPropagation(); event.preventDefault();}}>
                                         <PixelToolboxSwipeableViews
                                             should_update={_is_edit_drawer_open}
+                                            is_connected_to_hive={Boolean(_logged_account.hive_username)}
                                             onActionClose={this._handle_edit_drawer_close}
                                             canvas={_canvas}
                                             view_class={classes.listOfTools}
@@ -1416,11 +1423,10 @@ class Pixel extends React.Component {
                                             <Tab className={classes.tab} icon={<ImageFilterIcon />} />
                                         </Tabs>
                                     </div>
-                                    <div className={classes.drawerContainer} onGotPointerCapture={(event) => {event.stopPropagation(); event.preventDefault();}}>
+                                    <div className={classes.drawerContainer}>
                                         <PixelToolboxSwipeableViews
-                                            should_update={true}
+                                            should_update={!_is_edit_drawer_open}
                                             is_connected_to_hive={Boolean(_logged_account.hive_username)}
-                                            onActionClose={this._handle_edit_drawer_close}
                                             canvas={_canvas}
                                             view_class={classes.listOfTools}
                                             view_name_index={_view_name_index}
@@ -1475,16 +1481,25 @@ class Pixel extends React.Component {
                 </IconButton>
                 <Dialog open={_is_dialog_info_open} onClose={this._handle_dialog_info_close}>
                     <DialogContent>
-                        <h2>DISCLAIMER! BECAUSE <ShufflingSpanText text={"ULTIMATELY"} animation_delay_ms={333} animation_duration_ms={666}/>:</h2>
+                        <h2>DISCLAIMER! BECAUSE <ShufflingSpanText text={"ULTIMATELY"} animation_delay_ms={333} animation_duration_ms={555}/>:</h2>
                         <p>We hope you will soon make new friends on the blockchain technology using Wallet Crypto Red; some of whom may wish to join some forces with you to form one's powerful dreams.</p>
                         <p>Plan your next moves together, conceive elaborate investment strategies and build your “team”, develop your passion, and learn about fascinating things! <br />Support each other with the powers of donating pixel art to your friends and the causes you do care about.</p>
                         <p>Defend your true will by concentrating, and by strategically moving your efforts, using tools and bots we are enjoying developing. <b>United, we love to stand strong, and through a ride on the W.C.R. application you can expand your horizon</b>; transaction by transaction, pixel by pixel, NFT by NFT, and share by daring; but also in real life with the profit you can make.</p>
-                        <p className={classes.blueCenter}><ShufflingSpanText  animation_delay_ms={666} animation_duration_ms={1111} style={{fontFamily: "Noto Sans Mono"}} pre={"+ - "} app={" - +"} text={"Uniquely, we are free. Together we are strong!"}/></p>
-                        <p><blockquote style={{color: "#666"}}>Jamy (the assistant) told its developers to forge not works of art but swords of technology, he cares of what we don't so here we have this useless informative dialog and for therein lies great art...</blockquote></p>
-                        <p>The only way to create an exhibition of the current global situation is you have to take the macro-state notion you’re part of, into your own heart, and redesign it accordingly to your own soul.</p>
-                        <p>Now in a broader terms, we said that our future will be the creation and collection of situations, maybe situations for nothing or nothingness with ease... situation they wanted and they maybe wanted to devaluate everything which was a part of the modern society, to be human, but for sure for them, art market, art dealing with art, or something that should be more profound and ruined to be believed by the people is a threat.</p>
-                        <p>They want to not only negate art but as the more global delirious state of mind flow into existence, we broadly put it also to realize, that in other words, IT (information technology), which is to say: "make of daily life a creative, continuously-original-delirious-ecstatic experience", is a difficult process and levier. Throughout the best efforts of our developers,</p>
-                        <p>Enjoy this platform.</p>
+                        <p className={classes.blueCenter}><ShufflingSpanText  animation_delay_ms={777} animation_duration_ms={1111} style={{fontFamily: "Noto Sans Mono"}} pre={"+ - "} app={" - +"} text={"Uniquely, we are free. Together we are strong!"}/></p>
+                        <p><blockquote style={{color: "#888"}}>Jamy (the assistant) told its developers to forge not works of art but swords of technology, he cares of what we don't so here we have this useless informative dialog and for therein lies great art...</blockquote></p>
+                        <p>The only way to create a natural exposition of the current world situation is to take the notion of macro-state that you are a part of, in your own heart, and redesign it to suit your own mind or soul.</p>
+                        <p>Now in broader terms we have said that our future will be the creation and collection of situations, maybe situations for nothing and / or sometimes with nothingness and ease ...<br/>Situation that "they" wanted and maybe they wanted to devalue everything that was part of modern society to be human, but it is safe for them, the art market, art talking about art , or something that would have to be deeper meaning.</p>
+                        <p>They not only want to deny the art but as the global delusional/delirious state of mind spreads more and more in existence, we say it as widely to achieve together, as in other words , computing (information technology), that is to say the fact of: <b>"making daily life a creative experience, continually original-delusional-ecstatic"</b>, is a difficult process and a powerful lever. Just as if we were in a crypto-bank stated cold-war, our technological and engineering competence were to be exploited to the maximum. And with it,</p>
+                        <p><blockquote style={{color: "#888"}}>Whoever you may be, a yakuza or a former bankster, You can enjoy this platform through this site with ease.</blockquote></p>
+                        <p>And with it, we, as contributors, started to:</p>
+                        <ul>
+                            <li>Counter quantum-computer.</li>
+                            <li>Displace FIAT currency.</li>
+                            <li>Disrupt theoretical monopoly over mainstream social media.</li>
+                            <li>Bring back power to the people trough autonomy and algorithms.</li>
+                            <li>Not be denied.</li>
+                        </ul>
+                        <p>With you.</p>
                     </DialogContent>
                     <DialogActions>
                         <Button variant="text" color="primary" autoFocus onClick={this._handle_dialog_info_close}><ShufflingSpanText animation_delay_ms={444} animation_duration_ms={999} text={t( "words.close" )}/></Button>

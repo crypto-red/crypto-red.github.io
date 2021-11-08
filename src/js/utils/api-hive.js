@@ -575,11 +575,11 @@ function cached_get_hive_posts(parameters, callback_function) {
 
             data.posts.forEach((p) => {
 
-                cached_get_hive_post({author: p.author, permlink: p.permlink}, function(err2, p2) {
+                cached_get_hive_post({author: p.author, permlink: p.permlink}, function(err2, data2) {
 
-                    if(!err2 && p2) {
+                    if(!err2 && data2) {
 
-                        posts.push(p2);
+                        posts.push(data2);
                     }
 
                     post_processed++;
@@ -774,7 +774,7 @@ function vote_on_hive_post(author, permlink, weight, username, master_key, callb
     });
 }
 
-function cached_search_on_hive(terms = "", author = "", tags = ["pixel-art"], sorting = "relevance", page = "1", callback_function) {
+function cached_search_on_hive(terms = "", authors = [], tags = ["pixel-art"], sorting = "relevance", page = "1", callback_function) {
 
     function pre_callback_function(err, data) {
 
@@ -806,7 +806,7 @@ function cached_search_on_hive(terms = "", author = "", tags = ["pixel-art"], so
 
                             if(all_posts.length === 0 && data.pages > page){
 
-                                search_on_hive(terms, author, tags, sorting, page+1, callback_function);
+                                search_on_hive(terms, authors, tags, sorting, page+1, callback_function);
                             }else {
 
                                 callback_function(null, {posts: all_posts, pages: data.pages, page});
@@ -828,18 +828,19 @@ function cached_search_on_hive(terms = "", author = "", tags = ["pixel-art"], so
 
     _cache_data(
         hive_queries_db,
-        1 * 60 * 60 * 1000,
-        "search_on_hive-terms"+terms+"-author-"+author+"-tags-"+tags.join(",")+"-sorting-"+sorting+"-page-"+page,
+        1 * 60 * 1000,
+        encodeURI("search_on_hive-terms"+terms+"-author-"+authors.join(",")+"-tags-"+tags.join(",")+"-sorting-"+sorting+"-page-"+page),
         search_on_hive,
-        { terms, author, tags, sorting, page },
+        { terms, authors, tags, sorting, page },
         pre_callback_function
     );
 }
 
 function search_on_hive(parameters, callback_function) {
 
-    let { terms, author, tags, sorting, page } = parameters;
+    let { terms, authors, tags, sorting, page } = parameters;
 
+    /* TAGS */
     let tags_in_terms = [];
     const tag_text_regex = /tag(s)?:[a-zA-Z0-9-\,]+/gm;
     terms = terms.replace(tag_text_regex, function(match){
@@ -849,9 +850,25 @@ function search_on_hive(parameters, callback_function) {
 
         return ""; //tags_list.join(" ").replaceAll("pixel-art", "");
     });
-
     const all_tags = [...new Set([...tags, ...tags_in_terms])];
-    postJSON("https://hivesearcher.com/api/search", {q:`${terms.length ? terms: 'I'} ${author.length ? ("author:" + author): ""} tag:${all_tags.join(",")} type:post`, so: sorting, pa:page}, (err, res) => {
+
+    /* AUTHORS */
+    let authors_in_terms = [];
+    const author_text_regex= /\@[a-zA-Z0-9\-\.]+/gm
+    terms = terms.replace(author_text_regex, function(match){
+
+        authors_in_terms.push(match.replace("@",""));
+        return "";
+    });
+    const all_authors = [...new Set([...authors, ...authors_in_terms])];
+
+    const query =
+        (`${terms.length ? terms+" ": "* "}`+
+        `${all_authors.length ? ("author:" + all_authors.join(",") + " "): ""}` +
+        `tag:${all_tags.join(",")} `+
+        `type:post`).replace(/\s+/g, " ");
+
+    postJSON("https://ecency.com/search-api/search", {q: query, sort: sorting, pa:page}, (err, res) => {
 
         if(res) {
 

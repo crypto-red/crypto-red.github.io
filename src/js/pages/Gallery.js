@@ -441,7 +441,7 @@ class Gallery extends React.Component {
             actions.trigger_loading_update(0);
             this.setState({_loading_posts: true}, () => {
 
-                search_on_hive(_search_mode_query, "", ["pixel-art"], (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]), _search_mode_query_page.toString(), (err, data) => {
+                search_on_hive(_search_mode_query, [], ["pixel-art"], (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]), _search_mode_query_page.toString(), (err, data) => {
 
                     if((data || {}).posts){
 
@@ -892,9 +892,9 @@ class Gallery extends React.Component {
 
     _handle_reset_selected_account = () => {
 
-        const { _history, _sorting_modes, _sorting_tab_index } = this.state;
+        const { _history, _post_author } = this.state;
 
-        const new_pathname = "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]);
+        const new_pathname = "/gallery/newest/search/" + _post_author;
         _history.push(new_pathname);
     };
 

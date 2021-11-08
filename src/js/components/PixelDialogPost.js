@@ -36,6 +36,7 @@ import gfm from "remark-gfm";
 import ReactMarkdown from "react-markdown";
 import Fab from "@material-ui/core/Fab";
 import EditIcon from "@material-ui/icons/Edit";
+import EyeIcon from "../icons/Eye";
 import Grow from "@material-ui/core/Grow";
 import Chip from "@material-ui/core/Chip";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -724,6 +725,49 @@ class PixelDialogPost extends React.Component {
                     if(_title_prediction["identity_attack"] > 0.3 || _description_prediction["identity_attack"] > 0.3) {
 
                         actions.trigger_snackbar("Do you think identity grows on threes? At least try to appears sentient.", 10000);
+                    }else if(
+                        (
+                            (_title_input.toUpperCase().includes("PRIMERZ") || _description_input.toUpperCase().includes("PRIMERZ")) ||
+                            (_title_input.toUpperCase().includes("@MES") || _description_input.toUpperCase().includes("@MES")) ||
+                            (_title_input.toUpperCase().includes("MATH EASY SOLUTION") || _description_input.toUpperCase().includes("MATH EASY SOLUTION"))
+                        ) &&
+                        (_title_prediction_avg >= 0.33 || _description_prediction_avg >= 0.33)
+                    ) {
+
+                        actions.trigger_snackbar("I can't force you, some sort of protocols saves our application.", 7000);
+
+                        setTimeout(() => {
+
+                            actions.trigger_snackbar("It is love alone that is the greatest weapon and the deepest and hardest secret, so bless it all.", 7000);
+
+                            setTimeout(() => {
+
+                                actions.trigger_snackbar("The spirit will seek the truth, but the flesh is the teacher.", 7000);
+                            }, 10000);
+
+                        }, 10000);
+                    }else if(
+                        (
+                            (_title_input.toUpperCase().includes("@PRIMERZ") || _description_input.toUpperCase().includes("@PRIMERZ")) ||
+                            (_title_input.toUpperCase().includes("@MES") || _description_input.toUpperCase().includes("@MES")) ||
+                            (_title_input.toUpperCase().includes("@RAFIRZM") || _description_input.toUpperCase().includes("@RAFIRZM"))
+                        ) &&
+                        (_title_prediction_avg <= 0.33 || _description_prediction_avg <= 0.33)
+                    ) {
+
+                        actions.trigger_snackbar("May a wonderful light always guide you on the unfolding road.", 7000);
+
+                    }else if(
+                        (_title_input.toUpperCase().includes("CRYPTO.RED") || _description_input.toUpperCase().includes("CRYPTO.RED")) &&
+                        (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
+                    ) {
+
+                        actions.trigger_snackbar("While many things will be absolute, many more will be a matter of perspective.", 7000);
+
+                        setTimeout(() => {
+
+                            actions.trigger_snackbar("Learn your speech, learn to act, learn to be what you are in the seed of your spirit.", 7000);
+                        }, 10000);
                     }else if(_title_prediction["insult"] > 0.3 || _description_prediction["insult"] > 0.3) {
 
                         actions.trigger_snackbar("Calamity, no my little diddy. The hatred came.", 10000);
@@ -752,39 +796,7 @@ class PixelDialogPost extends React.Component {
                         (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
                     ) {
 
-                        actions.trigger_snackbar("I am an easy target, I wonder", 10000);
-                    }else if(
-                        (_title_input.toUpperCase().includes("CRYPTO.RED") || _description_input.toUpperCase().includes("CRYPTO.RED")) &&
-                        (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
-                    ) {
-
-                        actions.trigger_snackbar("Splendid, really goooo, why don’t you all have combat skills.", 10000);
-
-                        setTimeout(() => {
-
-                            actions.trigger_snackbar("Calamity madler, are you going to destroy my installation?", 10000);
-                        }, 7000);
-                    }else if(
-                        (
-                            (_title_input.toUpperCase().includes("PRIMERZ") || _description_input.toUpperCase().includes("PRIMERZ")) ||
-                            (_title_input.toUpperCase().includes("@MES") || _description_input.toUpperCase().includes("@MES")) ||
-                            (_title_input.toUpperCase().includes("MATH EASY SOLUTION") || _description_input.toUpperCase().includes("MATH EASY SOLUTION"))
-                        ) &&
-                        (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
-                    ) {
-
-                        actions.trigger_snackbar("I have no authority here, some sort of protocols saves my application.", 10000);
-
-                        setTimeout(() => {
-
-                            actions.trigger_snackbar("I see now that helping you was wrong.", 10000);
-
-                            setTimeout(() => {
-
-                                actions.trigger_snackbar("I take no pleasure at doing what must be done. Mpruhgrsnammmmhu, I won't do anything.", 10000);
-                            }, 7000);
-
-                        }, 7000);
+                        actions.trigger_snackbar("Calamity madler,I must be an easy target, I wonder", 10000);
                     }else if(
                         (_title_input.toUpperCase().includes("MASTER CHIEF") || _description_input.toUpperCase().includes("MASTER CHIEF"))
                     ) {
@@ -1339,12 +1351,20 @@ class PixelDialogPost extends React.Component {
                             </div>
                             <div className={classes.bottomMobileFabs}>
                                 {
-                                    edit && !_drawer_open && _window_width < 1200 ?
+                                    edit && !_drawer_open && _window_width < 1200 &&
                                         <Grow in>
                                             <Fab className={classes.editFab} variant="extended" onClick={this._handle_fab_click}>
                                                 <EditIcon /> Edit
                                             </Fab>
-                                        </Grow>: null
+                                        </Grow>
+                                }
+                                {
+                                    !edit && !_drawer_open && _window_width < 1200 &&
+                                        <Grow in>
+                                            <Fab className={classes.editFab} variant="extended" onClick={this._handle_drawer_open}>
+                                                <EyeIcon /> View
+                                            </Fab>
+                                        </Grow>
                                 }
                             </div>
                             <div className={classes.bottomDesktopFabs}>

@@ -238,6 +238,7 @@ class PixelToolboxSwipeableViews extends React.Component {
             is_something_selected: props.is_something_selected,
             previous_view_name_index: props.previous_view_name_index,
             hue: props.hue,
+            should_update: props.should_update || false,
             _layer_opened: false,
             _anchor_el: null,
             _saturation: 60,
@@ -249,7 +250,15 @@ class PixelToolboxSwipeableViews extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        this.setState(new_props);
+        let refresh = this.state.is_connected_to_hive !== new_props.is_connected_to_hive;
+
+        this.setState(new_props,() =>{
+
+            if(refresh) {
+
+                this.forceUpdate();
+            }
+        });
     }
 
     shouldComponentUpdate(new_props) {
@@ -1020,7 +1029,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                                             </div>
                                             <ListSubheader className={classes.listSubHeader}>
                                                 <span><ImportIcon /></span>
-                                                <span>{is_connected_to_hive ? "Post on Hive": "Please loggin onto Hive"}</span>
+                                                <span>{is_connected_to_hive ? "Post on Hive": "Please login onto Hive"}</span>
                                             </ListSubheader>
                                             <div className={classes.listItems}>
                                                 <ListItem disabled={!is_connected_to_hive} button onClick={() => {this._publish()}}>
