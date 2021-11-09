@@ -49,7 +49,7 @@ const styles = theme => ({
         maxWidth: "100%",
     },
     content: {
-        flexGrow: 1
+        flexGrow: 1,
     },
     snackbar: {
         "& .MuiSnackbarContent-root	": {
