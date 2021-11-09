@@ -28,6 +28,7 @@ import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
 import {t} from "../utils/t";
 import Grow from "@material-ui/core/Grow";
+import ShufflingSpanText from "../components/ShufflingSpanText";
 
 class MasonryExtended extends Masonry {
     _getEstimatedTotalHeight() {
@@ -117,6 +118,24 @@ const styles = theme => ({
         },
     },
     masonry: {
+        opacity: 1,
+        transition: "opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 25ms",
+        overflow: "overlay",
+        "& > .ReactVirtualized__Masonry": {
+            position: "absolute",
+            padding: "88px 16px 32px 16px",
+            margin: 0,
+            scrollBehavior: "smooth",
+            overflow: "overlay",
+            "& > .ReactVirtualized__Masonry__innerScrollContainer": {
+                overflow: "visible !important",
+                transform: "translateZ(0px)",
+            }
+        }
+    },
+    masonryHidden: {
+        opacity: 0,
+        transition: "opacity 0 cubic-bezier(0.4, 0, 0.2, 1) 0",
         overflow: "overlay",
         "& > .ReactVirtualized__Masonry": {
             position: "absolute",
@@ -182,23 +201,26 @@ class Gallery extends React.Component {
 
         this.state = {
             classes: props.classes,
+            pathname: props.pathname || "",
+            _previous_pathname: "",
+            _sorting_tab_index: SORTING_MODES.indexOf(props.pathname.split("/")[2] || 0),
+            _post_author: (props.pathname.split("/")[3] || "").includes("@") ? props.pathname.split("/")[3]: (props.pathname.split("/")[5] || "").includes("@") ? props.pathname.split("/")[5]: null,
+            _post_permlink: (props.pathname.split("/")[3] || "").includes("@") ? props.pathname.split("/")[4] || null: (props.pathname.split("/")[5] || "").includes("@") ? props.pathname.split("/")[6] || null: null,
+            _is_search_mode: Boolean(props.pathname.split("/")[3] === "search"),
+            _search_mode_query: props.pathname.split("/")[3] === "search" ? decodeURI(props.pathname.split("/")[4] || ""): "",
+            _search_sorting_tab_index: SEARCH_SORTING_MODES.indexOf(props.pathname.split("/")[2] || 0),
             _history: HISTORY,
             _sorting_modes: SORTING_MODES,
-            _sorting_tab_index: 0,
             _selected_locales_code: null,
             _selected_currency: null,
             _hbd_market: null,
             _logged_account: {},
-            _post_author: null,
-            _post_permlink: null,
-            _is_search_mode: Boolean(props.pathname.split("/")[3] === "search"),
             _search_sorting_modes: SEARCH_SORTING_MODES,
-            _search_sorting_tab_index: 0,
-            _search_mode_query: "",
             _search_mode_query_page: 0,
             _search_mode_query_pages: 1,
             _post: null,
             _loading_posts: false,
+            _updating_dimension: false,
             _post_closed_at: 0,
             _selected_post_index: 0,
             _scrolling_reset_time_interval: 300,
@@ -237,6 +259,7 @@ class Gallery extends React.Component {
             _reaction_selected_post: {},
             _reaction_voted_result: null,
             _reaction_selected_post_loading: false,
+
         };
     };
 
@@ -246,6 +269,8 @@ class Gallery extends React.Component {
 
         let state = {
             classes: new_props.classes,
+            pathname: new_props.pathname,
+            _previous_pathname: this.state.pathname,
             _sorting_tab_index: _sorting_modes.indexOf(new_props.pathname.split("/")[2] || 0),
             _post_author: (new_props.pathname.split("/")[3] || "").includes("@") ? new_props.pathname.split("/")[3]: (new_props.pathname.split("/")[5] || "").includes("@") ? new_props.pathname.split("/")[5]: null,
             _post_permlink: (new_props.pathname.split("/")[3] || "").includes("@") ? new_props.pathname.split("/")[4] || null: (new_props.pathname.split("/")[5] || "").includes("@") ? new_props.pathname.split("/")[6] || null: null,
@@ -262,7 +287,10 @@ class Gallery extends React.Component {
         const search_mode_query_changed = this.state._search_mode_query !== state._search_mode_query;
 
         let get_post = Boolean(!state._is_search_mode && state._post_author && state._post_permlink && (state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink) && !this.state._post);
-        let closed_search = Boolean((!state._is_search_mode && this.state._is_search_mode && this.state._search_mode_query !== "") || (state._search_mode_query === "" && this.state._search_mode_query !== ""));
+        let closed_search = Boolean(
+            (!state._is_search_mode && this.state._is_search_mode && this.state._search_mode_query !== "") ||
+            (state._search_mode_query === "" && this.state._search_mode_query !== "")
+        );
         let closed_post = Boolean(!state._post_author && !state._post_permlink && this.state._post_author && this.state._post_permlink);
 
         this.setState(state, () => {
@@ -279,12 +307,14 @@ class Gallery extends React.Component {
 
                 this.setState({_posts: [], _start_author: null, _start_permlink: null}, () => {
 
+                    this.forceUpdate();
                     this._load_more_posts();
                 });
             }else if(search_sorting_changed && state._is_search_mode) {
 
                 this.setState({_posts: [], _start_author: null, _start_permlink: null, _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
 
+                    this.forceUpdate();
                     this._search_more_posts();
                 });
             }else if(search_mode_query_changed && state._is_search_mode) {
@@ -302,6 +332,7 @@ class Gallery extends React.Component {
         window.addEventListener("resize", this._updated_dimensions);
         ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 
+        this._updated_dimensions();
         this._update_settings();
 
         if(this.state._is_search_mode) {
@@ -400,9 +431,9 @@ class Gallery extends React.Component {
 
                     const posts = _start_author && _start_permlink ? _posts.concat(data.posts): data.posts;
 
-                    this.setState({_loading_posts: false, _posts: posts, _start_author: data.end_author, _start_permlink: data.end_permlink}, () => {
+                    this.setState({_updating_dimension: true, _loading_posts: false, _posts: posts, _start_author: data.end_author, _start_permlink: data.end_permlink}, () => {
 
-                        this._updated_dimensions();
+                        this._updated_dimensions(true);
                         actions.trigger_loading_update(100);
                     });
                 }else {
@@ -423,6 +454,7 @@ class Gallery extends React.Component {
 
             this.setState({_posts: [], _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
 
+                this.forceUpdate();
                 this._search_more_posts();
                 _history.push(pathname);
             });
@@ -447,9 +479,9 @@ class Gallery extends React.Component {
 
                         const posts = _search_mode_query_page > 1 ? _posts.concat(data.posts): data.posts;
 
-                        this.setState({_loading_posts: false, _posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
+                        this.setState({_updating_dimension: true,_loading_posts: false, _posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
 
-                            this._updated_dimensions();
+                            this._updated_dimensions(true);
                             actions.trigger_loading_update(100);
                         });
                     }else {
@@ -502,7 +534,6 @@ class Gallery extends React.Component {
 
     _calculate_column_count() {
 
-
         const { _window_width, _root_width, _gutter_size } = this.state;
         let { _column_count } = this.state;
 
@@ -532,7 +563,7 @@ class Gallery extends React.Component {
         this.setState({_column_width, _column_count}, () => {
 
             this.state._cell_measurer_cache.clearAll();
-            this._reset_cell_positioner();
+            //this._reset_cell_positioner();
             this._init_cell_positioner();
         });
     }
@@ -550,7 +581,7 @@ class Gallery extends React.Component {
 
     _cell_renderer = ({index, key, parent, style}) => {
 
-        const { _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _reaction_selected_post, _reaction_selected_post_loading, _posts, _column_width, _cell_measurer_cache } = this.state;
+        const { _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _reaction_selected_post, _reaction_selected_post_loading, _posts, _column_width, _cell_measurer_cache, _column_count } = this.state;
         const post = _posts[index] || {};
 
         if(!post.id) { return <div></div>; }
@@ -569,6 +600,7 @@ class Gallery extends React.Component {
             <CellMeasurer cache={_cell_measurer_cache} index={index} key={key} parent={parent}>
                 <div draggable={"false"} style={style}>
                     <PixelArtCard
+                        fade_in={Math.floor(index / _column_count) * 40 * _column_count + (index % _column_count) * 20}
                         selected={selected}
                         post={post}
                         is_loading={is_loading}
@@ -594,19 +626,19 @@ class Gallery extends React.Component {
 
     _init_cell_positioner() {
 
-        if (this.state._cell_positioner === null) {
+        const {_cell_measurer_cache, _column_count, _column_width, _gutter_size} = this.state;
 
-            const { _cell_measurer_cache, _column_count, _column_width, _gutter_size } = this.state;
+        let _cell_positioner = createMasonryCellPositioner({
+            cellMeasurerCache: _cell_measurer_cache,
+            columnCount: _column_count,
+            columnWidth: _column_width,
+            spacer: _gutter_size,
+        });
 
-            let _cell_positioner = createMasonryCellPositioner({
-                cellMeasurerCache: _cell_measurer_cache,
-                columnCount: _column_count,
-                columnWidth: _column_width,
-                spacer: _gutter_size,
-            });
+        this.setState({_updating_dimension: false, _cell_positioner}, () =>{
 
-            this.setState({_cell_positioner})
-        }
+            this.forceUpdate();
+        })
     }
 
     _updated_dimensions = (do_not_refresh_after = false) => {
@@ -625,8 +657,9 @@ class Gallery extends React.Component {
                     _window_height = w.innerHeight|| documentElement.clientHeight || body.clientHeight;
 
                 const root_rect = _root.getBoundingClientRect();
-                this.setState({_window_width, _window_height, _root_width: root_rect.width, _root_height: root_rect.height}, () => {
+                this.setState({_cell_positioner: null, _window_width, _window_height, _root_width: root_rect.width, _root_height: root_rect.height}, () => {
 
+                    this.forceUpdate();
                     this._calculate_column_count();
 
                     if(!do_not_refresh_after) {
@@ -634,7 +667,7 @@ class Gallery extends React.Component {
                         this._updated_dimensions(true);
                     }
                 });
-            }, do_not_refresh_after ? 0: 500);
+            }, do_not_refresh_after ? 0: 200);
         }else {
 
             setTimeout(() => {
@@ -892,10 +925,9 @@ class Gallery extends React.Component {
 
     _handle_reset_selected_account = () => {
 
-        const { _history, _post_author } = this.state;
+        const { _history, _previous_pathname } = this.state;
 
-        const new_pathname = "/gallery/newest/search/" + _post_author;
-        _history.push(new_pathname);
+        _history.push(_previous_pathname !== "" ? _previous_pathname: "/gallery");
     };
 
     _open_editor = () => {
@@ -906,7 +938,7 @@ class Gallery extends React.Component {
 
     render() {
 
-        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _post_author, _post_permlink, _loading_posts, _selected_locales_code } = this.state;
+        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _updating_dimension } = this.state;
         const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index } = this.state;
 
         const width = _window_width;
@@ -966,21 +998,18 @@ class Gallery extends React.Component {
 
                 {
                     _posts.length ?
-                        <div className={classes.masonry}>
+                        <div className={ _cell_positioner !== null && _updating_dimension === false ? classes.masonry: classes.masonryHidden}>
                             {masonry_element}
                         </div>:
                         <div className={classes.noPosts} style={{height: post_list_height}}>
                             {
                                 _loading_posts ?
-                                    <Fade in timeout={75}>
-                                        <div>
-                                            <h1>Please wait...</h1>
-                                            {_is_search_mode && <h5>Powered in partnership with Ecency.com</h5>}
-                                        </div>
-                                    </Fade>:
-                                    <Fade in timeout={75}>
-                                        <div><h1>Nothing to show you.</h1></div>
-                                    </Fade>
+                                    <div key={"loading_posts"}>
+                                        <h1><ShufflingSpanText  animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: "Noto Sans Mono"}} text={"Please wait..."}/></h1>
+                                        {_is_search_mode && <h5>Powered in partnership with Ecency.com</h5>}
+                                    </div>:
+                                    <div key={"not_loading_posts"}><h1><ShufflingSpanText animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: "Noto Sans Mono"}} text={"Nothing to show you."}/></h1></div>
+
                             }
                         </div>
                 }

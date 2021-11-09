@@ -204,6 +204,8 @@ class PixelArtCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            index: props.index || 0,
+            fade_in: props.fade_in || 0,
             classes: props.classes,
             post: props.post,
             is_loading: props.is_loading || false,
@@ -211,8 +213,20 @@ class PixelArtCard extends React.Component {
             hbd_market: props.hbd_market,
             selected_currency: props.selected_currency,
             selected_locales_code: props.selected_locales_code,
+            _shown: props.fade_in ? false: true,
         };
     };
+
+    componentDidMount() {
+
+        setTimeout(() => {
+
+            this.setState({_shown: true},() =>{
+
+                this.forceUpdate();
+            });
+        }, this.state.fade_in)
+    }
 
     shouldComponentUpdate(new_props) {
 
@@ -230,7 +244,7 @@ class PixelArtCard extends React.Component {
 
     render() {
 
-        const { classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading } = this.state;
+        const { classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading, _shown, fade_in } = this.state;
 
         if(!post){ return <div></div>;}
 
@@ -241,7 +255,7 @@ class PixelArtCard extends React.Component {
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
 
         return (
-            <Card elevation={0} className={classes.card} score={Math.round(post.voting_ratio / 10) * 10} dataselected={selected ? "true": "false"}>
+            <Card elevation={0} className={classes.card} style={_shown ? {opacity: 1, transition: `opacity 175ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`}: {opacity: 0, transition: "opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"}} score={Math.round(post.voting_ratio / 10) * 10} dataselected={selected ? "true": "false"}>
                 <CardActionArea>
                     <div style={{position: "relative", overflow: "hidden"}}>
                         <CardMedia

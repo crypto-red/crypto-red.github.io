@@ -171,15 +171,15 @@ function _preprocess_text(content) {
     content = content.replace(tag_text_regex, function(match){
 
         const url = "/newest/search/tag:" + match.toLowerCase().replace("#", "").replace(" ", "");
-        return` [${origin}/gallery${url}](${match.replaceAll(" ", "")})`;
+        return ` [${match.replaceAll(" ", "")}](${origin}/gallery${url})`;
     });
 
     /* RENDER USERNAME */
     const username_text_regex = / @[a-zA-Z0-9-.]+/gm;
     content = content.replace(username_text_regex, function(match){
 
-        const url = "/@" + match.toLowerCase().replace("@", "").replace(" ", "");
-        return` [${origin}/gallery/recent${url}](${match.replaceAll(" ", "")})`;
+        const username = + match.toLowerCase().replace("@", "").replace(" ", "");
+        return` [${match.replaceAll(" ", "")}](${origin}/gallery/newest/search/@${username})`;
     });
 
     return content;
