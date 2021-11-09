@@ -198,6 +198,7 @@ function _format_post(post) {
     const metadata_language = metadata.language || "unknown";
 
     const app = metadata.app || "unknown";
+    const responsabilities = metadata.responsabilities || [];
     const description = _preprocess_text(content);
     const title = post.title;
     let metadata_tags = metadata.tags || [post.category];
@@ -248,10 +249,9 @@ function _format_post(post) {
         positive_votes,
         negative_votes,
         voting_ratio,
-        metadata: {
-            language: metadata_language,
-            app: app
-        }
+        responsabilities,
+        language: metadata_language,
+        app: app,
     };
 }
 
@@ -666,7 +666,7 @@ function get_hive_posts(parameters, callback_function) {
     });
 }
 
-function post_hive_pixel_art(title, image, description, tags, username, master_key, callback_function) {
+function post_hive_pixel_art(title, image, description, tags, metadata, username, master_key, callback_function) {
 
     tags.splice(tags.indexOf("pixel-art"), 1);
 
@@ -678,10 +678,11 @@ function post_hive_pixel_art(title, image, description, tags, username, master_k
         "Made with the [pixel art editor](https://wallet.crypto.red/pixel) of wallet.crypto.red ([view post in W.C.R.](https://wallet.crypto.red/gallery/created/@" + username + "/" + permlink + ")).";
 
     tags.unshift("pixel-art");
-    post_hive_post(title, body, tags, username, permlink, master_key, callback_function);
+
+    post_hive_post(title, body, tags, metadata, username, permlink, master_key, callback_function);
 }
 
-function post_hive_post(title, body, tags, username, permlink, master_key, callback_function) {
+function post_hive_post(title, body, tags, metadata, username, permlink, master_key, callback_function) {
 
     const APPLICATION_RELEASE = "CRYPTO.RED 0.0.4";
     const REWARD_BENEFICIARIES = [
@@ -692,10 +693,11 @@ function post_hive_post(title, body, tags, username, permlink, master_key, callb
     ];
 
     const category = tags[0];
-    const metadata = {
+    const md = {
         tags: tags,
         image: [],
-        app: APPLICATION_RELEASE
+        app: APPLICATION_RELEASE,
+        ...metadata,
     };
 
     function option_callback_function(error, result) {
@@ -744,7 +746,7 @@ function post_hive_post(title, body, tags, username, permlink, master_key, callb
             permlink,
             title,
             body,
-            metadata,
+            md,
             option_callback_function
         );
     }else {

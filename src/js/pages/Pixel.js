@@ -960,11 +960,11 @@ class Pixel extends React.Component {
     _handle_post_pixel_art = (data) => {
 
         const { _logged_account } = this.state;
-        const {title, description, image, tags} = data;
+        const {title, description, image, tags, metadata} = data;
 
         if(_logged_account.hive_username) {
 
-            post_hive_pixel_art(title, image, description, tags, _logged_account.hive_username, _logged_account.hive_password, (err, res) => {
+            post_hive_pixel_art(title, image, description, tags, metadata, _logged_account.hive_username, _logged_account.hive_password, (err, res) => {
 
                 if(!err) {
 
@@ -1499,7 +1499,7 @@ class Pixel extends React.Component {
                             <li>Displace FIAT currency.</li>
                             <li>Disrupt theoretical monopoly over mainstream social media.</li>
                             <li>Bring back power to the people trough autonomy and algorithms.</li>
-                            <li>Not be denied.</li>
+                            <li>Not be denied. Dissuade others.</li>
                         </ul>
                         <p><blockquote style={{color: "#888"}}>With you letting it be an act of freedom against slavery and backward evolution along with a standard of quality to decentralise world's largest power that be, are, and sometimes shouldn't be there...</blockquote></p>
                     </DialogContent>

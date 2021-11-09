@@ -286,7 +286,7 @@ class Gallery extends React.Component {
         const search_sorting_changed = this.state._search_sorting_tab_index !== state._search_sorting_tab_index;
         const search_mode_query_changed = this.state._search_mode_query !== state._search_mode_query;
 
-        let get_post = Boolean(!state._is_search_mode && state._post_author && state._post_permlink && (state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink) && !this.state._post);
+        let get_post = Boolean(state._post_author && state._post_permlink && (state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink) && !this.state._post);
         let closed_search = Boolean(
             (!state._is_search_mode && this.state._is_search_mode && this.state._search_mode_query !== "") ||
             (state._search_mode_query === "" && this.state._search_mode_query !== "")
@@ -341,6 +341,11 @@ class Gallery extends React.Component {
         }else {
 
             this._load_more_posts();
+        }
+
+        if(this.state._post_author && this.state._post_permlink) {
+
+            this._get_post();
         }
     };
 

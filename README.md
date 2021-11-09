@@ -47,6 +47,6 @@ Just like **IF WE WERE in a state of cold war, declared between crypto and banki
  * Displace FIAT currency.
  * Disrupt theoretical monopoly over mainstream social media.
  * Bring back power to the people trough autonomy and algorithms.
- * Not be denied.
+ * Not be denied. Dissuade others.
 
 With you letting it be an act of freedom against slavery and backward evolution along with a standard of quality to decentralise world's largest power that be, are, and sometimes shouldn't be there...

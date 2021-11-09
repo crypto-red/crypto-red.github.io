@@ -40,6 +40,12 @@ import EyeIcon from "../icons/Eye";
 import Grow from "@material-ui/core/Grow";
 import Chip from "@material-ui/core/Chip";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import FormLabel from "@material-ui/core/FormLabel";
+import FormControl from "@material-ui/core/FormControl";
+import FormGroup from "@material-ui/core/FormGroup";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
+import FormHelperText from "@material-ui/core/FormHelperText";
+import Checkbox from "@material-ui/core/Checkbox";
 
 import * as toxicity from "@tensorflow-models/toxicity";
 import {lookup_hive_accounts_name} from "../utils/api";
@@ -203,6 +209,17 @@ const styles = theme => ({
             paddingBottom: "48px",
         },
     },
+    nsTags: {
+        padding: theme.spacing(1, 0, 2, 0),
+        "& > span": {
+            borderRadius: 2,
+            marginRight: 6,
+            padding: 4,
+            fontSize: 8,
+            backgroundColor: theme.palette.secondary.dark,
+            color: "#ffffff",
+        },
+    },
     drawerHeader: {
         position: "relative",
         background: "#fff",
@@ -274,6 +291,9 @@ const styles = theme => ({
         "& svg": {
             marginRight: 4
         },
+    },
+    formControl: {
+        marginTop: theme.spacing(2),
     },
     chip: {
         marginRight: 4,
@@ -352,6 +372,11 @@ class PixelDialogPost extends React.Component {
             _has_translation_started: false,
             _is_description_collapsed: true,
             _history: HISTORY,
+            _responsabilities: {
+                unsourced: true,
+                opinion: true,
+                hurt: true,
+            }
         };
     };
 
@@ -558,6 +583,11 @@ class PixelDialogPost extends React.Component {
             _translated_title: "",
             _has_translation_started: false,
             _is_description_collapsed: true,
+            _responsabilities:{
+                unsourced: true,
+                opinion: true,
+                hurt: true,
+            }
         }, () => {
 
             this.forceUpdate();
@@ -812,7 +842,7 @@ class PixelDialogPost extends React.Component {
 
     _handle_send_click = (event) => {
 
-        const { _title_input, _description_input, _tags_input, post } = this.state;
+        const { _title_input, _description_input, _tags_input, _responsabilities, post } = this.state;
 
         if(this.props.onRequestSend) {
 
@@ -821,6 +851,9 @@ class PixelDialogPost extends React.Component {
                 description: _description_input,
                 image: post.image,
                 tags: _tags_input,
+                metadata: {
+                    responsabilities: _responsabilities,
+                },
             });
         }
     }
@@ -1012,6 +1045,14 @@ class PixelDialogPost extends React.Component {
         _history.push(`/gallery/newest/search/tag:${(tags[1] || tags[0])}`);
     };
 
+    handle_disclaimer_change = (event) => {
+
+        let { _responsabilities } = this.state;
+        _responsabilities[event.target.name] = event.target.checked;
+
+        this.setState({ _responsabilities });
+    };
+
     render() {
 
         const {
@@ -1040,6 +1081,7 @@ class PixelDialogPost extends React.Component {
             keepMounted,
             selected_locales_code,
             _is_description_collapsed,
+            _responsabilities,
         } = this.state;
 
         const post = this.state.post || {};
@@ -1159,6 +1201,30 @@ class PixelDialogPost extends React.Component {
                                     <div className={classes.contentDrawer}>
                                         <CardContent>
                                             {
+                                                !edit && post &&
+                                                <div className={classes.nsTags}>
+                                                    {Object.entries(post.responsabilities || {}).map((entry) => {
+
+                                                        const [ key, value ] = entry;
+
+                                                        const r_text = {
+                                                            unsourced: "He/She did not paint or take this photo himself or the source image doesn't belong to him/her.",
+                                                            opinion: "This post is NOT a press-release or a checked-fact. It is only his/her experience and / or a personal perception-description.",
+                                                            hurt: "This post contains nudity, hate, madness, or anything that may disturb someone else's freedom of expression. (NSFW)"
+                                                        };
+
+                                                        if(["unsourced", "opinion","hurt"].includes(key)) {
+
+                                                            return (
+                                                                <Tooltip title={r_text[key]}>
+                                                                    <span style={value ? {}: {textDecoration: "line-through"}}>{value ? "YES: ": "NO: "}{key}</span>
+                                                                </Tooltip>
+                                                            );
+                                                        }
+                                                    })}
+                                                </div>
+                                            }
+                                            {
                                                 !edit && TRANSLATION_AVAILABLE.includes(lang) &&
                                                     <Button disabled={is_translating} onClick={this._toggle_translate_everything}
                                                             startIcon={has_translated ? <TranslateOffIcon />: <TranslateIcon />}>
@@ -1258,6 +1324,27 @@ class PixelDialogPost extends React.Component {
                                                             })
                                                         }
                                                     </div>
+                                            }
+                                            {
+                                                edit &&
+                                                <FormControl component="fieldset" className={classes.formControl}>
+                                                    <FormLabel component="legend">Assign responsibilities</FormLabel>
+                                                    <FormGroup>
+                                                        <FormControlLabel
+                                                            control={<Checkbox checked={_responsabilities.unsourced} onChange={this.handle_disclaimer_change} name="unsourced" />}
+                                                            label="I did not paint or take this photo myself or the source image doesn't belong to me."
+                                                        />
+                                                        <FormControlLabel
+                                                            control={<Checkbox checked={_responsabilities.opinion} onChange={this.handle_disclaimer_change} name="opinion" />}
+                                                            label="This post is NOT a press-release or a checked-fact. It is only my experience and / or my own perception-description."
+                                                        />
+                                                        <FormControlLabel
+                                                            control={<Checkbox checked={_responsabilities.hurt} onChange={this.handle_disclaimer_change} name="hurt" />}
+                                                            label="This post contains nudity, hate, madness, or anything that may disturb someone else's freedom of expression. (NSFW)"
+                                                        />
+                                                    </FormGroup>
+                                                    <FormHelperText>Be careful!</FormHelperText>
+                                                </FormControl>
                                             }
                                             {
                                                 edit &&

@@ -8,6 +8,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
+import Tooltip from "@material-ui/core/Tooltip";
 
 import EyeIcon from "../icons/Eye";
 
@@ -129,6 +130,20 @@ const styles = theme => ({
         },
         width: "100%",
         height: "100%",
+    },
+    nsTags: {
+        position: "absolute",
+        left: 0,
+        top: 0,
+        padding: theme.spacing(1),
+        "& > span": {
+            borderRadius: 2,
+            marginRight: 6,
+            padding: 4,
+            fontSize: 8,
+            backgroundColor: theme.palette.secondary.dark,
+            color: "#ffffff",
+        },
     },
     cardContent: {
         position: "relative",
@@ -267,6 +282,27 @@ class PixelArtCard extends React.Component {
                         />
                         <div className={classes.cardMediaOverlay}
                              onClick={(event) => {this.props.on_card_media_click(post, event)}}>
+                            <div className={classes.nsTags}>
+                                {Object.entries(post.responsabilities).map((entry) => {
+
+                                    const [ key, value ] = entry;
+
+                                    const r_text = {
+                                        unsourced: "He/She did not paint or take this photo himself or the source image doesn't belong to him/her.",
+                                        opinion: "This post is NOT a press-release or a checked-fact. It is only his/her experience and / or a personal perception-description.",
+                                        hurt: "This post contains nudity, hate, madness, or anything that may disturb someone else's freedom of expression. (NSFW)"
+                                    };
+
+                                    if(["unsourced", "opinion","hurt"].includes(key)) {
+
+                                        return (
+                                            <Tooltip title={r_text[key]}>
+                                                <span style={value ? {}: {textDecoration: "line-through"}}>{value ? "YES: ": "NO: "}{key}</span>
+                                            </Tooltip>
+                                        );
+                                    }
+                                })}
+                            </div>
                             <EyeIcon style={{color: "#ffffff"}} width={36} height={36}/>
                         </div>
                     </div>

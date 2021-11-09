@@ -13,6 +13,9 @@ const overrides = {
                 overflow: "overlay",
                 overscrollBehavior: "none",
             },
+            blockquote: {
+                color: "#666"
+            },
             ".emoji": {
                 verticalAlign: "middle",
                 height: "1em",
