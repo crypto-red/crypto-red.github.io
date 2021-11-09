@@ -27,16 +27,27 @@ The emoji graphics are licensed under the CC-BY 4.0 by Twitter. Thanks to their 
 
 ## Information
 
-They not only want to deny the art but as the global delusional/delirious state of mind spreads more and more in existence, we say it as widely to achieve together, as in other words , computing (information technology), that is to say the fact of: **"making daily life a creative experience, continually original-delusional-ecstatic"**, is a difficult process and a powerful lever. Just as if we were in a crypto-bank stated cold-war, our technological and engineering competence were to be exploited to the maximum. And with it,
+They not only want to deny the art but as the global delusional/delirious state of mind spreads more and more in existence but we say it as widely and openly to achieve together, information technology improvements, (as in other words, computing, that is to say the fact of: "making daily life a creative experience, continually original-delusional-ecstatic"), is a difficult process and a powerful thing.
 
-> Whoever you may be, a yakuza or a former bankster, You can enjoy this platform through this site with ease and without fear.
 
-**And with it, we, as contributors, started to:**
+Just as if we were in a crypto-bank stated cold-war, our technological and engineering competence were to be exploited to the maximum. And with it,
 
- * Counter quantum-computer.
- * Displace FIAT currency.
- * Disrupt theoretical monopoly over mainstream social media.
- * Bring back power to the people trough autonomy and algorithms.
- * Not be denied with fear not belonging to a pure frequency.
 
-With you let it be an act of freedom against slavery and backward evolution along with a standard of quality to decentralise world's largest power that be, are, and sometimes shouldn't be there...
+Whoever you may be, a yakuza, a "pebble incarnation because you don't move" or a former bankster, You can enjoy this platform through this site with ease and without fear of the unknown.
+
+
+And with IT, we, as contributors, started to:
+
+
+Counter quantum-computer.
+
+Displace FIAT currency.
+
+Disrupt theoretical monopoly over mainstream social media.
+
+Bring back power to the people trough autonomy and algorithms.
+
+Not be denied.
+
+
+With you letting it be an act of freedom against slavery and backward evolution along with a standard of quality to decentralise world's largest power that be, are, and sometimes shouldn't be there...

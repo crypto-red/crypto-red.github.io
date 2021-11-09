@@ -1488,10 +1488,10 @@ class Pixel extends React.Component {
                         <p className={classes.blueCenter}><ShufflingSpanText  animation_delay_ms={777} animation_duration_ms={1111} style={{fontFamily: "Noto Sans Mono"}} pre={"+ - "} app={" - +"} text={"Uniquely, we are free. Together we are strong!"}/></p>
                         <p><blockquote style={{color: "#888"}}>Jamy (the assistant) told its developers to forge not works of art but swords of technology, he cares of what we don't so here we have this useless informative dialog and for therein lies great art...</blockquote></p>
                         <p>The only way to create a natural exposition of the current world situation is to take the notion of macro-state that you are a part of, in your own heart, and redesign it to suit your own mind or soul.</p>
-                        <p>Now in broader terms we have said that our future will be the creation and collection of situations, maybe situations for nothing and / or sometimes with nothingness and ease ...<br/>Situation that "they" wanted and maybe they wanted to devalue everything that was part of modern society to be human, but it is safe for them, the art market, art talking about art , or something that would have to be deeper meaning.</p>
-                        <p>They not only want to deny the art but as the global delusional/delirious state of mind spreads more and more in existence, we say it as widely to achieve together, as in other words , computing (information technology), that is to say the fact of: <b>"making daily life a creative experience, continually original-delusional-ecstatic"</b>, is a difficult process and a powerful lever. Just as if we were in a crypto-bank stated cold-war, our technological and engineering competence were to be exploited to the maximum. And with it,</p>
-                        <p><blockquote style={{color: "#888"}}>Whoever you may be, a yakuza or a former bankster, You can enjoy this platform through this site with ease.</blockquote></p>
-                        <p>And with it, we, as contributors, started to:</p>
+                        <p>Now in broader terms we have said that our future will be the creation and collection of situations, maybe situations for nothing and / or sometimes with nothingness and ease ...<br/>Situation that "they" wanted and maybe they wanted to devalue everything that was part of modern society to be yet human, but it is safe for them, the art market, art talking about art, or something that would have to be a lot deeper we meant.</p>
+                        <p>They not only want to deny the art but as the global delusional/delirious state of mind spreads more and more in existence but we say it as widely and openly to achieve together, information technology improvements, (as in other words, computing, that is to say the fact of: <b>"making daily life a creative experience, continually original-delusional-ecstatic"</b>), is a difficult process and a powerful thing.<br /> Just as if we were in a crypto-bank stated cold-war, our technological and engineering competence were to be exploited to the maximum. And with it,</p>
+                        <p><blockquote style={{color: "#888"}}>Whoever you may be, a yakuza, a "pebble incarnation because you don't move" or a former bankster, You can enjoy this platform through this site with ease and without fear of the unknown.</blockquote></p>
+                        <p>And with IT, we, as contributors, started to:</p>
                         <ul>
                             <li>Counter quantum-computer.</li>
                             <li>Displace FIAT currency.</li>
@@ -1499,7 +1499,7 @@ class Pixel extends React.Component {
                             <li>Bring back power to the people trough autonomy and algorithms.</li>
                             <li>Not be denied.</li>
                         </ul>
-                        <p>With you.</p>
+                        <p><blockquote style={{color: "#888"}}>With you letting it be an act of freedom against slavery and backward evolution along with a standard of quality to decentralise world's largest power that be, are, and sometimes shouldn't be there...</blockquote></p>
                     </DialogContent>
                     <DialogActions>
                         <Button variant="text" color="primary" autoFocus onClick={this._handle_dialog_info_close}><ShufflingSpanText animation_delay_ms={444} animation_duration_ms={999} text={t( "words.close" )}/></Button>
