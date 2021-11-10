@@ -220,7 +220,7 @@ class AccountDialogProfileHive extends React.Component {
                     className={classes.dialogPaper}
                     keepMounted>
                 <Card className={classes.card}>
-                    <CardHeader className={classes.cardHeader} style={{backgroundSize: "cover !important", backgroundImage: _account.metadata ? `url(${_account.metadata.profile.cover_image})`: ""}}>
+                    <CardHeader className={classes.cardHeader} style={{backgroundSize: "cover !important", backgroundImage: _account.metadata ? `url(${_account.cover_image})`: ""}}>
                         <div className={classes.cardHeaderTop}></div>
                         <div className={classes.cardHeaderBottom}>
                             <div className={classes.cardHeaderBottomLeft}></div>
@@ -228,11 +228,11 @@ class AccountDialogProfileHive extends React.Component {
                         </div>
                     </CardHeader>
                     <div className={classes.cardImageBox}>
-                        <div className={classes.cardImage} style={{backgroundSize: "cover !important", backgroundImage: _account.metadata ? `url(${_account.metadata.profile.profile_image})`: ""}}></div>
+                        <div className={classes.cardImage} style={{backgroundSize: "cover !important", backgroundImage: _account.profile_image ? `url(${_account.profile_image})`: ""}}></div>
                     </div>
                     <CardContent className={classes.cardContent}>
                         <div className={classes.cardContentUserame}>{"@" + (account_name || "").replace("@", "")}</div>
-                        <div className={classes.cardContentUserDescription}>{_account.metadata ? _account.metadata.profile.about: "..."}</div>
+                        <div className={classes.cardContentUserDescription}>{_account.about ? _account.about: "..."}</div>
                     </CardContent>
                     <div className={classes.cardTabsContainer}>
                         <Tabs variant="fullWidth" textColor="primary" value={0}>

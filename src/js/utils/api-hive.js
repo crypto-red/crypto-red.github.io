@@ -134,16 +134,11 @@ function _format_account(account) {
     const account_formatted = {
         name: account.name,
         memo_key: account.memo_key,
-        metadata: {
-            profile: {
-                profile_image: parsed_json_metadata.profile.profile_image,
-                cover_image: parsed_json_metadata.profile.cover_image,
-                about: parsed_json_metadata.profile.about,
-                name: parsed_json_metadata.profile.name,
-                location: parsed_json_metadata.profile.location,
-                website: parsed_json_metadata.profile.website
-            }
-        },
+        profile_image: parsed_json_metadata.profile.profile_image,
+        cover_image: parsed_json_metadata.profile.cover_image,
+        about: parsed_json_metadata.profile.about,
+        location: parsed_json_metadata.profile.location,
+        website: parsed_json_metadata.profile.website,
         wallet: {
             saved_hive,
             saved_hbd,

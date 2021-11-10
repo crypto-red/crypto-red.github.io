@@ -37,6 +37,7 @@ import AtmIcon from "@material-ui/icons/Atm";
 import FeedbackIcon from "@material-ui/icons/Feedback";
 import ForumIcon from "@material-ui/icons/Forum";
 import ChemistryEmojiIcon from "../twemoji/react/1F9Ea";
+import CoolEmojiSvg from "../twemoji/react/1F60E";
 
 import QrCodeScanIcon from "../icons/QrCodeScan";
 import CryptDialog from "../components/CryptDialog";
@@ -56,6 +57,11 @@ const styles = theme => ({
     iconLeft: {
         color: theme.palette.secondary.contrastText,
         marginRight: theme.spacing(1),
+        height: "1.25em",
+    },
+    iconRight: {
+        color: theme.palette.secondary.contrastText,
+        marginLeft: theme.spacing(1),
         height: "1.25em",
     },
     flipExpandMoreIcon: {
@@ -413,7 +419,7 @@ class DrawerContent extends React.Component {
                     <List>
                         <ListItem button onClick={this._open_gallery_page}>
                             <ChemistryEmojiIcon className={classes.iconLeft}/>
-                            <ListItemText primary={"NFTs [Demo]"} />
+                            <ListItemText primary={"NFTs [Pixel Art]"} />
                         </ListItem>
                         <ListItem button onClick={this._open_dashboard_page}>
                             <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />

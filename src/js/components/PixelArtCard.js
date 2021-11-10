@@ -140,7 +140,7 @@ const styles = theme => ({
             borderRadius: 2,
             marginRight: 6,
             padding: 4,
-            fontSize: 8,
+            fontSize: 10,
             backgroundColor: theme.palette.secondary.dark,
             color: "#ffffff",
         },
@@ -259,11 +259,11 @@ class PixelArtCard extends React.Component {
 
     render() {
 
-        const { classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading, _shown, fade_in } = this.state;
+        const { classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading, _shown  } = this.state;
 
         if(!post){ return <div></div>;}
 
-        const vote_number = (post.positive_votes || 0) + (post.negative_votes || 0);
+        const vote_number = (post.active_votes || []).length;
         const tags = post.tags ? post.tags: [];
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
@@ -296,8 +296,8 @@ class PixelArtCard extends React.Component {
                                     if(["unsourced", "opinion","hurt"].includes(key)) {
 
                                         return (
-                                            <Tooltip title={r_text[key]}>
-                                                <span style={value ? {}: {textDecoration: "line-through"}}>{value ? "YES: ": "NO: "}{key}</span>
+                                            <Tooltip title={r_text[key] + (value ? " [TRUE]": " [FALSE]")}>
+                                                <span style={value ? {}: {textDecoration: "line-through"}}>{key}</span>
                                             </Tooltip>
                                         );
                                     }
@@ -320,7 +320,7 @@ class PixelArtCard extends React.Component {
                 <CardActions className={classes.cardActions}>
                     <span className={classes.postValue}>
                         <span>{price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span> /
-                        <span> {vote_number} Votes</span> /
+                        <span style={{cursor: "pointer"}} onClick={(event) => {this.props.on_votes_click(event, post.active_votes)}}> {vote_number} Votes</span> /
                         <span style={{cursor: "pointer"}} onClick={() => {this.props.on_author_click(post.author)}}> @{post.author}</span>
                     </span>
                 </CardActions>

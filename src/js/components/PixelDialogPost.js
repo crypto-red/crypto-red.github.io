@@ -215,7 +215,7 @@ const styles = theme => ({
             borderRadius: 2,
             marginRight: 6,
             padding: 4,
-            fontSize: 8,
+            fontSize: 10,
             backgroundColor: theme.palette.secondary.dark,
             color: "#ffffff",
         },
@@ -1131,12 +1131,8 @@ class PixelDialogPost extends React.Component {
                                     <div className={classes.drawerHeader}>
                                         <CardHeader
                                             avatar={
-                                                <Avatar aria-label="Author" className={classes.avatar}>
-                                                    {
-                                                        author_account.metadata ?
-                                                            <img src={author_account.metadata.profile.profile_image} />:
-                                                            (post.author || "").slice(0, 1)
-                                                    }
+                                                <Avatar aria-label="Author" className={classes.avatar} src={(author_account.profile_image || "").replace("/0x0/", "/40x40/")}>
+                                                    {!author_account.name || post.author}
                                                 </Avatar>
                                             }
                                             title={

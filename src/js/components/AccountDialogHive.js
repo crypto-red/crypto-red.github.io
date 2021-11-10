@@ -250,11 +250,11 @@ class AccountDialogHive extends React.Component {
                                             <div>
                                                 <ListItem>
                                                     <ListItemAvatar>
-                                                        <Avatar style={{backgroundColor: "transparent"}} alt={option.original.metadata.profile.name || option.original.name} src={option.original.metadata.profile.profile_image}>
+                                                        <Avatar style={{backgroundColor: "transparent"}} alt={option.original.name || option.original.name} src={(option.original.profile_image || "").replace("/0x0/", "/40x40/")}>
                                                             <Jdenticon size="48" value={option.original.name} />
                                                         </Avatar>
                                                     </ListItemAvatar>
-                                                    <ListItemText primary={<span dangerouslySetInnerHTML={{ __html: "@" + option.string }}></span>} secondary={option.original.metadata.profile.name} />
+                                                    <ListItemText primary={<span dangerouslySetInnerHTML={{ __html: "@" + option.string }}></span>} secondary={option.original.name} />
                                                 </ListItem>
                                                 <Divider variant="inset" component="li" />
                                             </div>

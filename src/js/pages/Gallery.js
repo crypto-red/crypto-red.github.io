@@ -5,7 +5,6 @@ import { withStyles } from "@material-ui/core/styles";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import AppBar from "@material-ui/core/AppBar";
-import Fade from "@material-ui/core/Fade";
 
 import ClockIcon from "../icons/Clock";
 import TimeIcon from "../icons/Time";
@@ -19,6 +18,7 @@ import PixelDialogPost from "../components/PixelDialogPost";
 import PixelArtCard from "../components/PixelArtCard";
 import AccountDialogProfileHive from "../components/AccountDialogProfileHive";
 import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
+import MenuVotesPixelPost from "../components/MenuVotesPixelPost";
 
 import { search_on_hive, get_hive_posts, get_hive_post, vote_on_hive_post } from "../utils/api"
 import actions from "../actions/utils";
@@ -259,6 +259,9 @@ class Gallery extends React.Component {
             _reaction_selected_post: {},
             _reaction_voted_result: null,
             _reaction_selected_post_loading: false,
+
+            _votes_anchor: null,
+            _votes: [],
 
         };
     };
@@ -615,7 +618,8 @@ class Gallery extends React.Component {
                         on_author_click={this._handle_set_selected_account}
                         on_card_media_click={this._handle_art_open}
                         on_card_content_click={selected ? this._handle_art_open: this._handle_art_focus}
-                        on_reaction_click={this._handle_art_reaction}/>
+                        on_reaction_click={this._handle_art_reaction}
+                        on_votes_click={this._handle_votes_menu_open}/>
                 </div>
             </CellMeasurer>
         );
@@ -941,10 +945,20 @@ class Gallery extends React.Component {
         _history.push("/pixel");
     }
 
+    _handle_votes_menu_open = (event, votes) => {
+
+        this.setState({_votes_anchor: event.currentTarget, _votes: votes});
+    };
+
+    _handle_votes_menu_close = (event, votes) => {
+
+        this.setState({_votes_anchor: null, _votes: []});
+    };
+
     render() {
 
         const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _updating_dimension } = this.state;
-        const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index } = this.state;
+        const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
 
         const width = _window_width;
         const height = _window_height;
@@ -1024,6 +1038,11 @@ class Gallery extends React.Component {
                     voted_result={_reaction_voted_result}
                     on_close={this._handle_reaction_menu_close}
                     on_vote={this._handle_vote} />
+
+                <MenuVotesPixelPost
+                    anchor={_votes_anchor}
+                    votes={_votes}
+                    on_close={this._handle_votes_menu_close} />
 
                 <PixelDialogPost
                     selected_locales_code={_selected_locales_code}
