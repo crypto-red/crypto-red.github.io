@@ -1,5 +1,8 @@
 import hiveJS from "@hiveio/hive-js";
 import { ChainTypes, makeBitMaskFilter } from "@hiveio/hive-js/lib/auth/serializer";
+import sumBasic  from "node-sumbasic/src";
+
+
 import PouchDB from "pouchdb";
 import {postJSON} from "./load-json";
 import {clean_json_text} from "./json";
@@ -195,6 +198,9 @@ function _format_post(post) {
     const app = metadata.app || "unknown";
     const responsabilities = metadata.responsabilities || [];
     const description = _preprocess_text(content);
+
+    let summary = sumBasic(description.split("\n"), 20);
+
     const title = post.title;
     let metadata_tags = metadata.tags || [post.category];
     metadata_tags = metadata_tags.map(function(tag){
@@ -231,6 +237,7 @@ function _format_post(post) {
         image,
         root_title: post.root_title,
         description,
+        summary,
         active_reposts: post.reblogged_by,
         comments: post.children,
         tags: metadata_tags,

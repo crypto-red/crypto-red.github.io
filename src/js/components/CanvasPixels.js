@@ -153,6 +153,7 @@ const anim_loop = ( render, do_not_cancel_animation = false, force_update = fals
 };
 
 import React from "react";
+const workerpool = require('workerpool');
 
 class CanvasPixels extends React.Component {
 
@@ -320,6 +321,7 @@ class CanvasPixels extends React.Component {
 
         _intervals[0] = setInterval(() => {
             this._maybe_save_state();
+            this._update_canvas(true, true);
         }, 250);
 
         _intervals[1] = setInterval(() => {
@@ -332,7 +334,7 @@ class CanvasPixels extends React.Component {
 
         _intervals[3] = setInterval(() => {
             this._maybe_update_selection_highlight();
-        }, 1000 * 2/5);
+        }, 1000 * 2 / 5);
 
         _intervals[4] = setInterval(() => {
 
@@ -340,33 +342,33 @@ class CanvasPixels extends React.Component {
         }, 61);
 
         const body_css =
-            "body {"+
-                "touch-action:none;"+
+            "body {" +
+            "touch-action:none;" +
             "}";
 
         const pixelated_css =
-            ".Canvas-Pixels, .Canvas-Wrapper, .MuiTouchRipple-root {"+
-                "-ms-interpolation-mode: -webkit-optimize-contrast;" +
-                "image-rendering: nearest-neighbor;" +
-                "image-rendering: optimizeSpeed;" +
-                "image-rendering: -webkit-optimize-contrast;" +
-                "image-rendering: optimize-contrast;" +
-                "image-rendering: -o-pixelated;" +
-                "-ms-interpolation-mode: nearest-neighbor;" +
-                "image-rendering: pixelated;" +
-                "-ms-touch-action: none;" +
-                "touch-action: none;"+
+            ".Canvas-Pixels, .Canvas-Wrapper, .MuiTouchRipple-root {" +
+            "-ms-interpolation-mode: -webkit-optimize-contrast;" +
+            "image-rendering: nearest-neighbor;" +
+            "image-rendering: optimizeSpeed;" +
+            "image-rendering: -webkit-optimize-contrast;" +
+            "image-rendering: optimize-contrast;" +
+            "image-rendering: -o-pixelated;" +
+            "-ms-interpolation-mode: nearest-neighbor;" +
+            "image-rendering: pixelated;" +
+            "-ms-touch-action: none;" +
+            "touch-action: none;" +
             "}";
 
         const canvas_wrapper_css =
-            ".Canvas-Wrapper {"+
-                "transition: box-shadow 200ms 0ms cubic-bezier(0.4, 0, 0.2, 1) "+
-            "}"+
-            ".Canvas-Wrapper.MOVE:not(.Canvas-Focused), .Canvas-Wrapper.PICKER:not(.Canvas-Focused) {"+
-                "cursor: grab;"+
-            "}"+
-            ".Canvas-Wrapper.MOVE:active:not(.Canvas-Focused), .Canvas-Wrapper.PICKER:active:not(.Canvas-Focused) {"+
-                "cursor: grabbing;"+
+            ".Canvas-Wrapper {" +
+            "transition: box-shadow 200ms 0ms cubic-bezier(0.4, 0, 0.2, 1) " +
+            "}" +
+            ".Canvas-Wrapper.MOVE:not(.Canvas-Focused), .Canvas-Wrapper.PICKER:not(.Canvas-Focused) {" +
+            "cursor: grab;" +
+            "}" +
+            ".Canvas-Wrapper.MOVE:active:not(.Canvas-Focused), .Canvas-Wrapper.PICKER:active:not(.Canvas-Focused) {" +
+            "cursor: grabbing;" +
             "}";
 
         const canvas_style = document.createElement("style");
@@ -867,43 +869,64 @@ class CanvasPixels extends React.Component {
         const { previous_history_position, history_position, state_history } = JSON.parse(_json_state_history);
 
         let { _layers } = this.state;
+        let all_layers = [];
 
-        _layers = _layers.map((layer, index) => {
+        (async () => {
 
-            if(previous_history_position !== history_position) {
+             const maybe_set_layers = () => {
 
-                if(typeof state_history[previous_history_position]._layers[index] !== "undefined" && typeof state_history[history_position]._layers[index] !== "undefined") {
+                if(all_layers.length === _layers.length) {
+                    this.setState({_layers: all_layers}, () => {
 
-                    if(
-                        state_history[previous_history_position]._s_pxls[index] !== state_history[history_position]._s_pxls[index] ||
-                        state_history[previous_history_position]._s_pxl_colors[index] !== state_history[history_position]._s_pxl_colors[index] ||
-                        state_history[previous_history_position]._layers[index].opacity !== state_history[history_position]._layers[index].opacity ||
-                        state_history[previous_history_position]._layers[index].hidden !== state_history[history_position]._layers[index].hidden ||
-                        state_history[previous_history_position]._layers[index].id !== state_history[history_position]._layers[index].id
-                    ) {
-
-                        layer.thumbnail = this.get_layer_base64_png_data_url(index);
-                        layer.data = this.get_layer_data(index);
-                    }
-                }else {
-
-                    layer.thumbnail = this.get_layer_base64_png_data_url(index);
-                    layer.data = this.get_layer_data(index);
+                        this._notify_layers_change();
+                    });
                 }
-            }else if(parseInt(history_position) === 0) {
-
-                layer.thumbnail = this.get_layer_base64_png_data_url(index);
-                layer.data = this.get_layer_data(index);
             }
 
-            return layer;
-        });
+            _layers.forEach((layer, index) => {
 
-        this.setState({_layers}, () => {
+                if(previous_history_position !== history_position) {
 
-            this._notify_layers_change();
-        });
+                    if(typeof state_history[previous_history_position]._layers[index] !== "undefined" && typeof state_history[history_position]._layers[index] !== "undefined") {
 
+                        if(
+                            state_history[previous_history_position]._s_pxls[index] !== state_history[history_position]._s_pxls[index] ||
+                            state_history[previous_history_position]._s_pxl_colors[index] !== state_history[history_position]._s_pxl_colors[index] ||
+                            state_history[previous_history_position]._layers[index].opacity !== state_history[history_position]._layers[index].opacity ||
+                            state_history[previous_history_position]._layers[index].hidden !== state_history[history_position]._layers[index].hidden ||
+                            state_history[previous_history_position]._layers[index].id !== state_history[history_position]._layers[index].id
+                        ) {
+
+                            this.get_layer_base64_png_data_url(index, (thumbnail) => {
+
+                                layer.thumbnail = thumbnail;
+                                layer.data = this.get_layer_data(index);
+                                all_layers[index] = layer;
+                                maybe_set_layers();
+                            });
+                        }
+                    }else {
+
+                        this.get_layer_base64_png_data_url(index, (thumbnail) => {
+
+                            layer.thumbnail = thumbnail;
+                            layer.data = this.get_layer_data(index);
+                            all_layers[index] = layer;
+                            maybe_set_layers();
+                        });
+                    }
+                }else if(parseInt(history_position) === 0) {
+
+                    this.get_layer_base64_png_data_url(index, (thumbnail) => {
+
+                        layer.thumbnail = thumbnail;
+                        layer.data = this.get_layer_data(index);
+                        all_layers[index] = layer;
+                        maybe_set_layers();
+                    });
+                }
+            });
+        })();
     };
 
     get_layer_data = (layer_index) => {
@@ -915,15 +938,12 @@ class CanvasPixels extends React.Component {
         };
     };
 
-    get_layer_base64_png_data_url(layer_index) {
+    get_layer_base64_png_data_url = (layer_index, callback_function) => {
 
         const { pxl_width, pxl_height, _s_pxl_colors, _s_pxls } = this.state;
         const scale = 1;
 
-        let canvas = document.createElement("canvas");
-        canvas.width = pxl_width * scale;
-        canvas.height = pxl_height * scale;
-
+        let canvas = new OffscreenCanvas(pxl_width * scale, pxl_height * scale);
         let ctx = canvas.getContext('2d');
 
         _s_pxls[layer_index].forEach((pxl, index) => {
@@ -936,85 +956,362 @@ class CanvasPixels extends React.Component {
             ctx.fillRect(pos_x * scale, pos_y * scale, 1 * scale, 1 * scale);
         });
 
-        return canvas.toDataURL();
+        (async () => {
+
+            const to_data_URL = async (data) =>
+                new Promise(ok => {
+                    const reader = new FileReader();
+                    reader.addEventListener("load", () => ok(reader.result));
+                    reader.readAsDataURL(data);
+                });
+
+            const blob = await canvas.convertToBlob({type: "image/png"});
+            const url = await to_data_URL(blob);
+
+            callback_function(url);
+        })();
     };
 
-    _pxls_to_png = (pxls, pxl_colors, scale) => {
+    _pxls_to_png = async(pxls, pxl_colors, scale) => {
 
+        const process_function_string = `return async function(
+            pxl_width, 
+            pxl_height,
+            pxls, 
+            pxl_colors,
+            scale
+        ) {
+
+            var canvas = new OffscreenCanvas(pxl_width * scale, pxl_height * scale);
+            var ctx = canvas.getContext('2d');
+    
+            pxls.forEach((pxl, index) => {
+    
+                var pixel_color_hex = pxl_colors[pxl];
+    
+                var pos_x = index % pxl_width;
+                var pos_y = (index - pos_x) / pxl_width;
+    
+                ctx.fillStyle = pixel_color_hex;
+                ctx.fillRect(pos_x * scale, pos_y * scale, 1 * scale, 1 * scale);
+            });
+   
+            const to_data_URL = async (data) =>
+                new Promise(ok => {
+                    const reader = new FileReader();
+                    reader.addEventListener("load", () => ok(reader.result));
+                    reader.readAsDataURL(data);
+              });
+
+            const blob = await canvas.convertToBlob({type: "image/png"});
+            return await to_data_URL(blob);
+        }`;
+
+
+        let process_function = new Function(process_function_string)();
         const { pxl_width, pxl_height } = this.state;
-        let canvas = document.createElement("canvas");
-        canvas.width = pxl_width * scale;
-        canvas.height = pxl_height * scale;
 
-        let ctx = canvas.getContext('2d');
+        const pool = workerpool.pool();
+        let result = await pool.exec(process_function, [
+            pxl_width,
+            pxl_height,
+            pxls,
+            pxl_colors,
+            scale
+        ]).timeout(60000);
 
-        pxls.forEach((pxl, index) => {
-
-            const pixel_color_hex = pxl_colors[pxl];
-
-            const pos_x = index % pxl_width;
-            const pos_y = (index - pos_x) / pxl_width;
-
-            ctx.fillStyle = pixel_color_hex;
-            ctx.fillRect(pos_x * scale, pos_y * scale, 1 * scale, 1 * scale);
-        });
-
-        return canvas.toDataURL();
-
+        return result;
     };
 
-    get_base64_png_data_url(scale) {
+    get_base64_png_data_url(scale = 1, callback_function = () => {}) {
 
-        const { pxl_width, pxl_height, _s_pxl_colors, _layers, _layer_index, _s_pxls } = this.state;
-
-        let canvas = document.createElement("canvas");
-        canvas.width = pxl_width * scale;
-        canvas.height = pxl_height * scale;
-
-        let ctx = canvas.getContext('2d');
-
-        _s_pxls[0].forEach((pxl, index) => {
-
-            let layer_pixel_colors = [];
-            let start_i = -1;
-            start_i++;
-
-            for (let i = _s_pxl_colors.length - 1; i >= 0; i--) {
-
-                const layer_pixel_color = _s_pxl_colors[i][_s_pxls[i][index]];
-                layer_pixel_colors[i] = layer_pixel_color;
-                const [r, g, b, a] = layer_pixel_color;
-
-                if(a === 255) {
-
-                    start_i = i;
-                    break;
-                }
-
-            }
-
-            let pixel_color_hex = "#00000000";
-
-            for (let i = start_i; i < _s_pxl_colors.length ; i++) {
-
-                if(!_layers[i].hidden) {
-
-                    const layer_pixel_color = layer_pixel_colors[i];
-
-                    pixel_color_hex = this._blend_colors(pixel_color_hex, layer_pixel_color, _layers[i].opacity, false);
-                }
-            }
-
-            const pos_x = index % pxl_width;
-            const pos_y = (index - pos_x) / pxl_width;
-
-            ctx.fillStyle = pixel_color_hex;
-            ctx.fillRect(pos_x * scale, pos_y * scale, 1 * scale, 1 * scale);
-        });
-
-        return canvas.toDataURL();
-
+        this._get_base64_png_data_url(scale, callback_function)
     }
+
+    _get_base64_png_data_url = (scale = 1, callback_function = () => {}) => {
+
+        const process_function_string = `return async function(
+            pxl_width, 
+            pxl_height,
+            _s_pxls, 
+            _s_pxl_colors,
+            _layers,
+            scale
+        ) {
+        
+            function this_rgb_to_hsl(r, g, b) {
+
+                r /= 255, g /= 255, b /= 255;
+                let max = Math.max(r, g, b), min = Math.min(r, g, b);
+                let h, s, l = (max + min) / 2;
+
+                if(max == min){
+                    h = s = 0; // achromatic
+                }else{
+                    let d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch(max){
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
+                    }
+                    h /= 6;
+                }
+
+                return new Array(Math.round(h * 360), Math.round(s * 100), Math.round(l * 100));
+            }
+
+            function this_hsl_to_rgb(h, s, l) {
+
+                h /= 360;
+                s /= 100;
+                l /= 100;
+
+                let r, g, b;
+                if (s === 0) {
+                    r = g = b = l;
+                } else {
+                    function hue_to_rgb(p, q, t) {
+                        if (t < 0) t += 1;
+                        if (t > 1) t -= 1;
+                        if (t < 1 / 6) return p + (q - p) * 6 * t;
+                        if (t < 1 / 2) return q;
+                        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                        return p;
+                    }
+                    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                    const p = 2 * l - q;
+                    r = hue_to_rgb(p, q, h + 1 / 3);
+                    g = hue_to_rgb(p, q, h);
+                    b = hue_to_rgb(p, q, h - 1 / 3);
+                }
+
+                return new Array(r * 255, g * 255, b * 255);
+            }
+
+            function this_get_hex_values_from_rgba_values(r, g, b, a) {
+
+                return new Array(
+                    this_get_hex_value_from_rgb_value(r),
+                    this_get_hex_value_from_rgb_value(g),
+                    this_get_hex_value_from_rgb_value(b),
+                    this_get_hex_value_from_rgb_value(a)
+                );
+            }
+
+            function this_get_hex_color_from_rgba_values(r, g, b, a) {
+
+                const hex = this_get_hex_values_from_rgba_values(r, g, b, a);
+                return "#" + hex[0] + hex[1] + hex[2] + hex[3];
+            }
+
+            function this_get_rgba_from_hex(color) {
+
+                color = color || "#00000000";
+
+                const r = parseInt(color.substring(1, 3), 16);
+                const g = parseInt(color.substring(3, 5), 16);
+                const b = parseInt(color.substring(5, 7), 16);
+                const a = parseInt(color.substring(7, 9), 16);
+
+                return new Array(r, g, b, a);
+            }
+
+            function this_reduce_color(rgba_component, color_gain ) {
+
+                if(color_gain === 1) {
+
+                    return rgba_component;
+                }else {
+
+                    rgba_component++;
+                    let comp_by_gain = Math.round(rgba_component * color_gain) - 1;
+                    comp_by_gain = comp_by_gain < 0 ? 0: comp_by_gain;
+
+                    return Math.round(comp_by_gain / color_gain);
+                }
+            }
+
+            function this_get_hex_value_from_rgb_value(value) {
+
+                return Math.round(value).toString(16).padStart(2, "0");
+            }
+
+            function this_format_color(color) {
+
+                color = typeof color === "undefined" ? "#00000000": color;
+                // if color equals #fff -> #ffffff
+                color = color.length === 4 ? "#" + color.charAt(1) + color.charAt(1) + color.charAt(2) + color.charAt(2) + color.charAt(3) + color.charAt(3): color;
+                // if color equals #3333 -> #33333333
+                color = color.length === 5 ? "#" + color.charAt(1) + color.charAt(1) + color.charAt(2) + color.charAt(2) + color.charAt(3) + color.charAt(3) + color.charAt(4) + color.charAt(4): color;
+                // if color equals #000000 -> #000000ff (Alpha)
+                color = color.length === 7 ? color + "ff": color;
+                return color;
+            }
+
+            function this_match_color (color_a, color_b, threshold) {
+
+                threshold = typeof threshold === "undefined" ? null: threshold;
+
+                if(threshold === 1) {
+
+                    return true;
+                }else if(threshold === 0){
+
+                    return color_a === color_b;
+                }else {
+
+                    const threshold_256 = Math.round(threshold * 255);
+
+                    color_a = this_format_color(color_a);
+                    color_b = this_format_color(color_b);
+
+                    const c_a = this_get_rgba_from_hex(color_a);
+                    const c_b = this_get_rgba_from_hex(color_b);
+
+                    const a_diff = Math.abs(c_a[3] - c_b[3]);
+                    const r_diff = Math.abs(c_a[0] - c_b[0]);
+                    const g_diff = Math.abs(c_a[1] - c_b[1]);
+                    const b_diff = Math.abs(c_a[2] - c_b[2]);
+
+                    const a_diff_ratio = Math.abs(1 - a_diff / 255);
+
+                    if(threshold !== null) {
+
+                        return Boolean(r_diff < threshold_256 && g_diff < threshold_256 && b_diff < threshold_256 && a_diff < threshold_256);
+                    }else {
+
+                        return ((r_diff + g_diff + b_diff) / (255 * 3)) * a_diff_ratio;
+                    }
+                }
+            }
+
+            function this_blend_colors (color_a, color_b, amount = 1, should_return_transparent = false, blend_alpha = true) {
+
+                amount = Math.min(Math.max(amount, 0), 1);
+                color_a = this_format_color(color_a);
+                // If we blend the first color with the second with 0 "force", return transparent
+                if(amount === 0 && color_b !== "hover" && should_return_transparent) {
+
+                    return "#00000000";
+                }
+
+                // Make sure we have a color based on the 4*2 hex char format
+
+                if(color_b === "hover") {
+
+                    let rgba = this_get_rgba_from_hex(color_a);
+                    let hsl = this_rgb_to_hsl(rgba[0], rgba[1], rgba[2]);
+
+                    const irgb = this_hsl_to_rgb((hsl[0] + 0) % 360, (hsl[1] + 0) % 100, (hsl[2] + 50) % 100);
+                    color_b = this_get_hex_color_from_rgba_values(irgb[0], irgb[1], irgb[2], 255);
+                }
+
+                color_b = this_format_color(color_b);
+                // If the second color is transparent, return transparent
+                if(color_b === "#00000000" && amount === 1 && should_return_transparent) { return "#00000000"; }
+
+                // Extract RGBA from both colors
+                let base = this_get_rgba_from_hex(color_a);
+                base[3] /= 255;
+
+                let added = this_get_rgba_from_hex(color_b);
+                added[3] /= 255;
+                added[3] *= amount;
+
+                let mix = [];
+                if (base[3] !== 0 && added[3] !== 0) {
+
+                    mix[3] = 1 - (1 - added[3]) * (1 - base[3]); // alpha
+                    mix[0] = Math.round((added[0] * added[3] / mix[3]) + (base[0] * base[3] * (1 - added[3]) / mix[3])); // red
+                    mix[1] = Math.round((added[1] * added[3] / mix[3]) + (base[1] * base[3] * (1 - added[3]) / mix[3])); // green
+                    mix[2] = Math.round((added[2] * added[3] / mix[3]) + (base[2] * base[3] * (1 - added[3]) / mix[3])); // blue
+                }else if(added[3] !== 0) {
+
+                    mix = added;
+                }else {
+                    mix = base;
+                }
+
+                mix[3] *= 255;
+
+                return this_get_hex_color_from_rgba_values(mix[0], mix[1], mix[2], mix[3]);
+            }
+
+            var canvas = new OffscreenCanvas(pxl_width * scale, pxl_height * scale);
+            var ctx = canvas.getContext('2d');
+    
+            _s_pxls[0].forEach((pxl, index) => {
+    
+                var layer_pixel_colors = [];
+                var start_i = -1;
+                start_i++;
+    
+                for (var i = _s_pxl_colors.length - 1; i >= 0; i--) {
+    
+                    var layer_pixel_color = _s_pxl_colors[i][_s_pxls[i][index]];
+                    layer_pixel_colors[i] = layer_pixel_color;
+                    var rgba = layer_pixel_color;
+    
+                    if(rgba[3] === 255) {
+    
+                        start_i = i;
+                        break;
+                    }
+    
+                }
+    
+                var pixel_color_hex = "#00000000";
+    
+                for (let i = start_i; i < _s_pxl_colors.length ; i++) {
+    
+                    if(!_layers[i].hidden) {
+    
+                        var layer_pixel_color = layer_pixel_colors[i];
+    
+                        pixel_color_hex = this_blend_colors(pixel_color_hex, layer_pixel_color, _layers[i].opacity, false);
+                    }
+                }
+    
+                var pos_x = index % pxl_width;
+                var pos_y = (index - pos_x) / pxl_width;
+    
+                ctx.fillStyle = pixel_color_hex;
+                ctx.fillRect(pos_x * scale, pos_y * scale, 1 * scale, 1 * scale);
+            });
+            
+            const to_data_URL = async (data) =>
+                new Promise(ok => {
+                    const reader = new FileReader();
+                    reader.addEventListener("load", () => ok(reader.result));
+                    reader.readAsDataURL(data);
+              });
+
+            const blob = await canvas.convertToBlob({type: "image/png"});
+            return await to_data_URL(blob);
+        }`;
+
+
+        let process_function = new Function(process_function_string)();
+
+        const { pxl_width, pxl_height, _s_pxls, _s_pxl_colors, _layers, _layer_index } = this.state;
+
+        const pool = workerpool.pool();
+
+        (async () => {
+
+            let result = await pool.exec(process_function, [
+                pxl_width,
+                pxl_height,
+                _s_pxls,
+                _s_pxl_colors,
+                _layers,
+                scale
+            ]).timeout(60000);
+
+            callback_function(result);
+        })();
+    };
 
     _format_color = (color) => {
 
@@ -1421,10 +1718,7 @@ class CanvasPixels extends React.Component {
 
     set_canvas_from_image = (image_obj, loading_base64_img = "") => {
 
-        if(this.props.onImageLoad) {
-
-            this.props.onImageLoad();
-        }
+        if(this.props.onLoad) {this.props.onLoad("image_load");}
 
         this.setState({_hidden: true, _loading_base64_img_changed: true}, () => {
 
@@ -1448,7 +1742,7 @@ class CanvasPixels extends React.Component {
             }, this.state.animation_duration / 2);
         });
 
-        setTimeout(() => {
+        setTimeout( async() => {
 
             const { default_size, max_size, ideal_size, _base64_original_images, dont_change_img_size_onload } = this.state;
 
@@ -1469,7 +1763,7 @@ class CanvasPixels extends React.Component {
 
                 // From the result in colors and pixels color index find if the image is resized bigger but from a pixelart image
                 let { new_pxl_colors, new_pxls, ratio_pixel_per_color, too_much_pixel_cpu_would_go_brrrrr } = this._get_pixels_palette_and_list_from_image_data(image_data, false, (256 - 256 / (merge_color_threshold * 256)) / 256);
-                [ new_pxls, new_pxl_colors ] = this._remove_close_pxl_colors(new_pxls, new_pxl_colors, 4/16, null, 0);
+                [ new_pxls, new_pxl_colors ] = await this._remove_close_pxl_colors(new_pxls, new_pxl_colors, 4/16, null, 0);
                 ratio_pixel_per_color = new_pxls.length / new_pxl_colors.length;
 
                 let enough_sure = max_size * max_size > height * width;
@@ -3990,21 +4284,22 @@ class CanvasPixels extends React.Component {
 
         if(this.props.on_kb_change) {
 
-            const base64 = this.get_base64_png_data_url(1)
-            const bytes = 3 * Math.ceil((base64.length/4));
+            this.get_base64_png_data_url(1, (base64) => {
 
-            this.props.on_kb_change(bytes / 1000);
+                const bytes = 3 * Math.ceil((base64.length/4));
+                this.props.on_kb_change(bytes / 1000);
+            });
+
         }
     };
 
     _update_canvas = (force_update = false, do_not_cancel_animation = false) => {
 
         // Potentially cancel the latest animation frame (Clear old) and then request a new one that will maybe be rendered
-        const { _last_paint_timestamp, _loading_base64_img, dont_show_canvas_until_img_set, dont_show_canvas, but_show_canvas_once, has_shown_canvas_once } = this.state;
+        const {_loading_base64_img, dont_show_canvas_until_img_set, dont_show_canvas, but_show_canvas_once, has_shown_canvas_once } = this.state;
 
         if((_loading_base64_img.length <= 0 && dont_show_canvas_until_img_set) || (dont_show_canvas && !(but_show_canvas_once && !has_shown_canvas_once))){return;}
 
-        force_update = force_update || (_last_paint_timestamp + 1000 / 60 < Date.now() && !is_mobile_or_tablet);
 
         // Importing state variables
         let { _canvas } = this.state;
@@ -4440,7 +4735,7 @@ class CanvasPixels extends React.Component {
                         has_shown_canvas_once: true,
                     });
 
-                }, false, force_update || do_not_cancel_animation); // Enable to cancel in order to know that a frame has not been drawn
+                }, false, true); // Enable to cancel in order to know that a frame has not been drawn
             }
         }
     };
@@ -4618,7 +4913,7 @@ class CanvasPixels extends React.Component {
             number_of_colors: _s_pxl_colors[0].length,
         };
 
-        if(this.props.onImageLoadComplete) { this.props.onImageLoadComplete(image_details); }
+        if(this.props.onLoadComplete) { this.props.onLoadComplete("image_load", image_details); }
     };
 
     _notify_image_import_complete = () => {
@@ -5362,9 +5657,15 @@ class CanvasPixels extends React.Component {
         this._to_vignette(color, intensity);
     }
 
-    to_less_color = (threshold = 1/16) => {
+    to_less_color = (threshold = 1/16, callback_function = () => {}) => {
 
-        return this._to_less_color(threshold);
+        if(this.props.onLoad) { this.props.onLoad("less_color"); }
+
+        this._to_less_color(threshold, (result) => {
+
+            callback_function(result);
+            if(this.props.onLoadComplete) { this.props.onLoadComplete("less_color", result); }
+        });
     }
 
     auto_adjust_contrast = (intensity = 1) => {
@@ -5720,44 +6021,48 @@ class CanvasPixels extends React.Component {
         return this._get_hex_color_from_rgba_values(darkest_r_g_b_a[0], darkest_r_g_b_a[1], darkest_r_g_b_a[2], 255);
     };
 
-    to_multiple_images_with_filter = (filter_names, scale = 1) => {
+    to_multiple_images_with_filter = (filter_names, scale = 1, callback_function = () => {}) => {
 
-        const { _layer_index } = this.state;
-        let { _s_pxls, _s_pxl_colors } = this.state;
-        _s_pxls = [..._s_pxls];
-        _s_pxl_colors = [..._s_pxl_colors];
+        (async() => {
 
-
-        let alpha = 1;
-        [ _s_pxls[_layer_index], _s_pxl_colors[_layer_index], alpha ] = this._pxl_adjust_contrast(_s_pxls[_layer_index], _s_pxl_colors[_layer_index], 3/4);
-
-        const darkest_color = this._get_darkest_color(_s_pxl_colors[_layer_index]);
-        [ _s_pxls[_layer_index], _s_pxl_colors[_layer_index] ] = this._remove_close_pxl_colors(_s_pxls[_layer_index], _s_pxl_colors[_layer_index], "auto", null, alpha * 2);
-
-        let [img_pxls, img_pxl_colors] = this._pxl_adjust_smoothness(_s_pxls[_layer_index], _s_pxl_colors[_layer_index], 4);
-        [ img_pxls, img_pxl_colors ] = this._pxl_adjust_contrast(img_pxls, img_pxl_colors, 3/4);
+            const { _layer_index } = this.state;
+            let { _s_pxls, _s_pxl_colors } = this.state;
+            _s_pxls = [..._s_pxls];
+            _s_pxl_colors = [..._s_pxl_colors];
 
 
-        let images = {
-            "Normal": this._pxls_to_png(img_pxls, img_pxl_colors, scale)
-        };
+            let alpha = 1;
+            [ _s_pxls[_layer_index], _s_pxl_colors[_layer_index], alpha ] = this._pxl_adjust_contrast(_s_pxls[_layer_index], _s_pxl_colors[_layer_index], 3/4);
+
+            const darkest_color = this._get_darkest_color(_s_pxl_colors[_layer_index]);
+            [ _s_pxls[_layer_index], _s_pxl_colors[_layer_index] ] = await this._remove_close_pxl_colors(_s_pxls[_layer_index], _s_pxl_colors[_layer_index], "auto", null, alpha * 2);
+
+            let [img_pxls, img_pxl_colors] = this._pxl_adjust_smoothness(_s_pxls[_layer_index], _s_pxl_colors[_layer_index], 4);
+            [ img_pxls, img_pxl_colors ] = this._pxl_adjust_contrast(img_pxls, img_pxl_colors, 3/4);
 
 
-        this.get_filter_names().forEach((filter_name) => {
+            let images = {
+                "Normal": await this._pxls_to_png(img_pxls, img_pxl_colors, scale)
+            };
 
-            if(filter_names.includes(filter_name)) {
 
-                let [pxls, pxl_colors] = this._pxl_adjust_smoothness(_s_pxls[_layer_index], _s_pxl_colors[_layer_index]);
-                [ pxls, pxl_colors ]  = this._filter_pixels(filter_name, 4/7, pxls, pxl_colors);
-                [ pxls, pxl_colors ] = this._pxl_to_vignette(pxls, pxl_colors, darkest_color, 1/4);
-                [ pxls, pxl_colors ] = this._pxl_adjust_contrast(pxls, pxl_colors, 2/4);
-                images[filter_name] = this._pxls_to_png(pxls, pxl_colors, scale);
+            this.get_filter_names().forEach((filter_name) => {
 
-            }
-        });
+                if(filter_names.includes(filter_name)) {
 
-        return images;
+                    let [pxls, pxl_colors] = this._pxl_adjust_smoothness(_s_pxls[_layer_index], _s_pxl_colors[_layer_index]);
+                    [ pxls, pxl_colors ]  = this._filter_pixels(filter_name, 4/7, pxls, pxl_colors);
+                    this._pxl_to_vignette(pxls, pxl_colors, darkest_color, 1/4, async(result) => {
 
+                        let [ pxls, pxl_colors ] = result;
+                        [ pxls, pxl_colors ] = this._pxl_adjust_contrast(pxls, pxl_colors, 2/4);
+                        images[filter_name] = await this._pxls_to_png(pxls, pxl_colors, scale);
+                        callback_function(images);
+                    });
+                }
+            });
+
+        })();
     };
 
     _to_alpha = (color = "#000000ff", intensity = 1) => {
@@ -5777,26 +6082,31 @@ class CanvasPixels extends React.Component {
         });
     }
 
-    _to_less_color = (threshold) => {
+    _to_less_color = (threshold, callback_function = () => {}) => {
 
+        if(this.props.onLoad) { this.props.onLoad("less_color_auto"); }
         const { _layer_index } = this.state;
         let { _s_pxls, _s_pxl_colors } = this.state;
 
         const color_number = _s_pxl_colors[_layer_index].length;
 
-        [ _s_pxls[_layer_index], _s_pxl_colors[_layer_index] ] = this._remove_close_pxl_colors(_s_pxls[_layer_index], _s_pxl_colors[_layer_index], threshold);
+        (async() => {
+            let result = await this._remove_close_pxl_colors(_s_pxls[_layer_index], _s_pxl_colors[_layer_index], threshold);
+            [ _s_pxls[_layer_index], _s_pxl_colors[_layer_index] ] = result;
 
-        const color_remaining_number = _s_pxl_colors[_layer_index].length;
+            const color_remaining_number = _s_pxl_colors[_layer_index].length;
+            let results = {
+                colors_removed: color_number - color_remaining_number,
+                colors_remaining: color_remaining_number,
+            };
 
-        this.setState({_s_pxls, _s_pxl_colors, _last_action_timestamp: Date.now()}, () => {
+            this.setState({_s_pxls, _s_pxl_colors, _last_action_timestamp: Date.now()}, () => {
 
-            this._update_canvas();
-        });
-
-        return {
-            colors_removed: color_number - color_remaining_number,
-            colors_remaining: color_remaining_number,
-        };
+                this._update_canvas();
+                if(this.props.onLoadComplete) { this.props.onLoadComplete("less_color_auto", results); }
+                callback_function(results);
+            });
+        })();
     };
 
     _auto_adjust_contrast = (intensity = 1) => {
@@ -5827,65 +6137,68 @@ class CanvasPixels extends React.Component {
         });
     };
 
-    _pxl_to_vignette = (pxls, pxl_colors, color, intensity) => {
+    _pxl_to_vignette = (pxls, pxl_colors, color, intensity, callback_function) => {
 
-        color = this._format_color(color);
+        (async() => {
 
-        const {pxl_width, pxl_height } = this.state;
+            color = this._format_color(color);
 
-        const [ctx] = this._get_new_ctx_from_canvas(pxl_width, pxl_height);
+            const {pxl_width, pxl_height } = this.state;
 
-        // Create a radial gradient
-        // The inner circle is at x=110, y=90, with radius=30
-        // The outer circle is at x=100, y=100, with radius=70
-        const max_width_height = Math.max(pxl_width, pxl_height);
-        const inverted_color = this._invert_hex_color(color);
+            const [ctx] = this._get_new_ctx_from_canvas(pxl_width, pxl_height);
 
-        let gradient = ctx.createRadialGradient(pxl_width / 2,pxl_height / 2,0, pxl_width / 2,pxl_height / 2, max_width_height / 2);
+            // Create a radial gradient
+            // The inner circle is at x=110, y=90, with radius=30
+            // The outer circle is at x=100, y=100, with radius=70
+            const max_width_height = Math.max(pxl_width, pxl_height);
+            const inverted_color = this._invert_hex_color(color);
 
-        gradient.addColorStop(1, color);
-        gradient.addColorStop(0.85, this._blend_colors(color, inverted_color, 0.75));
-        gradient.addColorStop(0, inverted_color);
+            let gradient = ctx.createRadialGradient(pxl_width / 2,pxl_height / 2,0, pxl_width / 2,pxl_height / 2, max_width_height / 2);
 
-        // Fill with gradient
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, pxl_width, pxl_height);
+            gradient.addColorStop(1, color);
+            gradient.addColorStop(0.85, this._blend_colors(color, inverted_color, 0.75));
+            gradient.addColorStop(0, inverted_color);
 
-        const canvas_image_data = ctx.getImageData(0, 0, pxl_width, pxl_height);
-        let {new_pxls, new_pxl_colors} = this._get_pixels_palette_and_list_from_image_data(canvas_image_data, true, 0);
+            // Fill with gradient
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, pxl_width, pxl_height);
 
-        [ new_pxls, new_pxl_colors ] = this._remove_close_pxl_colors(new_pxls, new_pxl_colors, 255/6/255, null, 6);
-        [ new_pxls, new_pxl_colors ] = this._pxl_colors_to_alpha(new_pxls, new_pxl_colors, inverted_color, 1);
+            const canvas_image_data = ctx.getImageData(0, 0, pxl_width, pxl_height);
+            let {new_pxls, new_pxl_colors} = this._get_pixels_palette_and_list_from_image_data(canvas_image_data, true, 0);
 
-        const [ r, g, b, a ] = this._get_rgba_from_hex(color);
-        new_pxl_colors = new_pxl_colors.map((pxl_color, color_index) => {
+            [ new_pxls, new_pxl_colors ] = await this._remove_close_pxl_colors(new_pxls, new_pxl_colors, 255/6/255, null, 6);
+            [ new_pxls, new_pxl_colors ] = this._pxl_colors_to_alpha(new_pxls, new_pxl_colors, inverted_color, 1);
 
-            const [ p_r, p_g, p_b, p_a ] = this._get_rgba_from_hex(pxl_color);
-            return this._get_hex_color_from_rgba_values(r, g, b, p_a);
-        });
+            const [ r, g, b, a ] = this._get_rgba_from_hex(color);
+            new_pxl_colors = new_pxl_colors.map((pxl_color, color_index) => {
 
-        let brand_new_pxl_colors = [];
-        new_pxls = new_pxls.map((pxl, index) => {
+                const [ p_r, p_g, p_b, p_a ] = this._get_rgba_from_hex(pxl_color);
+                return this._get_hex_color_from_rgba_values(r, g, b, p_a);
+            });
 
-            const pxl_color = new_pxl_colors[pxl];
-            const old_pxl_color = pxl_colors[pxls[index]];
+            let brand_new_pxl_colors = [];
+            new_pxls = new_pxls.map((pxl, index) => {
 
-            const new_color = this._blend_colors(old_pxl_color, pxl_color, intensity, false);
+                const pxl_color = new_pxl_colors[pxl];
+                const old_pxl_color = pxl_colors[pxls[index]];
 
-            if(brand_new_pxl_colors.indexOf(new_color) === -1) {
+                const new_color = this._blend_colors(old_pxl_color, pxl_color, intensity, false);
 
-                brand_new_pxl_colors.push(new_color);
-            }
+                if(brand_new_pxl_colors.indexOf(new_color) === -1) {
 
-            const new_color_index = brand_new_pxl_colors.indexOf(new_color);
+                    brand_new_pxl_colors.push(new_color);
+                }
 
-            return new_color_index;
-        })
+                const new_color_index = brand_new_pxl_colors.indexOf(new_color);
 
-        new_pxl_colors = brand_new_pxl_colors;
+                return new_color_index;
+            })
 
-        return [new_pxls, new_pxl_colors];
+            new_pxl_colors = brand_new_pxl_colors;
 
+            callback_function([new_pxls, new_pxl_colors]);
+
+        })();
     };
 
     _to_vignette = (color, intensity) => {
@@ -5895,14 +6208,17 @@ class CanvasPixels extends React.Component {
             const {_layer_index} = this.state;
             let {_s_pxls, _s_pxl_colors} = this.state;
 
-            [_s_pxls[_layer_index], _s_pxl_colors[_layer_index]] = this._pxl_to_vignette(_s_pxls[_layer_index], _s_pxl_colors[_layer_index], color, intensity);
+            this._pxl_to_vignette(_s_pxls[_layer_index], _s_pxl_colors[_layer_index], color, intensity, (result) => {
 
-            this.setState({_s_pxls, _s_pxl_colors, _last_action_timestamp: Date.now()}, () => {
+                [_s_pxls[_layer_index], _s_pxl_colors[_layer_index]] = result;
 
-                this._update_canvas();
+                this.setState({_s_pxls, _s_pxl_colors, _last_action_timestamp: Date.now()}, () => {
+
+                    this._update_canvas();
+                });
+
             });
         }
-
     };
 
 
@@ -6524,10 +6840,8 @@ class CanvasPixels extends React.Component {
         width = Math.round(width);
         height = Math.round(height);
 
-        const url = this.get_base64_png_data_url(1);
         let img = new Image;
-
-        img.onload = () => {
+        img.onload = async () => {
 
             let [canvas_resized_ctx] = this._get_new_ctx_from_canvas(width, height, true);
             canvas_resized_ctx.drawImage(img, 0, 0, width, height);
@@ -6560,7 +6874,7 @@ class CanvasPixels extends React.Component {
 
             threshold *= 1 - (((255 - max_grey) + min_grey) / 255) / 2;
 
-            let [ pixels, colors ] = this._remove_close_pxl_colors(new_pxls, new_pxl_colors, threshold);
+            let [ pixels, colors ] = await this._remove_close_pxl_colors(new_pxls, new_pxl_colors, threshold);
             const color_remaining_number = colors.length;
             colors.sort((ca, cb) => {
 
@@ -6655,118 +6969,391 @@ class CanvasPixels extends React.Component {
 
         };
 
-        img.src = url;
+        this.get_base64_png_data_url(1, (url) => {
+
+            img.src = url;
+        });
     };
 
-    _remove_close_pxl_colors = (pxls, pxl_colors, bucket_threshold = null, threshold_steps = null, color_number_bonus = 0, best_color_number = null) => {
+    _remove_close_pxl_colors = async(pxls = [], pxl_colors  = [], bucket_threshold = null, threshold_steps = null, color_number_bonus = 0, best_color_number = null, callback_function = () =>{}) => {
 
-        let indexes_of_colors_proceed = new Set();
-        let original_pxls = [...pxls];
-        let original_pxl_colors = [...pxl_colors];
-        let is_bucket_threshold_auto = bucket_threshold === "auto";
-        let is_bucket_threshold_auto_goal_reached = !is_bucket_threshold_auto;
-        let bucket_threshold_auto_goal_target = 6;
-        let bucket_threshold_auto_goal_attempt = new Set();
-        best_color_number = best_color_number !== null ? best_color_number: Math.max(Math.cbrt(original_pxl_colors.length) * (2/3) + color_number_bonus, 16);
+        const this_state_bucket_threshold = this.state.bucket_threshold;
 
-        if(best_color_number < 2 || best_color_number > pxl_colors.length) {
+        const process_function_string = `return function(
+            pxls,
+            pxl_colors,
+            bucket_threshold,
+            threshold_steps,
+            color_number_bonus,
+            best_color_number,
+            this_state_bucket_threshold 
+        ) {
 
-            is_bucket_threshold_auto_goal_reached = true;
-        }
+            function this_rgb_to_hsl(r, g, b) {
 
-        let attempt = 1;
+                r /= 255, g /= 255, b /= 255;
+                let max = Math.max(r, g, b), min = Math.min(r, g, b);
+                let h, s, l = (max + min) / 2;
 
-        while (!is_bucket_threshold_auto_goal_reached || attempt === 1) {
-            attempt++;
-
-            bucket_threshold = is_bucket_threshold_auto ?
-                1/(bucket_threshold_auto_goal_target - 2):
-                bucket_threshold || this.state.bucket_threshold;
-            threshold_steps = threshold_steps || Math.round(bucket_threshold * 255);
-            const color_loss = (255 - (255 / (bucket_threshold * 255))) / 255;
-
-            [original_pxls, original_pxl_colors] = [[...pxls], [...pxl_colors]];
-
-            let reduced_pxl_colors = [...pxl_colors].map((color_hex) => {
-
-                let [r, g, b, a] = this._get_rgba_from_hex(color_hex);
-
-                r = this._reduce_color(r, 1 - color_loss);
-                g = this._reduce_color(g, 1 - color_loss);
-                b = this._reduce_color(b, 1 - color_loss);
-                a = this._reduce_color(a, 1 - color_loss);
-
-                return "#" + this._get_hex_value_from_rgb_value(r) + this._get_hex_value_from_rgb_value(g) + this._get_hex_value_from_rgb_value(b) + this._get_hex_value_from_rgb_value(a);
-
-            });
-
-            let [ new_pxls, new_pxl_colors ] = [original_pxls, reduced_pxl_colors];
-
-            for (let i = 1; i <= threshold_steps; i += 1) {
-
-                let threshold = bucket_threshold * (i / threshold_steps);
-                const weight_applied_to_color_usage_difference = i / threshold_steps;
-
-                indexes_of_colors_proceed.clear();
-                let pxl_colors_usage = new Array(new_pxl_colors.length).fill(0);
-
-                new_pxls.forEach((pxl) => {
-
-                    pxl_colors_usage[pxl]++;
-                });
-
-                new_pxl_colors.forEach((color_a, index_of_color_a) => {
-
-                    if(!indexes_of_colors_proceed.has(index_of_color_a)) {
-
-                        const color_a_usage = pxl_colors_usage[index_of_color_a];
-
-                        new_pxl_colors.forEach((color_b, index_of_color_b) => {
-
-                            if(!indexes_of_colors_proceed.has(index_of_color_b)) {
-
-                                const color_b_usage = pxl_colors_usage[index_of_color_b];
-                                const color_a_more_used = color_a_usage > color_b_usage;
-
-                                const color_usage_difference = color_a_more_used ? color_a_usage / color_b_usage: color_b_usage / color_a_usage;
-                                const weighted_threshold = (threshold + (threshold * (1 - 1 / color_usage_difference) * weight_applied_to_color_usage_difference)) / (1 + weight_applied_to_color_usage_difference);
-
-                                if(this._match_color(color_a, color_b, weighted_threshold)) {
-
-                                    const color = color_a_more_used ?
-                                        this._blend_colors(original_pxl_colors[index_of_color_a], original_pxl_colors[index_of_color_b], 1 / (color_usage_difference), true):
-                                        this._blend_colors(original_pxl_colors[index_of_color_b], original_pxl_colors[index_of_color_a], 1 / (color_usage_difference), true);
-
-                                    original_pxl_colors[index_of_color_a] = color;
-                                    original_pxl_colors[index_of_color_b] = color;
-                                    indexes_of_colors_proceed.add(index_of_color_a);
-                                    indexes_of_colors_proceed.add(index_of_color_b);
-                                }
-                            }
-                        });
+                if(max == min){
+                    h = s = 0; // achromatic
+                }else{
+                    let d = max - min;
+                    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                    switch(max){
+                        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                        case g: h = (b - r) / d + 2; break;
+                        case b: h = (r - g) / d + 4; break;
                     }
+                    h /= 6;
+                }
+
+                return new Array(Math.round(h * 360), Math.round(s * 100), Math.round(l * 100));
+            }
+
+            function this_hsl_to_rgb(h, s, l) {
+
+                h /= 360;
+                s /= 100;
+                l /= 100;
+
+                let r, g, b;
+                if (s === 0) {
+                    r = g = b = l;
+                } else {
+                    function hue_to_rgb(p, q, t) {
+                        if (t < 0) t += 1;
+                        if (t > 1) t -= 1;
+                        if (t < 1 / 6) return p + (q - p) * 6 * t;
+                        if (t < 1 / 2) return q;
+                        if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                        return p;
+                    }
+                    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                    const p = 2 * l - q;
+                    r = hue_to_rgb(p, q, h + 1 / 3);
+                    g = hue_to_rgb(p, q, h);
+                    b = hue_to_rgb(p, q, h - 1 / 3);
+                }
+
+                return new Array(r * 255, g * 255, b * 255);
+            }
+
+            function this_get_hex_values_from_rgba_values(r, g, b, a) {
+
+                return new Array(
+                    this_get_hex_value_from_rgb_value(r),
+                    this_get_hex_value_from_rgb_value(g),
+                    this_get_hex_value_from_rgb_value(b),
+                    this_get_hex_value_from_rgb_value(a)
+                );
+            }
+
+            function this_get_hex_color_from_rgba_values(r, g, b, a) {
+
+                const hex = this_get_hex_values_from_rgba_values(r, g, b, a);
+                return "#" + hex[0] + hex[1] + hex[2] + hex[3];
+            }
+
+            function this_get_rgba_from_hex(color) {
+
+                color = color || "#00000000";
+
+                const r = parseInt(color.substring(1, 3), 16);
+                const g = parseInt(color.substring(3, 5), 16);
+                const b = parseInt(color.substring(5, 7), 16);
+                const a = parseInt(color.substring(7, 9), 16);
+
+                return new Array(r, g, b, a);
+            }
+
+            function this_reduce_color(rgba_component, color_gain ) {
+
+                if(color_gain === 1) {
+
+                    return rgba_component;
+                }else {
+
+                    rgba_component++;
+                    let comp_by_gain = Math.round(rgba_component * color_gain) - 1;
+                    comp_by_gain = comp_by_gain < 0 ? 0: comp_by_gain;
+
+                    return Math.round(comp_by_gain / color_gain);
+                }
+            }
+
+            function this_get_hex_value_from_rgb_value(value) {
+
+                return Math.round(value).toString(16).padStart(2, "0");
+            }
+
+            function this_format_color(color) {
+
+                color = typeof color === "undefined" ? "#00000000": color;
+                // if color equals #fff -> #ffffff
+                color = color.length === 4 ? "#" + color.charAt(1) + color.charAt(1) + color.charAt(2) + color.charAt(2) + color.charAt(3) + color.charAt(3): color;
+                // if color equals #3333 -> #33333333
+                color = color.length === 5 ? "#" + color.charAt(1) + color.charAt(1) + color.charAt(2) + color.charAt(2) + color.charAt(3) + color.charAt(3) + color.charAt(4) + color.charAt(4): color;
+                // if color equals #000000 -> #000000ff (Alpha)
+                color = color.length === 7 ? color + "ff": color;
+                return color;
+            }
+
+            function this_match_color (color_a, color_b, threshold) {
+
+                threshold = typeof threshold === "undefined" ? null: threshold;
+
+                if(threshold === 1) {
+
+                    return true;
+                }else if(threshold === 0){
+
+                    return color_a === color_b;
+                }else {
+
+                    const threshold_256 = Math.round(threshold * 255);
+
+                    color_a = this_format_color(color_a);
+                    color_b = this_format_color(color_b);
+
+                    const c_a = this_get_rgba_from_hex(color_a);
+                    const c_b = this_get_rgba_from_hex(color_b);
+
+                    const a_diff = Math.abs(c_a[3] - c_b[3]);
+                    const r_diff = Math.abs(c_a[0] - c_b[0]);
+                    const g_diff = Math.abs(c_a[1] - c_b[1]);
+                    const b_diff = Math.abs(c_a[2] - c_b[2]);
+
+                    const a_diff_ratio = Math.abs(1 - a_diff / 255);
+
+                    if(threshold !== null) {
+
+                        return Boolean(r_diff < threshold_256 && g_diff < threshold_256 && b_diff < threshold_256 && a_diff < threshold_256);
+                    }else {
+
+                        return ((r_diff + g_diff + b_diff) / (255 * 3)) * a_diff_ratio;
+                    }
+                }
+            }
+
+            function this_blend_colors (color_a, color_b, amount = 1, should_return_transparent = false, blend_alpha = true) {
+
+                amount = Math.min(Math.max(amount, 0), 1);
+                color_a = this_format_color(color_a);
+                // If we blend the first color with the second with 0 "force", return transparent
+                if(amount === 0 && color_b !== "hover" && should_return_transparent) {
+
+                    return "#00000000";
+                }
+
+                // Make sure we have a color based on the 4*2 hex char format
+
+                if(color_b === "hover") {
+
+                    let rgba = this_get_rgba_from_hex(color_a);
+                    let hsl = this_rgb_to_hsl(rgba[0], rgba[1], rgba[2]);
+
+                    const irgb = this_hsl_to_rgb((hsl[0] + 0) % 360, (hsl[1] + 0) % 100, (hsl[2] + 50) % 100);
+                    color_b = this_get_hex_color_from_rgba_values(irgb[0], irgb[1], irgb[2], 255);
+                }
+
+                color_b = this_format_color(color_b);
+                // If the second color is transparent, return transparent
+                if(color_b === "#00000000" && amount === 1 && should_return_transparent) { return "#00000000"; }
+
+                // Extract RGBA from both colors
+                let base = this_get_rgba_from_hex(color_a);
+                base[3] /= 255;
+
+                let added = this_get_rgba_from_hex(color_b);
+                added[3] /= 255;
+                added[3] *= amount;
+
+                let mix = [];
+                if (base[3] !== 0 && added[3] !== 0) {
+
+                    mix[3] = 1 - (1 - added[3]) * (1 - base[3]); // alpha
+                    mix[0] = Math.round((added[0] * added[3] / mix[3]) + (base[0] * base[3] * (1 - added[3]) / mix[3])); // red
+                    mix[1] = Math.round((added[1] * added[3] / mix[3]) + (base[1] * base[3] * (1 - added[3]) / mix[3])); // green
+                    mix[2] = Math.round((added[2] * added[3] / mix[3]) + (base[2] * base[3] * (1 - added[3]) / mix[3])); // blue
+                }else if(added[3] !== 0) {
+
+                    mix = added;
+                }else {
+                    mix = base;
+                }
+
+                mix[3] *= 255;
+
+                return this_get_hex_color_from_rgba_values(mix[0], mix[1], mix[2], mix[3]);
+            }
+
+            function this_remove_duplicate_pxl_colors(_pxls, _pxl_colors) {
+
+                _pxls = Array.from(_pxls);
+                _pxl_colors = Array.from(_pxl_colors);
+
+                // Work with Hashtables and Typed Array so it is fast
+                let new_pxl_colors_object = {};
+                let new_pxl_colors_object_length = 0;
+                let new_pxls = new Array(_pxls.length);
+
+                Array.from(_pxls).forEach((pxl, iteration) => {
+
+                    const color = _pxl_colors[pxl];
+                    let index_of_color = typeof new_pxl_colors_object[color] === "undefined" ? null: new_pxl_colors_object[color];
+
+                    if(index_of_color === null) {
+
+                        index_of_color = new_pxl_colors_object_length;
+                        new_pxl_colors_object[color] = index_of_color;
+                        new_pxl_colors_object_length++;
+                    }
+
+                    new_pxls[iteration] = index_of_color;
                 });
 
-                [ new_pxls, new_pxl_colors ] = this._remove_duplicate_pxl_colors(new_pxls, original_pxl_colors);
-                original_pxl_colors = new_pxl_colors;
+                let new_pxl_colors = new Array(new_pxl_colors_object_length);
+                Object.entries(new_pxl_colors_object).forEach((entry) => {
+
+                    new_pxl_colors[entry[1]] = entry[0];
+                })
+
+                return new Array(new_pxls, new_pxl_colors);
             }
 
-            if((original_pxl_colors.length + 2 > best_color_number && original_pxl_colors.length - 2 < best_color_number) || !is_bucket_threshold_auto || bucket_threshold_auto_goal_attempt.has(bucket_threshold_auto_goal_target)) {
+            let indexes_of_colors_proceed = new Set();
+            let original_pxls = Array.from(pxls);
+            let original_pxl_colors = Array.from(pxl_colors);
+            let is_bucket_threshold_auto = bucket_threshold === "auto";
+            let is_bucket_threshold_auto_goal_reached = !is_bucket_threshold_auto;
+            let bucket_threshold_auto_goal_target = 6;
+            let bucket_threshold_auto_goal_attempt = new Set();
+            best_color_number = best_color_number !== null ? best_color_number: Math.max(Math.cbrt(original_pxl_colors.length) * (2/3) + color_number_bonus, 16);
 
-                return this._remove_duplicate_pxl_colors(new_pxls, original_pxl_colors);
-            }else if(original_pxl_colors.length > best_color_number){
+            if(best_color_number < 2 || best_color_number > pxl_colors.length) {
 
-                bucket_threshold_auto_goal_attempt.add(bucket_threshold_auto_goal_target);
-                bucket_threshold_auto_goal_target --;
-            }else {
-
-                bucket_threshold_auto_goal_attempt.add(bucket_threshold_auto_goal_target);
-                bucket_threshold_auto_goal_target ++;
+                is_bucket_threshold_auto_goal_reached = true;
             }
-        }
 
-        return this._remove_duplicate_pxl_colors(pxls, pxl_colors);
+            let attempt = 1;
 
+            while (!is_bucket_threshold_auto_goal_reached || attempt === 1) {
+                attempt++;
+                
+                bucket_threshold = is_bucket_threshold_auto ?
+                    1/(bucket_threshold_auto_goal_target - 2):
+                    bucket_threshold || this_state_bucket_threshold;
+                threshold_steps = threshold_steps || Math.round(bucket_threshold * 255);
+                const color_loss = (255 - (255 / (bucket_threshold * 255))) / 255;
+
+                original_pxls = Array.from(pxls);
+                original_pxl_colors = Array.from(pxl_colors);
+
+                let reduced_pxl_colors = Array.from(pxl_colors).map((color_hex) => {
+
+                    let c = this_get_rgba_from_hex(color_hex);
+                    
+                    r = c[0],
+                    g = c[1],
+                    b = c[2],
+                    a = c[3],
+
+                    r = this_reduce_color(r, 1 - color_loss);
+                    g = this_reduce_color(g, 1 - color_loss);
+                    b = this_reduce_color(b, 1 - color_loss);
+                    a = this_reduce_color(a, 1 - color_loss);
+
+                    return "#" + this_get_hex_value_from_rgb_value(r) + this_get_hex_value_from_rgb_value(g) + this_get_hex_value_from_rgb_value(b) + this_get_hex_value_from_rgb_value(a);
+
+                });
+
+                let new_pxls = Array.from(original_pxls);
+                let new_pxl_colors = Array.from(reduced_pxl_colors);
+
+                for (let i = 1; i <= threshold_steps; i += 1) {
+
+                    let threshold = bucket_threshold * (i / threshold_steps);
+                    const weight_applied_to_color_usage_difference = i / threshold_steps;
+
+                    indexes_of_colors_proceed.clear();
+                    let pxl_colors_usage = new Array(new_pxl_colors.length).fill(0);
+
+                    Array.from(new_pxls).forEach((pxl) => {
+
+                        pxl_colors_usage[pxl]++;
+                    });
+
+                    Array.from(new_pxl_colors).forEach((color_a, index_of_color_a) => {
+
+                        if(!indexes_of_colors_proceed.has(index_of_color_a)) {
+
+                            const color_a_usage = pxl_colors_usage[index_of_color_a];
+
+                            Array.from(new_pxl_colors).forEach((color_b, index_of_color_b) => {
+
+                                if(!indexes_of_colors_proceed.has(index_of_color_b)) {
+
+                                    const color_b_usage = pxl_colors_usage[index_of_color_b];
+                                    const color_a_more_used = color_a_usage > color_b_usage;
+
+                                    const color_usage_difference = color_a_more_used ? color_a_usage / color_b_usage: color_b_usage / color_a_usage;
+                                    const weighted_threshold = (threshold + (threshold * (1 - 1 / color_usage_difference) * weight_applied_to_color_usage_difference)) / (1 + weight_applied_to_color_usage_difference);
+
+                                    if(this_match_color(color_a, color_b, weighted_threshold)) {
+
+                                        const color = color_a_more_used ?
+                                            this_blend_colors(original_pxl_colors[index_of_color_a], original_pxl_colors[index_of_color_b], 1 / (color_usage_difference), true):
+                                            this_blend_colors(original_pxl_colors[index_of_color_b], original_pxl_colors[index_of_color_a], 1 / (color_usage_difference), true);
+
+                                        original_pxl_colors[index_of_color_a] = color;
+                                        original_pxl_colors[index_of_color_b] = color;
+                                        indexes_of_colors_proceed.add(index_of_color_a);
+                                        indexes_of_colors_proceed.add(index_of_color_b);
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                    let r = this_remove_duplicate_pxl_colors(new_pxls, original_pxl_colors);
+                    new_pxls = r[0];
+                    new_pxl_colors = r[1];
+                    original_pxl_colors = Array.from(new_pxl_colors);
+                }
+
+                if((original_pxl_colors.length + 2 > best_color_number && original_pxl_colors.length - 2 < best_color_number) || !is_bucket_threshold_auto || bucket_threshold_auto_goal_attempt.has(bucket_threshold_auto_goal_target)) {
+
+                    return this_remove_duplicate_pxl_colors(new_pxls, original_pxl_colors);
+                }else if(original_pxl_colors.length > best_color_number){
+
+                    bucket_threshold_auto_goal_attempt.add(bucket_threshold_auto_goal_target);
+                    bucket_threshold_auto_goal_target --;
+                }else {
+
+                    bucket_threshold_auto_goal_attempt.add(bucket_threshold_auto_goal_target);
+                    bucket_threshold_auto_goal_target ++;
+                }
+            }
+
+            return this_remove_duplicate_pxl_colors(pxls, pxl_colors);
+        }`;
+
+
+        let process_function = new Function(process_function_string)();
+
+        const pool = workerpool.pool();
+        let result = await pool.exec(process_function, [
+            pxls,
+            pxl_colors,
+            bucket_threshold,
+            threshold_steps,
+            color_number_bonus,
+            best_color_number,
+            this_state_bucket_threshold,
+        ]).timeout(60000);
+
+        return result;
     };
 
     _remove_duplicate_pxl_colors = (_pxls, _pxl_colors) => {
@@ -7018,10 +7605,10 @@ class CanvasPixels extends React.Component {
         anim_loop(() => {
 
             this.forceUpdate(() => {
-                this._update_canvas(true, true);
+
                 callback_function();
             });
-        }, do_not_cancel_animation, false);
+        }, !can_be_cancelable, true);
     }
 
     set_move_speed_average_now = () => {

@@ -496,15 +496,21 @@ class PixelDialogPost extends React.Component {
         if(_canvas === null) {return}
 
         let a = document.createElement("a"); //Create <a>
-        a.href = "" + _canvas.get_base64_png_data_url(size); //Image Base64 Goes here
         a.download = `Pixel art n°${Date.now()} from WCR (x${size}).png`; //File name Here
-        a.click();
 
-        actions.trigger_sfx("hero_decorative-celebration-02");
-        setTimeout(() => {
-            actions.trigger_snackbar("Do You Want To Share? Yes or No", 7000);
-            actions.jamy_update("happy");
-        }, 2000);
+
+         _canvas.get_base64_png_data_url(size, (href) => {
+
+             a.href = "" + href;
+             a.click();
+
+             actions.trigger_sfx("hero_decorative-celebration-02");
+             setTimeout(() => {
+                 actions.trigger_snackbar("Do You Want To Share? Yes or No", 7000);
+                 actions.jamy_update("happy");
+             }, 2000);
+
+        }); //Image Base64 Goes here
     };
 
     _set_canvas_image = (base64_url = null) => {
@@ -906,7 +912,13 @@ class PixelDialogPost extends React.Component {
 
     _handle_tags_input_change = (chips) => {
 
-        this.setState({ _tags_input: chips || ["pixel-art"], _tags_input_error: false});
+        this.setState({ _tags_input: chips || ["pixel-art"], _tags_input_error: false}, () => {
+
+            if(chips[chips.length-1].includes(" ")) {
+
+                this._handle_tags_input_add(chips[chips.length-1]);
+            }
+        });
     };
 
     _handle_tags_input_delete = ( chip ) => {
@@ -1091,7 +1103,7 @@ class PixelDialogPost extends React.Component {
         const layer = layers[0] || {colors: []};
 
         const vote_number = post.active_votes ? post.active_votes.length: 0;
-        const tags = post.tags ? post.tags: [];
+        const tags = post.tags ? post.tags: _tags_input ? _tags_input: [];
         const url = window.location.href;
 
         const has_translated = _translated_title.length && _translated_description.length;
@@ -1212,8 +1224,8 @@ class PixelDialogPost extends React.Component {
                                                         if(["unsourced", "opinion","hurt"].includes(key)) {
 
                                                             return (
-                                                                <Tooltip title={r_text[key]}>
-                                                                    <span style={value ? {}: {textDecoration: "line-through"}}>{value ? "YES: ": "NO: "}{key}</span>
+                                                                <Tooltip title={r_text[key] + (value ? " [TRUE]": " [FALSE]")}>
+                                                                    <span style={value ? {}: {textDecoration: "line-through"}}>{key}</span>
                                                                 </Tooltip>
                                                             );
                                                         }

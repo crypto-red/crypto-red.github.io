@@ -248,7 +248,8 @@ class PixelArtCard extends React.Component {
         return (
             new_props.post !== this.state.post ||
             new_props.selected !== this.state.selected ||
-            new_props.is_loading !== this.state.is_loading
+            new_props.is_loading !== this.state.is_loading ||
+            new_props.hbd_market !== this.state.hbd_market
         );
     }
 
@@ -311,8 +312,7 @@ class PixelArtCard extends React.Component {
                             {post.title}
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p">
-                            {post.description.slice(0, 192)}
-                            {post.description.length > 192 && "..."}
+                            {post.summary}
                         </Typography>
                     </CardContent>
                     {is_loading ? <LinearProgress color="primary" variant="indeterminate" className={classes.progress}/>: null}

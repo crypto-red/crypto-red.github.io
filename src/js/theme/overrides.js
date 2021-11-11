@@ -120,9 +120,9 @@ const overrides = {
                 fontFamily: "Open Sans !important"
             },
             ".MuiBackdrop-root": {
-                backdropFilter: "blur(3px)",
+                backdropFilter: "blur(9px)",
                 backgroundColor: "rgba(6, 14, 35, .5)",
-                transform: "scale(3)",
+                transform: "scale(1)",
                 animation: "$fadeBlur 400ms cubic-bezier(0.4, 0, 0.2, 1)",
                 "@global": {
                     "@keyframes fadeBlur": {
@@ -131,8 +131,8 @@ const overrides = {
                             transform: "scale(1)",
                         },
                         "100%": {
-                            backdropFilter: "blur(3px)",
-                            transform: "scale(3)",
+                            backdropFilter: "blur(9px)",
+                            transform: "scale(1)",
                         },
                     }
                 }

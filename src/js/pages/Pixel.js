@@ -280,6 +280,7 @@ class Pixel extends React.Component {
             _canvas: null,
             _canvas_elevation: 8,
             _loading: false,
+            _loading_process: "",
             _can_undo: false,
             _can_redo: false,
             _current_color: "#ffffffff",
@@ -319,6 +320,7 @@ class Pixel extends React.Component {
             _ripple_color: "#ffffffff",
             _ripple_opacity: 1,
             _is_pixel_dialog_post_edit_open: false,
+            _is_dialog_info_open: false,
             _base64_url: "",
             _logged_account: {},
         };
@@ -603,17 +605,24 @@ class Pixel extends React.Component {
     _download_image = (size) => {
 
         const { _canvas } = this.state;
+        if(_canvas === null) {return}
 
         let a = document.createElement("a"); //Create <a>
-        a.href = "" + _canvas.get_base64_png_data_url(size); //Image Base64 Goes here
         a.download = `Pixel art n°${Date.now()} from WCR (x${size}).png`; //File name Here
-        a.click();
 
-        actions.trigger_sfx("hero_decorative-celebration-02");
-        setTimeout(() => {
-            actions.trigger_snackbar("Do you want to share (Instagram, Pinterest, ...)? Yes or No :)", 6000);
-            actions.jamy_update("happy");
-        }, 2000);
+
+        _canvas.get_base64_png_data_url(size, (href) => {
+
+            a.href = "" + href;
+            a.click();
+
+            actions.trigger_sfx("hero_decorative-celebration-02");
+            setTimeout(() => {
+                actions.trigger_snackbar("Do You Want To Share? Yes or No", 7000);
+                actions.jamy_update("happy");
+            }, 2000);
+
+        }); //Image Base64 Goes here
     };
 
     _handle_keyup = (event) => {
@@ -691,15 +700,30 @@ class Pixel extends React.Component {
         input.click();
     };
 
-    _handle_image_load = () => {
+    _handle_load = (process) => {
 
-        this.setState({_loading: true});
+        this.setState({_loading: true, _loading_process: process});
     };
 
-    _handle_image_load_complete = () => {
+    _handle_load_complete = (process, data) => {
 
-        this.setState({_loading: false});
-        this._handle_edit_drawer_close();
+        this.setState({_loading: false, _loading_process: process});
+
+        if(process === "less_color" || process === "less_color_auto") {
+
+            if(data.colors_removed !== 0) {
+
+                actions.trigger_snackbar(`I am a magician! And ${data.colors_removed} colors are now gone, only ${data.colors_remaining} remaining.`);
+                actions.trigger_sfx("navigation_selection-complete-celebration");
+                actions.jamy_update("happy");
+            }
+        }else if(process === "image_load"){
+
+            actions.trigger_snackbar(`DONE! We've imported an image with my now ${data.number_of_colors} colors.`);
+            actions.trigger_sfx("navigation_selection-complete-celebration");
+            actions.jamy_update("happy");
+            this._handle_edit_drawer_close();
+        }
     };
 
     _set_ripple_ref = (element) => {
@@ -912,12 +936,20 @@ class Pixel extends React.Component {
 
         let colors_removed = 0;
         let less_color_step = increase;
-        while (colors_removed === 0 || increase !== 0) {
+        const try_another = () => {
 
-            colors_removed = _canvas.to_less_color(less_color_step / 64).colors_removed;
-            less_color_step += increase;
-            increase -= colors_removed > 0 ? 1: 0;
-        }
+            _canvas.to_less_color(less_color_step / 64, (result) => {
+
+                colors_removed = result.colors_removed;
+                less_color_step += increase;
+                increase -= colors_removed > 0 ? 1: 0;
+                if(colors_removed === 0) {
+                    try_another();
+                }
+            });
+        };
+
+        try_another();
     };
 
     _get_average_color_of_selection = () => {
@@ -936,10 +968,11 @@ class Pixel extends React.Component {
     _handle_is_pixel_dialog_post_edit_open = () => {
 
         const { _canvas } = this.state;
-        const base64_url = _canvas.get_base64_png_data_url(1)
+        _canvas.get_base64_png_data_url(1, (base64_url) => {
 
-        this.setState({_base64_url: base64_url});
-        this.setState({_is_pixel_dialog_post_edit_open: true, _is_edit_drawer_open: false});
+            this.setState({_base64_url: base64_url});
+            this.setState({_is_pixel_dialog_post_edit_open: true, _is_edit_drawer_open: false});
+        });
     };
 
     _handle_elevation_change = (elevation) => {
@@ -998,6 +1031,7 @@ class Pixel extends React.Component {
             _view_name_index,
             _previous_view_name_index,
             _loading,
+            _loading_process,
             _view_names,
             _layers,
             _layer_index,
@@ -1058,7 +1092,9 @@ class Pixel extends React.Component {
                     onClose={this._handle_pixel_dialog_post_edit_close}
                     onRequestSend={this._handle_post_pixel_art}
                     edit={true}/>
-                <Backdrop className={classes.backdrop} open={_loading} />
+                <Backdrop className={classes.backdrop} open={_loading}>
+                    {_loading && <h1><ShufflingSpanText style={{fontFamily: "Noto Sans Mono"}} text={"Please wait..."} animation_delay_ms={0} animation_duration_ms={250}/></h1>}
+                </Backdrop>
                 <Menu
                     className={classes.contextMenu}
                     PaperProps={{
@@ -1249,8 +1285,8 @@ class Pixel extends React.Component {
                                     bucket_threshold={_slider_value}
                                     color_loss={_slider_value}
                                     pxl_current_opacity={1}
-                                    onImageLoadComplete={this._handle_image_load_complete}
-                                    onImageLoad={this._handle_image_load}
+                                    onLoadComplete={this._handle_load_complete}
+                                    onLoad={this._handle_load}
                                     onCanUndoRedoChange={this._handle_can_undo_redo_change}
                                     onSizeChange={this._handle_size_change}
                                     onCurrentColorChange={this._handle_current_color_change}
