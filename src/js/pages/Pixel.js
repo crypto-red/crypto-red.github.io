@@ -943,7 +943,7 @@ class Pixel extends React.Component {
                 colors_removed = result.colors_removed;
                 less_color_step += increase;
                 increase -= colors_removed > 0 ? 1: 0;
-                if(colors_removed === 0) {
+                if(colors_removed < result.colors_remaining / 20) {
                     try_another();
                 }
             });
@@ -1087,7 +1087,7 @@ class Pixel extends React.Component {
                         image: _base64_url,
                         author: _logged_account.hive_username || "undefined",
                     }}
-                    keepMounted={true}
+                    keepMounted={false}
                     open={_is_pixel_dialog_post_edit_open}
                     onClose={this._handle_pixel_dialog_post_edit_close}
                     onRequestSend={this._handle_post_pixel_art}
@@ -1320,7 +1320,7 @@ class Pixel extends React.Component {
                             <SwipeableDrawer
                                 className={classes.contentDrawer}
                                 disableBackdropTransition={true}
-                                keepMounted={true}
+                                keepMounted={false}
                                 open={_is_edit_drawer_open}
                                 onOpen={this._handle_edit_drawer_open}
                                 onClose={this._handle_edit_drawer_close}
@@ -1515,7 +1515,9 @@ class Pixel extends React.Component {
                 <IconButton className={classes.infoIcon} onClick={this._handle_dialog_info_open}>
                     <InfoIcon/>
                 </IconButton>
-                <Dialog open={_is_dialog_info_open} onClose={this._handle_dialog_info_close}>
+                <Dialog open={_is_dialog_info_open}
+                        onClose={this._handle_dialog_info_close}
+                        keepMounted={false}>
                     <DialogContent>
                         <h2>DISCLAIMER! BECAUSE <ShufflingSpanText text={"ULTIMATELY"} animation_delay_ms={333} animation_duration_ms={555}/>:</h2>
                         <p>We hope you will soon make new friends on the blockchain technology using Wallet Crypto Red; some of whom may wish to join some forces with you to form one's powerful dreams.</p>

@@ -2087,7 +2087,7 @@ class CanvasPixels extends React.Component {
 
             this.setState({scale}, () => {
 
-                this._request_force_update(false, () => {
+                this._request_force_update(false, false,() => {
 
                     const rect = _canvas_wrapper.getBoundingClientRect();
                     const for_middle_x = (_canvas_container.clientWidth - rect.width) / 2;
@@ -7590,11 +7590,11 @@ class CanvasPixels extends React.Component {
                 this.props.on_elevation_change(this.state._moves_speed_average_now);
             }
 
-            this._request_force_update();
+            this._request_force_update(false, true);
         });
     };
 
-    _request_force_update = (can_be_cancelable = false, callback_function = () => {}) => {
+    _request_force_update = (can_be_cancelable = false, especially_dont_force = false, callback_function = () => {}) => {
 
         const {_force_updated_timestamp  } = this.state;
         const now = Date.now();
@@ -7608,7 +7608,7 @@ class CanvasPixels extends React.Component {
 
                 callback_function();
             });
-        }, !can_be_cancelable, true);
+        }, !can_be_cancelable, !especially_dont_force);
     }
 
     set_move_speed_average_now = () => {
@@ -7643,7 +7643,7 @@ class CanvasPixels extends React.Component {
         const { _canvas_container } = this.state;
         if(!_canvas_container){return;}
 
-        this._request_force_update(false, () => {
+        this._request_force_update(false, false,() => {
 
             const rect = _canvas_container.getBoundingClientRect();
 
@@ -7669,7 +7669,7 @@ class CanvasPixels extends React.Component {
 
         this.setState({_screen_zoom_ratio}, () => {
 
-            this._request_force_update(false, () => {
+            this._request_force_update(false, false,() => {
 
                 if(align_center_middle) {
 

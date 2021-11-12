@@ -113,6 +113,7 @@ class AccountDialogProfileHive extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            keepMounted: props.keepMounted || false,
             classes: props.classes,
             open: props.open || false,
             account_name: props.account_name,
@@ -210,7 +211,7 @@ class AccountDialogProfileHive extends React.Component {
 
     render() {
 
-        const { classes, open, _posts, _account, account_name, _reaction_click_event } = this.state;
+        const { classes, open, _posts, _account, account_name, _reaction_click_event, keepMounted } = this.state;
 
         return (
             <Dialog PaperComponent={"div"}
@@ -218,7 +219,7 @@ class AccountDialogProfileHive extends React.Component {
                     open={open}
                     onClose={(event) => {this.props.onClose(event)}}
                     className={classes.dialogPaper}
-                    keepMounted>
+                    keepMounted={keepMounted}>
                 <Card className={classes.card}>
                     <CardHeader className={classes.cardHeader} style={{backgroundSize: "cover !important", backgroundImage: _account.metadata ? `url(${_account.cover_image})`: ""}}>
                         <div className={classes.cardHeaderTop}></div>

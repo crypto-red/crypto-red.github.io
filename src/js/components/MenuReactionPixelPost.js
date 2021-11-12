@@ -38,6 +38,7 @@ class MenuReactionPixelPost extends React.Component {
         super(props);
 
         this.state = {
+            keepMounted: props.keepMounted || false,
             event: props.event || null,
             classes: props.classes,
             voted_result: props.voted_result || null,
@@ -49,6 +50,7 @@ class MenuReactionPixelPost extends React.Component {
     componentWillReceiveProps(new_props) {
 
         const state = {
+            keepMounted: new_props.keepMounted || false,
             event: new_props.event || null,
             classes: new_props.classes,
             voted_result: new_props.voted_result || null,
@@ -69,7 +71,7 @@ class MenuReactionPixelPost extends React.Component {
 
     render() {
 
-        const { classes } = this.state;
+        const { classes, keepMounted } = this.state;
         const { _reaction_menu_x, _reaction_menu_y, voted_result, event } = this.state;
 
         const voted_percent = Math.round((voted_result / 10000) * 4) / 4;
@@ -84,7 +86,7 @@ class MenuReactionPixelPost extends React.Component {
                         overflowY: "overlay"
                     },
                 }}
-                keepMounted={false}
+                keepMounted={keepMounted}
                 open={_reaction_menu_x !== null && _reaction_menu_y !== null && Boolean(event)}
                 onClose={this._handle_reaction_menu_close}
                 anchorReference="anchorPosition"

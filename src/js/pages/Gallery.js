@@ -823,10 +823,7 @@ class Gallery extends React.Component {
             this.setState({_post: [..._posts][index+1]});
             actions.trigger_sfx("navigation_transition-right");
 
-            setTimeout(() => {
-
-                this._update_selected_post_index(index+1, true);
-            }, 4000);
+            this._update_selected_post_index(index+1);
         }
     };
 
@@ -841,7 +838,7 @@ class Gallery extends React.Component {
             this.setState({_post: [..._posts][index-1]});
             actions.trigger_sfx("navigation_transition-left");
 
-            this._update_selected_post_index(index-1, true);
+            this._update_selected_post_index(index-1);
         }
     };
 
@@ -890,10 +887,7 @@ class Gallery extends React.Component {
 
             if(!do_not_scroll) {
 
-                setTimeout(() => {
-
-                    this._scroll_to_index();
-                }, 10);
+                this._scroll_to_index();
             }else {
 
                 _masonry.forceUpdate();
@@ -920,7 +914,7 @@ class Gallery extends React.Component {
 
     _handle_masonry_scroll = (scroll_data) => {
 
-        const { clientHeight , scrollHeight, scrollTop } = scroll_data;
+        const { scrollTop } = scroll_data;
 
         this.setState({_scroll_top: scrollTop});
     };
@@ -957,7 +951,7 @@ class Gallery extends React.Component {
 
     render() {
 
-        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _scrolling_reset_time_interval, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _updating_dimension } = this.state;
+        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _updating_dimension } = this.state;
         const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
 
         const width = _window_width;
@@ -971,8 +965,6 @@ class Gallery extends React.Component {
 
         const masonry_element = (_cell_positioner !== null) ?
             <MasonryExtended
-                onScroll={this._handle_masonry_scroll}
-                scrollingResetTimeInterval={_scrolling_reset_time_interval}
                 scrollTop={_scroll_top}
                 height={post_list_height}
                 cellCount={_posts.length}
@@ -1034,12 +1026,14 @@ class Gallery extends React.Component {
                 }
 
                 <MenuReactionPixelPost
+                    keepMounted={false}
                     event={_reaction_click_event}
                     voted_result={_reaction_voted_result}
                     on_close={this._handle_reaction_menu_close}
                     on_vote={this._handle_vote} />
 
                 <MenuVotesPixelPost
+                    keepMounted={false}
                     anchor={_votes_anchor}
                     votes={_votes}
                     on_close={this._handle_votes_menu_close} />
@@ -1049,12 +1043,16 @@ class Gallery extends React.Component {
                     on_next={this._next_current_post}
                     on_previous={this._previous_current_post}
                     on_image_load_complete={() => {setTimeout(() => {this._scroll_to_index()}, 5)}}
-                    keepMounted={true}
+                    keepMounted={false}
                     post={_post}
                     open={_post !== null && _post_author !== null && _post_permlink !== null}
                     onClose={this._handle_pixel_dialog_post_close}/>
 
-                <AccountDialogProfileHive account_name={_post_author} open={_post_author !== null && _post_permlink === null} onClose={this._handle_reset_selected_account}/>
+                <AccountDialogProfileHive
+                    keepMounted={false}
+                    account_name={_post_author}
+                    open={_post_author !== null && _post_permlink === null}
+                    onClose={this._handle_reset_selected_account}/>
 
                 <Grow in>
                     <Fab className={classes.fab} variant="extended" onClick={this._open_editor}>

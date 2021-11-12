@@ -30,6 +30,7 @@ class MenuVotesPixelPost extends React.Component {
         super(props);
 
         this.state = {
+            keepMounted: props.keepMounted || false,
             event: props.event || null,
             classes: props.classes,
             votes: props.votes || [],
@@ -52,11 +53,12 @@ class MenuVotesPixelPost extends React.Component {
 
     render() {
 
-        const { classes, anchor, votes } = this.state;
+        const { classes, anchor, votes,keepMounted } = this.state;
 
         return (
             <Menu
                 id="long-menu"
+                keepMounted={keepMounted}
                 anchorEl={anchor}
                 open={Boolean(anchor)}
                 anchorOrigin={{
