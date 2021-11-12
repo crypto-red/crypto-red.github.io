@@ -8,9 +8,28 @@
 
 ## Languages
 
+Everything except pixel art features are available in the following languages:
 EN, FR, DE, IT, ID, PT, JA, ZH, RU, KO, HI, ES.
 
 Discussions -> [CLICK HERE](https://github.com/crypto-red/crypto-red.github.io/discussions)
+
+## Technology
+
+Designed for the DILIGENT REMOTE VIEWING of and interaction of situations such as financial data and pixel art with an ease and eye-comfort of use without any comparable predecessor.
+
+It embedded a GREAT MEMORY, a CLIENT DATABASE in other words with up to 11GB available, along with multiple (service) workers enabling multi-threading for a faster and more convenient use of web technologies related to canvas and its offscreen version.
+
+Every pixel art, which is by essence, a relatively NEW FORM OF ART, which can be created through the pixel art editor featuring powerful I-2-PA technologies developed from scratch by the main developer and is STORED ENTIRELY on the Hive BLOCKCHAIN, this guarantying a nearly 100% chance of surviving* against censorship, ages, accidental suppression, and other situations threatening those data belonging to you among other users.
+
+Hive features FREE, somehow limited, somehow heavy, 3 SECONDS block's transactions in which are stored your art and user profile for the part of the application looking like popular social media platforms, meanwhile your other crypto-accounts are using a seed always stored in your browser which you can choose to encrypt with a layering of powerful POST-QUANTUM algorithms for you to not mind who could access your account if it has an access to your computer, so you can share it without worrying.
+
+The application features links for remote blending swap, trading, and buying of multiple cryptographic-currencies along with two main tools: a QR-CODE scanner, and a tool for the ENCRYPTION of messages and memo on other chains such as those mentioned above which are ready to be used in the application.
+
+Thanks to TensorFlow, It also features AI and MACHINE LEARNING for prevent toxic content from being posted by its users which would include threats...
+
+"Making daily life a creative experience, continually ORIGINAL-DELUSIONAL-ECSTATIC."
+
+— Crypto Red's team
 
 ## Screenshots
 
