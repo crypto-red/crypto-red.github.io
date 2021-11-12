@@ -940,35 +940,56 @@ class CanvasPixels extends React.Component {
 
     get_layer_base64_png_data_url = (layer_index, callback_function) => {
 
-        const { pxl_width, pxl_height, _s_pxl_colors, _s_pxls } = this.state;
         const scale = 1;
+        const process_function_string = `return async function(
+            pxl_width, 
+            pxl_height,
+            pxls, 
+            pxl_colors,
+            scale
+        ) {
 
-        let canvas = new OffscreenCanvas(pxl_width * scale, pxl_height * scale);
-        let ctx = canvas.getContext('2d');
-
-        _s_pxls[layer_index].forEach((pxl, index) => {
-
-            const pixel_color_hex = _s_pxl_colors[layer_index][pxl];
-            const pos_x = index % pxl_width;
-            const pos_y = (index - pos_x) / pxl_width;
-
-            ctx.fillStyle = pixel_color_hex;
-            ctx.fillRect(pos_x * scale, pos_y * scale, 1 * scale, 1 * scale);
-        });
-
-        (async () => {
-
+            var canvas = new OffscreenCanvas(pxl_width * scale, pxl_height * scale);
+            var ctx = canvas.getContext('2d');
+    
+            pxls.forEach((pxl, index) => {
+    
+                var pixel_color_hex = pxl_colors[pxl];
+    
+                var pos_x = index % pxl_width;
+                var pos_y = (index - pos_x) / pxl_width;
+    
+                ctx.fillStyle = pixel_color_hex;
+                ctx.fillRect(pos_x * scale, pos_y * scale, 1 * scale, 1 * scale);
+            });
+   
             const to_data_URL = async (data) =>
                 new Promise(ok => {
                     const reader = new FileReader();
                     reader.addEventListener("load", () => ok(reader.result));
                     reader.readAsDataURL(data);
-                });
+              });
 
             const blob = await canvas.convertToBlob({type: "image/png"});
-            const url = await to_data_URL(blob);
+            return await to_data_URL(blob);
+        }`;
 
-            callback_function(url);
+
+        let process_function = new Function(process_function_string)();
+        const { pxl_width, pxl_height, _s_pxls, _s_pxl_colors } = this.state;
+
+        (async () => {
+
+            const pool = workerpool.pool();
+            let result = await pool.exec(process_function, [
+                pxl_width,
+                pxl_height,
+                _s_pxls[layer_index],
+                _s_pxl_colors[layer_index],
+                scale
+            ]).timeout(60000);
+
+            callback_function(result);
         })();
     };
 
