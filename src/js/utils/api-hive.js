@@ -677,7 +677,7 @@ function post_hive_pixel_art(title, image, description, tags, metadata, username
         description + "\n\n" +
         "![" + tags[0] + "](" + image + ")\n\n" +
         "--- \n\n" +
-        "Made with the [pixel art editor](https://wallet.crypto.red/pixel) of wallet.crypto.red ([view post in W.C.R.](https://wallet.crypto.red/gallery/created/@" + username + "/" + permlink + ")).";
+        "Made with the [pixel art editor](https://wallet.crypto.red/pixel) of wallet.crypto.red ([view post in W.C.R.](https://wallet.crypto.red/gallery/created/@" + username + "/" + permlink + ")). Free your mind for art and join us, pixel art is art.";
 
     tags.unshift("pixel-art");
 

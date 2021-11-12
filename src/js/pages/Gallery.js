@@ -245,8 +245,8 @@ class Gallery extends React.Component {
             _masonry: null,
 
             _cell_measurer_cache: new CellMeasurerCache({
-                defaultHeight: 356,
-                defaultWidth: 356,
+                defaultHeight: 0,
+                defaultWidth: 0,
                 fixedWidth: true,
                 fixedHeight: false
             }),
@@ -570,11 +570,15 @@ class Gallery extends React.Component {
 
         this.setState({_column_width, _column_count}, () => {
 
-            this.state._cell_measurer_cache.clearAll();
-            //this._reset_cell_positioner();
-            this._init_cell_positioner();
+            this._compute_cell_measurement();
         });
     }
+
+    _compute_cell_measurement = () => {
+
+        this.state._cell_measurer_cache.clearAll();
+        this._init_cell_positioner();
+    };
 
     _set_masonry_ref = (element) => {
 
@@ -605,22 +609,26 @@ class Gallery extends React.Component {
         this.setState({_top_scroll_of_el_by_index});
 
         return (
-            <CellMeasurer cache={_cell_measurer_cache} index={index} key={key} parent={parent}>
-                <div draggable={"false"} style={style}>
-                    <PixelArtCard
-                        fade_in={Math.floor(index / _column_count) * 40 * _column_count + (index % _column_count) * 20}
-                        selected={selected}
-                        post={post}
-                        is_loading={is_loading}
-                        hbd_market={_hbd_market}
-                        selected_currency={_selected_currency}
-                        selected_locales_code={_selected_locales_code}
-                        on_author_click={this._handle_set_selected_account}
-                        on_card_media_click={this._handle_art_open}
-                        on_card_content_click={selected ? this._handle_art_open: this._handle_art_focus}
-                        on_reaction_click={this._handle_art_reaction}
-                        on_votes_click={this._handle_votes_menu_open}/>
-                </div>
+            <CellMeasurer cache={_cell_measurer_cache} index={index} key={post.id} parent={parent}>
+                {({ measure, registerChild }) => (
+                    // 'style' attribute required to position cell (within parent List)
+                    <div ref={registerChild} draggable={"false"} style={style}>
+                        <PixelArtCard
+                            fade_in={Math.floor(index / _column_count) * 40 * _column_count + (index % _column_count) * 20}
+                            selected={selected}
+                            post={post}
+                            is_loading={is_loading}
+                            hbd_market={_hbd_market}
+                            selected_currency={_selected_currency}
+                            selected_locales_code={_selected_locales_code}
+                            on_loaded={measure}
+                            on_author_click={this._handle_set_selected_account}
+                            on_card_media_click={this._handle_art_open}
+                            on_card_content_click={selected ? this._handle_art_open: this._handle_art_focus}
+                            on_reaction_click={this._handle_art_reaction}
+                            on_votes_click={this._handle_votes_menu_open}/>
+                    </div>
+                )}
             </CellMeasurer>
         );
     };
@@ -668,13 +676,15 @@ class Gallery extends React.Component {
                 const root_rect = _root.getBoundingClientRect();
                 this.setState({_cell_positioner: null, _window_width, _window_height, _root_width: root_rect.width, _root_height: root_rect.height}, () => {
 
-                    this.forceUpdate();
-                    this._calculate_column_count();
+                    this.forceUpdate(() => {
+                        this._calculate_column_count();
 
-                    if(!do_not_refresh_after) {
+                        if(!do_not_refresh_after) {
 
-                        this._updated_dimensions(true);
-                    }
+                            this._updated_dimensions(true);
+                        }
+                    });
+
                 });
             }, do_not_refresh_after ? 0: 200);
         }else {

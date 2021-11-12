@@ -277,6 +277,7 @@ class PixelArtCard extends React.Component {
                         <CardMedia
                             className={classes.cardMedia}
                             component="img"
+                            onLoad={this.props.on_loaded}
                             alt={post.title}
                             image={post.image}
                             title={post.title}
