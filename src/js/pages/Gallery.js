@@ -13,6 +13,7 @@ import EyeIcon from "../icons/Eye";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 
 import { Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from "react-virtualized";
+import ImageMeasurer from "react-virtualized-image-measurer";
 
 import PixelDialogPost from "../components/PixelDialogPost";
 import PixelArtCard from "../components/PixelArtCard";
@@ -35,13 +36,13 @@ class MasonryExtended extends Masonry {
         const {cellCount, cellMeasurerCache, width} = this.props;
 
         const estimatedColumnCount = Math.floor(
-            width / cellMeasurerCache.defaultWidth,
+            width / (cellMeasurerCache || {}).defaultWidth || 0,
         );
 
         const estimateTotalHeight = this._positionCache.estimateTotalHeight(
             cellCount,
             estimatedColumnCount,
-            cellMeasurerCache.defaultHeight,
+            (cellMeasurerCache || {}).defaultHeight || 0,
         );
 
         return isFinite(estimateTotalHeight) ? estimateTotalHeight : 0;
@@ -204,7 +205,6 @@ class Gallery extends React.Component {
             _search_mode_query_pages: 1,
             _post: null,
             _loading_posts: false,
-            _updating_dimension: false,
             _post_closed_at: 0,
             _selected_post_index: 0,
             _scrolling_reset_time_interval: 300,
@@ -223,22 +223,16 @@ class Gallery extends React.Component {
             _start_permlink: null,
             _column_count: 4,
             _column_width: 356,
-            _load_more_threshold: 500,
-            _overscan_by_pixels: 3000,
+            _load_more_threshold: 2000,
+            _overscan_by_pixels: 2000,
             _cell_positioner: null,
+            _cell_positioner_config: null,
             _masonry: null,
-
-            _cell_measurer_cache: new CellMeasurerCache({
-                defaultHeight: 0,
-                defaultWidth: 0,
-                fixedWidth: true,
-                fixedHeight: false
-            }),
-
+            _cell_measurer_cache: null,
             _scroll_top: 0,
             _top_scroll_of_el_by_index: [],
             _height_of_el_by_index: [],
-
+            _x_y_of_el_by_index: [],
             _reaction_click_event: null,
             _reaction_selected_post: {},
             _reaction_voted_result: null,
@@ -282,36 +276,48 @@ class Gallery extends React.Component {
 
         this.setState(state, () => {
 
-            if(get_post) {
+            this.forceUpdate(() => {
 
-                this._get_post();
-            }else if(closed_post) {
+                if(get_post) {
 
-                this._handle_pixel_dialog_post_closed();
-            }
+                    this._get_post();
+                }else if(closed_post) {
 
-            if(closed_search || (sorting_changed && !state._is_search_mode)) {
+                    this._handle_pixel_dialog_post_closed();
+                }
 
-                this.setState({_posts: [], _start_author: null, _start_permlink: null}, () => {
+                if(closed_search || (sorting_changed && !state._is_search_mode)) {
 
-                    this.forceUpdate();
-                    this._load_more_posts();
-                });
-            }else if(search_sorting_changed && state._is_search_mode) {
+                    this.setState({_posts: [], _start_author: null, _start_permlink: null}, () => {
+                        this._scroll_to(0);
+                        this.forceUpdate(() => {
 
-                this.setState({_posts: [], _start_author: null, _start_permlink: null, _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
+                            this._load_more_posts();
+                        });
+                    });
+                }else if(search_sorting_changed && state._is_search_mode) {
 
-                    this.forceUpdate();
-                    this._search_more_posts();
-                });
-            }else if(search_mode_query_changed && state._is_search_mode) {
+                    this.setState({_posts: [], _start_author: null, _start_permlink: null, _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
+                        this._scroll_to(0);
+                        this.forceUpdate(() => {
 
-                setTimeout(() => {
+                            this._search_more_posts();
+                        });
+                    });
+                }else if(search_mode_query_changed && state._is_search_mode) {
 
-                    this._is_not_new_query_maybe_search_post(state._search_mode_query);
-                }, 1000);
-            }
+                    setTimeout(() => {
+
+                        this._is_not_new_query_maybe_search_post(state._search_mode_query);
+                    }, 1000);
+                }
+            });
         });
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+
+        return false;
     }
 
     componentDidMount() {
@@ -320,6 +326,7 @@ class Gallery extends React.Component {
         ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 
         this._updated_dimensions();
+
         this._update_settings();
 
         if(this.state._is_search_mode) {
@@ -361,7 +368,10 @@ class Gallery extends React.Component {
 
         if(!error && data)  {
 
-            this.setState({_hbd_market: data[0]});
+            this.setState({_hbd_market: data[0]}, () => {
+
+                this.forceUpdate();
+            });
         }
     };
 
@@ -415,31 +425,53 @@ class Gallery extends React.Component {
 
     _load_more_posts = () => {
 
-        const { _posts, _start_author, _start_permlink, _sorting_modes, _sorting_tab_index } = this.state;
-        actions.trigger_loading_update(0);
-        const load_new = !Boolean(_start_author) && !Boolean(_start_permlink);
+        const {_posts, _start_author, _start_permlink, _sorting_modes, _sorting_tab_index} = this.state;
 
-        this.setState({_loading_posts: true}, () => {
+        if (!_posts.length || (_start_permlink && _start_author)) {
 
-            get_hive_posts({_posts: load_new ? []: _posts, limit: 21, tag: "pixel-art", sorting: (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]), start_author: _start_author, start_permlink: _start_permlink}, (err, data) => {
+            actions.trigger_loading_update(0);
+            this.setState({_loading_posts: true}, () => {
 
-                if(data.posts){
+                this.forceUpdate(() => {
 
-                    const posts = !load_new ? _posts.concat(data.posts): data.posts;
+                    get_hive_posts({
+                        limit: 21,
+                        tag: "pixel-art",
+                        sorting: (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]),
+                        start_author: _start_author,
+                        start_permlink: _start_permlink
+                    }, (err, data) => {
 
-                    this.setState({_updating_dimension: true, _loading_posts: false, _posts: posts, _start_author: data.end_author, _start_permlink: data.end_permlink}, () => {
+                        if ((data || {}).posts) {
 
-                        if(load_new){this._updated_dimensions(true);}
-                        actions.trigger_loading_update(100);
+                            const posts = _posts.concat(data.posts);
+
+                            const end_data = data.end_author && data.end_permlink ? {
+                                _start_author: data.end_author,
+                                _start_permlink: data.end_permlink
+                            } : {_start_author: "", _start_permlink: ""};
+
+                            this.setState({...end_data, _loading_posts: false, _posts: posts}, () => {
+
+                                this.forceUpdate(() => {
+
+                                    this._recompute_cell_measurements();
+                                });
+                                actions.trigger_loading_update(100);
+                            });
+                        }else {
+
+                            actions.trigger_loading_update(100);
+                            this.setState({_loading_posts: false});
+                        }
                     });
-                }else {
-
-                    this.setState({_loading_posts: false});
-                    actions.trigger_loading_update(100);
-                }
+                });
             });
+        }else {
 
-        });
+            actions.trigger_loading_update(100);
+            this.setState({_loading_posts: false});
+        }
     };
 
     _is_not_new_query_maybe_search_post = (search_mode_query) => {
@@ -450,9 +482,12 @@ class Gallery extends React.Component {
 
             this.setState({_posts: [], _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
 
-                this.forceUpdate();
-                this._search_more_posts();
-                _history.push(pathname);
+                this._scroll_to(0);
+                this.forceUpdate(() => {
+
+                    this._search_more_posts();
+                    _history.push(pathname);
+                });
             });
         }
     };
@@ -462,31 +497,41 @@ class Gallery extends React.Component {
         const { _posts, _search_mode_query, _search_sorting_modes, _search_sorting_tab_index, _search_mode_query_pages } = this.state;
         let { _search_mode_query_page } = this.state;
 
-        if(_search_mode_query_page < _search_mode_query_pages) {
+        if (!_posts.length || _search_mode_query_page < _search_mode_query_pages) {
 
             _search_mode_query_page++;
 
             actions.trigger_loading_update(0);
             this.setState({_loading_posts: true}, () => {
 
-                search_on_hive(_search_mode_query, [], ["pixel-art"], (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]), _search_mode_query_page.toString(), (err, data) => {
+                this.forceUpdate(() => {
 
-                    if((data || {}).posts){
+                    search_on_hive(_search_mode_query, [], ["pixel-art"], (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]), _search_mode_query_page.toString(), (err, data) => {
 
-                        const posts = _search_mode_query_page > 1 ? _posts.concat(data.posts): data.posts;
+                        if((data || {}).posts){
 
-                        this.setState({_updating_dimension: true, _loading_posts: false, _posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
+                            const posts = posts.concat(data.posts);
 
-                            if(_search_mode_query_page <= 1){this._updated_dimensions(true);}
+                            this.setState({_loading_posts: false, _posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
+
+                                this.forceUpdate(() => {
+
+                                    this._recompute_cell_measurements();
+                                });
+                                actions.trigger_loading_update(100);
+                            });
+                        }else {
+
                             actions.trigger_loading_update(100);
-                        });
-                    }else {
-
-                        actions.trigger_loading_update(100);
-                        this.setState({_loading_posts: false});
-                    }
+                            this.setState({_loading_posts: false});
+                        }
+                    });
                 });
             });
+        }else {
+
+            actions.trigger_loading_update(100);
+            this.setState({_loading_posts: false});
         }
     };
 
@@ -512,111 +557,95 @@ class Gallery extends React.Component {
         _history.push(new_pathname);
     };
 
-    _reset_cell_positioner = () => {
+    _recompute_cell_measurements = () => {
 
-        const {_column_count, _column_width, _gutter_size, _masonry, _cell_positioner } = this.state;
+        const {_cell_measurer_cache, _masonry, _cell_positioner, _column_count, _gutter_size, _column_width } = this.state;
 
+        if(_cell_measurer_cache && _masonry && _cell_positioner) {
 
-        if(_cell_positioner !== null && _masonry !== null) {
-
-            _cell_positioner.reset({
+            let _cell_positioner_config = {
+                cellMeasurerCache: _cell_measurer_cache,
                 columnCount: _column_count,
                 columnWidth: _column_width,
-                spacer: _gutter_size
-            });
+                spacer: _gutter_size,
+            };
+
+            _cell_measurer_cache.clearAll();
+            _cell_positioner.reset(_cell_positioner_config);
             _masonry.clearCellPositions();
-        }
-    };
+            _masonry.forceUpdate();
 
-    _calculate_column_count() {
+            this.setState({_cell_positioner, _cell_positioner_config, _cell_measurer_cache}, () => {
 
-        const { _window_width, _root_width, _gutter_size } = this.state;
-        let { _column_count } = this.state;
+                this.forceUpdate();
+            });
 
-        if(_window_width > 1920) {
-
-            _column_count = 6;
-        }else if(_window_width > 1280) {
-
-            _column_count = 4;
-        }else if(_window_width > 960) {
-
-            _column_count = 3;
-        }else if(_window_width > 480) {
-
-            _column_count = 2;
         }else {
 
-            _column_count = 1;
+            this._init_cell_measurements();
         }
-
-        // View width
-        const page_width = _root_width;
-        const _column_width = Math.floor(
-            (page_width - (_column_count+1) * _gutter_size) / _column_count
-        );
-
-        this.setState({_column_width, _column_count}, () => {
-
-            this._compute_cell_measurement();
-        });
-    }
-
-    _compute_cell_measurement = () => {
-
-        this.state._cell_measurer_cache.clearAll();
-        this._init_cell_positioner();
     };
 
     _set_masonry_ref = (element) => {
 
-        this.setState({_masonry: element});
+        this.setState({_masonry: element}, () => {
+
+            this.forceUpdate(() => {
+
+                this._recompute_cell_measurements();
+            });
+        });
     };
 
     _set_root_ref = (element) => {
 
         if(element === null) { return}
-        this.setState({_root: element});
+        this.setState({_root: element}, () => {
+
+            this.forceUpdate();
+        });
     };
 
-    _cell_renderer = ({index, key, parent, style}) => {
+    _cell_renderer = (data) => {
 
+        const {index, key, parent, style} = data;
         const { _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _reaction_selected_post, _reaction_selected_post_loading, _posts, _column_width, _cell_measurer_cache, _column_count } = this.state;
+
         const post = _posts[index] || {};
+        if(!post.id){return <div />}
 
-        if(!post.id) { return <div></div>; }
-
+        const columnIndex = index % _column_count;
+        const rowIndex = (index - columnIndex) / _column_count;
         const selected = _selected_post_index === index;
         const is_loading = Boolean(_reaction_selected_post.id === post.id) && _reaction_selected_post_loading;
 
         style.width = _column_width;
-
-        let {_top_scroll_of_el_by_index, _height_of_el_by_index} = this.state;
+        let {_top_scroll_of_el_by_index, _height_of_el_by_index, _x_y_of_el_by_index} = this.state;
         _top_scroll_of_el_by_index[index] = style.top;
         _height_of_el_by_index[index] = style.height;
-        this.setState({_top_scroll_of_el_by_index});
+        _x_y_of_el_by_index[index] = [rowIndex, columnIndex];
+
+
+        this.setState({_top_scroll_of_el_by_index, _height_of_el_by_index});
 
         return (
-            <CellMeasurer cache={_cell_measurer_cache} index={index} key={post.id} parent={parent}>
-                {({ measure, registerChild }) => (
-                    // 'style' attribute required to position cell (within parent List)
-                    <div ref={registerChild} draggable={"false"} style={style}>
-                        <PixelArtCard
-                            fade_in={Math.floor(index / _column_count) * 40 * _column_count + (index % _column_count) * 20}
-                            selected={selected}
-                            post={post}
-                            is_loading={is_loading}
-                            hbd_market={_hbd_market}
-                            selected_currency={_selected_currency}
-                            selected_locales_code={_selected_locales_code}
-                            on_loaded={measure}
-                            on_author_click={this._handle_set_selected_account}
-                            on_card_media_click={this._handle_art_open}
-                            on_card_content_click={selected ? this._handle_art_open: this._handle_art_focus}
-                            on_reaction_click={this._handle_art_reaction}
-                            on_votes_click={this._handle_votes_menu_open}/>
-                    </div>
-                )}
+            <CellMeasurer cache={_cell_measurer_cache} index={index} key={`${key}`} parent={parent}>
+                <PixelArtCard
+                    rowIndex={rowIndex}
+                    columnIndex={columnIndex}
+                    style={style}
+                    fade_in={250}
+                    selected={selected}
+                    post={post}
+                    is_loading={is_loading}
+                    hbd_market={_hbd_market}
+                    selected_currency={_selected_currency}
+                    selected_locales_code={_selected_locales_code}
+                    on_author_click={this._handle_set_selected_account}
+                    on_card_media_click={this._handle_art_open}
+                    on_card_content_click={selected ? this._handle_art_open: this._handle_art_focus}
+                    on_reaction_click={this._handle_art_reaction}
+                    on_votes_click={this._handle_votes_menu_open}/>
             </CellMeasurer>
         );
     };
@@ -629,59 +658,115 @@ class Gallery extends React.Component {
         _history.push(new_pathname);
     };
 
-    _init_cell_positioner() {
+    _init_cell_measurements = () => {
 
-        const {_cell_measurer_cache, _column_count, _column_width, _gutter_size} = this.state;
+        if(this.state._cell_positioner_config && this.state._cell_measurer_cache && this.state._cell_positioner && this.state._masonry) {
 
-        let _cell_positioner = createMasonryCellPositioner({
-            cellMeasurerCache: _cell_measurer_cache,
-            columnCount: _column_count,
-            columnWidth: _column_width,
-            spacer: _gutter_size,
-        });
-
-        this.setState({_updating_dimension: false, _cell_positioner}, () =>{
-
-            this.forceUpdate();
-        })
-    }
-
-    _updated_dimensions = (do_not_refresh_after = false) => {
-
-        const { _root } = this.state;
-
-        if(_root !== null) {
-
-            setTimeout(() => {
-
-                let w = window,
-                    d = document,
-                    documentElement = d.documentElement,
-                    body = d.getElementsByTagName('body')[0],
-                    _window_width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
-                    _window_height = w.innerHeight|| documentElement.clientHeight || body.clientHeight;
-
-                const root_rect = _root.getBoundingClientRect();
-                this.setState({_cell_positioner: null, _window_width, _window_height, _root_width: root_rect.width, _root_height: root_rect.height}, () => {
-
-                    this.forceUpdate(() => {
-                        this._calculate_column_count();
-
-                        if(!do_not_refresh_after) {
-
-                            this._updated_dimensions(true);
-                        }
-                    });
-
-                });
-            }, do_not_refresh_after ? 0: 200);
+            this._recompute_cell_measurements();
         }else {
 
-            setTimeout(() => {
+            const {_column_count, _column_width, _gutter_size} = this.state;
 
-                this._updated_dimensions();
-            }, 100);
+            let _cell_measurer_cache = new CellMeasurerCache({
+                defaultHeight: 1,
+                defaultWidth: _column_width,
+                fixedWidth: true,
+            });
+
+            let _cell_positioner_config = {
+                cellMeasurerCache: _cell_measurer_cache,
+                columnCount: _column_count,
+                columnWidth: _column_width,
+                spacer: _gutter_size,
+            };
+
+            let _cell_positioner = createMasonryCellPositioner(_cell_positioner_config);
+
+            this.setState({_cell_measurer_cache, _cell_positioner, _cell_positioner_config}, () => {
+
+                this.forceUpdate();
+            });
         }
+    }
+
+    _updated_dimensions = () => {
+
+        console.log("U D");
+        let w = window,
+            d = document,
+            documentElement = d.documentElement,
+            body = d.getElementsByTagName('body')[0],
+            _window_width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
+            _window_height = w.innerHeight|| documentElement.clientHeight || body.clientHeight;
+
+        let _posts = [...this.state._posts];
+        this.setState({_posts: [], _window_width, _window_height, _load_more_threshold: _window_height * 2}, () => {
+
+            this.forceUpdate(() => {
+
+                const { _root, _gutter_size } = this.state;
+                let { _column_count } = this.state;
+
+                if(_root) {
+
+                    const root_rect = _root.getBoundingClientRect();
+                    const _root_width = root_rect.width;
+                    const _root_height = root_rect.height;
+
+                    if(_window_width < 100 || _root_width < 100) {
+
+                        setTimeout(() => {
+
+                            this._updated_dimensions()
+                        }, 50);
+
+                    }else {
+
+                        if(_root_width > 1920) {
+
+                            _column_count = 6;
+                        }else if(_root_width > 1280) {
+
+                            _column_count = 4;
+                        }else if(_root_width > 960) {
+
+                            _column_count = 3;
+                        }else if(_root_width > 480) {
+
+                            _column_count = 2;
+                        }else {
+
+                            _column_count = 1;
+                        }
+
+                        // View width
+                        const _column_width = Math.floor(
+                            (root_rect.width - (_column_count+1) * _gutter_size) / _column_count
+                        );
+
+                        this.setState({_posts: []}, () => {
+
+                            this.forceUpdate(() => {
+
+                                this.setState({_posts, _column_width, _column_count, _root_width, _root_height}, () => {
+
+                                    this.forceUpdate(() => {
+
+                                        this._init_cell_measurements();
+                                    });
+                                });
+                            });
+                        });
+                    }
+                }else {
+
+                    setTimeout(() => {
+
+                        this._updated_dimensions();
+                    }, 50);
+                }
+            });
+        });
     }
 
     _handle_art_open = (post, event) => {
@@ -773,7 +858,10 @@ class Gallery extends React.Component {
                 }
             });
 
-            this.setState({_reaction_click_event: {...event}, _reaction_selected_post: post, _reaction_voted_result});
+            this.setState({_reaction_click_event: {...event}, _reaction_selected_post: post, _reaction_voted_result}, () => {
+
+                this.forceUpdate();
+            });
         }else {
 
             this._handle_reaction_menu_close();
@@ -782,7 +870,10 @@ class Gallery extends React.Component {
 
     _handle_reaction_menu_close = () => {
 
-        this.setState({_reaction_click_event: null, _reaction_selected_post: {}, _reaction_voted_result: null});
+        this.setState({_reaction_click_event: null, _reaction_selected_post: {}, _reaction_voted_result: null}, () => {
+
+            this.forceUpdate();
+        });
     };
 
     _handle_art_focus = (post) => {
@@ -796,7 +887,10 @@ class Gallery extends React.Component {
 
     _handle_pixel_dialog_post_closed = () => {
 
-        this.setState({_post: null, _post_closed_at: Date.now()});
+        this.setState({_post: null, _post_closed_at: Date.now()}, () => {
+
+            this.forceUpdate();
+        });
         actions.trigger_sfx("state-change_confirm-down");
     };
 
@@ -842,19 +936,38 @@ class Gallery extends React.Component {
 
     _handle_keydown = (event) => {
 
-        let { _selected_post_index, _post_closed_at, _posts, _post, _column_count } = this.state;
+        let { _selected_post_index, _post_closed_at, _posts, _post, _column_count, _x_y_of_el_by_index } = this.state;
 
         if(!_post && _post_closed_at + 300 < Date.now()) {
 
             event.preventDefault();
 
+            const columnIndex = _selected_post_index % _column_count;
+            const rowIndex = (_selected_post_index - columnIndex) / _column_count;
+
+
             switch (event.keyCode) {
 
                 case 38:
-                    _selected_post_index -= _column_count;
+
+                    _x_y_of_el_by_index((xy, xy_i) => {
+
+                        const [r, c] = xy;
+                        if(c === columnIndex && rowIndex === r - 1) {
+
+                            _selected_post_index = xy_i;
+                        }
+                    });
                     break;
                 case 40:
-                    _selected_post_index += _column_count;
+                    _x_y_of_el_by_index((xy, xy_i) => {
+
+                        const [r, c] = xy;
+                        if(c === columnIndex && rowIndex === r + 1) {
+
+                            _selected_post_index = xy_i;
+                        }
+                    });
                     break;
                 case 37:
                     _selected_post_index -= 1;
@@ -868,10 +981,14 @@ class Gallery extends React.Component {
             this._update_selected_post_index(_selected_post_index);
 
             this.setState({_selected_post_index}, () => {
-                if(event.keyCode === 13) {
 
-                    this._open_selected_post_index();
-                }
+                this.forceUpdate(() => {
+
+                    if(event.keyCode === 13) {
+
+                        this._open_selected_post_index();
+                    }
+                });
             });
         }
     };
@@ -883,13 +1000,15 @@ class Gallery extends React.Component {
         const _selected_post_index = typeof index !== "undefined" ? index : _posts.indexOf(_post);
         this.setState({_selected_post_index}, () => {
 
-            if(!do_not_scroll) {
+            this.forceUpdate(() => {
+                if(!do_not_scroll) {
 
-                this._scroll_to_index();
-            }else {
+                    this._scroll_to_index();
+                }else {
 
-                _masonry.forceUpdate();
-            }
+                    _masonry.forceUpdate();
+                }
+            });
         });
     }
 
@@ -899,7 +1018,7 @@ class Gallery extends React.Component {
 
         if(_masonry) {
 
-            if(!scroll) {
+            if(typeof scroll === "undefined") {
 
                 _masonry._scrollingContainer.scrollTop = this.state._scroll_top;
                 _masonry.forceUpdate();
@@ -930,12 +1049,15 @@ class Gallery extends React.Component {
         const { _load_more_threshold, _loading_posts } = this.state;
         const { scrollTop, scrollHeight, clientHeight } = scroll_data;
 
-        if(scrollTop + clientHeight + _load_more_threshold > scrollHeight && !_loading_posts) {
+        if(!_loading_posts) {
 
-            this._load_more();
+            if(scrollTop + clientHeight + _load_more_threshold > scrollHeight) {
+
+                this._load_more();
+            }
+
+            this.setState({_scroll_top: scrollTop});
         }
-
-        this.setState({_scroll_top: scrollTop});
     };
 
     _open_selected_post_index = () => {
@@ -959,17 +1081,23 @@ class Gallery extends React.Component {
 
     _handle_votes_menu_open = (event, votes) => {
 
-        this.setState({_votes_anchor: event.currentTarget, _votes: votes});
+        this.setState({_votes_anchor: event.currentTarget, _votes: votes}, () => {
+
+            this.forceUpdate();
+        });
     };
 
     _handle_votes_menu_close = (event, votes) => {
 
-        this.setState({_votes_anchor: null, _votes: []});
+        this.setState({_votes_anchor: null, _votes: []}, () => {
+
+            this.forceUpdate();
+        });
     };
 
     render() {
 
-        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _updating_dimension } = this.state;
+        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code } = this.state;
         const { _cell_positioner, _cell_measurer_cache, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
 
         const width = _window_width;
@@ -980,20 +1108,6 @@ class Gallery extends React.Component {
             64:
             56;
         const post_list_height = height - post_list_window_margin_top;
-
-        const masonry_element = (_cell_positioner !== null) ?
-            <MasonryExtended
-                scrollTop={_scroll_top}
-                height={post_list_height}
-                cellCount={_posts.length}
-                cellMeasurerCache={_cell_measurer_cache}
-                cellPositioner={_cell_positioner}
-                cellRenderer={this._cell_renderer}
-                onScroll={this._handle_masonry_scroll}
-                overscanByPixels={_overscan_by_pixels}
-                ref={this._set_masonry_ref}
-                width={page_width}
-            ></MasonryExtended>: null;
 
         return (
             <div className={classes.root} ref={this._set_root_ref}>
@@ -1025,10 +1139,30 @@ class Gallery extends React.Component {
                 </div>
 
                 {
-                    _posts.length ?
-                        <div className={classes.masonry}>
-                            {masonry_element}
-                        </div>:
+                     _cell_measurer_cache && _cell_positioner ?
+                        <ImageMeasurer
+                            className={classes.masonry}
+                            items={_posts}
+                            image={item => item.image}
+                            defaultHeight={post_list_height}
+                            defaultWidth={page_width}
+                        >
+                            {({ itemsWithSizes }) => (
+                                <MasonryExtended
+                                    scrollTop={_scroll_top}
+                                    scrollingResetTimeInterval={100}
+                                    onScroll={this._handle_masonry_scroll}
+                                    height={post_list_height}
+                                    cellCount={itemsWithSizes.length}
+                                    cellMeasurerCache={_cell_measurer_cache}
+                                    cellPositioner={_cell_positioner}
+                                    cellRenderer={this._cell_renderer}
+                                    overscanByPixels={_overscan_by_pixels}
+                                    ref={this._set_masonry_ref}
+                                    width={page_width}
+                                ></MasonryExtended>
+                            )}
+                        </ImageMeasurer>:
                         <div className={classes.noPosts} style={{height: post_list_height}}>
                             {
                                 _loading_posts ?

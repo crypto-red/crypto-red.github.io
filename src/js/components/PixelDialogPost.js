@@ -56,6 +56,7 @@ import ChipInput from "material-ui-chip-input";
 import actions from "../actions/utils";
 import {postJSON} from "../utils/load-json";
 import {clean_json_text} from "../utils/json";
+import ReactDOM from "react-dom";
 
 const TRANSLATION_AVAILABLE = ["en", "ar", "zh", "nl", "fi", "fr", "de", "hi", "hu", "id", "ga", "it", "ja", "ko", "pl", "pt", "ru", "es", "sv", "tr", "uk", "vi"];
 
@@ -392,6 +393,8 @@ class PixelDialogPost extends React.Component {
 
         window.addEventListener("resize", this._updated_dimensions);
         document.addEventListener("keydown", this._handle_keydown);
+        ReactDOM.findDOMNode(this).focus();
+
         this._updated_dimensions();
 
         if(this.state.edit === true) {

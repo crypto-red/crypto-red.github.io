@@ -21,6 +21,7 @@ import FireHearthEmojiSvg from "../twemoji/react/2764Fe0F200D1F525";
 
 import get_svg_in_b64 from "../utils/svgToBase64";
 import price_formatter from "../utils/price-formatter";
+import ReactDOM from "react-dom";
 
 const red_angry_emoji_svg = get_svg_in_b64(<RedAngryEmojiSvg />);
 const angry_emoji_svg = get_svg_in_b64(<AngryEmojiSvg />);
@@ -219,7 +220,10 @@ class PixelArtCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            index: props.index || 0,
+            key: props.key,
+            rowIndex: props.rowIndex,
+            columnIndex: props.columnIndex,
+            style: props.style || {},
             fade_in: props.fade_in || 0,
             classes: props.classes,
             post: props.post,
@@ -245,7 +249,14 @@ class PixelArtCard extends React.Component {
 
     shouldComponentUpdate(new_props) {
 
+        if(new_props.selected && !this.state.selected) {
+
+            ReactDOM.findDOMNode(this).focus();
+        }
+
         return (
+            new_props.rowIndex !== this.state.rowIndex ||
+            new_props.columnIndex !== this.state.columnIndex ||
             new_props.post !== this.state.post ||
             new_props.selected !== this.state.selected ||
             new_props.is_loading !== this.state.is_loading ||
@@ -260,9 +271,7 @@ class PixelArtCard extends React.Component {
 
     render() {
 
-        const { classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading, _shown  } = this.state;
-
-        if(!post){ return <div></div>;}
+        const { key, rowIndex, columnIndex, style, classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading, _shown  } = this.state;
 
         const vote_number = (post.active_votes || []).length;
         const tags = post.tags ? post.tags: [];
@@ -271,13 +280,15 @@ class PixelArtCard extends React.Component {
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
 
         return (
-            <Card elevation={0} className={classes.card} style={_shown ? {opacity: 1, transition: `opacity 175ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`}: {opacity: 0, transition: "opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"}} score={Math.round(post.voting_ratio / 10) * 10} dataselected={selected ? "true": "false"}>
+            <Card key={key} ref={this.props.ref} elevation={4} className={classes.card}
+                  style={_shown ? {...style, opacity: 1, transition: `opacity 175ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`}: {...style, opacity: 0, transition: "opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"}}
+                  score={Math.round(post.voting_ratio / 10) * 10}
+                  dataselected={selected ? "true": "false"}>
                 <CardActionArea>
                     <div style={{position: "relative", overflow: "hidden"}}>
                         <CardMedia
                             className={classes.cardMedia}
                             component="img"
-                            onLoad={this.props.on_loaded}
                             alt={post.title}
                             image={post.image}
                             title={post.title}

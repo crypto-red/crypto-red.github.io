@@ -731,13 +731,19 @@ function get_hive_posts(parameters, callback_function) {
 
             posts = posts.map((p) => {return {author: p.author, permlink: p.permlink}});
 
-            if(posts.length) {
+            if(typeof data[data.length-1] !== "undefined") {
+                if(posts.length) {
 
-                callback_function(err, {posts, end_author: data[data.length-1].author, end_permlink: data[data.length-1].permlink});
+                    callback_function(err, {posts, end_author: data[data.length-1].author, end_permlink: data[data.length-1].permlink});
+                }else{
+
+                    get_hive_posts({ limit, tag, sorting, start_author: data[data.length-1].author, start_permlink: data[data.length-1] }, callback_function);
+                }
             }else {
 
-                get_hive_posts({ limit, tag, sorting, start_author: data[data.length-1].author, start_permlink: data[data.length-1] }, callback_function);
+                callback_function("No end of the post list known", null);
             }
+
         }else {
 
             callback_function("Cannot get more posts", null);
