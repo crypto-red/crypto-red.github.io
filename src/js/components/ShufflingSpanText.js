@@ -22,9 +22,12 @@ function loop_frame(render, initiated) {
 
             waf_id = window.requestAnimationFrame(render);
         }
-    }else { // The request was recent, feedback the request to itself.
+    }else if(initiated + 1000 / 10 > Date.now()) { // The request was recent, feedback the request to itself.
 
-        loop_frame(render, initiated);
+        setTimeout(() => {
+
+            loop_frame(render, initiated);
+        }, 10);
     }
 
 }

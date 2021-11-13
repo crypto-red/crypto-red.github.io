@@ -13,6 +13,47 @@ const hive_posts_db = new PouchDB("hive_posts_db", {revs_limit: 0, auto_compacti
 const hive_accounts_db = new PouchDB("hive_accounts_db", {revs_limit: 0, auto_compaction: false});
 const hive_queries_db = new PouchDB("hive_queries_db", {revs_limit: 0, auto_compaction: false});
 
+import React from "react";
+import AngryEmojiSvg from "../twemoji/react/1F624";
+import HearthEmojiSvg from "../twemoji/react/2764";
+import TongueEmojiSvg from "../twemoji/react/1F60B";
+import SunglassesEmojiSvg from "../twemoji/react/1F60E";
+import ConfidentEmojiSvg from "../twemoji/react/1F60E";
+import TongueWinkEmojiSvg from "../twemoji/react/1F61C";
+import TongueCrossEmojiSvg from "../twemoji/react/1F61D";
+import EmbarrassedEmojiSvg from "../twemoji/react/1F62C";
+import CryingEmojiSvg from "../twemoji/react/1F62D";
+import HappyEmojiSvg from "../twemoji/react/1F600";
+import WinkEmojiSvg from "../twemoji/react/1F609";
+import LaughingEmojiSvg from "../twemoji/react/1F602";
+import LaughingCrossEmojiSvg from "../twemoji/react/1F606";
+import AngelEmojiSvg from "../twemoji/react/1F607";
+import NeutralEmojiSvg from "../twemoji/react/1F610";
+import KissEmojiSvg from "../twemoji/react/1F618";
+import DrunkEmojiSvg from "../twemoji/react/1F635200D1F4Ab";
+import PerplexEmojiSvg from "../twemoji/react/1F914";
+
+import get_svg_in_b64 from "../utils/svgToBase64";
+
+const angry_emoji = get_svg_in_b64(<AngryEmojiSvg />);
+const hearth_emoji = get_svg_in_b64(<HearthEmojiSvg />);
+const tongue_emoji = get_svg_in_b64(<TongueEmojiSvg />);
+const sunglasses_emoji = get_svg_in_b64(<SunglassesEmojiSvg />);
+const confident_emoji = get_svg_in_b64(<ConfidentEmojiSvg />);
+const tongue_wink_emoji = get_svg_in_b64(<TongueWinkEmojiSvg />);
+const tongue_cross_emoji = get_svg_in_b64(<TongueCrossEmojiSvg />);
+const embarrassed_emoji = get_svg_in_b64(<EmbarrassedEmojiSvg />);
+const crying_emoji = get_svg_in_b64(<CryingEmojiSvg />);
+const happy_emoji = get_svg_in_b64(<HappyEmojiSvg />);
+const wink_emoji = get_svg_in_b64(<WinkEmojiSvg />);
+const laughing_emoji = get_svg_in_b64(<LaughingEmojiSvg />);
+const laughing_cross_emoji = get_svg_in_b64(<LaughingCrossEmojiSvg />);
+const angel_emoji = get_svg_in_b64(<AngelEmojiSvg />);
+const neutral_emoji = get_svg_in_b64(<NeutralEmojiSvg />);
+const kiss_emoji = get_svg_in_b64(<KissEmojiSvg />);
+const drunk_emoji = get_svg_in_b64(<DrunkEmojiSvg />);
+const perplex_emoji = get_svg_in_b64(<PerplexEmojiSvg />);
+
 function _cache_data(database, cache_time_ms, query_id, api_function, api_parameters, callback_function, response_to_data_formatter = (response) => {return response}) {
 
     let data_in_db = null;
@@ -179,6 +220,35 @@ function _preprocess_text(content) {
         const username = + match.toLowerCase().replace("@", "").replace(" ", "");
         return` [${match.replaceAll(" ", "")}](${origin}/gallery/newest/search/@${username})`;
     });
+
+    return content;
+}
+
+function postprocess_text(content = "") {
+
+    /* RENDER EMOJI */
+    content = content.replace(/ (\:\-?|) /gm, ` ![neutral emoji](${neutral_emoji}) `);
+    content = content.replace(/ (\:\-?\))|(\:\-?\])|(\:\-?\}) /gm, ` ![happy emoji](${happy_emoji}) `);
+    content = content.replace(/ (\:\'\-?\))|(\:\'\-?\])|(\:\'\-?\}) /gm, ` ![laughing emoji](${laughing_emoji}) `);
+    content = content.replace(/ (\:\-?\()|(\:\-?\[)|(\:\-?\{) /gm, ` ![angry emoji](${angry_emoji}) `);
+    content = content.replace(/ (\:\'\-?\()|(\:\'\-?\[)|(\:\'\-?\{) /gm, ` ![crying emoji](${crying_emoji}) `);
+    content = content.replace(/ (\:\-?[D])|([x]\-?D)|([X]\-?[D]) /gm, ` ![laughing emoji](${laughing_emoji}) `);
+    //content = content.replace(/ (\:\-?O)|(8\-0)/gm, `![_emoji](${_emoji}) `);
+    content = content.replace(/ (\:\-?\*) /gm, `![laughing emoji](${kiss_emoji}) `);
+    content = content.replace(/ (\;\-?\))|(\;\-?\])|(\;\-?\}) /gm, ` ![wink emoji](${wink_emoji}) `);
+    content = content.replace(/ (\:\-?[P])|(\:\-?[b]) /gm, ` ![tongue emoji](${tongue_emoji}) `);
+    content = content.replace(/ (\;\-?[P])|(\;\-?[b]) /gm, ` ![tongue wink emoji](${tongue_wink_emoji}) `);
+    content = content.replace(/ ([x]\-?[p])|([X]\-?[P]) /gm, ` ![tongue cross emoji](${tongue_cross_emoji}) `);
+    content = content.replace(/ (\:\-?\/)|(\:\-?\\)|(\=\\)|(\=\/)|(\:([s]|[L])) /gm, ` ![tongue cross emoji](${perplex_emoji}) `);
+    content = content.replace(/ (\:\-?\|) /gm, ` ![perplex emoji](${perplex_emoji}) `);
+    content = content.replace(/ (\:\$)|(\:\/\/(3|\))) /gm, ` ![embarrassed emoji](${embarrassed_emoji}) `);
+    //content = content.replace(/ (\:\-?([X]|\#|\&))/gm, ` ![happy_emoji](${happy emoji}) `);
+    content = content.replace(/ ((0|O)\:\-?(3|\))) /gm, ` ![happy emoji](${angel_emoji}) `);
+    //content = content.replace(/ ((\>|\}|3)\:\-?(\)|3))/gm, ` ![happy_emoji](${happy emoji}) `);
+    content = content.replace(/ (\|\;\-\))|(\|\-[O])|([B]\-) /gm, ` ![sunglasses emoji](${sunglasses_emoji}) `);
+    content = content.replace(/ (\:\-[J]) /gm, ` ![confident emoji](${confident_emoji}) `);
+    //content = content.replace(/ (\%\-?\))/gm, ` ![confused](${confused}) `);
+    //content = content.replace(/ (\:E)/gm, ` !(nervous)[${nervous}) `);
 
     return content;
 }
@@ -617,7 +687,7 @@ function get_hive_posts(parameters, callback_function) {
     let { limit, tag, sorting, start_author, start_permlink } = parameters;
     let query = { limit, tag, start_author, start_permlink };
 
-    let fun = function(){};
+    let fun = () => {};
 
     switch (sorting.toUpperCase()) {
 
@@ -635,9 +705,9 @@ function get_hive_posts(parameters, callback_function) {
             break;
     }
 
-    fun(query, function(err, data) {
+    fun(query, (err, data) => {
 
-        if(data) {
+        if(!err && data) {
 
             let posts = [];
             data.forEach((p) => {
@@ -660,7 +730,14 @@ function get_hive_posts(parameters, callback_function) {
             });
 
             posts = posts.map((p) => {return {author: p.author, permlink: p.permlink}});
-            callback_function(err, {posts, end_author: data[data.length-1].author, end_permlink: data[data.length-1].permlink});
+
+            if(posts.length) {
+
+                callback_function(err, {posts, end_author: data[data.length-1].author, end_permlink: data[data.length-1].permlink});
+            }else {
+
+                get_hive_posts({ limit, tag, sorting, start_author: data[data.length-1].author, start_permlink: data[data.length-1] }, callback_function);
+            }
         }else {
 
             callback_function("Cannot get more posts", null);
@@ -909,4 +986,5 @@ module.exports = {
     post_hive_pixel_art: post_hive_pixel_art,
     vote_on_hive_post: vote_on_hive_post,
     search_on_hive: cached_search_on_hive,
+    postprocess_text: postprocess_text,
 };

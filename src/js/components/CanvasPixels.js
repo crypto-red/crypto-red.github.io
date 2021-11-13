@@ -3372,7 +3372,7 @@ class CanvasPixels extends React.Component {
                 this.zoom_of(of, page_x_center, page_y_center, -move_x, -move_y);
             });
 
-        }else if(canvas_event_target === "CANVAS_WRAPPER_OVERFLOW") {
+        }else /*if(canvas_event_target === "CANVAS_WRAPPER_OVERFLOW")*/ {
 
             this._handle_canvas_move(event, canvas_event_target);
         }

@@ -55,6 +55,10 @@ const overrides = {
             "p img": {
                 width: "100%",
             },
+            'p img[alt~="emoji"]': {
+                width: "1em",
+                verticalAlign: "middle",
+            },
             "*::-webkit-scrollbar": {
                 width: "8px"
             },

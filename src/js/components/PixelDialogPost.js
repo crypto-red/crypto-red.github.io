@@ -49,6 +49,7 @@ import Checkbox from "@material-ui/core/Checkbox";
 
 import * as toxicity from "@tensorflow-models/toxicity";
 import {lookup_hive_accounts_name} from "../utils/api";
+import {postprocess_text} from "../utils/api-hive";
 import {HISTORY} from "../utils/constants";
 import TimeAgo from "javascript-time-ago";
 import ChipInput from "material-ui-chip-input";
@@ -1315,7 +1316,7 @@ class PixelDialogPost extends React.Component {
                                                         className={_is_description_collapsed && (post.description || "").length > 1000 ? classes.descriptionCollapsed: classes.description}>
                                                         <div>
                                                             <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>
-                                                                {_translated_description.length ? _translated_description: post.description}
+                                                                {_translated_description.length ? postprocess_text(_translated_description): postprocess_text(post.description)}
                                                             </ReactMarkdown>
                                                             {!_is_description_collapsed && (post.description || "").length > 1000 && <a onClick={this._handle_toggle_description}>See less...</a>}
                                                         </div>

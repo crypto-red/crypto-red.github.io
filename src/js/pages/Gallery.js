@@ -133,22 +133,6 @@ const styles = theme => ({
             }
         }
     },
-    masonryHidden: {
-        opacity: 0,
-        transition: "opacity 0 cubic-bezier(0.4, 0, 0.2, 1) 0",
-        overflow: "overlay",
-        "& > .ReactVirtualized__Masonry": {
-            position: "absolute",
-            padding: "88px 16px 32px 16px",
-            margin: 0,
-            scrollBehavior: "smooth",
-            overflow: "overlay",
-            "& > .ReactVirtualized__Masonry__innerScrollContainer": {
-                overflow: "visible !important",
-                transform: "translateZ(0px)",
-            }
-        }
-    },
     noPosts: {
         width: "100%",
         display: "flex",
@@ -239,7 +223,7 @@ class Gallery extends React.Component {
             _start_permlink: null,
             _column_count: 4,
             _column_width: 356,
-            _load_more_threshold: 4000,
+            _load_more_threshold: 500,
             _overscan_by_pixels: 3000,
             _cell_positioner: null,
             _masonry: null,
@@ -415,33 +399,37 @@ class Gallery extends React.Component {
 
     _load_more = () => {
 
-        const {_is_search_mode} = this.state;
+        const { _is_search_mode, _loading_posts } = this.state;
 
-        if(_is_search_mode) {
+        if(!_loading_posts) {
 
-            this._search_more_posts();
-        }else {
+            if(_is_search_mode) {
 
-            this._load_more_posts();
+                this._search_more_posts();
+            }else {
+
+                this._load_more_posts();
+            }
         }
-
     };
 
     _load_more_posts = () => {
 
         const { _posts, _start_author, _start_permlink, _sorting_modes, _sorting_tab_index } = this.state;
         actions.trigger_loading_update(0);
+        const load_new = !Boolean(_start_author) && !Boolean(_start_permlink);
+
         this.setState({_loading_posts: true}, () => {
 
-            get_hive_posts({limit: 21, tag: "pixel-art", sorting: (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]), start_author: _start_author, start_permlink: _start_permlink}, (err, data) => {
+            get_hive_posts({_posts: load_new ? []: _posts, limit: 21, tag: "pixel-art", sorting: (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]), start_author: _start_author, start_permlink: _start_permlink}, (err, data) => {
 
                 if(data.posts){
 
-                    const posts = _start_author && _start_permlink ? _posts.concat(data.posts): data.posts;
+                    const posts = !load_new ? _posts.concat(data.posts): data.posts;
 
                     this.setState({_updating_dimension: true, _loading_posts: false, _posts: posts, _start_author: data.end_author, _start_permlink: data.end_permlink}, () => {
 
-                        this._updated_dimensions(true);
+                        if(load_new){this._updated_dimensions(true);}
                         actions.trigger_loading_update(100);
                     });
                 }else {
@@ -487,9 +475,9 @@ class Gallery extends React.Component {
 
                         const posts = _search_mode_query_page > 1 ? _posts.concat(data.posts): data.posts;
 
-                        this.setState({_updating_dimension: true,_loading_posts: false, _posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
+                        this.setState({_updating_dimension: true, _loading_posts: false, _posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
 
-                            this._updated_dimensions(true);
+                            if(_search_mode_query_page <= 1){this._updated_dimensions(true);}
                             actions.trigger_loading_update(100);
                         });
                     }else {
@@ -700,7 +688,7 @@ class Gallery extends React.Component {
 
         const { _history, _is_search_mode, _sorting_modes, _sorting_tab_index, _search_sorting_modes, _search_sorting_tab_index, _search_mode_query } = this.state;
 
-        this._handle_art_focus(post, event);
+        this._handle_art_focus(post);
         const new_pathname = !_is_search_mode ?
             "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]) + "/@" + post.author + "/" + post.permlink:
             "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + _search_mode_query + "/@" + post.author + "/" + post.permlink;
@@ -797,7 +785,7 @@ class Gallery extends React.Component {
         this.setState({_reaction_click_event: null, _reaction_selected_post: {}, _reaction_voted_result: null});
     };
 
-    _handle_art_focus = (post, event) => {
+    _handle_art_focus = (post) => {
 
         const { _posts } = this.state;
 
@@ -880,7 +868,7 @@ class Gallery extends React.Component {
             this._update_selected_post_index(_selected_post_index);
 
             this.setState({_selected_post_index}, () => {
-                if(event.key === "Enter") {
+                if(event.keyCode === 13) {
 
                     this._open_selected_post_index();
                 }
@@ -905,26 +893,47 @@ class Gallery extends React.Component {
         });
     }
 
+    _scroll_to = (scroll) => {
+
+        const { _masonry } = this.state;
+
+        if(_masonry) {
+
+            if(!scroll) {
+
+                _masonry._scrollingContainer.scrollTop = this.state._scroll_top;
+                _masonry.forceUpdate();
+            }else {
+
+                this.setState({_scroll_top: scroll}, () => {
+
+                    _masonry._scrollingContainer.scrollTop = scroll;
+                    _masonry.forceUpdate();
+                });
+            }
+        }
+
+    };
+
     _scroll_to_index = (index) => {
 
-        const {_selected_post_index, _top_scroll_of_el_by_index, _height_of_el_by_index, _masonry, _root_height} = this.state;
+        const {_selected_post_index, _top_scroll_of_el_by_index, _height_of_el_by_index, _root_height} = this.state;
 
         index = typeof index !== "undefined" ? index: _selected_post_index;
         let top = _top_scroll_of_el_by_index[index] + _height_of_el_by_index[index] / 2 - _root_height / 3;
 
-        if(_masonry) {
-
-            this.setState({_scroll_top: top}, () => {
-
-                _masonry._scrollingContainer.scrollTop = top;
-                _masonry.forceUpdate();
-            });
-        }
+        this._scroll_to(top);
     };
 
     _handle_masonry_scroll = (scroll_data) => {
 
-        const { scrollTop } = scroll_data;
+        const { _load_more_threshold, _loading_posts } = this.state;
+        const { scrollTop, scrollHeight, clientHeight } = scroll_data;
+
+        if(scrollTop + clientHeight + _load_more_threshold > scrollHeight && !_loading_posts) {
+
+            this._load_more();
+        }
 
         this.setState({_scroll_top: scrollTop});
     };
@@ -932,8 +941,7 @@ class Gallery extends React.Component {
     _open_selected_post_index = () => {
 
         const {_selected_post_index, _posts} = this.state;
-
-        this.setState({_post: _posts[_selected_post_index]});
+        this._handle_art_open(_posts[_selected_post_index])
     };
 
     _handle_reset_selected_account = () => {
@@ -962,7 +970,7 @@ class Gallery extends React.Component {
     render() {
 
         const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _updating_dimension } = this.state;
-        const { _cell_positioner, _cell_measurer_cache, _load_more_threshold, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
+        const { _cell_positioner, _cell_measurer_cache, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
 
         const width = _window_width;
         const height = _window_height;
@@ -981,8 +989,7 @@ class Gallery extends React.Component {
                 cellMeasurerCache={_cell_measurer_cache}
                 cellPositioner={_cell_positioner}
                 cellRenderer={this._cell_renderer}
-                loadMoreRows={this._load_more}
-                threshold={_load_more_threshold}
+                onScroll={this._handle_masonry_scroll}
                 overscanByPixels={_overscan_by_pixels}
                 ref={this._set_masonry_ref}
                 width={page_width}
@@ -1019,7 +1026,7 @@ class Gallery extends React.Component {
 
                 {
                     _posts.length ?
-                        <div className={ _cell_positioner !== null && _updating_dimension === false ? classes.masonry: classes.masonryHidden}>
+                        <div className={classes.masonry}>
                             {masonry_element}
                         </div>:
                         <div className={classes.noPosts} style={{height: post_list_height}}>
