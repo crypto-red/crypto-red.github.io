@@ -197,6 +197,11 @@ const styles = theme => ({
             borderColor: "#1e5687",
         },
     },
+    drawerModalBackdropRoot: {
+        [theme.breakpoints.down("md")]: {
+            transform: "translateY(-48px)"
+        },
+    },
     drawerModal: {
         [theme.breakpoints.down("md")]: {
             transform: "translateY(48px)"
@@ -226,6 +231,7 @@ const styles = theme => ({
         boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px",
         [theme.breakpoints.down("md")]: {
             zIndex: 1,
+            paddingTop: theme.spacing(2),
         },
     },
     scrollOverflowMaxWidthMobile: {
@@ -1128,7 +1134,7 @@ class PixelDialogPost extends React.Component {
                                 <SwipeableDrawer
                                     swipeAreaWidth={50}
                                     keepMounted={keepMounted}
-                                    hideBackdrop={true}
+                                    ModalProps={{BackdropProps:{classes: {root: classes.drawerModalBackdropRoot}}}}
                                     onClose={this._handle_drawer_icon_close}
                                     onOpen={this._handle_drawer_open}
                                     className={classes.drawer}
@@ -1302,7 +1308,7 @@ class PixelDialogPost extends React.Component {
                                                         style={{marginBottom: 12}}
                                                     />:
                                                     <Collapse
-                                                        onClick={this._handle_toggle_description}
+                                                        onClick={_is_description_collapsed ? this._handle_toggle_description: () => {}}
                                                         in={!_is_description_collapsed || (post.description || "").length <= 1000}
                                                         timeout="auto"
                                                         collapsedHeight={"128px"}
@@ -1311,6 +1317,7 @@ class PixelDialogPost extends React.Component {
                                                             <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>
                                                                 {_translated_description.length ? _translated_description: post.description}
                                                             </ReactMarkdown>
+                                                            {!_is_description_collapsed && (post.description || "").length > 1000 && <a onClick={this._handle_toggle_description}>See less...</a>}
                                                         </div>
                                                     </Collapse>
                                             }

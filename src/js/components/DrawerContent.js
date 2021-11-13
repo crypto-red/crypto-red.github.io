@@ -418,8 +418,7 @@ class DrawerContent extends React.Component {
                 <Fade in timeout={500}>
                     <List>
                         <ListItem button onClick={this._open_gallery_page}>
-                            <ChemistryEmojiIcon className={classes.iconLeft}/>
-                            <ListItemText primary={"NFTs [Pixel Art]"} />
+                            <ListItemText primary={"NFT Market - Pixel Art"} />
                         </ListItem>
                         <ListItem button onClick={this._open_dashboard_page}>
                             <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />

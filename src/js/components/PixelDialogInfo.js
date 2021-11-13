@@ -80,7 +80,7 @@ class PixelDialogInfo extends React.Component {
                     </ul>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="text" color="primary" autoFocus onClick={this.onClose}><ShufflingSpanText animation_delay_ms={444} animation_duration_ms={999} text={t( "words.close" )}/></Button>
+                    <Button variant="text" color="primary" autoFocus onClick={this.props.onClose}><ShufflingSpanText animation_delay_ms={444} animation_duration_ms={999} text={t( "words.close" )}/></Button>
                 </DialogActions>
             </Dialog>
         );

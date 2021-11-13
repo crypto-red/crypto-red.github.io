@@ -155,9 +155,9 @@ const styles = theme => ({
         justifyContent: "flex-start",
         "& .MuiListItem-root": {
             display: "block",
-            flexGrow: 0,
-            flexBasis: "25%",
-            width: "25%",
+            flexGrow: 1,
+            flexBasis: "auto",
+            width: "100px",
             textAlign: "center",
             "& .MuiListItemIcon-root": {
                 minWidth: 0,
@@ -180,7 +180,9 @@ const styles = theme => ({
             flexFlow: "row",
             "& .MuiListItem-root": {
                 display: "block",
-                maxWidth: 120,
+                flexGrow: 1,
+                flexBasis: "auto",
+                width: "100px",
                 textAlign: "center",
                 "& .MuiListItemIcon-root": {
                     minWidth: 0,
@@ -797,7 +799,7 @@ class PixelToolboxSwipeableViews extends React.Component {
             <SwipeableViews
                 containerStyle={{overflow: "visible"}}
                 animateHeight={false}
-                animateTransitions={true}
+                animateTransitions={false}
                 disableLazyLoading={true}
                 index={view_name_index}
                 onChangeIndex={this._handle_view_name_change}
@@ -806,7 +808,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                 {
                     Object.entries(actions).map(a => a[1]).map((view, index) => {
 
-                        //if(view_name_index !== index && previous_view_name_index !== index) { return <List style={{overflow: "visible"}} />; }
+                        if(view_name_index !== index) { return <List style={{overflow: "visible"}} />; }
 
                         return (
                             <List key={index} style={{overflow: "visible", paddingTop: 0}} >
@@ -948,7 +950,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                 </ListSubheader>
                                                 <div className={classes.listItems}
                                                      style={
-                                                         action_set.text.toLowerCase().includes("filter") ?
+                                                         action_set.text.toLowerCase().includes("effects") || action_set.text.toLowerCase().includes("filter") ?
                                                              {flexWrap: "wrap",
                                                              alignContent: "stretch",
                                                              flexDirection: "row",

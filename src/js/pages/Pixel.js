@@ -131,6 +131,9 @@ const styles = theme => ({
         backgroundColor: "#f5f5f5",
         whiteSpace: "nowrap",
     },
+    drawerModalBackdropRoot: {
+        transform: "translateY(-96px)"
+    },
     drawerModal: {
         transform: "translateY(96px)"
     },
@@ -323,12 +326,15 @@ class Pixel extends React.Component {
             _is_dialog_info_open: false,
             _base64_url: "",
             _logged_account: {},
+            _less_than_1280w: false,
         };
     };
 
     componentDidMount() {
 
         this._update_settings();
+        window.addEventListener("resize", this._updated_dimensions);
+        this._updated_dimensions();
         document.addEventListener("keydown", this._handle_keydown);
         document.addEventListener("keyup", this._handle_keyup);
         actions.trigger_loading_update(0);
@@ -340,8 +346,21 @@ class Pixel extends React.Component {
         }, 350);
     }
 
+    _updated_dimensions = () => {
+
+        let w = window,
+            d = document,
+            documentElement = d.documentElement,
+            body = d.getElementsByTagName('body')[0],
+            _window_width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
+            _window_height = w.innerHeight|| documentElement.clientHeight || body.clientHeight;
+
+        this.setState({_less_than_1280w: _window_width < 1280})
+    }
+
     componentWillUnmount() {
 
+        window.removeEventListener("resize", this._updated_dimensions);
         document.removeEventListener("keydown", this._handle_keydown);
         document.removeEventListener("keyup", this._handle_keyup);
     }
@@ -1065,6 +1084,7 @@ class Pixel extends React.Component {
             _is_pixel_dialog_post_edit_open,
             _base64_url,
             _is_dialog_info_open,
+            _less_than_1280w,
         } = this.state;
 
         let { _logged_account } = this.state;
@@ -1078,6 +1098,204 @@ class Pixel extends React.Component {
 
         const rgb = 245 - Math.floor(Math.abs(_canvas_elevation) / 2);
 
+        const drawer = _less_than_1280w ?
+            (
+                <SwipeableDrawer
+                    className={classes.contentDrawer}
+                    disableBackdropTransition={true}
+                    keepMounted={false}
+                    open={_is_edit_drawer_open}
+                    onOpen={this._handle_edit_drawer_open}
+                    onClose={this._handle_edit_drawer_close}
+                    classes={{
+                        paper: classes.swipeableDrawerPaper,
+                        modal: classes.drawerModal,
+                    }}
+                    ModalProps={{BackdropProps:{classes: {root: classes.drawerModalBackdropRoot}}}}
+                    variant="temporary"
+                    anchor="bottom"
+                >
+                    <DialogCloseButton onClick={this._handle_edit_drawer_close} />
+                    <div style={{display: "grid"}}>
+                        <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
+                            <div className={classes.drawerHeader}>
+                                <Typography id="strength-slider" gutterBottom>
+                                    Effect strength:
+                                </Typography>
+                                <Slider
+                                    defaultValue={_slider_value}
+                                    step={1/32}
+                                    min={0}
+                                    max={1}
+                                    onChangeCommitted={this._set_value_from_slider}
+                                    aria-labelledby="strength-slider"
+                                />
+                            </div>
+                            <Tabs className={classes.tabs}
+                                  indicatorColor="primary"
+                                  textColor="primary"
+                                  variant="fullWidth"
+                                  selectionFollowsFocus={false}
+                                  value={_view_name_index}
+                                  onChange={(event, index) => {this._handle_view_name_change(index)}}>
+                                <Tab className={classes.tab} icon={<PaletteIcon />} />
+                                <Tab className={classes.tab} icon={<ImageIcon />} />
+                                <Tab className={classes.tab} icon={<AllLayersIcon />} />
+                                <Tab className={classes.tab} icon={<ToolsIcon />} />
+                                <Tab className={classes.tab} icon={<SelectIcon />} />
+                                <Tab className={classes.tab} icon={<ImageEffectIcon />} />
+                                <Tab className={classes.tab} icon={<ImageFilterIcon />} />
+                            </Tabs>
+                        </div>
+                        <div className={classes.drawerContainer} onGotPointerCapture={(event) => {event.stopPropagation(); event.preventDefault();}}>
+                            <PixelToolboxSwipeableViews
+                                should_update={true}
+                                is_connected_to_hive={Boolean(_logged_account.hive_username)}
+                                onActionClose={this._handle_edit_drawer_close}
+                                canvas={_canvas}
+                                view_class={classes.listOfTools}
+                                view_name_index={_view_name_index}
+                                previous_view_name_index={_previous_view_name_index}
+                                view_names={_view_names}
+                                layers={_layers}
+                                layer_index={_layer_index}
+                                is_image_import_mode={_is_image_import_mode}
+                                hide_canvas_content={_hide_canvas_content}
+                                show_original_image_in_background={_show_original_image_in_background}
+                                show_transparent_image_in_background={_show_transparent_image_in_background}
+                                can_undo={_can_undo}
+                                can_redo={_can_redo}
+                                hue={_hue}
+                                current_color={_current_color}
+                                second_color={_second_color}
+                                slider_value={_slider_value}
+                                tool={_tool}
+                                width={_width}
+                                height={_height}
+                                filters={_filters}
+                                select_mode={_select_mode}
+                                pencil_mirror_mode={_pencil_mirror_mode}
+                                is_something_selected={_is_something_selected}
+                                import_size={_import_size}
+
+                                set_tool={this._set_tool}
+                                set_select_mode={this._set_select_mode}
+                                set_pencil_mirror_mode={this._set_pencil_mirror_mode}
+                                set_width_from_slider={this._set_width_from_slider}
+                                set_height_from_slider={this._set_height_from_slider}
+                                set_import_size={this._set_import_size}
+                                switch_with_second_color={this._switch_with_second_color}
+                                show_hide_canvas_content={this._show_hide_canvas_content}
+                                show_hide_background_image={this._show_hide_background_image}
+                                show_hide_transparent_image={this._show_hide_transparent_image}
+                                on_current_color_change={this._handle_current_color_change}
+                                on_view_name_change={this._handle_view_name_change}
+                                on_upload_image={this._upload_image}
+                                on_import_image={this._import_image}
+                                on_download_image={this._download_image}
+                                on_request_publish={this._handle_is_pixel_dialog_post_edit_open}
+                            />
+                        </div>
+                    </div>
+                </SwipeableDrawer>
+            ):
+            (
+                <Drawer
+                    className={classes.contentDrawerFixed}
+                    variant="permanent"
+                    anchor="right"
+                    classes={{
+                        paper: classes.drawerPaper,
+                    }}
+                >
+                    <Toolbar />
+                    <div style={{display: "contents"}}>
+                        <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
+                            <div className={classes.drawerHeader}>
+                                            <span className={classes.coordinate}>
+                                                <span>{`FPS: ${Math.round((_fps + _prev_fps) / 2)}`}</span>
+                                                <span>{` | X: ${x}, Y: ${y} | `}</span>
+                                                <span className={_kb < 64 ? classes.green: classes.red}>{`[~${Math.round(_kb * 100) / 100} kB]`}</span>
+                                            </span>
+                                <Typography id="strength-slider" gutterBottom>
+                                    Effect strength:
+                                </Typography>
+                                <Slider
+                                    defaultValue={_slider_value}
+                                    step={1/32}
+                                    min={0}
+                                    max={1}
+                                    onChangeCommitted={this._set_value_from_slider}
+                                    aria-labelledby="strength-slider"
+                                />
+                            </div>
+                            <Tabs className={classes.tabs}
+                                  indicatorColor="primary"
+                                  textColor="primary"
+                                  variant="fullWidth"
+                                  selectionFollowsFocus={false}
+                                  value={_view_name_index}
+                                  onChange={(event, index) => {this._handle_view_name_change(index)}}>
+                                <Tab className={classes.tab} icon={<PaletteIcon />} />
+                                <Tab className={classes.tab} icon={<ImageIcon />} />
+                                <Tab className={classes.tab} icon={<AllLayersIcon />} />
+                                <Tab className={classes.tab} icon={<ToolsIcon />} />
+                                <Tab className={classes.tab} icon={<SelectIcon />} />
+                                <Tab className={classes.tab} icon={<ImageEffectIcon />} />
+                                <Tab className={classes.tab} icon={<ImageFilterIcon />} />
+                            </Tabs>
+                        </div>
+                        <div className={classes.drawerContainer}>
+                            <PixelToolboxSwipeableViews
+                                should_update={true}
+                                is_connected_to_hive={Boolean(_logged_account.hive_username)}
+                                canvas={_canvas}
+                                view_class={classes.listOfTools}
+                                view_name_index={_view_name_index}
+                                previous_view_name_index={_previous_view_name_index}
+                                view_names={_view_names}
+                                layers={_layers}
+                                layer_index={_layer_index}
+                                is_image_import_mode={_is_image_import_mode}
+                                hide_canvas_content={_hide_canvas_content}
+                                show_original_image_in_background={_show_original_image_in_background}
+                                show_transparent_image_in_background={_show_transparent_image_in_background}
+                                can_undo={_can_undo}
+                                can_redo={_can_redo}
+                                hue={_hue}
+                                current_color={_current_color}
+                                second_color={_second_color}
+                                slider_value={_slider_value}
+                                tool={_tool}
+                                width={_width}
+                                height={_height}
+                                filters={_filters}
+                                select_mode={_select_mode}
+                                pencil_mirror_mode={_pencil_mirror_mode}
+                                is_something_selected={_is_something_selected}
+                                import_size={_import_size}
+
+                                set_tool={this._set_tool}
+                                set_select_mode={this._set_select_mode}
+                                set_pencil_mirror_mode={this._set_pencil_mirror_mode}
+                                set_width_from_slider={this._set_width_from_slider}
+                                set_height_from_slider={this._set_height_from_slider}
+                                set_import_size={this._set_import_size}
+                                switch_with_second_color={this._switch_with_second_color}
+                                show_hide_canvas_content={this._show_hide_canvas_content}
+                                show_hide_background_image={this._show_hide_background_image}
+                                show_hide_transparent_image={this._show_hide_transparent_image}
+                                on_current_color_change={this._handle_current_color_change}
+                                on_view_name_change={this._handle_view_name_change}
+                                on_upload_image={this._upload_image}
+                                on_import_image={this._import_image}
+                                on_download_image={this._download_image}
+                                on_request_publish={this._handle_is_pixel_dialog_post_edit_open}
+                            />
+                        </div>
+                    </div>
+                </Drawer>
+            );
 
 
         return (
@@ -1136,198 +1354,7 @@ class Pixel extends React.Component {
                                     style={{color: _ripple_color, opacity: _ripple_opacity, position: "fixed", width: "100vw", height: "100vh", zIndex: 2000}}
                                 />
                             </div>
-                            <SwipeableDrawer
-                                className={classes.contentDrawer}
-                                disableBackdropTransition={true}
-                                keepMounted={false}
-                                open={_is_edit_drawer_open}
-                                onOpen={this._handle_edit_drawer_open}
-                                onClose={this._handle_edit_drawer_close}
-                                classes={{
-                                    paper: classes.swipeableDrawerPaper,
-                                    modal: classes.drawerModal,
-                                }}
-                                variant="temporary"
-                                anchor="bottom"
-                            >
-                                <DialogCloseButton onClick={this._handle_edit_drawer_close} />
-                                <div style={{display: "grid"}}>
-                                    <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
-                                        <div className={classes.drawerHeader}>
-                                            <Typography id="strength-slider" gutterBottom>
-                                                Effect strength:
-                                            </Typography>
-                                            <Slider
-                                                defaultValue={_slider_value}
-                                                step={1/32}
-                                                min={0}
-                                                max={1}
-                                                onChangeCommitted={this._set_value_from_slider}
-                                                aria-labelledby="strength-slider"
-                                            />
-                                        </div>
-                                        <Tabs className={classes.tabs}
-                                              indicatorColor="primary"
-                                              textColor="primary"
-                                              variant="fullWidth"
-                                              selectionFollowsFocus={false}
-                                              value={_view_name_index}
-                                              onChange={(event, index) => {this._handle_view_name_change(index)}}>
-                                            <Tab className={classes.tab} icon={<PaletteIcon />} />
-                                            <Tab className={classes.tab} icon={<ImageIcon />} />
-                                            <Tab className={classes.tab} icon={<AllLayersIcon />} />
-                                            <Tab className={classes.tab} icon={<ToolsIcon />} />
-                                            <Tab className={classes.tab} icon={<SelectIcon />} />
-                                            <Tab className={classes.tab} icon={<ImageEffectIcon />} />
-                                            <Tab className={classes.tab} icon={<ImageFilterIcon />} />
-                                        </Tabs>
-                                    </div>
-                                    <div className={classes.drawerContainer} onGotPointerCapture={(event) => {event.stopPropagation(); event.preventDefault();}}>
-                                        <PixelToolboxSwipeableViews
-                                            should_update={_is_edit_drawer_open}
-                                            is_connected_to_hive={Boolean(_logged_account.hive_username)}
-                                            onActionClose={this._handle_edit_drawer_close}
-                                            canvas={_canvas}
-                                            view_class={classes.listOfTools}
-                                            view_name_index={_view_name_index}
-                                            previous_view_name_index={_previous_view_name_index}
-                                            view_names={_view_names}
-                                            layers={_layers}
-                                            layer_index={_layer_index}
-                                            is_image_import_mode={_is_image_import_mode}
-                                            hide_canvas_content={_hide_canvas_content}
-                                            show_original_image_in_background={_show_original_image_in_background}
-                                            show_transparent_image_in_background={_show_transparent_image_in_background}
-                                            can_undo={_can_undo}
-                                            can_redo={_can_redo}
-                                            hue={_hue}
-                                            current_color={_current_color}
-                                            second_color={_second_color}
-                                            slider_value={_slider_value}
-                                            tool={_tool}
-                                            width={_width}
-                                            height={_height}
-                                            filters={_filters}
-                                            select_mode={_select_mode}
-                                            pencil_mirror_mode={_pencil_mirror_mode}
-                                            is_something_selected={_is_something_selected}
-                                            import_size={_import_size}
-
-                                            set_tool={this._set_tool}
-                                            set_select_mode={this._set_select_mode}
-                                            set_pencil_mirror_mode={this._set_pencil_mirror_mode}
-                                            set_width_from_slider={this._set_width_from_slider}
-                                            set_height_from_slider={this._set_height_from_slider}
-                                            set_import_size={this._set_import_size}
-                                            switch_with_second_color={this._switch_with_second_color}
-                                            show_hide_canvas_content={this._show_hide_canvas_content}
-                                            show_hide_background_image={this._show_hide_background_image}
-                                            show_hide_transparent_image={this._show_hide_transparent_image}
-                                            on_current_color_change={this._handle_current_color_change}
-                                            on_view_name_change={this._handle_view_name_change}
-                                            on_upload_image={this._upload_image}
-                                            on_import_image={this._import_image}
-                                            on_download_image={this._download_image}
-                                            on_request_publish={this._handle_is_pixel_dialog_post_edit_open}
-                                        />
-                                    </div>
-                                </div>
-                            </SwipeableDrawer>
-                            <Drawer
-                                className={classes.contentDrawerFixed}
-                                variant="permanent"
-                                anchor="right"
-                                classes={{
-                                    paper: classes.drawerPaper,
-                                }}
-                            >
-                                <Toolbar />
-                                <div style={{display: "contents"}}>
-                                    <div style={{boxShadow: "rgb(0 0 0 / 20%) 0px 2px 4px -1px, rgb(0 0 0 / 14%) 0px 4px 5px 0px, rgb(0 0 0 / 12%) 0px 1px 10px 0px", zIndex: 1}}>
-                                        <div className={classes.drawerHeader}>
-                                            <span className={classes.coordinate}>
-                                                <span>{`FPS: ${Math.round((_fps + _prev_fps) / 2)}`}</span>
-                                                <span>{` | X: ${x}, Y: ${y} | `}</span>
-                                                <span className={_kb < 64 ? classes.green: classes.red}>{`[~${Math.round(_kb * 100) / 100} kB]`}</span>
-                                            </span>
-                                            <Typography id="strength-slider" gutterBottom>
-                                                Effect strength:
-                                            </Typography>
-                                            <Slider
-                                                defaultValue={_slider_value}
-                                                step={1/32}
-                                                min={0}
-                                                max={1}
-                                                onChangeCommitted={this._set_value_from_slider}
-                                                aria-labelledby="strength-slider"
-                                            />
-                                        </div>
-                                        <Tabs className={classes.tabs}
-                                              indicatorColor="primary"
-                                              textColor="primary"
-                                              variant="fullWidth"
-                                              selectionFollowsFocus={false}
-                                              value={_view_name_index}
-                                              onChange={(event, index) => {this._handle_view_name_change(index)}}>
-                                            <Tab className={classes.tab} icon={<PaletteIcon />} />
-                                            <Tab className={classes.tab} icon={<ImageIcon />} />
-                                            <Tab className={classes.tab} icon={<AllLayersIcon />} />
-                                            <Tab className={classes.tab} icon={<ToolsIcon />} />
-                                            <Tab className={classes.tab} icon={<SelectIcon />} />
-                                            <Tab className={classes.tab} icon={<ImageEffectIcon />} />
-                                            <Tab className={classes.tab} icon={<ImageFilterIcon />} />
-                                        </Tabs>
-                                    </div>
-                                    <div className={classes.drawerContainer}>
-                                        <PixelToolboxSwipeableViews
-                                            should_update={!_is_edit_drawer_open}
-                                            is_connected_to_hive={Boolean(_logged_account.hive_username)}
-                                            canvas={_canvas}
-                                            view_class={classes.listOfTools}
-                                            view_name_index={_view_name_index}
-                                            previous_view_name_index={_previous_view_name_index}
-                                            view_names={_view_names}
-                                            layers={_layers}
-                                            layer_index={_layer_index}
-                                            is_image_import_mode={_is_image_import_mode}
-                                            hide_canvas_content={_hide_canvas_content}
-                                            show_original_image_in_background={_show_original_image_in_background}
-                                            show_transparent_image_in_background={_show_transparent_image_in_background}
-                                            can_undo={_can_undo}
-                                            can_redo={_can_redo}
-                                            hue={_hue}
-                                            current_color={_current_color}
-                                            second_color={_second_color}
-                                            slider_value={_slider_value}
-                                            tool={_tool}
-                                            width={_width}
-                                            height={_height}
-                                            filters={_filters}
-                                            select_mode={_select_mode}
-                                            pencil_mirror_mode={_pencil_mirror_mode}
-                                            is_something_selected={_is_something_selected}
-                                            import_size={_import_size}
-
-                                            set_tool={this._set_tool}
-                                            set_select_mode={this._set_select_mode}
-                                            set_pencil_mirror_mode={this._set_pencil_mirror_mode}
-                                            set_width_from_slider={this._set_width_from_slider}
-                                            set_height_from_slider={this._set_height_from_slider}
-                                            set_import_size={this._set_import_size}
-                                            switch_with_second_color={this._switch_with_second_color}
-                                            show_hide_canvas_content={this._show_hide_canvas_content}
-                                            show_hide_background_image={this._show_hide_background_image}
-                                            show_hide_transparent_image={this._show_hide_transparent_image}
-                                            on_current_color_change={this._handle_current_color_change}
-                                            on_view_name_change={this._handle_view_name_change}
-                                            on_upload_image={this._upload_image}
-                                            on_import_image={this._import_image}
-                                            on_download_image={this._download_image}
-                                            on_request_publish={this._handle_is_pixel_dialog_post_edit_open}
-                                        />
-                                    </div>
-                                </div>
-                            </Drawer>
+                            {drawer}
                         </div>
                     </div>
                 </div>
