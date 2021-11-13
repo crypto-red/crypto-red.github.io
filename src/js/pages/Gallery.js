@@ -1027,7 +1027,7 @@ class Gallery extends React.Component {
                                 _loading_posts ?
                                     <div key={"loading_posts"}>
                                         <h1><ShufflingSpanText  animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: "Noto Sans Mono"}} text={"Please wait..."}/></h1>
-                                        {_is_search_mode && <h5>Powered in partnership with Ecency.com</h5>}
+                                        {_is_search_mode && <h4>Powered in partnership with Ecency.com</h4>}
                                     </div>:
                                     <div key={"not_loading_posts"}><h1><ShufflingSpanText animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: "Noto Sans Mono"}} text={"Nothing to show you."}/></h1></div>
 

@@ -1221,7 +1221,7 @@ class PixelDialogPost extends React.Component {
                                                             hurt: "This post contains nudity, hate, madness, or anything that may disturb someone else's freedom of expression. (NSFW)"
                                                         };
 
-                                                        if(["unsourced", "opinion","hurt"].includes(key)) {
+                                                        if(["unsourced", "opinion", "hurt"].includes(key)) {
 
                                                             return (
                                                                 <Tooltip title={r_text[key] + (value ? " [TRUE]": " [FALSE]")}>
@@ -1438,7 +1438,7 @@ class PixelDialogPost extends React.Component {
                                         onContextMenu={(e) => {e.preventDefault()}}
                                         onSizeChange={this._handle_size_change}
                                         onLayersChange={this._handle_layers_change}
-                                        onImageLoadComplete={this._handle_image_load_complete}
+                                        onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
                                         onCrossMiddle={(direction, canvas_event_target) => {this._swiped(direction, canvas_event_target)}}
                                         ref={this._set_canvas_ref}
                                     />

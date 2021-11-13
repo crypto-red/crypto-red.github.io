@@ -49,6 +49,9 @@ const overrides = {
                     }
                 }
             },
+            ".highlighted": {
+                backgroundColor: "#e8ecfe",
+            },
             "p img": {
                 width: "100%",
             },

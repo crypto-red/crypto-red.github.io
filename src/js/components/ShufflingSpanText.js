@@ -52,9 +52,9 @@ class ShufflingSpanText extends React.Component {
             pre: props.pre || "",
             text: props.text,
             app: props.app || "",
-            animation_delay_ms: props.animation_delay_ms || 500,
-            animation_duration_ms: props.animation_duration_ms || 3500,
-            animation_fps: props.animation_fps || 25,
+            animation_delay_ms: typeof props.animation_delay_ms !== "undefined" ? props.animation_delay_ms : 500,
+            animation_duration_ms: typeof props.animation_duration_ms !== "undefined" ? props.animation_duration_ms : 3500,
+            animation_fps: typeof props.animation_fps !== "undefined" ? props.animation_fps : 20,
             _text_proceed: "",
         };
     };
