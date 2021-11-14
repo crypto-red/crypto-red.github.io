@@ -37,6 +37,8 @@ import AtmIcon from "@material-ui/icons/Atm";
 import FeedbackIcon from "@material-ui/icons/Feedback";
 import ForumIcon from "@material-ui/icons/Forum";
 import ChemistryEmojiIcon from "../twemoji/react/1F9Ea";
+import PhotoEmojiIcon from "../twemoji/react/1F4F7";
+import NewEmojiIcon from "../twemoji/react/1F195";
 import CoolEmojiSvg from "../twemoji/react/1F60E";
 
 import QrCodeScanIcon from "../icons/QrCodeScan";
@@ -418,7 +420,8 @@ class DrawerContent extends React.Component {
                 <Fade in timeout={500}>
                     <List>
                         <ListItem button onClick={this._open_gallery_page}>
-                            <ListItemText primary={"NFT Market - Pixel Art"} />
+                            <PhotoEmojiIcon className={classes.iconLeft} />
+                            <ListItemText primary={"Gallery Of Pixel Art"} />
                         </ListItem>
                         <ListItem button onClick={this._open_dashboard_page}>
                             <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />

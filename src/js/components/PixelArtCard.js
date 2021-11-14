@@ -220,6 +220,7 @@ class PixelArtCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            image_height: props.image_height || 0,
             key: props.key,
             rowIndex: props.rowIndex,
             columnIndex: props.columnIndex,
@@ -255,6 +256,7 @@ class PixelArtCard extends React.Component {
         }
 
         return (
+            new_props.image_height !== this.state.image_height ||
             new_props.rowIndex !== this.state.rowIndex ||
             new_props.columnIndex !== this.state.columnIndex ||
             new_props.post !== this.state.post ||
@@ -271,7 +273,7 @@ class PixelArtCard extends React.Component {
 
     render() {
 
-        const { key, rowIndex, columnIndex, style, classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading, _shown  } = this.state;
+        const { key, image_height, rowIndex, columnIndex, style, classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading, _shown  } = this.state;
 
         const vote_number = (post.active_votes || []).length;
         const tags = post.tags ? post.tags: [];
@@ -285,7 +287,7 @@ class PixelArtCard extends React.Component {
                   score={Math.round(post.voting_ratio / 10) * 10}
                   dataselected={selected ? "true": "false"}>
                 <CardActionArea>
-                    <div style={{position: "relative", overflow: "hidden"}}>
+                    <div style={{height: image_height, display: "block", position: "relative", overflow: "hidden"}}>
                         <CardMedia
                             className={classes.cardMedia}
                             component="img"

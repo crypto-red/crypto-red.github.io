@@ -322,6 +322,7 @@ class Gallery extends React.Component {
 
     componentDidMount() {
 
+        actions.trigger_snackbar(`"Making daily life a creative experience, continually original-delusional-ecstatic."`, 5000);
         window.addEventListener("resize", this._updated_dimensions);
         ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 
@@ -609,10 +610,13 @@ class Gallery extends React.Component {
     _cell_renderer = (data) => {
 
         const {index, key, parent, style} = data;
-        const { _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _reaction_selected_post, _reaction_selected_post_loading, _posts, _column_width, _cell_measurer_cache, _column_count } = this.state;
+        const { _masonry, _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _reaction_selected_post, _reaction_selected_post_loading, _column_width, _cell_measurer_cache, _column_count } = this.state;
 
-        const post = _posts[index] || {};
-        if(!post.id){return <div />}
+        const post = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).item || {}: {};
+        const size = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).size || {}: {};
+        if(!post.id || !size){return <div />}
+
+        const image_height = Math.ceil(_column_width * (size.height / size.width)) || 0;
 
         const columnIndex = index % _column_count;
         const rowIndex = (index - columnIndex) / _column_count;
@@ -637,6 +641,7 @@ class Gallery extends React.Component {
                     fade_in={250}
                     selected={selected}
                     post={post}
+                    image_height={image_height}
                     is_loading={is_loading}
                     hbd_market={_hbd_market}
                     selected_currency={_selected_currency}
@@ -660,7 +665,8 @@ class Gallery extends React.Component {
 
     _init_cell_measurements = () => {
 
-        if(this.state._cell_positioner_config && this.state._cell_measurer_cache && this.state._cell_positioner && this.state._masonry) {
+
+        if(this.state._cell_positioner_config && this.state._cell_measurer_cache && this.state._cell_positioner) {
 
             this._recompute_cell_measurements();
         }else {
@@ -684,14 +690,31 @@ class Gallery extends React.Component {
 
             this.setState({_cell_measurer_cache, _cell_positioner, _cell_positioner_config}, () => {
 
-                this.forceUpdate();
+                this.forceUpdate(() => {
+
+                    const update_masonry = () => {
+
+                        const { _masonry } = this.state;
+                        if(!_masonry){
+
+                            setTimeout(() => {
+
+                                update_masonry();
+                            }, 50);
+                        }else {
+
+                            this._recompute_cell_measurements();
+                        }
+                    };
+
+                    update_masonry()
+                });
             });
         }
     }
 
     _updated_dimensions = () => {
 
-        console.log("U D");
         let w = window,
             d = document,
             documentElement = d.documentElement,
@@ -699,8 +722,7 @@ class Gallery extends React.Component {
             _window_width = w.innerWidth || documentElement.clientWidth || body.clientWidth,
             _window_height = w.innerHeight|| documentElement.clientHeight || body.clientHeight;
 
-        let _posts = [...this.state._posts];
-        this.setState({_posts: [], _window_width, _window_height, _load_more_threshold: _window_height * 2}, () => {
+        this.setState({_window_width, _window_height, _load_more_threshold: _window_height * 2}, () => {
 
             this.forceUpdate(() => {
 
@@ -722,16 +744,16 @@ class Gallery extends React.Component {
 
                     }else {
 
-                        if(_root_width > 1920) {
+                        if(_window_width > 1920) {
 
                             _column_count = 6;
-                        }else if(_root_width > 1280) {
+                        }else if(_window_width > 1280) {
 
                             _column_count = 4;
-                        }else if(_root_width > 960) {
+                        }else if(_window_width > 960) {
 
                             _column_count = 3;
-                        }else if(_root_width > 480) {
+                        }else if(_window_width > 480) {
 
                             _column_count = 2;
                         }else {
@@ -744,6 +766,7 @@ class Gallery extends React.Component {
                             (root_rect.width - (_column_count+1) * _gutter_size) / _column_count
                         );
 
+                        let _posts = [...this.state._posts];
                         this.setState({_posts: []}, () => {
 
                             this.forceUpdate(() => {
@@ -1068,9 +1091,9 @@ class Gallery extends React.Component {
 
     _handle_reset_selected_account = () => {
 
-        const { _history, _previous_pathname } = this.state;
+        const { _history, _previous_pathname, pathname } = this.state;
 
-        _history.push(_previous_pathname !== "" ? _previous_pathname: "/gallery");
+        _history.push(pathname.replace(/\/\@[a-z0-9-\.]+/gm, ""));
     };
 
     _open_editor = () => {
@@ -1154,6 +1177,7 @@ class Gallery extends React.Component {
                                     onScroll={this._handle_masonry_scroll}
                                     height={post_list_height}
                                     cellCount={itemsWithSizes.length}
+                                    itemsWithSizes={itemsWithSizes}
                                     cellMeasurerCache={_cell_measurer_cache}
                                     cellPositioner={_cell_positioner}
                                     cellRenderer={this._cell_renderer}
@@ -1200,7 +1224,7 @@ class Gallery extends React.Component {
                     onClose={this._handle_pixel_dialog_post_close}/>
 
                 <AccountDialogProfileHive
-                    keepMounted={false}
+                    keepMounted={true}
                     account_name={_post_author}
                     open={_post_author !== null && _post_permlink === null}
                     onClose={this._handle_reset_selected_account}/>

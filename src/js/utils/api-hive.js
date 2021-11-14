@@ -174,7 +174,7 @@ function _format_account(account) {
     const hive = Number(account.balance.split(" ")[0]);
     const hbd = Number(account.hbd_balance.split(" ")[0]);
 
-
+    console.log(account);
     const account_formatted = {
         name: account.name,
         memo_key: account.memo_key,
@@ -399,6 +399,67 @@ function lookup_hive_accounts_name(parameters, callback_function) {
         }else {
 
             callback_function(error, null);
+        }
+    });
+}
+
+function cached_lookup_hive_account_reputation_by_name(name, callback_function) {
+
+    name = name.replace("@", "");
+
+    _cache_data(
+        hive_accounts_db,
+        5 * 60 * 1000,
+        "hive_account-reputation-@"+name,
+        lookup_hive_account_reputation_by_name,
+        {name},
+        callback_function
+    );
+}
+
+function lookup_hive_account_reputation_by_name(parameters, callback_function) {
+
+    const { name } = parameters;
+
+    hiveJS.api.getAccountReputations(name, 1, function(error, results) {
+
+        if(!error && typeof results[0] !== "undefined") {
+
+            const reputation = hiveJS.formatter.reputation(results[0].reputation);
+            callback_function(null, reputation);
+        }else {
+
+            callback_function("Can not get user's reputation", null);
+        }
+    });
+}
+
+function cached_lookup_hive_account_follow_count_by_name(name, callback_function) {
+
+    name = name.replace("@", "");
+
+    _cache_data(
+        hive_accounts_db,
+        5 * 60 * 1000,
+        "hive_account-follow_count-@"+name,
+        lookup_hive_account_follow_count_by_name,
+        {name},
+        callback_function
+    );
+}
+
+function lookup_hive_account_follow_count_by_name(parameters, callback_function) {
+
+    const { name } = parameters;
+
+    hiveJS.api.getFollowCount(name,function(error, results) {
+
+        if(!error && typeof results !== "undefined") {
+
+            callback_function(null, {followers: results.follower_count, following: results.following_count});
+        }else {
+
+            callback_function("Can not get user's follow count", null);
         }
     });
 }
@@ -976,6 +1037,8 @@ function search_on_hive(parameters, callback_function) {
 module.exports = {
     lookup_hive_accounts: cached_lookup_hive_accounts,
     lookup_hive_accounts_name: cached_lookup_hive_accounts_name,
+    lookup_hive_account_reputation_by_name: cached_lookup_hive_account_reputation_by_name,
+    lookup_hive_account_follow_count_by_name: cached_lookup_hive_account_follow_count_by_name,
     lookup_hive_accounts_with_details: cached_lookup_hive_accounts_with_details,
     get_hive_account_keys: get_hive_account_keys,
     get_hive_send_transaction_info: get_hive_send_transaction_info,
