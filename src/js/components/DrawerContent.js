@@ -37,6 +37,7 @@ import AtmIcon from "@material-ui/icons/Atm";
 import FeedbackIcon from "@material-ui/icons/Feedback";
 import ForumIcon from "@material-ui/icons/Forum";
 import ChemistryEmojiIcon from "../twemoji/react/1F9Ea";
+import PaletteEmojiIcon from "../twemoji/react/1F3A8";
 import PhotoEmojiIcon from "../twemoji/react/1F4F7";
 import NewEmojiIcon from "../twemoji/react/1F195";
 import CoolEmojiSvg from "../twemoji/react/1F60E";
@@ -48,6 +49,7 @@ import QRCodeToolsDialog from "../components/QRCodeToolsDialog";
 import { HISTORY, COINS } from "../utils/constants";
 import api from "../utils/api";
 import actions from "../actions/utils";
+import CyberExhibition from "../icons/CyberExhibition";
 
 const styles = theme => ({
     nested: {
@@ -58,13 +60,15 @@ const styles = theme => ({
     },
     iconLeft: {
         color: theme.palette.secondary.contrastText,
-        marginRight: theme.spacing(1),
-        height: "1.5em",
+        marginRight: theme.spacing(2),
+        width: "72px",
+        height: "48px",
     },
     iconRight: {
         color: theme.palette.secondary.contrastText,
-        marginLeft: theme.spacing(1),
-        height: "1.5em",
+        marginLeft: theme.spacing(2),
+        width: "72px",
+        height: "48px",
     },
     flipExpandMoreIcon: {
         transform: "rotate(180deg)",
@@ -420,8 +424,8 @@ class DrawerContent extends React.Component {
                 <Fade in timeout={500}>
                     <List>
                         <ListItem button onClick={this._open_gallery_page}>
-                            <NewEmojiIcon className={classes.iconLeft} />
-                            <ListItemText primary={"Pixel Arts Gallery"} />
+                            <CyberExhibition className={classes.iconLeft} />
+                            <ListItemText primary={`Artistic Situations... (NFTs, Pixel Art)`} />
                         </ListItem>
                         <ListItem button onClick={this._open_dashboard_page}>
                             <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />

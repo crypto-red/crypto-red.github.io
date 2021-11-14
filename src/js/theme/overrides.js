@@ -4,7 +4,7 @@ const overrides = {
             html: {
                 overflow: "overlay",
                 overscrollBehavior: "none",
-                fontFamily: "Noto Sans"
+                fontFamily: `"Noto Sans"`
             },
             body: {
                 backgroundColor: "#FAFAFA",

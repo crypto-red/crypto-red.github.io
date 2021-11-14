@@ -282,12 +282,15 @@ class AccountDialogHive extends React.Component {
                                         helperText={_is_account_password_error ? t( "sentences.wrong password input"): ""}
                                         onKeyDown={this._handle_key_down_input_two}
                                         id="password"
-                                        label={t( "words.password", {FLC: true})}
+                                        label={"Owner/Master Key"}
                                         type="password"
                                         autoFocus={_view_auto_focus_index === 1}
                                         fullWidth
                                     />
                                 </div>
+                                <p>
+                                    <Button color="primary" variant={""} onClick={() => {window.open("https://signup.hive.io/", "_blank")}}>https://signup.hive.io/</Button>
+                                </p>
                             </DialogContent>
                         </div>: null
                     }

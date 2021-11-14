@@ -2,8 +2,8 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
 import Typography from "@material-ui/core/Typography";
-
 import Slider from "@material-ui/core/Slider";
+import {COINS_IMAGES, HISTORY} from "../utils/constants";
 
 import AllLayersIcon from "../icons/AllLayers";
 import SelectIcon from "../icons/Select";
@@ -92,6 +92,7 @@ import MagnifyMinusIcon from "../icons/MagnifyMinus";
 import NavigationIcon from "../icons/Navigation";
 
 import Jdenticon from "react-jdenticon";
+import HiveLogoWordmark from "../icons/HiveLogoWordmark";
 
 const styles = theme => ({
     listSubHeader: {
@@ -246,6 +247,7 @@ class PixelToolboxSwipeableViews extends React.Component {
             _saturation: 60,
             _luminosity: 60,
             _opacity: 100,
+            _history: HISTORY,
             import_size: props.import_size,
         };
     };
@@ -573,7 +575,11 @@ class PixelToolboxSwipeableViews extends React.Component {
 
             this.props.on_request_publish();
         }
+    };
 
+    _to_account = () => {
+
+        this.state._history.push("/accounts");
     };
 
     render() {
@@ -1039,6 +1045,12 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                         <PublishIcon />
                                                     </ListItemIcon>
                                                     <ListItemText className={classes.ListItemText} primary={"Publish"}/>
+                                                </ListItem>
+                                                <ListItem disabled={is_connected_to_hive} button onClick={() => {this._to_account()}}>
+                                                    <ListItemIcon className={classes.listItemIcon}>
+                                                        <img style={{height: 24, width: 24}} src={COINS_IMAGES["hive"]}/>
+                                                    </ListItemIcon>
+                                                    <ListItemText className={classes.ListItemText} primary={"Hive login"}/>
                                                 </ListItem>
                                             </div>
                                             <ListSubheader className={classes.listSubHeader}>

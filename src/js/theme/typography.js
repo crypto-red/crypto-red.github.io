@@ -1,48 +1,48 @@
 const typography = {
     h1: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     h2: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     h3: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     h4: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     h5: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     h6: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     subtitle1: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     subtitle2: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     body1: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     body2: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     button: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     caption: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     overline: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     text: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
     label: {
-        fontFamily: "Noto Sans"
+        fontFamily: `"Noto Sans"`
     },
 }
 

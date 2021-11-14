@@ -27,9 +27,14 @@ import api from "../utils/api";
 import {HISTORY} from "../utils/constants";
 import Fab from "@material-ui/core/Fab";
 import AddIcon from "@material-ui/icons/Add";
+import PhotoEmojiIcon from "../twemoji/react/1F4F7";
 import {t} from "../utils/t";
 import Grow from "@material-ui/core/Grow";
 import ShufflingSpanText from "../components/ShufflingSpanText";
+import get_svg_in_b64 from "../utils/svgToBase64";
+import CyberExhibition from "../icons/CyberExhibition";
+const cyber_exhibition_svg = get_svg_in_b64(<CyberExhibition />);
+
 
 class MasonryExtended extends Masonry {
     _getEstimatedTotalHeight() {
@@ -136,6 +141,7 @@ const styles = theme => ({
     },
     noPosts: {
         width: "100%",
+        position: "absolute",
         display: "flex",
         padding: "88px 16px 32px 16px",
         justifyContent: "center",
@@ -192,7 +198,7 @@ class Gallery extends React.Component {
             _post_author: (props.pathname.split("/")[3] || "").includes("@") ? props.pathname.split("/")[3]: (props.pathname.split("/")[5] || "").includes("@") ? props.pathname.split("/")[5]: null,
             _post_permlink: (props.pathname.split("/")[3] || "").includes("@") ? props.pathname.split("/")[4] || null: (props.pathname.split("/")[5] || "").includes("@") ? props.pathname.split("/")[6] || null: null,
             _is_search_mode: Boolean(props.pathname.split("/")[3] === "search"),
-            _search_mode_query: props.pathname.split("/")[3] === "search" ? decodeURI(props.pathname.split("/")[4] || ""): "",
+            _search_mode_query: props.pathname.split("/")[3] === "search" ? decodeURIComponent(props.pathname.split("/")[4] || ""): "",
             _search_sorting_tab_index: SEARCH_SORTING_MODES.indexOf(props.pathname.split("/")[2] || 0),
             _history: HISTORY,
             _sorting_modes: SORTING_MODES,
@@ -256,7 +262,7 @@ class Gallery extends React.Component {
             _post_author: (new_props.pathname.split("/")[3] || "").includes("@") ? new_props.pathname.split("/")[3]: (new_props.pathname.split("/")[5] || "").includes("@") ? new_props.pathname.split("/")[5]: null,
             _post_permlink: (new_props.pathname.split("/")[3] || "").includes("@") ? new_props.pathname.split("/")[4] || null: (new_props.pathname.split("/")[5] || "").includes("@") ? new_props.pathname.split("/")[6] || null: null,
             _is_search_mode: Boolean(new_props.pathname.split("/")[3] === "search"),
-            _search_mode_query: new_props.pathname.split("/")[3] === "search" ? decodeURI(new_props.pathname.split("/")[4] || ""): "",
+            _search_mode_query: new_props.pathname.split("/")[3] === "search" ? decodeURIComponent(new_props.pathname.split("/")[4] || ""): "",
             _search_sorting_tab_index: _search_sorting_modes.indexOf(new_props.pathname.split("/")[2] || 0),
         };
 
@@ -554,7 +560,7 @@ class Gallery extends React.Component {
 
         const { _history, _search_sorting_modes, _search_mode_query } = this.state;
 
-        const new_pathname = "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + _search_mode_query;
+        const new_pathname = "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + encodeURIComponent(_search_mode_query);
         _history.push(new_pathname);
     };
 
@@ -799,7 +805,7 @@ class Gallery extends React.Component {
         this._handle_art_focus(post);
         const new_pathname = !_is_search_mode ?
             "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]) + "/@" + post.author + "/" + post.permlink:
-            "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + _search_mode_query + "/@" + post.author + "/" + post.permlink;
+            "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + encodeURIComponent(_search_mode_query) + "/@" + post.author + "/" + post.permlink;
         _history.push(new_pathname);
         actions.trigger_sfx("alert_high-intensity");
     };
@@ -923,7 +929,7 @@ class Gallery extends React.Component {
 
         const new_pathname = !_is_search_mode ?
             "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]):
-            "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + _search_mode_query;
+            "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + encodeURIComponent(_search_mode_query);
         _history.push(new_pathname);
     };
 
@@ -1162,39 +1168,45 @@ class Gallery extends React.Component {
                 </div>
 
                 {
-                     _cell_measurer_cache && _cell_positioner ?
-                        <ImageMeasurer
-                            className={classes.masonry}
-                            items={_posts}
-                            image={item => item.image}
-                            defaultHeight={post_list_height}
-                            defaultWidth={page_width}
-                        >
-                            {({ itemsWithSizes }) => (
-                                <MasonryExtended
-                                    scrollTop={_scroll_top}
-                                    scrollingResetTimeInterval={100}
-                                    onScroll={this._handle_masonry_scroll}
-                                    height={post_list_height}
-                                    cellCount={itemsWithSizes.length}
-                                    itemsWithSizes={itemsWithSizes}
-                                    cellMeasurerCache={_cell_measurer_cache}
-                                    cellPositioner={_cell_positioner}
-                                    cellRenderer={this._cell_renderer}
-                                    overscanByPixels={_overscan_by_pixels}
-                                    ref={this._set_masonry_ref}
-                                    width={page_width}
-                                ></MasonryExtended>
-                            )}
-                        </ImageMeasurer>:
+                    _cell_measurer_cache && _cell_positioner &&
+                    <ImageMeasurer
+                        className={classes.masonry}
+                        items={_posts}
+                        image={item => item.image}
+                        defaultHeight={post_list_height}
+                        defaultWidth={page_width}
+                    >
+                        {({itemsWithSizes}) => (
+                            <MasonryExtended
+                                scrollTop={_scroll_top}
+                                scrollingResetTimeInterval={100}
+                                onScroll={this._handle_masonry_scroll}
+                                height={post_list_height}
+                                cellCount={itemsWithSizes.length}
+                                itemsWithSizes={itemsWithSizes}
+                                cellMeasurerCache={_cell_measurer_cache}
+                                cellPositioner={_cell_positioner}
+                                cellRenderer={this._cell_renderer}
+                                overscanByPixels={_overscan_by_pixels}
+                                ref={this._set_masonry_ref}
+                                width={page_width}
+                            ></MasonryExtended>
+                        )}
+                    </ImageMeasurer>
+                }
+                {
+                    ((!_cell_measurer_cache || !_cell_positioner) || (_posts.length === 0)) &&
                         <div className={classes.noPosts} style={{height: post_list_height}}>
                             {
                                 _loading_posts ?
                                     <div key={"loading_posts"}>
-                                        <h1><ShufflingSpanText  animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: "Noto Sans Mono"}} text={"Please wait..."}/></h1>
+                                        <h1><ShufflingSpanText  animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Please wait..."}/></h1>
                                         {_is_search_mode && <h4>Powered in partnership with Ecency.com</h4>}
                                     </div>:
-                                    <div key={"not_loading_posts"}><h1><ShufflingSpanText animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: "Noto Sans Mono"}} text={"Nothing to show you."}/></h1></div>
+                                    <div key={"not_loading_posts"}>
+                                        <h1><ShufflingSpanText animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Nothing to show you."}/></h1>
+                                        <div style={{opacity: 0.73, height: "min(66vw, 66vh)", backgroundSize: "contain", backgroundPosition: "center center", backgroundRepeat: "no-repeat", backgroundImage: `url("${cyber_exhibition_svg}")`}} />
+                                    </div>
 
                             }
                         </div>
@@ -1231,7 +1243,7 @@ class Gallery extends React.Component {
 
                 <Grow in>
                     <Fab className={classes.fab} variant="extended" onClick={this._open_editor}>
-                        <AddIcon /> {t( "words.create")}
+                        <PhotoEmojiIcon style={{height: "1.8em"}} /> {t( "words.create")}
                     </Fab>
                 </Grow>
 

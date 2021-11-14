@@ -1074,7 +1074,7 @@ class PixelDialogPost extends React.Component {
         const {_history, post} = this.state;
 
         const tags = post.tags || [];
-        _history.push(`/gallery/newest/search/tag:${name}`);
+        _history.push(`/gallery/newest/search/${encodeURIComponent("#"+name)}`);
     };
 
     handle_disclaimer_change = (event) => {
@@ -1177,8 +1177,8 @@ class PixelDialogPost extends React.Component {
                                             subheader={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null}
                                             action={
                                                 !edit && TRANSLATION_AVAILABLE.includes(lang) &&
-                                                <Button disabled={is_translating} onClick={this._toggle_translate_everything} startIcon={has_translated ? <TranslateOffIcon />: <TranslateIcon />}>
-                                                    {has_translated ? "Back ": "Do "}
+                                                <Button variant={"contained"} color={"secondary"} disabled={is_translating} onClick={this._toggle_translate_everything} startIcon={has_translated ? <TranslateOffIcon />: <TranslateIcon />}>
+                                                    {has_translated ? "Original ": `${document.documentElement.lang.toUpperCase()} `}
                                                     {is_translating && <CircularProgress size={24} className={classes.buttonProgress} />}
                                                 </Button>
                                             }

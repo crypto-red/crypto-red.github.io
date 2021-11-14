@@ -1,6 +1,7 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
+import {HISTORY} from "../utils/constants";
 import Dialog from "@material-ui/core/Dialog";
 import Tooltip from "@material-ui/core/Tooltip";
 import CardActionArea from "@material-ui/core/CardActionArea";
@@ -150,6 +151,7 @@ class AccountDialogProfileHive extends React.Component {
             _reputation: 0,
             _follow_count: {},
             _posts: [],
+            _history: HISTORY,
         };
     };
 
@@ -227,6 +229,13 @@ class AccountDialogProfileHive extends React.Component {
         }
     };
 
+    _view_posts = () => {
+
+        const {_account, _history } = this.state;
+
+        _history.push(`/gallery/newest/search/@${_account.name}`)
+    }
+
     render() {
 
         const { classes, open, _posts, _account, _reputation, _follow_count, account_name, _reaction_click_event, keepMounted } = this.state;
@@ -278,6 +287,9 @@ class AccountDialogProfileHive extends React.Component {
                             </div>
                         }
                     </CardContent>
+                    <CardActionArea>
+                        <Button fullWidth variant={"contained"} color={"primary"} onClick={this._view_posts}>View posts</Button>
+                    </CardActionArea>
                 </Dialog>
             </div>
         );

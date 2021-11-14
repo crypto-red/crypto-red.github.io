@@ -89,13 +89,13 @@ const styles = theme => ({
     appTitle: {
         verticalAlign: "middle",
         fontWeight: "bold",
-        fontFamily: "Saira",
+        fontFamily: `"Saira"`,
         userSelect: "none",
     },
     swipeableDrawerAppTitle: {
         verticalAlign: "middle",
         fontWeight: "bold",
-        fontFamily: "Saira",
+        fontFamily: `"Saira"`,
         userSelect: "none",
     },
     avatar: {

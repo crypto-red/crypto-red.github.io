@@ -157,7 +157,7 @@ class InnerToolbar extends React.Component {
             loaded_progress_percent: props.loaded_progress_percent,
             classes: props.classes,
             _is_search_bar_active: props.pathname.split("/")[3] === "search",
-            _search_bar_value: decodeURI(props.pathname.split("/")[4] || ""),
+            _search_bar_value: decodeURIComponent(props.pathname.split("/")[4] || ""),
             _history: HISTORY,
             _pathname_before_search: null,
             _search_input_ref: null,
@@ -214,7 +214,7 @@ class InnerToolbar extends React.Component {
     componentWillReceiveProps(new_props) {
 
         const _is_search_bar_active = new_props.pathname.split("/")[3] === "search";
-        const _search_bar_value = decodeURI(new_props.pathname.split("/")[4] || "");
+        const _search_bar_value = decodeURIComponent(new_props.pathname.split("/")[4] || "");
 
         const state = {
             ...new_props,
@@ -252,7 +252,7 @@ class InnerToolbar extends React.Component {
         const value = event.target.value;
 
         const search_sorting_mode = /(newest|relevance|popularity)/g.test(pathname.split("/")[2]) ? pathname.split("/")[2]: "relevance";
-        _history.replace("/gallery/" + search_sorting_mode + "/search/" + encodeURI(value).slice(0, 64), _history.location.state);
+        _history.replace("/gallery/" + search_sorting_mode + "/search/" + encodeURIComponent(value).slice(0, 64), _history.location.state);
     }
 
     render() {
@@ -302,7 +302,7 @@ class InnerToolbar extends React.Component {
                                         autoFocus
                                         selectionFollowsFocus={false}
                                         className={classes.innerToolbarInput}
-                                        placeholder="search…"
+                                        placeholder="Search artistic situations…"
                                         classes={{
                                             root: classes.inputRoot,
                                             input: classes.inputInput,

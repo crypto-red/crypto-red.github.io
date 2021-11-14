@@ -25,7 +25,9 @@ import ReactDOM from "react-dom";
 import TimeAgo from "javascript-time-ago";
 import Chip from "@material-ui/core/Chip";
 import {HISTORY} from "../utils/constants";
-import zIndex from "@material-ui/core/styles/zIndex";
+import {postprocess_text} from "../utils/api-hive";
+import gfm from "remark-gfm";
+import ReactMarkdown from "react-markdown";
 
 const red_angry_emoji_svg = get_svg_in_b64(<RedAngryEmojiSvg />);
 const angry_emoji_svg = get_svg_in_b64(<AngryEmojiSvg />);
@@ -330,8 +332,8 @@ class PixelArtCard extends React.Component {
                         </div>
                     </div>
                     <CardContent datatags={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
-                        <Typography gutterBottom variant="h5" component="h2">
-                            {post.title}
+                        <Typography gutterBottom variant={"h5"} component="h2">
+                            <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>{postprocess_text(post.title)}</ReactMarkdown>
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p" style={{position: "relative"}}>
                             {post.summary}

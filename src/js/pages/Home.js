@@ -16,7 +16,7 @@ import actions from "../actions/utils";
 
 import DollarEmojiSvg from "../twemoji/react/1F911";
 import AngelEmojiSvg from "../twemoji/react/1F607";
-import PrivacyEmojiSvg from "../twemoji/react/1F575";
+import HundredEmojiSvg from "../twemoji/react/1F4Af";
 import HearthEmojiSvg from "../twemoji/react/2665";
 import EarthEmojiSvg from "../twemoji/react/1F30D";
 
@@ -218,7 +218,7 @@ class Home extends React.Component {
                     <div className={classes.headerContainer}>
                         <h1 className={classes.title}>
                             <span>The <span className={classes.blue}>100% free </span></span><img src={get_svg_in_b64(<DollarEmojiSvg />)} className="emoji bounce"/><br />
-                            <span>and <span className={classes.blue}>open-source</span></span><br />
+                            <span>and <span className={classes.blue}>open-source</span> <img className={"emoji"} src={get_svg_in_b64(<HundredEmojiSvg />)}/></span><br />
                             <span><img src={get_svg_in_b64(<AngelEmojiSvg />)} className="emoji"/> crypto wallet.</span>
                         </h1>
                         <h2 className={classes.subtitle}>

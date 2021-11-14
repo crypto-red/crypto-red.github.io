@@ -209,7 +209,7 @@ function _preprocess_text(content) {
     const tag_text_regex = / #[a-zA-Z0-9-]+/gm;
     content = content.replace(tag_text_regex, function(match){
 
-        const url = "/newest/search/tag:" + match.toLowerCase().replace("#", "").replace(" ", "");
+        const url = "/newest/search/#" + match.toLowerCase().replace("#", "").replace(" ", "");
         return ` [${match.replaceAll(" ", "")}](${origin}/gallery${url})`;
     });
 
@@ -227,7 +227,7 @@ function _preprocess_text(content) {
 function postprocess_text(content = "") {
 
     /* RENDER EMOJI */
-    content = content.replace(/ (\:\-?|) /gm, ` ![neutral emoji](${neutral_emoji}) `);
+    content = content.replace(/ (\:\-?\|) /gm, ` ![neutral emoji](${neutral_emoji}) `);
     content = content.replace(/ (\:\-?\))|(\:\-?\])|(\:\-?\}) /gm, ` ![happy emoji](${happy_emoji}) `);
     content = content.replace(/ (\:\'\-?\))|(\:\'\-?\])|(\:\'\-?\}) /gm, ` ![laughing emoji](${laughing_emoji}) `);
     content = content.replace(/ (\:\-?\()|(\:\-?\[)|(\:\-?\{) /gm, ` ![angry emoji](${angry_emoji}) `);
@@ -245,8 +245,8 @@ function postprocess_text(content = "") {
     //content = content.replace(/ (\:\-?([X]|\#|\&))/gm, ` ![happy_emoji](${happy emoji}) `);
     content = content.replace(/ ((0|O)\:\-?(3|\))) /gm, ` ![happy emoji](${angel_emoji}) `);
     //content = content.replace(/ ((\>|\}|3)\:\-?(\)|3))/gm, ` ![happy_emoji](${happy emoji}) `);
-    content = content.replace(/ (\|\;\-\))|(\|\-[O])|([B]\-) /gm, ` ![sunglasses emoji](${sunglasses_emoji}) `);
-    content = content.replace(/ (\:\-[J]) /gm, ` ![confident emoji](${confident_emoji}) `);
+    content = content.replace(/ (\|\;\-\))|(\|\-O)|(B\-) /gm, ` ![sunglasses emoji](${sunglasses_emoji}) `);
+    content = content.replace(/ (\:\-?(J|j)) /gm, ` ![confident emoji](${confident_emoji}) `);
     //content = content.replace(/ (\%\-?\))/gm, ` ![confused](${confused}) `);
     //content = content.replace(/ (\:E)/gm, ` !(nervous)[${nervous}) `);
 
@@ -271,7 +271,7 @@ function _format_post(post) {
 
     let summary = sumBasic(description.split("\n"), 20);
 
-    const title = post.title;
+    const title = ` ${post.title} `;
     let metadata_tags = metadata.tags || [post.category];
     metadata_tags = metadata_tags.map(function(tag){
         return tag.replace(/[^a-zA-Z0-9-]/g, "").toLowerCase();
@@ -567,14 +567,14 @@ function cached_get_hive_account_balance_by_username(parameters, callback_functi
 
     }else {
 
-        cached_lookup_hive_accounts_name([hive_username], (err, res) => {
+        cached_lookup_hive_accounts_name(hive_username, (err, res) => {
 
-            if(err && typeof res[0] === "undefined") {
+            if(err && typeof res === "undefined") {
 
                 callback_function(err, null);
             }else {
 
-                const acc = res[0];
+                const acc = res;
 
                 if(coin_id === "hive_dollar") {
 
@@ -977,7 +977,7 @@ function cached_search_on_hive(terms = "", authors = [], tags = ["pixel-art"], s
     _cache_data(
         hive_queries_db,
         1 * 60 * 1000,
-        encodeURI("search_on_hive-terms"+terms+"-author-"+authors.join(",")+"-tags-"+tags.join(",")+"-sorting-"+sorting+"-page-"+page),
+        encodeURIComponent("search_on_hive-terms"+terms+"-author-"+authors.join(",")+"-tags-"+tags.join(",")+"-sorting-"+sorting+"-page-"+page),
         search_on_hive,
         { terms, authors, tags, sorting, page },
         pre_callback_function
@@ -998,7 +998,19 @@ function search_on_hive(parameters, callback_function) {
 
         return ""; //tags_list.join(" ").replaceAll("pixel-art", "");
     });
-    const all_tags = [...new Set([...tags, ...tags_in_terms])];
+
+    /* HASHTAGS */
+    let hashtags_in_terms = [];
+    const hashtag_text_regex = /#[a-zA-Z0-9-]+/gm;
+    terms = terms.replace(hashtag_text_regex, function(match){
+
+        match = match.replaceAll("#", "");
+        hashtags_in_terms.push(match);
+
+        return "";
+    });
+
+    const all_tags = [...new Set([...tags, ...tags_in_terms, ...hashtags_in_terms])];
 
     /* AUTHORS */
     let authors_in_terms = [];
@@ -1011,7 +1023,7 @@ function search_on_hive(parameters, callback_function) {
     const all_authors = [...new Set([...authors, ...authors_in_terms])];
 
     const query =
-        (`${terms.length ? terms+" ": "* "}`+
+        (`${terms.replaceAll(/ /gm, "").length ? terms + " ": "* "}`+
         `${all_authors.length ? ("author:" + all_authors.join(",") + " "): ""}` +
         `tag:${all_tags.join(",")} `+
         `type:post`).replace(/\s+/g, " ");
