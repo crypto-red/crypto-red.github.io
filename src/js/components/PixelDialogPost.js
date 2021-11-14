@@ -57,6 +57,7 @@ import actions from "../actions/utils";
 import {postJSON} from "../utils/load-json";
 import {clean_json_text} from "../utils/json";
 import ReactDOM from "react-dom";
+import {Card} from "@material-ui/core";
 
 const TRANSLATION_AVAILABLE = ["en", "ar", "zh", "nl", "fi", "fr", "de", "hi", "hu", "id", "ga", "it", "ja", "ko", "pl", "pt", "ru", "es", "sv", "tr", "uk", "vi"];
 
@@ -215,6 +216,15 @@ const styles = theme => ({
         [theme.breakpoints.down("md")]: {
             paddingBottom: "48px",
         },
+    },
+    postTags: {
+        lineHeight: "32px",
+        boxSizing: "content-box",
+        padding: "8px 16px",
+    },
+    postTag: {
+        marginRight: 4,
+        cursor: "pointer",
     },
     nsTags: {
         padding: theme.spacing(1, 0, 2, 0),
@@ -1059,12 +1069,12 @@ class PixelDialogPost extends React.Component {
         _history.push(pathname.replaceAll(/(\/[a-zA-Z0-9\_\-\%]+)$/gm, ""));
     };
 
-    _open_tag = () => {
+    _open_tag = (name) => {
 
         const {_history, post} = this.state;
 
         const tags = post.tags || [];
-        _history.push(`/gallery/newest/search/tag:${(tags[1] || tags[0])}`);
+        _history.push(`/gallery/newest/search/tag:${name}`);
     };
 
     handle_disclaimer_change = (event) => {
@@ -1161,14 +1171,16 @@ class PixelDialogPost extends React.Component {
                                                 <span className={classes.headerTitle}>
                                                     <span className={classes.headerAuthor} onClick={this._open_profile}>{`@${post.author}`}</span>
                                                     <span> in </span>
-                                                    <span className={classes.headerCategory} onClick={this._open_tag}>{`#${(tags[1] || tags[0])}`}</span>
+                                                    <span className={classes.headerCategory} onClick={() => {this._open_tag((tags[1] || tags[0]))}}>{`#${(tags[1] || tags[0])}`}</span>
                                                 </span>
                                             }
                                             subheader={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null}
                                             action={
-                                                <IconButton>
-                                                    <MoreVertIcon />
-                                                </IconButton>
+                                                !edit && TRANSLATION_AVAILABLE.includes(lang) &&
+                                                <Button disabled={is_translating} onClick={this._toggle_translate_everything} startIcon={has_translated ? <TranslateOffIcon />: <TranslateIcon />}>
+                                                    {has_translated ? "Back ": "Do "}
+                                                    {is_translating && <CircularProgress size={24} className={classes.buttonProgress} />}
+                                                </Button>
                                             }
                                         />
                                         <CardContent>
@@ -1204,20 +1216,6 @@ class PixelDialogPost extends React.Component {
                                                     </Button>
                                                 </Tooltip>
                                             </ButtonGroup>
-                                        </CardContent>
-                                        <Tabs
-                                            value={_drawer_tab_index}
-                                            indicatorColor="primary"
-                                            textColor="primary"
-                                            onChange={this._handle_drawer_tab_index_change}
-                                        >
-                                            <Tab label="Details" />
-                                            <Tab disabled={true} label="Comments" />
-                                            <Tab disabled={true} label="Buy" />
-                                        </Tabs>
-                                    </div>
-                                    <div className={classes.contentDrawer}>
-                                        <CardContent>
                                             {
                                                 !edit && post &&
                                                 <div className={classes.nsTags}>
@@ -1242,14 +1240,20 @@ class PixelDialogPost extends React.Component {
                                                     })}
                                                 </div>
                                             }
-                                            {
-                                                !edit && TRANSLATION_AVAILABLE.includes(lang) &&
-                                                    <Button disabled={is_translating} onClick={this._toggle_translate_everything}
-                                                            startIcon={has_translated ? <TranslateOffIcon />: <TranslateIcon />}>
-                                                        {has_translated ? "Show original ": "Translate "}
-                                                        {is_translating && <CircularProgress size={24} className={classes.buttonProgress} />}
-                                                    </Button>
-                                            }
+                                        </CardContent>
+                                        <Tabs
+                                            value={_drawer_tab_index}
+                                            indicatorColor="primary"
+                                            textColor="primary"
+                                            onChange={this._handle_drawer_tab_index_change}
+                                        >
+                                            <Tab label="Details" />
+                                            <Tab disabled={true} label="Comments" />
+                                            <Tab disabled={true} label="Buy" />
+                                        </Tabs>
+                                    </div>
+                                    <div className={classes.contentDrawer}>
+                                        <CardContent>
                                             {
                                                 edit &&
                                                     <form noValidate autoComplete="off">
@@ -1410,6 +1414,20 @@ class PixelDialogPost extends React.Component {
                                                 </TableBody>
                                             </Table>
                                         </CardContent>
+                                        {tags.length > 1 && !edit &&
+                                            <CardContent style={{padding: "16 16 0 16"}}>
+                                                <Typography gutterBottom variant="h5" component="h4">Tags</Typography>
+                                            </CardContent>
+                                        }
+                                        { tags.length > 1 && !edit &&
+                                            <CardContent className={classes.postTags}>
+                                            {
+                                                tags.map((tag, index) => {
+                                                    return index ? <Chip className={classes.postTag} key={tag} variant={"default"} size={"small"} label={`#${tag}`} onClick={() => {this._open_tag(tag)}}/> : null;
+                                                })
+                                            }
+                                            </CardContent>
+                                        }
                                         <CardContent style={{padding: "16 16 0 16"}}>
                                             <Typography gutterBottom variant="h5" component="h4">Download</Typography>
                                         </CardContent>

@@ -2,12 +2,15 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
 import Dialog from "@material-ui/core/Dialog";
+import Tooltip from "@material-ui/core/Tooltip";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardContent from "@material-ui/core/CardContent";
 import Button from "@material-ui/core/Button";
 import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp"
 import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown"
 import {lookup_hive_accounts_name, lookup_hive_account_reputation_by_name, lookup_hive_account_follow_count_by_name} from "../utils/api-hive";
+import IconButton from "@material-ui/core/IconButton";
+import LocationOnIcon from "@material-ui/icons/LocationOn";
 
 const styles = theme => ({
     dialogRoot: {
@@ -85,7 +88,7 @@ const styles = theme => ({
     cardImage: {
         width: 128,
         height: 128,
-        borderRadius: "50%",
+        clipPath: "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);",
         display: "inline-block",
         cursor: "pointer",
         pointerEvents: "all",
@@ -95,9 +98,9 @@ const styles = theme => ({
         backgroundColor: theme.palette.primary.light,
         backgroundSize: "cover",
         transform: "scale(1)",
-        transition: "box-shadow 160ms cubic-bezier(0, 0, 0.2, 1), transform 160ms cubic-bezier(0, 0, 0.2, 1)",
+        transition: "transform 160ms cubic-bezier(0, 0, 0.2, 1), clip-path 160ms cubic-bezier(0, 0, 0.2, 1)",
         "&:hover": {
-            boxShadow: "0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%)",
+            clipPath: "circle(50%)",
             transform: "scale(2)",
         }
     },
@@ -105,12 +108,14 @@ const styles = theme => ({
         margin: "-16px auto auto -16px",
         position: "absolute",
         boxSizing: "content-box",
+        cursor: "pointer",
+        pointerEvents: "all",
         width: 19,
         zIndex: -1,
         height: 19,
         padding: 8,
         display: "inline-block",
-        borderRadius: "50%",
+        clipPath: "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);",
         backgroundColor: theme.palette.primary.dark,
         color: theme.palette.primary.contrastText,
     },
@@ -120,13 +125,15 @@ const styles = theme => ({
     cardContentUserame: {
         fontSize: 24,
         textAlign: "center",
-        marginTop: 12,
         padding: "8px 16px",
     },
     cardContentUserDescription: {
         padding: "0px 16px 16px 16px",
         textAlign: "center",
     },
+    cardContentUserLocation: {
+        textAlign: "right",
+    }
 });
 
 
@@ -239,23 +246,37 @@ class AccountDialogProfileHive extends React.Component {
                                     <div className={classes.cardHeaderTopRight}></div>
                                 </div>
                                 <div className={classes.cardHeaderBottom}>
-                                    <Button variant={"outlined"} className={classes.cardHeaderBottomLeft} startIcon={<KeyboardArrowDownIcon />}>
-                                        {_follow_count.followers}
-                                    </Button>
-                                    <Button variant={"outlined"} className={classes.cardHeaderBottomRight} endIcon={<KeyboardArrowUpIcon/>}>
-                                        {_follow_count.following}
-                                    </Button>
+                                    <Tooltip title="Followers" aria-label="Followers">
+                                        <Button variant={"outlined"} className={classes.cardHeaderBottomLeft} startIcon={<KeyboardArrowDownIcon />}>
+                                            {_follow_count.followers}
+                                        </Button>
+                                    </Tooltip>
+                                    <Tooltip title="Following" aria-label="Following">
+                                        <Button variant={"outlined"} className={classes.cardHeaderBottomRight} endIcon={<KeyboardArrowUpIcon/>}>
+                                            {_follow_count.following}
+                                        </Button>
+                                    </Tooltip>
                                 </div>
                             </div>
                         </div>
                     </CardActionArea>
                     <div className={classes.cardImageBox}>
                         <div className={classes.cardImage} style={{backgroundSize: "cover !important", backgroundImage: _account.profile_image ? `url(${_account.profile_image})`: ""}}></div>
-                        <div className={classes.reputation}>{_reputation}</div>
+                        <Tooltip title="Reputation" aria-label="Reputation">
+                            <div className={classes.reputation}>{_reputation}</div>
+                        </Tooltip>
                     </div>
                     <CardContent className={classes.cardContent}>
                         <div className={classes.cardContentUserame}>{"@" + (account_name || "").replace("@", "")}</div>
                         <div className={classes.cardContentUserDescription}>{_account.about ? _account.about: "..."}</div>
+                        {_account.location &&
+                            <div className={classes.cardContentUserLocation}>
+                                <span>{_account.location}</span>
+                                <IconButton onClick={() => {window.open(`https://www.google.com/maps/search/${_account.location}`, "_blank")}}>
+                                    <LocationOnIcon/>
+                                </IconButton>
+                            </div>
+                        }
                     </CardContent>
                 </Dialog>
             </div>

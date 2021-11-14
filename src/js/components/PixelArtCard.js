@@ -22,6 +22,10 @@ import FireHearthEmojiSvg from "../twemoji/react/2764Fe0F200D1F525";
 import get_svg_in_b64 from "../utils/svgToBase64";
 import price_formatter from "../utils/price-formatter";
 import ReactDOM from "react-dom";
+import TimeAgo from "javascript-time-ago";
+import Chip from "@material-ui/core/Chip";
+import {HISTORY} from "../utils/constants";
+import zIndex from "@material-ui/core/styles/zIndex";
 
 const red_angry_emoji_svg = get_svg_in_b64(<RedAngryEmojiSvg />);
 const angry_emoji_svg = get_svg_in_b64(<AngryEmojiSvg />);
@@ -34,7 +38,7 @@ const styles = theme => ({
     card: {
         overflow: "visible",
         position: "relative",
-        boxSizing: "border-box",
+        boxSizing: "content-box",
         width: "100%",
         height: "auto",
         borderRadius: 4,
@@ -234,6 +238,7 @@ class PixelArtCard extends React.Component {
             selected_currency: props.selected_currency,
             selected_locales_code: props.selected_locales_code,
             _shown: props.fade_in ? false: true,
+            _history: HISTORY,
         };
     };
 
@@ -281,9 +286,12 @@ class PixelArtCard extends React.Component {
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
 
+        const selected_style = selected ? {zIndex: 2}: {zIndex: 0};
+        const herited_style = {...style, ...selected_style};
+
         return (
             <Card key={key} ref={this.props.ref} elevation={4} className={classes.card}
-                  style={_shown ? {...style, opacity: 1, transition: `opacity 175ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`}: {...style, opacity: 0, transition: "opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"}}
+                  style={_shown ? {...herited_style, opacity: 1, transition: `opacity 175ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`}: {...herited_style, opacity: 0, transition: "opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"}}
                   score={Math.round(post.voting_ratio / 10) * 10}
                   dataselected={selected ? "true": "false"}>
                 <CardActionArea>
@@ -321,11 +329,11 @@ class PixelArtCard extends React.Component {
                             <EyeIcon style={{color: "#ffffff"}} width={36} height={36}/>
                         </div>
                     </div>
-                    <CardContent datatags={"#" + (tags[1] || tags[0])} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
+                    <CardContent datatags={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
                         <Typography gutterBottom variant="h5" component="h2">
                             {post.title}
                         </Typography>
-                        <Typography variant="body2" color="textSecondary" component="p">
+                        <Typography variant="body2" color="textSecondary" component="p" style={{position: "relative"}}>
                             {post.summary}
                         </Typography>
                     </CardContent>

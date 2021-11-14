@@ -322,7 +322,7 @@ class Gallery extends React.Component {
 
     componentDidMount() {
 
-        actions.trigger_snackbar(`"Making daily life a creative experience, continually original-delusional-ecstatic."`, 5000);
+        actions.trigger_snackbar(`"Making the metaverse and daily life a creative experience, continually original-delusional-ecstatic."`, 5000);
         window.addEventListener("resize", this._updated_dimensions);
         ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 
@@ -511,7 +511,7 @@ class Gallery extends React.Component {
 
                         if((data || {}).posts){
 
-                            const posts = posts.concat(data.posts);
+                            const posts = _posts.concat(data.posts);
 
                             this.setState({_loading_posts: false, _posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
 
