@@ -768,7 +768,7 @@ function get_hive_posts(parameters, callback_function) {
 
     fun(query, (err, data) => {
 
-        if(!err && data) {
+        if(!err && Array.isArray(data)) {
 
             let posts = [];
             data.forEach((p) => {

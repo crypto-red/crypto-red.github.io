@@ -236,7 +236,7 @@ class Gallery extends React.Component {
             _reaction_click_event: null,
             _reaction_selected_post: {},
             _reaction_voted_result: null,
-            _reaction_selected_post_loading: false,
+            _reaction_selected_post_loading: null,
 
             _votes_anchor: null,
             _votes: [],
@@ -610,7 +610,7 @@ class Gallery extends React.Component {
     _cell_renderer = (data) => {
 
         const {index, key, parent, style} = data;
-        const { _masonry, _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _reaction_selected_post, _reaction_selected_post_loading, _column_width, _cell_measurer_cache, _column_count } = this.state;
+        const { _masonry, _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _reaction_selected_post_loading, _column_width, _cell_measurer_cache, _column_count } = this.state;
 
         const post = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).item || {}: {};
         const size = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).size || {}: {};
@@ -621,7 +621,7 @@ class Gallery extends React.Component {
         const columnIndex = index % _column_count;
         const rowIndex = (index - columnIndex) / _column_count;
         const selected = _selected_post_index === index;
-        const is_loading = Boolean(_reaction_selected_post.id === post.id) && _reaction_selected_post_loading;
+        const is_loading = Boolean((_reaction_selected_post_loading || {}).id === post.id);
 
         style.width = _column_width;
         let {_top_scroll_of_el_by_index, _height_of_el_by_index, _x_y_of_el_by_index} = this.state;
@@ -816,9 +816,9 @@ class Gallery extends React.Component {
 
                     let { _posts } = this.state;
 
-                    this.setState({_reaction_selected_post_loading: true}, () => {
+                    this.setState({_reaction_selected_post_loading: {..._reaction_selected_post}}, () => {
 
-                        this.state._masonry.forceUpdate();
+                        this.forceUpdate();
 
                         setTimeout(() => {
 
@@ -832,9 +832,9 @@ class Gallery extends React.Component {
                                         return post;
                                     });
 
-                                    this.setState({_posts, _reaction_selected_post_loading: false}, () => {
+                                    this.setState({_posts, _reaction_selected_post_loading: null}, () => {
 
-                                        this.state._masonry.forceUpdate();
+                                        this.forceUpdate();
                                     });
 
                                     this._handle_art_reaction(null, data);

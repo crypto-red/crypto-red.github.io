@@ -1423,7 +1423,7 @@ class PixelDialogPost extends React.Component {
                                             <CardContent className={classes.postTags}>
                                             {
                                                 tags.map((tag, index) => {
-                                                    return index ? <Chip className={classes.postTag} key={tag} variant={"default"} size={"small"} label={`#${tag}`} onClick={() => {this._open_tag(tag)}}/> : null;
+                                                    return index ? <Chip clickable className={classes.postTag} key={tag} variant={"default"} size={"small"} label={`#${tag}`} onClick={() => {this._open_tag(tag)}}/> : null;
                                                 })
                                             }
                                             </CardContent>

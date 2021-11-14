@@ -59,12 +59,12 @@ const styles = theme => ({
     iconLeft: {
         color: theme.palette.secondary.contrastText,
         marginRight: theme.spacing(1),
-        height: "1.25em",
+        height: "1.5em",
     },
     iconRight: {
         color: theme.palette.secondary.contrastText,
         marginLeft: theme.spacing(1),
-        height: "1.25em",
+        height: "1.5em",
     },
     flipExpandMoreIcon: {
         transform: "rotate(180deg)",
@@ -420,8 +420,8 @@ class DrawerContent extends React.Component {
                 <Fade in timeout={500}>
                     <List>
                         <ListItem button onClick={this._open_gallery_page}>
-                            <PhotoEmojiIcon className={classes.iconLeft} />
-                            <ListItemText primary={"Gallery Of Pixel Art"} />
+                            <NewEmojiIcon className={classes.iconLeft} />
+                            <ListItemText primary={"Pixel Arts Gallery"} />
                         </ListItem>
                         <ListItem button onClick={this._open_dashboard_page}>
                             <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />
