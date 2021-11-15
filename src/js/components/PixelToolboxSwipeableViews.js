@@ -359,12 +359,20 @@ class PixelToolboxSwipeableViews extends React.Component {
 
         let colors_removed = 0;
         let less_color_step = increase;
-        while (colors_removed === 0 || increase !== 0) {
+        const try_another = () => {
 
-            colors_removed = canvas.to_less_color(less_color_step / 64).colors_removed;
-            less_color_step += increase;
-            increase -= colors_removed > 0 ? 1: 0;
-        }
+            canvas.to_less_color(less_color_step / 64, (result) => {
+
+                colors_removed = result.colors_removed;
+                less_color_step += increase;
+                increase -= colors_removed > 0 ? 1: 0;
+                if(colors_removed < 1) {
+                    try_another();
+                }
+            });
+        };
+
+        try_another();
     };
 
     _colorize = () => {

@@ -35,7 +35,7 @@ const styles = theme => ({
         textTransform: "none",
         textAlign: "inherit",
         padding: 0,
-        backgroundColor: theme.palette.secondary.light,
+        backgroundColor: theme.palette.secondary.main, // #030435
         "&:hover": {
             backgroundColor: theme.palette.secondary.lighter,
         },
@@ -51,7 +51,7 @@ const styles = theme => ({
             background: "linear-gradient(to right, transparent, rgba(13, 50, 199, 0.27), transparent)",
             animation: "$innerToolbarCyberPunkAnimation 7.7s linear alternate infinite",
         },
-        boxShadow: "inset 0px 0px 6px #0035ff17, inset 0px 0px 24px #9eaaf12b, inset 0px 0px 48px #95a8ff17",
+        boxShadow: "inset 0px 0px 6px #475db3ab, inset 0px 0px 24px #838fdc61, inset 0px 0px 48px #cbd4ff40",
         "&::-webkit-scrollbar": {
             display: "none"
         }

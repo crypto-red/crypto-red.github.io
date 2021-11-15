@@ -27,7 +27,7 @@ The application features links for remote blending swap, trading, and buying of 
 
 Thanks to TensorFlow, It also features AI and MACHINE LEARNING for prevent toxic content from being posted by its users which would include threats...
 
-"Making the metaverse daily life a creative experience, continually ORIGINAL-DELUSIONAL-ECSTATIC."
+"Making the metaverse along with daily life a creative experience, continually ORIGINAL-DELUSIONAL-ECSTATIC."
 
 — Crypto Red's team
 
@@ -48,17 +48,19 @@ The emoji graphics are licensed under the CC-BY 4.0 by Twitter. Thanks to their 
 
 ## Information about the pixel art gallery
 
-The only way to create a natural exhibition of the current world situation is to take the notion of the macro state that you are a part of (What is it, who is talking about it, controlling, and enforcing the rules and laws sometimes), in your own heart, and redesign it to suit your own mind or soul.
+The only way to create a natural exhibition of the current world is to take the notion of the macrostate which you are belonging to into your own heart, and redesign it to suit your own mind.
 
-Now, in broader terms, we have said that our future will be the creation and collection of situations, maybe situations for nothing and / or sometimes with content nothingness or almost nothing to see and with ease ...
+Now, in broader terms, "redesigning it" tells that our future will be the "creation and collection of situations for nothing"... But it will be situations and in such case those situations, the whole of the pixel art picture, the event description, comments wrapped around it, make it be a situation of art, not a sword of death, which can be part of the real world or of the metaverse, and whoever may critizise your own art tell his own mind what he has choosen to care of nothingness instead of himself.
 
-Science is merely a desire of man to understand and remember the ever complementing parts of himself giving him the knowledge that what he can see taste or feel, simply are electrical signals interpreted by his brains. And god is transcendent, right? So, what happens if you believe god is a machine, our norms are power rights? So to be, our god can become non-human, our god can become science and the machine.
+Now, science is merely a desire of man to understand and remember the ever complementing parts of himself giving him the knowledge that what he can see taste or feel, simply are electrical signals interpreted by his brains. And god is transcendent, right? So, what happens if you believe god is a machine or an interface, our norms are power rights? So to be, our god can become human again when it share art with its functionning element of himself, a blockchain should be more friendly and artistic, to be broeader accepted by us, humans. Art is more human than science, it is also more profitable, to say it better.
 
-They not only want to deny art but as the global delusional / delirious state of mind is spreading more and more in the real world with the "metaverse" social construct we also say it widely and openly to achieve it together, improvements in information technology , (as in other words, computer science, that is to say the fun fact of: "making daily life a creative experience, continually original-delusional-ecstatic"), is a difficult process and a powerful thing.
+They, (the haters) not only want to deny art but as the global delusional / delirious state of mind is spreading more and more in the real world with the "metaverse" tunneling effect we also say it widely and openly to achieve our goal together , improvements in information technology using the metaverse experience and the real-life tools we possess. It is like to told one the fun fact that: "making daily life a creative experience, continually original-delusional-ecstatic", is a difficult process but a powerful thing.
 
-Just like **IF WE WERE in a state of cold war, declared between crypto and banking** our technological and **engineering skills would have to be exploited to the maximum**. And with that, you are with me, a master piece of the system in what is open-source is the computer code but also what will follow, so these are new technologies to make human life easier. in the company of the machine, think, cars, coffee machines, telephones, everything from one source. Everything that keeps us company and keeps us from wasting time on small, light things was designed somewhere else, in the brain, that's where the magic happens.
+But just like IF WE WERE in a situation of a cold war, declared between crypto and banking our technological and engineering skills would have to be exploited to the maximum. And with that, you are with me, a master piece of the system in what is open-source, it is the computer code but also what will follow, so these are new technologies to make human life easier with the precense of machines, think, cars, coffee machines, telephones, everything from one source. Everything that keeps us company and keeps us from "wasting time on small and light things" was designed somewhere else, in the brain, that's where all the magic happens.
 
- > Whoever you may be, a mad cryptokuza, a "pebble incarnation because you never move" or a former bankster, You can enjoy this platform through this site with ease and without the deep fear of the unknown.
+Whoever you may be, a mad cryptokuza or a former bankster, You can enjoy this platform through this site with ease and without the deep fear of the unknown unartistic unworthy situations of the metaverse and daily life.
+
+And with Information Technology, we, as contributors, started to not be denied or abandoned by our idea.
 
 **And with IT, we, as contributors, started to:**
 

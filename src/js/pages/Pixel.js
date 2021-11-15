@@ -917,7 +917,7 @@ class Pixel extends React.Component {
 
         _view_name_index = typeof _view_name_index !== "undefined" ? _view_name_index: this.state._view_name_index;
 
-        this.setState({_is_edit_drawer_open: Boolean(event), _view_name_index});
+        this.setState({_is_edit_drawer_open: true, _view_name_index});
     };
 
     _handle_edit_drawer_close = () => {
@@ -962,13 +962,19 @@ class Pixel extends React.Component {
                 colors_removed = result.colors_removed;
                 less_color_step += increase;
                 increase -= colors_removed > 0 ? 1: 0;
-                if(colors_removed < (result.colors_remaining + result.colors_removed) * 5 / 100) {
+                if(colors_removed < 1) {
                     try_another();
                 }
             });
         };
 
         try_another();
+    };
+
+    _less_colors_auto = ( ) => {
+
+        const { _canvas } = this.state;
+        _canvas.to_less_color("auto");
     };
 
     _get_average_color_of_selection = () => {
@@ -1419,7 +1425,6 @@ class Pixel extends React.Component {
                                 }
                             </div>
                             : null
-
                     }
                     {
                         _is_something_selected ?
@@ -1499,6 +1504,12 @@ class Pixel extends React.Component {
                         </ListItemIcon>
                         <ListItemText primary="Reduce color number" />
                     </ListItem>
+                    <ListItem button divider onClick={this._less_colors_auto}>
+                        <ListItemIcon>
+                            <LessColorIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="To auto colors number" />
+                    </ListItem>
                     <ListItem button divider onClick={(event) => _canvas.smooth_adjust(1)}>
                         <ListItemIcon>
                             <ImageSmoothIcon />
@@ -1526,12 +1537,6 @@ class Pixel extends React.Component {
                         </Fab>
                     </div>
                 </Grow>
-                <IconButton className={classes.infoIcon} onClick={this._handle_dialog_info_open}>
-                    <InfoIcon/>
-                </IconButton>
-                <PixelDialogInfo open={_is_dialog_info_open}
-                        onClose={this._handle_dialog_info_close}
-                        keepMounted={false} />
                 <Backdrop className={classes.backdrop} open={_loading} keepMounted={false}>
                     <div className={classes.backdropTextContent}>
                         {_loading && <h1><ShufflingSpanText style={{fontFamily: `"Noto Sans Mono"`}} text={"Please wait..."} animation_delay_ms={0} animation_duration_ms={250}/></h1>}

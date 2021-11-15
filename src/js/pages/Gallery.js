@@ -328,7 +328,7 @@ class Gallery extends React.Component {
 
     componentDidMount() {
 
-        actions.trigger_snackbar(`"Making the metaverse and daily life a creative experience, continually original-delusional-ecstatic."`, 5000);
+        actions.trigger_snackbar(`Inside the illusion of art! We make the daily life a creative experience, continually original-delusional-ecstatic situations.`, 5000);
         window.addEventListener("resize", this._updated_dimensions);
         ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 
