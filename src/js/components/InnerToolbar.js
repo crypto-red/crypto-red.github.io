@@ -302,7 +302,7 @@ class InnerToolbar extends React.Component {
                                         autoFocus
                                         selectionFollowsFocus={false}
                                         className={classes.innerToolbarInput}
-                                        placeholder="Search artistic situations…"
+                                        placeholder="Search pixel arts in artistic situations…"
                                         classes={{
                                             root: classes.inputRoot,
                                             input: classes.inputInput,

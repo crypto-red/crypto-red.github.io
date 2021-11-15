@@ -180,6 +180,27 @@ const styles = theme => ({
             marginRight: 4
         }
     },
+    cyberExhibitionImage: {
+        opacity: 0.4,
+        height: "min(66vw, 66vh)",
+        backgroundSize: "contain",
+        backgroundPosition: "center center",
+        backgroundRepeat: "no-repeat",
+        backgroundImage: `url("${cyber_exhibition_svg}")`,
+        animation: "$op 1.8s none infinite 1s",
+        "@global": {
+            "@keyframes op": {
+                "0%": {opacity: 0.5},
+                "10%": {opacity: 0.4},
+                "30%": {opacity: 0.6},
+                "50%": {opacity: 0.4},
+                "57%": {opacity: 0.5},
+                "64%": {opacity: 0.3},
+                "100%": {opacity: 0.4},
+            }
+        }
+
+    }
 });
 
 const SORTING_MODES = ["created", "active", "hot", "trending"];
@@ -328,7 +349,7 @@ class Gallery extends React.Component {
 
     componentDidMount() {
 
-        actions.trigger_snackbar(`Inside the illusion of art! We make the daily life a creative experience, continually original-delusional-ecstatic situations.`, 5000);
+        actions.trigger_snackbar(`Inside the disillusion of art! We make the daily life a creative experience, continually original-delusional-ecstatic situations.`, 5000);
         window.addEventListener("resize", this._updated_dimensions);
         ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 
@@ -1200,12 +1221,14 @@ class Gallery extends React.Component {
                             {
                                 _loading_posts ?
                                     <div key={"loading_posts"}>
-                                        <h1><ShufflingSpanText  animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Please wait..."}/></h1>
+                                        <h1><ShufflingSpanText  animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Gathering [...artistic situations...]"}/></h1>
+                                        <h3><ShufflingSpanText  animation_delay_ms={300} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Waiting on finding [pixel arts...]"}/></h3>
                                         {_is_search_mode && <h4>Powered in partnership with Ecency.com</h4>}
                                     </div>:
                                     <div key={"not_loading_posts"}>
-                                        <h1><ShufflingSpanText animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Nothing to show you."}/></h1>
-                                        <div style={{opacity: 0.73, height: "min(66vw, 66vh)", backgroundSize: "contain", backgroundPosition: "center center", backgroundRepeat: "no-repeat", backgroundImage: `url("${cyber_exhibition_svg}")`}} />
+                                        <h1><ShufflingSpanText animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Nothingness = [...artistic situations]"}/></h1>
+                                        <h3><ShufflingSpanText animation_delay_ms={300} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"No [pixel arts...] in those"}/></h3>
+                                        <div className={classes.cyberExhibitionImage} />
                                     </div>
 
                             }
@@ -1243,7 +1266,7 @@ class Gallery extends React.Component {
 
                 <Grow in>
                     <Fab className={classes.fab} variant="extended" onClick={this._open_editor}>
-                        <PhotoEmojiIcon style={{height: "1.8em"}} /> {t( "words.create")}
+                        <AddIcon style={{height: "1.8em"}} /> Situation
                     </Fab>
                 </Grow>
 

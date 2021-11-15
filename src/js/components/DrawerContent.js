@@ -424,7 +424,7 @@ class DrawerContent extends React.Component {
                 <Fade in timeout={500}>
                     <List>
                         <ListItem button onClick={this._open_gallery_page}>
-                            <ListItemText primary={`Artistic Pixel Arts Situations`} />
+                            <ListItemText primary={`Pixel Arts In Artistic Situations`} />
                         </ListItem>
                         <ListItem button onClick={this._open_dashboard_page}>
                             <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />

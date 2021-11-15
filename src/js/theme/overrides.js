@@ -16,6 +16,9 @@ const overrides = {
             blockquote: {
                 color: "#666"
             },
+            "h1 > p, h2 > p, h3 > p, h4 > p, h5 > p, h6 > p": {
+                margin: 0,
+            },
             ".emoji": {
                 verticalAlign: "middle",
                 height: "1em",
