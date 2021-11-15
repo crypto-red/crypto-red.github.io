@@ -93,6 +93,7 @@ import NavigationIcon from "../icons/Navigation";
 
 import Jdenticon from "react-jdenticon";
 import HiveLogoWordmark from "../icons/HiveLogoWordmark";
+import InfoIcon from "@material-ui/icons/Info";
 
 const styles = theme => ({
     listSubHeader: {
@@ -1074,10 +1075,15 @@ class PixelToolboxSwipeableViews extends React.Component {
                                         </div>
                                         : null
                                 }
-
+                                <ListSubheader className={classes.listSubHeader}>
+                                    <span><InfoIcon/></span>
+                                    <span>Information</span>
+                                </ListSubheader>
+                                <ListItem>
+                                    <ListItemText className={classes.ListItemText} primary={"This is FINALLY an exhibition of PIXEL ARTS, each of those pixel arts are ENCAPSULATED into a SITUATION OF ART, made by an artist, the author of the blog post (serving to store theses situations and to search for them in the database which is a real blockchain). An artistic situation born in the mind of its creator, before being realized and published to the blockchain. Theses data, on the blockchain, belongs to you and stays as it were trough advanced cryptography implementation, nevertheless, changes occurring to the situation like comments among other could make the real-life situation change too thus INFLUENCING BACK THINGS like the correction brought by, it’s publisher and therefore the publisher him(her)self."}></ListItemText>
+                                </ListItem>
                             </List>
                         );
-
                     })
                 }
             </SwipeableViews>
