@@ -107,13 +107,22 @@ const styles = theme => ({
         "& > .MuiCardActionArea-root > div:hover > img, &[dataselected='true'] > .MuiCardActionArea-root > div > img": {
             transform: "scale(1.25)"
         },
+        "& > .MuiCardActionArea-root": {
+            overflow: "hidden",
+        },
         "& > .MuiCardActionArea-root > div:hover > div, &[dataselected='true'] > .MuiCardActionArea-root > div > div": {
             background: `linear-gradient(to top, rgb(0 0 0 / 48%) 12px, rgb(0 0 0 / 0%) calc(12px + 12%))`,
             "& svg": {
                 opacity: 1,
                 transform: "scale(4)",
-            }
+            },
         },
+        "&[dataselected='true'] > .MuiCardActionArea-root > div:first-child": {
+            "& div:last-child": {
+                transform: "translate(0px, 0px)",
+                opacity: 1,
+            }
+        }
     },
     cardMedia: {
         imageRendering: "pixelated",
@@ -121,6 +130,7 @@ const styles = theme => ({
         transform: "scale(1)",
     },
     cardMediaOverlay: {
+        zIndex: 0,
         background: `linear-gradient(to top, rgb(0 0 0 / 48%) 24px, rgb(0 0 0 / 0%) calc(24px + 12%))`,
         transition: "background 250ms cubic-bezier(0.4, 0, 0.2, 1)",
         position: "absolute",
@@ -140,6 +150,7 @@ const styles = theme => ({
     },
     nsTags: {
         position: "absolute",
+        pointerEvents: "none",
         left: 0,
         top: 0,
         padding: theme.spacing(1),
@@ -153,23 +164,27 @@ const styles = theme => ({
         },
     },
     cardContent: {
+        zIndex: 1,
         position: "relative",
         backgroundColor: "#FAFAFA",
         transition: "background-color 140ms cubic-bezier(0.4, 0, 0.2, 1)",
-        "&::before": {
-            top: -24,
+        "&::after": {
+            zIndex: -1,
+            top: -32,
             content: "attr(datatags)",
-            padding: "10px 16px",
+            padding: "16px 8px 16px 16px",
             left: 0,
             width: "66%",
             position: "absolute",
-            height: 25,
+            lineHeight: "8px",
             backgroundColor: "#fafafa",
             clipPath: "polygon(0 0, calc(66%) 0%, 100% 100%, 100% 0%, 100% 100%, 0 100%, 0% 66%, 0% 33%)",
-            transition: "background-color 140ms cubic-bezier(0.4, 0, 0.2, 1)",
+            transform: "translate(0px, 0px)",
+            transition: "background-color 140ms cubic-bezier(0.4, 0, 0.2, 1), transform 240ms cubic-bezier(0.4, 0, 0.2, 1)",
         },
-        "&[dataselected='true']::before": {
+        "&[dataselected='true']::after": {
             backgroundColor: "#d7dbff",
+            transform: "translate(-100%, 0px)",
         },
         "&[dataselected='true']": {
             backgroundColor: "#d7dbff",
@@ -218,7 +233,24 @@ const styles = theme => ({
         },
         opacity: 1,
         backgroundColor: "#3729c177",
-    }
+    },
+    postTags: {
+        zIndex: 1,
+        position: "absolute",
+        left: 0,
+        bottom: 0,
+        lineHeight: "32px",
+        boxSizing: "content-box",
+        padding: "8px",
+        transform: "translate(0px, 100%)",
+        opacity: 0,
+        transition: "transform 240ms cubic-bezier(0.4, 0, 0.2, 1) 120ms, opacity 240ms cubic-bezier(0.4, 0, 0.2, 1) 120ms",
+    },
+    postTag: {
+        zIndex: 2,
+        marginRight: 4,
+        cursor: "pointer",
+    },
 });
 
 class PixelArtCard extends React.Component {
@@ -305,8 +337,7 @@ class PixelArtCard extends React.Component {
                             image={post.image}
                             title={post.title}
                         />
-                        <div className={classes.cardMediaOverlay}
-                             onClick={(event) => {this.props.on_card_media_click(post, event)}}>
+                        <div className={classes.cardMediaOverlay} onClick={(event) => {this.props.on_card_media_click(post, event)}}>
                             <div className={classes.nsTags}>
                                 {Object.entries(post.responsabilities).map((entry) => {
 
@@ -328,7 +359,14 @@ class PixelArtCard extends React.Component {
                                     }
                                 })}
                             </div>
-                            <EyeIcon style={{color: "#ffffff"}} width={36} height={36}/>
+                            <EyeIcon style={{color: "#ffffff", pointerEvents: "none"}} width={36} height={36}/>
+                        </div>
+                        <div className={classes.postTags}>
+                            {
+                                tags.map((tag, index) => {
+                                    return index ? <Chip clickable className={classes.postTag} key={tag} variant={"default"} size={"small"} label={`#${tag}`} onClick={() => {this.props.on_card_tag_click(tag)}}/> : null;
+                                })
+                            }
                         </div>
                     </div>
                     <CardContent datatags={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>

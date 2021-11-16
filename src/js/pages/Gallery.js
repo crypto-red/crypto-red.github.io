@@ -273,7 +273,7 @@ class Gallery extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        const { _sorting_modes, _search_sorting_modes } = this.state;
+        const { _sorting_modes, _search_sorting_modes, _posts } = this.state;
 
         let state = {
             classes: new_props.classes,
@@ -315,7 +315,7 @@ class Gallery extends React.Component {
 
                 if(closed_search || (sorting_changed && !state._is_search_mode)) {
 
-                    this.setState({_posts: [], _start_author: null, _start_permlink: null}, () => {
+                    this.setState({_posts: [], _start_author: "", _start_permlink: ""}, () => {
                         this._scroll_to(0);
                         this.forceUpdate(() => {
 
@@ -324,7 +324,7 @@ class Gallery extends React.Component {
                     });
                 }else if(search_sorting_changed && state._is_search_mode) {
 
-                    this.setState({_posts: [], _start_author: null, _start_permlink: null, _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
+                    this.setState({_posts: [], _start_author: "", _start_permlink: "", _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
                         this._scroll_to(0);
                         this.forceUpdate(() => {
 
@@ -357,18 +357,35 @@ class Gallery extends React.Component {
 
         this._update_settings();
 
-        if(this.state._is_search_mode) {
+        this.forceUpdate(() => {
 
-            this._search_more_posts();
-        }else {
+            if(this.state._is_search_mode) {
 
-            this._load_more_posts();
-        }
+                this.setState({_posts: [], _start_author: "", _start_permlink: "", _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
+                    this._scroll_to(0);
+                    this.forceUpdate(() => {
 
-        if(this.state._post_author && this.state._post_permlink) {
+                        this._search_more_posts();
+                    });
+                });
+            }else {
 
-            this._get_post();
-        }
+                this.setState({_posts: [], _start_author: "", _start_permlink: ""}, () => {
+                    this._scroll_to(0);
+                    this.forceUpdate(() => {
+
+                        this._load_more_posts();
+                    });
+                });
+            }
+
+            if(this.state._post_author && this.state._post_permlink) {
+
+                this._get_post();
+            }
+        });
+
+
     };
 
     _update_settings() {
@@ -689,6 +706,7 @@ class Gallery extends React.Component {
                     selected_locales_code={_selected_locales_code}
                     on_author_click={this._handle_set_selected_account}
                     on_card_media_click={this._handle_art_open}
+                    on_card_tag_click={this._handle_set_tag}
                     on_card_content_click={selected ? this._handle_art_open: this._handle_art_focus}
                     on_reaction_click={this._handle_art_reaction}
                     on_votes_click={this._handle_votes_menu_open}/>
@@ -696,11 +714,20 @@ class Gallery extends React.Component {
         );
     };
 
+    _handle_set_tag = (name) => {
+
+        const {_history} = this.state;
+
+        _history.push(`/gallery/newest/search/${encodeURIComponent("#"+name)}`);
+    };
+
     _handle_set_selected_account = (author) => {
 
-        const { _history, _sorting_modes, _sorting_tab_index } = this.state;
+        const { _history, _sorting_modes, _sorting_tab_index, _is_search_mode, _search_mode_query, _search_sorting_tab_index, _search_sorting_modes } = this.state;
 
-        const new_pathname = "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]) + "/@" + author;
+        const new_pathname = _is_search_mode ?
+            `/gallery/${_search_sorting_modes[_search_sorting_tab_index]}/search/${encodeURIComponent(_search_mode_query)}/@${author}`:
+            `/gallery/${_sorting_modes[_sorting_tab_index] || _sorting_modes[0]}/@${author}`;
         _history.push(new_pathname);
     };
 
@@ -1134,7 +1161,7 @@ class Gallery extends React.Component {
 
         const { _history, _previous_pathname, pathname } = this.state;
 
-        _history.push(pathname.replace(/\/\@[a-z0-9-\.]+/gm, ""));
+        _history.push(pathname.replace(/\/\@[a-z0-9-\.]+$/gm, ""));
     };
 
     _open_editor = () => {
