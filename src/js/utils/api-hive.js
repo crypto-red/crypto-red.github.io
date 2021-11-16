@@ -165,6 +165,7 @@ function _format_account(account) {
     parsed_json_metadata.profile.cover_image = typeof parsed_json_metadata.profile.cover_image === "undefined" ? "": IMAGE_PROXY_URL + parsed_json_metadata.profile.cover_image;
     parsed_json_metadata.profile.cover_image = parsed_json_metadata.profile.cover_image.match(/(https:\/\/)([/|.|\w|\s])*\.(?:jpg|jpeg|gif|png)/) === null ? "": IMAGE_PROXY_URL + parsed_json_metadata.profile.cover_image;
     parsed_json_metadata.profile.about = typeof parsed_json_metadata.profile.about === "undefined" ? "": parsed_json_metadata.profile.about;
+    parsed_json_metadata.profile.display_name = typeof parsed_json_metadata.profile.display_name === "undefined" ? "": parsed_json_metadata.profile.display_name;
     parsed_json_metadata.profile.name = typeof parsed_json_metadata.profile.name === "undefined" ? "": parsed_json_metadata.profile.name;
     parsed_json_metadata.profile.location = typeof parsed_json_metadata.profile.location === "undefined" ? "": parsed_json_metadata.profile.location;
     parsed_json_metadata.profile.website = typeof parsed_json_metadata.profile.website === "undefined" ? "": parsed_json_metadata.profile.website;
@@ -181,6 +182,7 @@ function _format_account(account) {
         profile_image: parsed_json_metadata.profile.profile_image,
         cover_image: parsed_json_metadata.profile.cover_image,
         about: parsed_json_metadata.profile.about,
+        display_name: parsed_json_metadata.profile.display_name,
         location: parsed_json_metadata.profile.location,
         website: parsed_json_metadata.profile.website,
         wallet: {

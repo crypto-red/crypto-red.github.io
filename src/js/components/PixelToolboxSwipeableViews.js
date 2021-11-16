@@ -664,7 +664,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                     icon: <LayerEditIcon />,
                     text: `Layer actions`,
                     tools: [
-                        {icon: <LayerAddIcon />, text: "New layer", on_click: () => {canvas.new_layer(layer_index+1)}},
+                        {icon: <LayerAddIcon />, text: "New layer", on_click: () => {canvas.new_layer(layer_index)}},
                         {icon: <LayerDeleteIcon />, text: "Delete layer", on_click: () => {canvas.delete_layer(layer_index)}},
                         {icon: <ContentDuplicateIcon />, text: "Duplicate layer", on_click: () => {canvas.duplicate_layer(layer_index)}},
                         {icon: <MergeIcon />, text: "Merge down layer", on_click: () => {canvas.merge_down_layer(layer_index)}},
@@ -839,8 +839,10 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                 {[...layers].reverse().map((layer, index, array) => {
 
                                                     const index_reverse_order = (array.length - 1) - index;
+                                                    layer = layer || {};
                                                     layer.colors = layer.colors || [];
                                                     layer.data = layer.data || {};
+                                                    layer.hidden = layer.hidden || false;
 
                                                     return (
                                                         <div key={index_reverse_order}>
@@ -855,7 +857,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                                 <ExpandMoreIcon  className={_layer_opened && layer_index === index_reverse_order ? classes.flipExpandMoreIcon: classes.expandMoreIcon}/>
                                                             </ListItem>
                                                             {
-                                                                layer_index === index_reverse_order || _previous_layer_index === index_reverse_order ?
+                                                                (layer_index === index_reverse_order || _previous_layer_index === index_reverse_order) &&
                                                                     <Collapse timeout={{ appear: 250, enter: 250, exit: 250 }} in={_layer_opened && layer_index === index_reverse_order} className={classes.layerSelected}>
                                                                         <div style={{padding: "12px 0px 12px 32px"}}>
                                                                             <span>Colours: ({layer.colors.length}/{layer.data.number_of_color})</span>
@@ -882,12 +884,11 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                                             <div style={{padding: "12px 0px"}}>
                                                                                 <Button color="primary" onClick={() => {canvas.current_layer_up()}}>UP</Button>
                                                                                 <Button color="primary" onClick={() => {canvas.current_layer_down()}}>DOWN</Button>
-                                                                                <Button color="primary" onClick={() => {canvas.toggle_layer_visibility(layer_index)}}>{layers[layer_index].hidden ? `SHOW`: `HIDE`}</Button>
-                                                                                <Button color="primary" onClick={() => {canvas.change_layer_opacity(layer_index, slider_value)}}>{`OPACITY: ${layers[layer_index].opacity} -> ${slider_value}`}</Button>
+                                                                                <Button color="primary" onClick={() => {canvas.toggle_layer_visibility(layer_index)}}>{(layers[layer_index] || {}).hidden ? `SHOW`: `HIDE`}</Button>
+                                                                                <Button color="primary" onClick={() => {canvas.change_layer_opacity(layer_index, slider_value)}}>{`OPACITY: ${(layers[layer_index] || {}).opacity} -> ${slider_value}`}</Button>
                                                                             </div>
                                                                         </div>
-                                                                    </Collapse>:
-                                                                    null
+                                                                    </Collapse>
                                                             }
                                                         </div>
                                                     );

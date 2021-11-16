@@ -629,9 +629,9 @@ class CanvasPixels extends React.Component {
         let { _layers, _s_pxl_colors, _s_pxls } = this.state;
         at_index = typeof at_index === "undefined" ? _s_pxl_colors.length: at_index;
 
-        _s_pxl_colors.splice(at_index, 0, ["#00000000"]);
-        _s_pxls.splice(at_index, 0, new Array(pxl_width * pxl_height).fill(0));
-        _layers.splice(at_index, 0, {id: Date.now(), name: `Layer ${at_index}`, hidden: false, opacity: 1, data: {}});
+        _s_pxl_colors.splice(at_index+1, 0, ["#00000000"]);
+        _s_pxls.splice(at_index+1, 0, new Array(pxl_width * pxl_height).fill(0));
+        _layers.splice(at_index+1, 0, {id: Date.now(), name: `Layer ${at_index}`, hidden: false, opacity: 1, data: {}, thumbnail: ""});
 
         this.setState({
             _layers,
@@ -876,14 +876,16 @@ class CanvasPixels extends React.Component {
              const maybe_set_layers = () => {
 
                 if(all_layers.length === _layers.length) {
-                    this.setState({_layers: all_layers}, () => {
+                    this.setState({_layers: [...all_layers]}, () => {
 
                         this._notify_layers_change();
                     });
                 }
             }
 
-            _layers.forEach((layer, index) => {
+            state_history[history_position]._layers.forEach((layer, index) => {
+
+                layer = {...(state_history[history_position]._layers[index] || {})};
 
                 if(previous_history_position !== history_position) {
 
@@ -896,6 +898,7 @@ class CanvasPixels extends React.Component {
                             state_history[previous_history_position]._layers[index].hidden !== state_history[history_position]._layers[index].hidden ||
                             state_history[previous_history_position]._layers[index].id !== state_history[history_position]._layers[index].id
                         ) {
+
 
                             this.get_layer_base64_png_data_url(index, (thumbnail) => {
 
@@ -984,8 +987,8 @@ class CanvasPixels extends React.Component {
             let result = await pool.exec(process_function, [
                 pxl_width,
                 pxl_height,
-                _s_pxls[layer_index],
-                _s_pxl_colors[layer_index],
+                _s_pxls[layer_index] || [],
+                _s_pxl_colors[layer_index] || [],
                 scale
             ]).timeout(60000);
 

@@ -276,7 +276,7 @@ class AccountDialogProfileHive extends React.Component {
                         </Tooltip>
                     </div>
                     <CardContent className={classes.cardContent}>
-                        <div className={classes.cardContentUserame}>{"@" + (account_name || "").replace("@", "")}</div>
+                        <div className={classes.cardContentUserame}>{`${account_name} ${_account.display_name ? `(${_account.display_name})`: ``}`}</div>
                         <div className={classes.cardContentUserDescription}>{_account.about ? _account.about: "..."}</div>
                         {_account.location &&
                             <div className={classes.cardContentUserLocation}>

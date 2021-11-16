@@ -552,6 +552,13 @@ class Gallery extends React.Component {
 
                             actions.trigger_loading_update(100);
                             this.setState({_loading_posts: false});
+
+                            if(!_posts.length) {
+
+                                actions.trigger_snackbar("There is no artistic situations containing pixel art to show");
+                                actions.trigger_sfx("alert_error-01");
+                                actions.jamy_update("sad");
+                            }
                         }
                     });
                 });
@@ -560,6 +567,13 @@ class Gallery extends React.Component {
 
             actions.trigger_loading_update(100);
             this.setState({_loading_posts: false});
+
+            if(!_posts.length) {
+
+                actions.trigger_snackbar("There is no artistic situations containing pixel art to show");
+                actions.trigger_sfx("alert_error-01");
+                actions.jamy_update("sad");
+            }
         }
     };
 
@@ -660,7 +674,7 @@ class Gallery extends React.Component {
         this.setState({_top_scroll_of_el_by_index, _height_of_el_by_index});
 
         return (
-            <CellMeasurer cache={_cell_measurer_cache} index={index} key={`${key}`} parent={parent}>
+            <CellMeasurer cache={_cell_measurer_cache} index={index} key={`${key}.${post.id}`} parent={parent}>
                 <PixelArtCard
                     rowIndex={rowIndex}
                     columnIndex={columnIndex}
