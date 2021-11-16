@@ -1141,6 +1141,7 @@ class PixelDialogPost extends React.Component {
                     PaperComponent={"div"}
                     fullScreen
                     onClose={(event) => {this.props.onClose(event)}}
+                    onExited={(event) => {this.props.onExited && this.props.onExited(event)}}
                 >
                     <div className={classes.root}>
                         <div className={classes.content}>

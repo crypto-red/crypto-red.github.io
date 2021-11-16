@@ -218,6 +218,7 @@ class Gallery extends React.Component {
             _sorting_tab_index: SORTING_MODES.indexOf(props.pathname.split("/")[2] || 0),
             _post_author: (props.pathname.split("/")[3] || "").includes("@") ? props.pathname.split("/")[3]: (props.pathname.split("/")[5] || "").includes("@") ? props.pathname.split("/")[5]: null,
             _post_permlink: (props.pathname.split("/")[3] || "").includes("@") ? props.pathname.split("/")[4] || null: (props.pathname.split("/")[5] || "").includes("@") ? props.pathname.split("/")[6] || null: null,
+            _started_on_post_dialog: Boolean((props.pathname.split("/")[3] || "").includes("@") ? props.pathname.split("/")[4] || null: (props.pathname.split("/")[5] || "").includes("@") ? props.pathname.split("/")[6] || null: null),
             _is_search_mode: Boolean(props.pathname.split("/")[3] === "search"),
             _search_mode_query: props.pathname.split("/")[3] === "search" ? decodeURIComponent(props.pathname.split("/")[4] || ""): "",
             _search_sorting_tab_index: SEARCH_SORTING_MODES.indexOf(props.pathname.split("/")[2] || 0),
@@ -246,8 +247,8 @@ class Gallery extends React.Component {
             _average_img_ratio: 1,
 
             _gutter_size: 16,
-            _start_author: null,
-            _start_permlink: null,
+            _start_author: "",
+            _start_permlink: "",
             _column_count: 4,
             _column_width: 356,
             _load_more_threshold: 2000,
@@ -264,7 +265,7 @@ class Gallery extends React.Component {
             _reaction_selected_post: {},
             _reaction_voted_result: null,
             _reaction_selected_post_loading: null,
-
+            _dialog_post_closed_count: 0,
             _votes_anchor: null,
             _votes: [],
 
@@ -350,14 +351,13 @@ class Gallery extends React.Component {
     componentDidMount() {
 
         actions.trigger_snackbar(`Inside the disillusion of art! We make the daily life a creative experience, continually original-delusional-ecstatic situations.`, 5000);
-        window.addEventListener("resize", this._updated_dimensions);
+        window.addEventListener("resize", this._update_dimensions_handler);
         ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 
-        this._updated_dimensions();
 
         this._update_settings();
-
-        this.forceUpdate(() => {
+        this._is_logged();
+        this._updated_dimensions(() => {
 
             if(this.state._is_search_mode) {
 
@@ -384,15 +384,13 @@ class Gallery extends React.Component {
                 this._get_post();
             }
         });
-
-
     };
 
-    _update_settings() {
+    _update_settings = () => {
 
         api.get_settings(this._process_settings_query_result);
-    }
-
+    };
+x
     _process_settings_query_result = (error, settings) => {
 
         if(!error) {
@@ -401,11 +399,8 @@ class Gallery extends React.Component {
             const _selected_locales_code =  typeof settings.locales !== "undefined" ? settings.locales: "en-US";
             const _selected_currency = typeof settings.currency !== "undefined" ? settings.currency: "USD";
 
-            this.setState({  _selected_locales_code, _selected_currency }, () => {
-
-                this._is_logged();
-                api.get_coins_markets(["hive_dollar"], _selected_currency.toLowerCase(), this._set_coins_markets);
-            });
+            api.get_coins_markets(["hive_dollar"], _selected_currency.toLowerCase(), this._set_coins_markets);
+            this.setState({  _selected_locales_code, _selected_currency });
         }
     };
 
@@ -415,7 +410,10 @@ class Gallery extends React.Component {
 
             this.setState({_hbd_market: data[0]}, () => {
 
-                this.forceUpdate();
+                this.forceUpdate(() => {
+
+                    this._recompute_cell_measurements();
+                });
             });
         }
     };
@@ -470,9 +468,9 @@ class Gallery extends React.Component {
 
     _load_more_posts = () => {
 
-        const {_posts, _start_author, _start_permlink, _sorting_modes, _sorting_tab_index} = this.state;
+        const { _posts, _start_author, _start_permlink, _sorting_modes, _sorting_tab_index, _loading_posts } = this.state;
 
-        if (!_posts.length || (_start_permlink && _start_author)) {
+        if (!_loading_posts) {
 
             actions.trigger_loading_update(0);
             this.setState({_loading_posts: true}, () => {
@@ -482,26 +480,26 @@ class Gallery extends React.Component {
                     get_hive_posts({
                         limit: 21,
                         tag: "pixel-art",
-                        sorting: (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]),
+                        sorting: _sorting_modes[_sorting_tab_index] || _sorting_modes[0],
                         start_author: _start_author,
                         start_permlink: _start_permlink
                     }, (err, data) => {
 
-                        if ((data || {}).posts) {
-
-                            const posts = _posts.concat(data.posts);
+                        if (((data || {}).posts || []).length >= 1) {
 
                             const end_data = data.end_author && data.end_permlink ? {
                                 _start_author: data.end_author,
                                 _start_permlink: data.end_permlink
                             } : {_start_author: "", _start_permlink: ""};
 
-                            this.setState({...end_data, _loading_posts: false, _posts: posts}, () => {
+
+                            this.setState({...end_data, _loading_posts: false, _posts: _posts.concat(data.posts)}, () => {
 
                                 this.forceUpdate(() => {
 
                                     this._recompute_cell_measurements();
                                 });
+
                                 actions.trigger_loading_update(100);
                             });
                         }else {
@@ -512,10 +510,6 @@ class Gallery extends React.Component {
                     });
                 });
             });
-        }else {
-
-            actions.trigger_loading_update(100);
-            this.setState({_loading_posts: false});
         }
     };
 
@@ -539,10 +533,10 @@ class Gallery extends React.Component {
 
     _search_more_posts = () => {
 
-        const { _posts, _search_mode_query, _search_sorting_modes, _search_sorting_tab_index, _search_mode_query_pages } = this.state;
+        const { _posts, _search_mode_query, _search_sorting_modes, _search_sorting_tab_index, _search_mode_query_pages, _loading_posts } = this.state;
         let { _search_mode_query_page } = this.state;
 
-        if (!_posts.length || _search_mode_query_page < _search_mode_query_pages) {
+        if (!_loading_posts && _search_mode_query_page < _search_mode_query_pages) {
 
             _search_mode_query_page++;
 
@@ -569,34 +563,16 @@ class Gallery extends React.Component {
 
                             actions.trigger_loading_update(100);
                             this.setState({_loading_posts: false});
-
-                            if(!_posts.length) {
-
-                                actions.trigger_snackbar("There is no artistic situations containing pixel art to show");
-                                actions.trigger_sfx("alert_error-01");
-                                actions.jamy_update("sad");
-                            }
                         }
                     });
                 });
             });
-        }else {
-
-            actions.trigger_loading_update(100);
-            this.setState({_loading_posts: false});
-
-            if(!_posts.length) {
-
-                actions.trigger_snackbar("There is no artistic situations containing pixel art to show");
-                actions.trigger_sfx("alert_error-01");
-                actions.jamy_update("sad");
-            }
         }
     };
 
     componentWillUnmount() {
 
-        window.removeEventListener("resize", this._updated_dimensions);
+        window.removeEventListener("resize", this._update_dimensions_handler);
         ReactDOM.findDOMNode(this).removeEventListener("keydown", this._handle_keydown);
     }
 
@@ -616,7 +592,7 @@ class Gallery extends React.Component {
         _history.push(new_pathname);
     };
 
-    _recompute_cell_measurements = () => {
+    _recompute_cell_measurements = (callback_function = () => {}) => {
 
         const {_cell_measurer_cache, _masonry, _cell_positioner, _column_count, _gutter_size, _column_width } = this.state;
 
@@ -636,12 +612,12 @@ class Gallery extends React.Component {
 
             this.setState({_cell_positioner, _cell_positioner_config, _cell_measurer_cache}, () => {
 
-                this.forceUpdate();
+                callback_function();
             });
 
         }else {
 
-            this._init_cell_measurements();
+            this._init_cell_measurements(callback_function);
         }
     };
 
@@ -668,11 +644,11 @@ class Gallery extends React.Component {
     _cell_renderer = (data) => {
 
         const {index, key, parent, style} = data;
-        const { _masonry, _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _reaction_selected_post_loading, _column_width, _cell_measurer_cache, _column_count } = this.state;
+        const { _masonry, _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _reaction_selected_post_loading, _column_width, _cell_measurer_cache, _column_count, _posts } = this.state;
 
         const post = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).item || {}: {};
         const size = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).size || {}: {};
-        if(!post.id || !size){return <div />}
+        if(!post.id || !size.height){return <div />}
 
         const image_height = Math.ceil(_column_width * (size.height / size.width)) || 0;
 
@@ -691,7 +667,7 @@ class Gallery extends React.Component {
         this.setState({_top_scroll_of_el_by_index, _height_of_el_by_index});
 
         return (
-            <CellMeasurer cache={_cell_measurer_cache} index={index} key={`${key}.${post.id}`} parent={parent}>
+            <CellMeasurer cache={_cell_measurer_cache} index={index} key={`${key}`} parent={parent}>
                 <PixelArtCard
                     rowIndex={rowIndex}
                     columnIndex={columnIndex}
@@ -731,12 +707,12 @@ class Gallery extends React.Component {
         _history.push(new_pathname);
     };
 
-    _init_cell_measurements = () => {
+    _init_cell_measurements = (callback_function = () => {}) => {
 
 
         if(this.state._cell_positioner_config && this.state._cell_measurer_cache && this.state._cell_positioner) {
 
-            this._recompute_cell_measurements();
+            this._recompute_cell_measurements(callback_function);
         }else {
 
             const {_column_count, _column_width, _gutter_size} = this.state;
@@ -760,28 +736,33 @@ class Gallery extends React.Component {
 
                 this.forceUpdate(() => {
 
-                    const update_masonry = () => {
+                    const update_masonry = (callback_function = () => {}) => {
 
                         const { _masonry } = this.state;
                         if(!_masonry){
 
                             setTimeout(() => {
 
-                                update_masonry();
+                                update_masonry(callback_function);
                             }, 50);
                         }else {
 
-                            this._recompute_cell_measurements();
+                            this._recompute_cell_measurements(callback_function);
                         }
                     };
 
-                    update_masonry()
+                    update_masonry(callback_function)
                 });
             });
         }
     }
 
-    _updated_dimensions = () => {
+    _update_dimensions_handler = () => {
+
+        this._updated_dimensions();
+    };
+
+    _updated_dimensions = (callback_function = () => {}) => {
 
         let w = window,
             d = document,
@@ -794,7 +775,7 @@ class Gallery extends React.Component {
 
             this.forceUpdate(() => {
 
-                const { _root, _gutter_size } = this.state;
+                const { _root, _gutter_size, _window_width, _window_height } = this.state;
                 let { _column_count } = this.state;
 
                 if(_root) {
@@ -803,11 +784,11 @@ class Gallery extends React.Component {
                     const _root_width = root_rect.width;
                     const _root_height = root_rect.height;
 
-                    if(_window_width < 100 || _root_width < 100) {
+                    if(_window_width < 100 || _root_width < 100 || _root_height < 100 || _window_height < 100) {
 
                         setTimeout(() => {
 
-                            this._updated_dimensions()
+                            this._updated_dimensions(callback_function)
                         }, 50);
 
                     }else {
@@ -834,26 +815,21 @@ class Gallery extends React.Component {
                             (root_rect.width - (_column_count+1) * _gutter_size) / _column_count
                         );
 
-                        let _posts = [...this.state._posts];
-                        this.setState({_posts: []}, () => {
+                        this.setState({_column_width, _column_count, _root_width, _root_height}, () => {
 
                             this.forceUpdate(() => {
 
-                                this.setState({_posts, _column_width, _column_count, _root_width, _root_height}, () => {
-
-                                    this.forceUpdate(() => {
-
-                                        this._init_cell_measurements();
-                                    });
-                                });
+                                this._init_cell_measurements(callback_function);
                             });
                         });
+
                     }
+
                 }else {
 
                     setTimeout(() => {
 
-                        this._updated_dimensions();
+                        this._updated_dimensions(callback_function);
                     }, 50);
                 }
             });
@@ -978,10 +954,7 @@ class Gallery extends React.Component {
 
     _handle_pixel_dialog_post_closed = () => {
 
-        this.setState({_post: null, _post_closed_at: Date.now()}, () => {
-
-            this.forceUpdate();
-        });
+        this.setState({_post: null, _post_closed_at: Date.now()});
         actions.trigger_sfx("state-change_confirm-down");
     };
 
@@ -1091,15 +1064,16 @@ class Gallery extends React.Component {
         const _selected_post_index = typeof index !== "undefined" ? index : _posts.indexOf(_post);
         this.setState({_selected_post_index}, () => {
 
-            this.forceUpdate(() => {
-                if(!do_not_scroll) {
+            if(!do_not_scroll) {
+
+                this.forceUpdate(() => {
 
                     this._scroll_to_index();
-                }else {
+                });
+            }else {
 
-                    _masonry.forceUpdate();
-                }
-            });
+                _masonry.forceUpdate();
+            }
         });
     }
 
@@ -1142,7 +1116,7 @@ class Gallery extends React.Component {
 
         if(!_loading_posts) {
 
-            if(scrollTop + clientHeight + _load_more_threshold > scrollHeight) {
+            if(scrollTop + clientHeight + _load_more_threshold > scrollHeight && scrollHeight > clientHeight) {
 
                 this._load_more();
             }
@@ -1186,9 +1160,19 @@ class Gallery extends React.Component {
         });
     };
 
+    _handle_pixel_dialog_post_exited = () => {
+
+        let { _dialog_post_closed_count } = this.state;
+        _dialog_post_closed_count++;
+        this.setState({_dialog_post_closed_count}, () => {
+
+            this.forceUpdate();
+        });
+    };
+
     render() {
 
-        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code } = this.state;
+        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _dialog_post_closed_count, _started_on_post_dialog } = this.state;
         const { _cell_positioner, _cell_measurer_cache, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
 
         const width = _window_width;
@@ -1229,33 +1213,39 @@ class Gallery extends React.Component {
                     }
                 </div>
 
-                {
-                    _cell_measurer_cache && _cell_positioner &&
-                    <ImageMeasurer
+                <ImageMeasurer
                         className={classes.masonry}
                         items={_posts}
                         image={item => item.image}
                         defaultHeight={post_list_height}
                         defaultWidth={page_width}
-                    >
-                        {({itemsWithSizes}) => (
-                            <MasonryExtended
-                                scrollTop={_scroll_top}
-                                scrollingResetTimeInterval={100}
-                                onScroll={this._handle_masonry_scroll}
-                                height={post_list_height}
-                                cellCount={itemsWithSizes.length}
-                                itemsWithSizes={itemsWithSizes}
-                                cellMeasurerCache={_cell_measurer_cache}
-                                cellPositioner={_cell_positioner}
-                                cellRenderer={this._cell_renderer}
-                                overscanByPixels={_overscan_by_pixels}
-                                ref={this._set_masonry_ref}
-                                width={page_width}
-                            ></MasonryExtended>
-                        )}
+                        keyMapper={(item, index) => `${item.id || index}`}
+                >
+                        {({itemsWithSizes}) => {
+
+                            if(_cell_measurer_cache && _cell_positioner) {
+
+                                return (
+                                    <MasonryExtended
+                                        scrollTop={_scroll_top}
+                                        scrollingResetTimeInterval={100}
+                                        onScroll={this._handle_masonry_scroll}
+                                        height={post_list_height}
+                                        key={Boolean(_dialog_post_closed_count > 0 && _started_on_post_dialog)}
+                                        cellCount={itemsWithSizes.length}
+                                        itemsWithSizes={itemsWithSizes}
+                                        cellMeasurerCache={_cell_measurer_cache}
+                                        cellPositioner={_cell_positioner}
+                                        cellRenderer={this._cell_renderer}
+                                        overscanByPixels={_overscan_by_pixels}
+                                        ref={this._set_masonry_ref}
+                                        width={page_width}
+                                    ></MasonryExtended>
+                                )
+                            }
+                        }}
                     </ImageMeasurer>
-                }
+
                 {
                     ((!_cell_measurer_cache || !_cell_positioner) || (_posts.length === 0)) &&
                         <div className={classes.noPosts} style={{height: post_list_height}}>
@@ -1287,17 +1277,19 @@ class Gallery extends React.Component {
                     keepMounted={false}
                     anchor={_votes_anchor}
                     votes={_votes}
-                    on_close={this._handle_votes_menu_close} />
+                    on_close={this._handle_votes_menu_close}/>
 
                 <PixelDialogPost
                     selected_locales_code={_selected_locales_code}
                     on_next={this._next_current_post}
                     on_previous={this._previous_current_post}
                     on_image_load_complete={() => {setTimeout(() => {this._scroll_to_index()}, 5)}}
-                    keepMounted={false}
+                    keepMounted={true}
                     post={_post}
                     open={_post !== null && _post_author !== null && _post_permlink !== null}
-                    onClose={this._handle_pixel_dialog_post_close}/>
+                    onClose={this._handle_pixel_dialog_post_close}
+                    onExited={this._handle_pixel_dialog_post_exited}
+                />
 
                 <AccountDialogProfileHive
                     keepMounted={true}
