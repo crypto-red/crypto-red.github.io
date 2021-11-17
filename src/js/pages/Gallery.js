@@ -181,7 +181,7 @@ const styles = theme => ({
         }
     },
     cyberExhibitionImage: {
-        opacity: 0.4,
+        opacity: 0,
         height: "min(66vw, 66vh)",
         backgroundSize: "contain",
         backgroundPosition: "center center",
@@ -390,7 +390,7 @@ class Gallery extends React.Component {
 
         api.get_settings(this._process_settings_query_result);
     };
-x
+
     _process_settings_query_result = (error, settings) => {
 
         if(!error) {
@@ -582,6 +582,7 @@ x
 
         const new_pathname = "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]);
         _history.push(new_pathname);
+        actions.trigger_sfx("navigation_transition-right");
     };
 
     _handle_search_sorting_change = (event, _search_sorting_tab_index) => {
@@ -590,6 +591,7 @@ x
 
         const new_pathname = "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + encodeURIComponent(_search_mode_query);
         _history.push(new_pathname);
+        actions.trigger_sfx("navigation_transition-right");
     };
 
     _recompute_cell_measurements = (callback_function = () => {}) => {
@@ -705,6 +707,7 @@ x
             `/gallery/${_search_sorting_modes[_search_sorting_tab_index]}/search/${encodeURIComponent(_search_mode_query)}/@${author}`:
             `/gallery/${_sorting_modes[_sorting_tab_index] || _sorting_modes[0]}/@${author}`;
         _history.push(new_pathname);
+        actions.trigger_sfx("alert_high-intensity");
     };
 
     _init_cell_measurements = (callback_function = () => {}) => {
@@ -1074,6 +1077,8 @@ x
 
                 _masonry.forceUpdate();
             }
+
+            actions.trigger_sfx("ui_tap-variant-01");
         });
     }
 
@@ -1136,6 +1141,7 @@ x
         const { _history, _previous_pathname, pathname } = this.state;
 
         _history.push(pathname.replace(/\/\@[a-z0-9-\.]+$/gm, ""));
+        actions.trigger_sfx("state-change_confirm-down");
     };
 
     _open_editor = () => {
@@ -1250,7 +1256,7 @@ x
                     ((!_cell_measurer_cache || !_cell_positioner) || (_posts.length === 0)) &&
                         <div className={classes.noPosts} style={{height: post_list_height}}>
                             {
-                                _loading_posts ?
+                                _loading_posts ||  (_post_author !== null && _post_permlink !== null) ?
                                     <div key={"loading_posts"}>
                                         <h1><ShufflingSpanText  animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Gathering [...artistic situations...]"}/></h1>
                                         <h3><ShufflingSpanText  animation_delay_ms={300} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Waiting on finding [pixel arts...]"}/></h3>
