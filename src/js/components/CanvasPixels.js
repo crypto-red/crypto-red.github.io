@@ -370,12 +370,13 @@ class CanvasPixels extends React.Component {
                 animation-duration: 1000ms;
                 animation-delay: 0ms;
                 animation-timing-function: linear;
+                transition: opacity 0ms 0ms linear;
             }
             .Canvas-Wrapper-Overflow.Hidden {
                 transform: scale(1);
                 opacity: 0 !important,
                 transform-origin: center center !important;
-                transition: opacity 650ms 350ms linear;
+                transition: opacity 1000ms 0ms linear;
             }
             @keyframes canvanimation { 
                   0% { transform: matrix3d(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: .0; }
@@ -388,9 +389,9 @@ class CanvasPixels extends React.Component {
                   61.66% { transform: matrix3d(1.001, 0, 0, 0, 0, 1.001, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1; }
                   83.98% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1; }
                   100% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1; } 
-            }`
+            }` +
             ".Canvas-Wrapper {" +
-                "transition: box-shadow 200ms 0ms cubic-bezier(0.4, 0, 0.2, 1), transform 25ms 0ms linear" +
+                "transition: box-shadow 0ms 0ms linear, transform 240ms 0ms linear;" +
             "}" +
             ".Canvas-Wrapper.MOVE:not(.Canvas-Focused), .Canvas-Wrapper.PICKER:not(.Canvas-Focused) {" +
                 "cursor: grab;" +
@@ -3440,7 +3441,7 @@ class CanvasPixels extends React.Component {
 
         const { perspective } = this.state;
 
-        if(perspective > 0) {
+        if(perspective > 0 && !is_mobile_or_tablet) {
 
             const pos = this._get_canvas_pos();
             const pos_x_in_canvas_container = ((event.pageX || x) - pos.canvas_container.left);
@@ -3483,12 +3484,19 @@ class CanvasPixels extends React.Component {
         }else {
 
             let { _pointer_events } = this.state;
+            let pointer_event_got_deleted = true;
 
             for (let i = 0; i < _pointer_events.length; i++) {
                 if (event.pointerId === _pointer_events[i].pointerId) {
                     _pointer_events[i] = event;
+                    pointer_event_got_deleted = false;
                     break;
                 }
+            }
+
+            if(pointer_event_got_deleted){
+
+                _pointer_events.push(event);
             }
 
             this.setState({_pointer_events: [..._pointer_events]}, () => {
@@ -3604,6 +3612,8 @@ class CanvasPixels extends React.Component {
                 break;
             }
         }
+
+        _pointer_events = [];
 
         if (_pointer_events.length < 2) {
 
@@ -7808,7 +7818,7 @@ class CanvasPixels extends React.Component {
                     background: `repeating-conic-gradient(rgb(248 248 248 / 100%) 0% 25%, rgb(235 235 235 / 100%) 0% 50%) left top 50% / calc(200% / ${pxl_width}) calc(200% / ${pxl_height})`,
                 }: {};
 
-        background_image_style_props = _loading_base64_img.length ?
+        background_image_style_props = show_original_image_in_background && _loading_base64_img.length ?
             {
                 background: `center / cover no-repeat url("${_loading_base64_img}")`
             }: background_image_style_props;
@@ -7822,7 +7832,7 @@ class CanvasPixels extends React.Component {
         shadow_depth = (_canvas_event_target === "CANVAS" && _mouse_down && _moves_speed_average_now < 2) ? 1 : shadow_depth;
         shadow_depth = (shadow_depth === 0) ? 0.75 : shadow_depth;
 
-        let shadow = this._get_shadow(Math.round(shadow_depth * 3));
+        let shadow = this._get_shadow(Math.round(shadow_depth / 2) * 6);
 
         const canvas_wrapper_width = Math.round(pxl_width * _screen_zoom_ratio * scale);
         const canvas_wrapper_height = Math.round(pxl_height * _screen_zoom_ratio * scale);
@@ -7862,10 +7872,10 @@ class CanvasPixels extends React.Component {
                                  position: "fixed",
                                  width: canvas_wrapper_width,
                                  height: canvas_wrapper_height,
-                                 transform: `rotateX(${perspective_coordinate[0].toFixed(2)*1}deg) rotateY(${perspective_coordinate[1].toFixed(2)*1}deg)`,
+                                 transform: `scale(${is_mobile_or_tablet ? 1: (1 + (Math.abs(_moves_speed_average_now/8) - 0.25) * 8 / 160).toFixed(2)}) rotateX(${perspective_coordinate[0].toFixed(2)*1}deg) rotateY(${perspective_coordinate[1].toFixed(2)*1}deg)`,
                                  transformOrigin: "center center",
                                  boxSizing: "content-box",
-                                 boxShadow: shadow,
+                                 boxShadow: !is_mobile_or_tablet ? shadow: "",
                                  touchAction: "none",
                                  pointerEvents: "none",
                              }}
@@ -7880,7 +7890,7 @@ class CanvasPixels extends React.Component {
                                     borderRadius: canvas_border_radius,
                                     width: Math.floor(pxl_width),
                                     height: Math.floor(pxl_height),
-                                    transform: `scale(${_screen_zoom_ratio * scale})`,
+                                    transform: `scale(${(_screen_zoom_ratio * scale).toFixed(2)})`,
                                     transformOrigin: "left top",
                                     boxSizing: "content-box",
                                     ...background_image_style_props,

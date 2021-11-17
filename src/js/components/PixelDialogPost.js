@@ -1458,11 +1458,11 @@ class PixelDialogPost extends React.Component {
                                             pxl_height={_height}
                                             key={"canvas-post-edit"}
                                             default_size={1000}
-                                            default_scale={0.64}
+                                            default_scale={0.6}
                                             no_actions={true}
-                                            show_original_image_in_background={Boolean(post)}
+                                            show_original_image_in_background={false}
                                             dont_show_canvas_until_img_set={true}
-                                            dont_show_canvas={_dont_show_canvas}
+                                            dont_show_canvas={true}
                                             but_show_canvas_once={true}
                                             dont_change_img_size_onload={true}
                                             move_using_full_container={true}
@@ -1472,7 +1472,7 @@ class PixelDialogPost extends React.Component {
                                             onContextMenu={(e) => {e.preventDefault()}}
                                             onSizeChange={this._handle_size_change}
                                             onLayersChange={this._handle_layers_change}
-                                            perspective={8}
+                                            perspective={6}
                                             onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
                                             onCrossMiddle={(direction, canvas_event_target) => {this._swiped(direction, canvas_event_target)}}
                                             ref={this._set_canvas_ref}

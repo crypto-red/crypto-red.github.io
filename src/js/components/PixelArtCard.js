@@ -49,7 +49,7 @@ const styles = theme => ({
             content: "''",
             background: "#100d4e",
             transform: "translate(-66px, -2.5px)",
-            transition: "transform 175ms cubic-bezier(0.4, 0, 0.2, 1)",
+            transition: "transform 180ms cubic-bezier(0.4, 0, 0.2, 1)",
             width: 64,
             height: 10,
             position: "absolute",
@@ -105,13 +105,13 @@ const styles = theme => ({
         "&[score='90']::after": {backgroundImage: `url('${angel_emoji_svg}')`},
         "&[score='100']::after": {backgroundImage: `url('${fire_earth_emoji_svg}')`},
         "& > .MuiCardActionArea-root > div:hover > img, &[dataselected='true'] > .MuiCardActionArea-root > div > img": {
-            transform: "scale(1.25)"
+            transform: "scale(1.18) translateY(-12px)"
         },
         "& > .MuiCardActionArea-root": {
             overflow: "hidden",
         },
         "& > .MuiCardActionArea-root > div:hover > div, &[dataselected='true'] > .MuiCardActionArea-root > div > div": {
-            background: `linear-gradient(to top, rgb(0 0 0 / 48%) 12px, rgb(0 0 0 / 0%) calc(12px + 12%))`,
+            background: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.009) 11.7%, rgba(0, 0, 0, 0.034) 22.1%, rgba(0, 0, 0, 0.072) 31.2%, rgba(0, 0, 0, 0.123) 39.4%, rgba(0, 0, 0, 0.182) 46.6%, rgba(0, 0, 0, 0.249) 53.1%, rgba(0, 0, 0, 0.32) 58.9%, rgba(0, 0, 0, 0.394) 64.3%, rgba(0, 0, 0, 0.468) 69.3%, rgba(0, 0, 0, 0.54) 74.1%, rgba(0, 0, 0, 0.607) 78.8%, rgba(0, 0, 0, 0.668) 83.6%, rgba(0, 0, 0, 0.721) 88.7%, rgba(0, 0, 0, 0.762) 94.1%, rgba(0, 0, 0, 0.79) 100%)`,
             "& svg": {
                 opacity: 1,
                 transform: "scale(4)",
@@ -126,20 +126,20 @@ const styles = theme => ({
     },
     cardMedia: {
         imageRendering: "pixelated",
-        transition: "transform 250ms cubic-bezier(0.4, 0, 0.2, 1)",
+        transition: "transform 240ms cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "scale(1)",
     },
     cardMediaOverlay: {
         zIndex: 0,
-        background: `linear-gradient(180deg, rgba(0, 0, 0, 0) 88%, rgba(0, 0, 0, 0.78))`,
-        transition: "background 250ms cubic-bezier(0.4, 0, 0.2, 1)",
+        background: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.009) 11.7%, rgba(0, 0, 0, 0.034) 22.1%, rgba(0, 0, 0, 0.072) 31.2%, rgba(0, 0, 0, 0.123) 39.4%, rgba(0, 0, 0, 0.182) 46.6%, rgba(0, 0, 0, 0.249) 53.1%, rgba(0, 0, 0, 0.32) 58.9%, rgba(0, 0, 0, 0.394) 64.3%, rgba(0, 0, 0, 0.468) 69.3%, rgba(0, 0, 0, 0.54) 74.1%, rgba(0, 0, 0, 0.607) 78.8%, rgba(0, 0, 0, 0.668) 83.6%, rgba(0, 0, 0, 0.721) 88.7%, rgba(0, 0, 0, 0.762) 94.1%, rgba(0, 0, 0, 0.79) 100%)`,
+        transition: "background 240ms cubic-bezier(0.4, 0, 0.2, 1)",
         position: "absolute",
         top: "50%;",
         left: "50%",
         transform: "translate(-50%, -50%)",
         "& > svg": {
             transform: "scale(1)",
-            transition: "transform 250ms cubic-bezier(0.4, 0, 0.2, 1), opacity 250ms cubic-bezier(0.4, 0, 0.2, 1)",
+            transition: "transform 240ms cubic-bezier(0.4, 0, 0.2, 1), opacity 240ms cubic-bezier(0.4, 0, 0.2, 1)",
             position: "absolute",
             left: "50%",
             top: "50%",
@@ -167,7 +167,7 @@ const styles = theme => ({
         zIndex: 1,
         position: "relative",
         backgroundColor: "#FAFAFA",
-        transition: "background-color 140ms cubic-bezier(0.4, 0, 0.2, 1)",
+        transition: "background-color 120ms cubic-bezier(0.4, 0, 0.2, 1)",
         "&::after": {
             zIndex: -1,
             top: -32,
@@ -191,7 +191,7 @@ const styles = theme => ({
         },
         "& > *": {
             opacity: .5,
-            transition: "opacity 140ms cubic-bezier(0.4, 0, 0.2, 1)"
+            transition: "opacity 120ms cubic-bezier(0.4, 0, 0.2, 1)"
         },
         "&[dataselected='true'] > *, &:hover > *": {
             opacity: 1,
