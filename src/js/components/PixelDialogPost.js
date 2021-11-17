@@ -394,7 +394,9 @@ class PixelDialogPost extends React.Component {
                 unsourced: true,
                 opinion: true,
                 hurt: true,
-            }
+            },
+            _x: 0,
+            _y: 0,
         };
     };
 
@@ -1449,30 +1451,34 @@ class PixelDialogPost extends React.Component {
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
-
-                                    <CanvasPixels
-                                        pxl_width={_width}
-                                        pxl_height={_height}
-                                        key={"canvas-post-edit"}
-                                        default_size={1000}
-                                        no_actions={true}
-                                        show_original_image_in_background={Boolean(post)}
-                                        dont_show_canvas_until_img_set={true}
-                                        dont_show_canvas={_dont_show_canvas}
-                                        but_show_canvas_once={true}
-                                        dont_change_img_size_onload={true}
-                                        move_using_full_container={true}
-                                        className={classes.contentCanvas}
-                                        tool={"MOVE"}
-                                        show_transparent_image_in_background={false}
-                                        onContextMenu={(e) => {e.preventDefault()}}
-                                        onSizeChange={this._handle_size_change}
-                                        onLayersChange={this._handle_layers_change}
-                                        onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
-                                        onCrossMiddle={(direction, canvas_event_target) => {this._swiped(direction, canvas_event_target)}}
-                                        ref={this._set_canvas_ref}
-                                    />
-                                </div>
+                                    <div>
+                                        <CanvasPixels
+                                            canvas_wrapper_padding={48}
+                                            pxl_width={_width}
+                                            pxl_height={_height}
+                                            key={"canvas-post-edit"}
+                                            default_size={1000}
+                                            default_scale={0.64}
+                                            no_actions={true}
+                                            show_original_image_in_background={Boolean(post)}
+                                            dont_show_canvas_until_img_set={true}
+                                            dont_show_canvas={_dont_show_canvas}
+                                            but_show_canvas_once={true}
+                                            dont_change_img_size_onload={true}
+                                            move_using_full_container={true}
+                                            className={classes.contentCanvas}
+                                            tool={"MOVE"}
+                                            show_transparent_image_in_background={false}
+                                            onContextMenu={(e) => {e.preventDefault()}}
+                                            onSizeChange={this._handle_size_change}
+                                            onLayersChange={this._handle_layers_change}
+                                            perspective={8}
+                                            onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
+                                            onCrossMiddle={(direction, canvas_event_target) => {this._swiped(direction, canvas_event_target)}}
+                                            ref={this._set_canvas_ref}
+                                        />
+                                    </div>
+                                    </div>
                             </div>
                             <div className={classes.bottomMobileFabs}>
                                 {

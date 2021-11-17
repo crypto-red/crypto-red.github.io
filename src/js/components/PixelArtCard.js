@@ -131,7 +131,7 @@ const styles = theme => ({
     },
     cardMediaOverlay: {
         zIndex: 0,
-        background: `linear-gradient(to top, rgb(0 0 0 / 48%) 24px, rgb(0 0 0 / 0%) calc(24px + 12%))`,
+        background: `linear-gradient(180deg, rgba(0, 0, 0, 0) 88%, rgba(0, 0, 0, 0.78))`,
         transition: "background 250ms cubic-bezier(0.4, 0, 0.2, 1)",
         position: "absolute",
         top: "50%;",
@@ -180,7 +180,7 @@ const styles = theme => ({
             backgroundColor: "#fafafa",
             clipPath: "polygon(0 0, calc(66%) 0%, 100% 100%, 100% 0%, 100% 100%, 0 100%, 0% 66%, 0% 33%)",
             transform: "translate(0px, 0px)",
-            transition: "background-color 140ms cubic-bezier(0.4, 0, 0.2, 1), transform 240ms cubic-bezier(0.4, 0, 0.2, 1)",
+            transition: "linear-gradient(180deg, rgba(0, 0, 0, 0) 88%, rgba(0, 0, 0, 0.78))",
         },
         "&[dataselected='true']::after": {
             backgroundColor: "#d7dbff",
@@ -295,6 +295,7 @@ class PixelArtCard extends React.Component {
         }
 
         return (
+            new_props.key !== this.state.key ||
             new_props.image_height !== this.state.image_height ||
             new_props.rowIndex !== this.state.rowIndex ||
             new_props.columnIndex !== this.state.columnIndex ||

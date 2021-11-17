@@ -161,6 +161,8 @@ class CanvasPixels extends React.Component {
         super(props);
         this.state = {
             className: props.className || null,
+            perspective: props.perspective || 0,
+            perspective_coordinate: [0, 0],
             animation: props.animation || true,
             animation_duration: props.animation_duration || 225,
             move_using_full_container: props.move_using_full_container,
@@ -343,32 +345,58 @@ class CanvasPixels extends React.Component {
 
         const body_css =
             "body {" +
-            "touch-action:none;" +
+                "touch-action:none;" +
             "}";
 
         const pixelated_css =
             ".Canvas-Pixels, .Canvas-Wrapper, .MuiTouchRipple-root {" +
-            "-ms-interpolation-mode: -webkit-optimize-contrast;" +
-            "image-rendering: nearest-neighbor;" +
-            "image-rendering: optimizeSpeed;" +
-            "image-rendering: -webkit-optimize-contrast;" +
-            "image-rendering: optimize-contrast;" +
-            "image-rendering: -o-pixelated;" +
-            "-ms-interpolation-mode: nearest-neighbor;" +
-            "image-rendering: pixelated;" +
-            "-ms-touch-action: none;" +
-            "touch-action: none;" +
+                "-ms-interpolation-mode: -webkit-optimize-contrast;" +
+                "image-rendering: nearest-neighbor;" +
+                "image-rendering: optimizeSpeed;" +
+                "image-rendering: -webkit-optimize-contrast;" +
+                "image-rendering: optimize-contrast;" +
+                "image-rendering: -o-pixelated;" +
+                "-ms-interpolation-mode: nearest-neighbor;" +
+                "image-rendering: pixelated;" +
+                "-ms-touch-action: none;" +
+                "touch-action: none;" +
             "}";
 
         const canvas_wrapper_css =
+            `.Canvas-Wrapper-Overflow.Shown {
+                transform: scale(1);
+                animation-name: canvanimation;
+                animation-fill-mode: inherit;
+                animation-duration: 1000ms;
+                animation-delay: 0ms;
+                animation-timing-function: linear;
+            }
+            .Canvas-Wrapper-Overflow.Hidden {
+                transform: scale(1);
+                opacity: 0 !important,
+                transform-origin: center center !important;
+                transition: opacity 650ms 350ms linear;
+            }
+            @keyframes canvanimation { 
+                  0% { transform: matrix3d(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: .0; }
+                  4.3% { transform: matrix3d(0.271, 0, 0, 0, 0, 0.271, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: .2; }
+                  8.61% { transform: matrix3d(.818, 0, 0, 0, 0, .818, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: .8; }
+                  12.91% { transform: matrix3d(1.078, 0, 0, 0, 0, 1.078, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: .9; }
+                  17.22% { transform: matrix3d(1.11, 0, 0, 0, 0, 1.11, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1; }
+                  28.33% { transform: matrix3d(1.031, 0, 0, 0, 0, 1.031, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1; }
+                  39.44% { transform: matrix3d(.991, 0, 0, 0, 0, .991, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1; }
+                  61.66% { transform: matrix3d(1.001, 0, 0, 0, 0, 1.001, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1; }
+                  83.98% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1; }
+                  100% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1; } 
+            }`
             ".Canvas-Wrapper {" +
-            "transition: box-shadow 200ms 0ms cubic-bezier(0.4, 0, 0.2, 1) " +
+                "transition: box-shadow 200ms 0ms cubic-bezier(0.4, 0, 0.2, 1), transform 25ms 0ms linear" +
             "}" +
             ".Canvas-Wrapper.MOVE:not(.Canvas-Focused), .Canvas-Wrapper.PICKER:not(.Canvas-Focused) {" +
-            "cursor: grab;" +
+                "cursor: grab;" +
             "}" +
             ".Canvas-Wrapper.MOVE:active:not(.Canvas-Focused), .Canvas-Wrapper.PICKER:active:not(.Canvas-Focused) {" +
-            "cursor: grabbing;" +
+                "cursor: grabbing;" +
             "}";
 
         const canvas_style = document.createElement("style");
@@ -531,6 +559,14 @@ class CanvasPixels extends React.Component {
             this.setState(new_props);
         }
     }
+
+    set_perspective_coordinate = (array) => {
+
+        this.setState({perspective_coordinate: array}, () => {
+
+            this._request_force_update(false, true);
+        });
+    };
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
 
@@ -1744,7 +1780,7 @@ class CanvasPixels extends React.Component {
 
         if(this.props.onLoad) {this.props.onLoad("image_load");}
 
-        this.setState({_hidden: true, _loading_base64_img_changed: true}, () => {
+        this.setState({has_shown_canvas_once: false, _hidden: true, _loading_base64_img_changed: true}, () => {
 
             setTimeout(() => {
 
@@ -3376,9 +3412,12 @@ class CanvasPixels extends React.Component {
                 this.zoom_of(of, page_x_center, page_y_center, -move_x, -move_y);
             });
 
+            this._handle_position_change(event, client_x_center, client_y_center);
+
         }else /*if(canvas_event_target === "CANVAS_WRAPPER_OVERFLOW")*/ {
 
             this._handle_canvas_move(event, canvas_event_target);
+            this._handle_position_change(event, _pointer_events[0].clientX, _pointer_events[0].clientY);
         }
     };
 
@@ -3396,6 +3435,24 @@ class CanvasPixels extends React.Component {
             this.zoom_of(1, null, null, event.movementX, event.movementY);
         }
     };
+
+    _handle_position_change = (event, x, y) => {
+
+        const { perspective } = this.state;
+
+        if(perspective > 0) {
+
+            const pos = this._get_canvas_pos();
+            const pos_x_in_canvas_container = ((event.pageX || x) - pos.canvas_container.left);
+            const pos_y_in_canvas_container = ((event.pageY || y) - pos.canvas_container.top);
+
+
+            const x = perspective * ((pos_x_in_canvas_container - pos.canvas_container.width / 2) / (pos.canvas_container.width / 2));
+            const y = -perspective * ((pos_y_in_canvas_container - pos.canvas_container.height / 2) / (pos.canvas_container.height / 2));
+
+            this.set_perspective_coordinate([y < 0 ? y : 2 * y, x > 5 ? x : x * 2]);
+        }
+    }
 
     _handle_canvas_wrapper_overflow_pointer_move = (event) => {
 
@@ -3420,6 +3477,7 @@ class CanvasPixels extends React.Component {
 
         if(event.pointerType === "mouse") {
 
+            this._handle_position_change(event);
             this._handle_canvas_mouse_move(event, canvas_event_target);
 
         }else {
@@ -3759,10 +3817,10 @@ class CanvasPixels extends React.Component {
         if(pos_x === -1 || pos_y === -1) {
             this._notify_position_change(event, {x: pos_x, y: pos_y});
             return;
-
         }
 
         if(no_actions) {
+            this._notify_position_change(event, {x: pos_x, y: pos_y});
             return;
         }
 
@@ -7738,6 +7796,7 @@ class CanvasPixels extends React.Component {
             _hidden,
             show_image_only_before_canvas_set,
             has_shown_canvas_once,
+            perspective_coordinate,
         } = this.state;
 
         let background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
@@ -7765,14 +7824,17 @@ class CanvasPixels extends React.Component {
 
         let shadow = this._get_shadow(Math.round(shadow_depth * 3));
 
+        const canvas_wrapper_width = Math.round(pxl_width * _screen_zoom_ratio * scale);
+        const canvas_wrapper_height = Math.round(pxl_height * _screen_zoom_ratio * scale);
+
         return (
             <div ref={this._set_canvas_container_ref} draggable={"false"} style={{boxSizing: "border-box", position: "relative", overflow: "hidden", transform: `translateZ(0px)`, touchAction: "none", pointerEvents: "none"}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
-                     className={"Canvas-Wrapper-Overflow"}
+                     className={"Canvas-Wrapper-Overflow" + (has_shown_canvas_once ? " Shown ": " Not-Shown ")}
                      draggable={"false"}
                      style={{
                          transition: `opacity ${animation ? animation_duration / 2: 0}ms cubic-bezier(0, 0, 0.2, 1) 200ms`,
-                         opacity: _hidden ? 0: 1,
+                         opacity: _hidden || !has_shown_canvas_once ? 0: "inherit",
                          height: "100%",
                          width: "100%",
                          overflow: "visible",
@@ -7781,45 +7843,53 @@ class CanvasPixels extends React.Component {
                          touchAction: "none",
                          pointerEvents: "all",
                      }}>
-                    <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
-                         draggable={"false"}
-                         style={{
-                             borderWidth: canvas_wrapper_border_width,
-                             borderStyle: "solid",
-                             borderColor: "#fff",
-                             backgroundColor: canvas_wrapper_background_color,
-                             borderRadius: canvas_wrapper_border_radius,
-                             padding: canvas_wrapper_padding / window.devicePixelRatio * scale,
-                             position: "fixed",
-                             width: Math.round(pxl_width * _screen_zoom_ratio * scale),
-                             height: Math.round(pxl_height * _screen_zoom_ratio * scale),
-                             transform: `translate3d(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px, 0px)`,
-                             transformOrigin: "center center",
-                             boxSizing: "content-box",
-                             boxShadow: shadow,
-                             touchAction: "none",
-                             pointerEvents: "none",
-                         }}
-                         ref={this._set_canvas_wrapper_ref}>
-                        <canvas
-                            draggable={"false"}
-                            style={{
-                                position: "absolute",
-                                touchAction: "none",
-                                pointerEvents: "auto",
-                                cursor: cursor,
-                                borderRadius: canvas_border_radius,
-                                width: Math.floor(pxl_width),
-                                height: Math.floor(pxl_height),
-                                transform: `scale(${_screen_zoom_ratio * scale})`,
-                                transformOrigin: "left top",
-                                boxSizing: "content-box",
-                                ...background_image_style_props,
-                            }}
-                            className={"Canvas-Pixels"}
-                            ref={this._set_canvas_ref}
-                            width={pxl_width}
-                            height={pxl_height}/>
+                    <div style={{
+                        boxSizing: "content-box",
+                        position: "fixed",
+                        transform: `translate3d(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px, 0px)`,
+                        transformOrigin: "center center",
+                        perspective: `${Math.max(canvas_wrapper_width, canvas_wrapper_height)}px`
+                    }}>
+                        <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
+                             draggable={"false"}
+                             style={{
+                                 borderWidth: canvas_wrapper_border_width,
+                                 borderStyle: "solid",
+                                 borderColor: "#fff",
+                                 backgroundColor: canvas_wrapper_background_color,
+                                 borderRadius: canvas_wrapper_border_radius,
+                                 padding: canvas_wrapper_padding / window.devicePixelRatio * scale,
+                                 position: "fixed",
+                                 width: canvas_wrapper_width,
+                                 height: canvas_wrapper_height,
+                                 transform: `rotateX(${perspective_coordinate[0].toFixed(2)*1}deg) rotateY(${perspective_coordinate[1].toFixed(2)*1}deg)`,
+                                 transformOrigin: "center center",
+                                 boxSizing: "content-box",
+                                 boxShadow: shadow,
+                                 touchAction: "none",
+                                 pointerEvents: "none",
+                             }}
+                             ref={this._set_canvas_wrapper_ref}>
+                            <canvas
+                                draggable={"false"}
+                                style={{
+                                    position: "absolute",
+                                    touchAction: "none",
+                                    pointerEvents: "auto",
+                                    cursor: cursor,
+                                    borderRadius: canvas_border_radius,
+                                    width: Math.floor(pxl_width),
+                                    height: Math.floor(pxl_height),
+                                    transform: `scale(${_screen_zoom_ratio * scale})`,
+                                    transformOrigin: "left top",
+                                    boxSizing: "content-box",
+                                    ...background_image_style_props,
+                                }}
+                                className={"Canvas-Pixels"}
+                                ref={this._set_canvas_ref}
+                                width={pxl_width}
+                                height={pxl_height}/>
+                        </div>
                     </div>
                 </div>
             </div>
