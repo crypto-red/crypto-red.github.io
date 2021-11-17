@@ -47,8 +47,8 @@ const styles = theme => ({
             "content": "\"\"",
             position: "absolute",
             height: 40,
-            width: "30%",
-            background: "linear-gradient(to right, transparent, rgba(13, 50, 199, 0.27), transparent)",
+            width: "50%",
+            background: "linear-gradient(to right, transparent, rgb(155 163 220 / 33%), transparent)",
             animation: "$innerToolbarCyberPunkAnimation 7.7s linear alternate infinite",
         },
         boxShadow: "inset 0px 0px 6px #475db3ab, inset 0px 0px 24px #838fdc61, inset 0px 0px 48px #cbd4ff40",
@@ -98,7 +98,7 @@ const styles = theme => ({
     },
     linearProgressVisible: {
         "& .MuiLinearProgress-barColorPrimary": {
-            background: `linear-gradient(90deg, ${theme.palette.primary.actionLighter} 0%, ${theme.palette.primary.action} 100%);`,
+            background: `linear-gradient(90deg, ${"rgb(155 163 220 / 66%)"} 0%, ${"rgb(155 163 220 / 22%)"} 100%);`,
             zIndex: -1,
         },
         zIndex: 1,
@@ -110,7 +110,7 @@ const styles = theme => ({
     },
     linearProgressVisibleOffline: {
         "& .MuiLinearProgress-barColorPrimary": {
-            background: `linear-gradient(90deg, ${theme.palette.primary.actionRedLighter} 0%, ${theme.palette.primary.actionRed} 100%);`,
+            background: `linear-gradient(90deg, ${theme.palette.primary.actionRed} 0%, ${"rgb(155 163 220 / 0%)"} 100%);`,
             zIndex: -1,
         },
         zIndex: 1,

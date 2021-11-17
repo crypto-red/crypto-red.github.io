@@ -350,7 +350,7 @@ class Gallery extends React.Component {
 
     componentDidMount() {
 
-        actions.trigger_snackbar(`Inside the disillusion of art! We make the daily life a creative experience, continually original-delusional-ecstatic situations.`, 5000);
+        actions.trigger_snackbar(`Inside the new laboratory of W.C.R.'s Artistic Situations! Not less than just NFTs! We make the daily life a creative experience, continually original-delusional-ecstatic situations.`, 5000);
         window.addEventListener("resize", this._update_dimensions_handler);
         ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 
@@ -711,7 +711,7 @@ class Gallery extends React.Component {
 
         this.forceUpdate(() => {
 
-            if(this.state._masonry) {
+            if(this.state._masonry && this.state._cell_measurer_cache && this.state._cell_positioner_config && this.state._cell_positioner) {
 
                 this._recompute_cell_measurements(callback_function);
             }else {

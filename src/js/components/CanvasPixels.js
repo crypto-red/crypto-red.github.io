@@ -7053,11 +7053,40 @@ class CanvasPixels extends React.Component {
                 return color_data;
             });
 
+            let brightest_color = colors[0];
+            let darkest_color = colors[0];
+
+            colors.forEach((color) => {
+
+                const [r0, g0, b0, a0] = this._get_rgba_from_hex(brightest_color);
+                const [r1, g1, b1, a1] = this._get_rgba_from_hex(darkest_color);
+                const [r2, g2, b2, a2] = this._get_rgba_from_hex(color);
+
+                if((r1 + g1 + b1) > (r2 + g2 + b2) && (a2 > 250)) {
+
+                    darkest_color = color;
+                }
+
+                if((r0 + g0 + b0) < (r2 + g2 + b2) && (a2 > 250)) {
+
+                    brightest_color = color;
+                }
+            });
+
+            const background_color = this._blend_colors(darkest_color, "#000000ff", 0.33);
+            const background_color_hsl = this._rgb_to_hsl(...this._get_rgba_from_hex(background_color));
+            const new_background_color_rgb = this._hsl_to_rgb(background_color_hsl[0], Math.round(background_color_hsl[1] * 0.50), Math.round(background_color_hsl[2] * 0.75));
+            const new_background_color = this._get_hex_color_from_rgba_values(new_background_color_rgb[0], new_background_color_rgb[1], new_background_color_rgb[2], 222);
+
+
             callback_function({
                 colors_with_threshold,
                 colors_removed: color_number - color_remaining_number,
                 colors_remaining: color_remaining_number,
                 colors,
+                darkest_color,
+                brightest_color,
+                background_color: new_background_color,
             });
 
         };
@@ -7872,7 +7901,7 @@ class CanvasPixels extends React.Component {
                                  position: "fixed",
                                  width: canvas_wrapper_width,
                                  height: canvas_wrapper_height,
-                                 transform: `scale(${is_mobile_or_tablet ? 1: (1 + (Math.abs(_moves_speed_average_now/8) - 0.25) * 8 / 160).toFixed(2)}) rotateX(${perspective_coordinate[0].toFixed(2)*1}deg) rotateY(${perspective_coordinate[1].toFixed(2)*1}deg)`,
+                                 transform: `scale(${(1 + (Math.abs(_moves_speed_average_now/8) - 0.25) * 8 / 160).toFixed(2)}) rotateX(${perspective_coordinate[0].toFixed(2)*1}deg) rotateY(${perspective_coordinate[1].toFixed(2)*1}deg)`,
                                  transformOrigin: "center center",
                                  boxSizing: "content-box",
                                  boxShadow: !is_mobile_or_tablet ? shadow: "",

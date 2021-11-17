@@ -367,7 +367,10 @@ class PixelDialogPost extends React.Component {
             _color_palette: {
                 _colors_removed: 0,
                 colors_remaining: 0,
-                colors: []
+                colors: [],
+                brightest_color: "#ffffffff",
+                darkest_color: "#000000ff",
+                background_color: "#222222ff",
             },
             _image_details: {
                 number_of_colors: null,
@@ -559,8 +562,7 @@ class PixelDialogPost extends React.Component {
 
             this.state._canvas.get_color_palette( 1/4, (data) => {
 
-                const { colors_removed, colors_remaining, colors, colors_with_threshold } = data;
-                this.setState({_color_palette: {colors_removed, colors_remaining, colors, colors_with_threshold}}, () => {
+                this.setState({_color_palette: data}, () => {
 
                     this.forceUpdate();
                 });
@@ -594,7 +596,10 @@ class PixelDialogPost extends React.Component {
             _color_palette: {
                 _colors_removed: 0,
                 colors_remaining: 0,
-                colors: []
+                colors: [],
+                brightest_color: "#ffffffff",
+                darkest_color: "#000000ff",
+                background_color: "#222222ff",
             },
             _image_details: {
                 number_of_colors: null,
@@ -1137,7 +1142,7 @@ class PixelDialogPost extends React.Component {
                 <Dialog
                     keepMounted={keepMounted}
                     BackdropProps={{
-                        style: {background: "rgba(0, 0, 0, .666)"}
+                        style: {transition: "background 250ms 0ms cubic-bezier(0.4, 0, 0.2, 1)", background: `${_color_palette.background_color}`}
                     }}
                     open={open}
                     PaperComponent={"div"}
@@ -1462,7 +1467,7 @@ class PixelDialogPost extends React.Component {
                                             no_actions={true}
                                             show_original_image_in_background={false}
                                             dont_show_canvas_until_img_set={true}
-                                            dont_show_canvas={true}
+                                            dont_show_canvas={_dont_show_canvas}
                                             but_show_canvas_once={true}
                                             dont_change_img_size_onload={true}
                                             move_using_full_container={true}
