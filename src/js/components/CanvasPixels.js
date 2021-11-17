@@ -162,6 +162,7 @@ class CanvasPixels extends React.Component {
         this.state = {
             className: props.className || null,
             perspective: props.perspective || 0,
+            light: props.light || 1,
             perspective_coordinate: [0, 0],
             animation: props.animation || true,
             animation_duration: props.animation_duration || 225,
@@ -7517,9 +7518,9 @@ class CanvasPixels extends React.Component {
 
         function create_shadow(...px) {
             return [
-                `${px[0]}px ${px[1]}px ${px[2]}px ${px[3]}px rgba(0,0,0,${shadow_key_umbra_opacity})`,
-                `${px[4]}px ${px[5]}px ${px[6]}px ${px[7]}px rgba(0,0,0,${shadow_key_penumbra_opacity})`,
-                `${px[8]}px ${px[9]}px ${px[10]}px ${px[11]}px rgba(0,0,0,${shadow_ambient_shadow_opacity})`,
+                `${px[0]}px ${px[1]}px ${px[2]}px ${px[3]}px rgba(126,126,126,${shadow_key_umbra_opacity})`,
+                `${px[4]}px ${px[5]}px ${px[6]}px ${px[7]}px rgba(126,126,126,${shadow_key_penumbra_opacity})`,
+                `${px[8]}px ${px[9]}px ${px[10]}px ${px[11]}px rgba(126,126,126,${shadow_ambient_shadow_opacity})`,
             ].join(',');
         }
 
@@ -7836,7 +7837,11 @@ class CanvasPixels extends React.Component {
             show_image_only_before_canvas_set,
             has_shown_canvas_once,
             perspective_coordinate,
+            perspective,
+            light,
         } = this.state;
+
+        const p = perspective;
 
         let background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
             {
@@ -7865,6 +7870,8 @@ class CanvasPixels extends React.Component {
 
         const canvas_wrapper_width = Math.round(pxl_width * _screen_zoom_ratio * scale);
         const canvas_wrapper_height = Math.round(pxl_height * _screen_zoom_ratio * scale);
+
+        const l = light / scale;
 
         return (
             <div ref={this._set_canvas_container_ref} draggable={"false"} style={{boxSizing: "border-box", position: "relative", overflow: "hidden", transform: `translateZ(0px)`, touchAction: "none", pointerEvents: "none"}} className={className}>
@@ -7901,7 +7908,7 @@ class CanvasPixels extends React.Component {
                                  position: "fixed",
                                  width: canvas_wrapper_width,
                                  height: canvas_wrapper_height,
-                                 transform: `scale(${(1 + (Math.abs(_moves_speed_average_now/8) - 0.25) * 8 / 160).toFixed(2)}) rotateX(${perspective_coordinate[0].toFixed(2)*1}deg) rotateY(${perspective_coordinate[1].toFixed(2)*1}deg)`,
+                                 transform: `scale(${(1 + scale * (Math.abs(_moves_speed_average_now/8) - 0.25) * 8 / 160).toFixed(2)}) rotateX(${(perspective_coordinate[0] / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] / scale).toFixed(2)}deg)`,
                                  transformOrigin: "center center",
                                  boxSizing: "content-box",
                                  boxShadow: !is_mobile_or_tablet ? shadow: "",
@@ -7922,12 +7929,50 @@ class CanvasPixels extends React.Component {
                                     transform: `scale(${(_screen_zoom_ratio * scale).toFixed(2)})`,
                                     transformOrigin: "left top",
                                     boxSizing: "content-box",
+                                    filter: !is_mobile_or_tablet && p ? `brightness(${(1 - (p/200) * l) + (
+                                    (
+                                        l * (3*p - Math.floor((perspective_coordinate[1]+p)*10) / (p*3*10)) / 2 + 
+                                        l * (Math.floor((perspective_coordinate[0]+p)*10) / (p*3*10)) / 2
+                                    ) / (3*p) * (p/100))})`: "none",
                                     ...background_image_style_props,
                                 }}
                                 className={"Canvas-Pixels"}
                                 ref={this._set_canvas_ref}
                                 width={pxl_width}
                                 height={pxl_height}/>
+                            <div style={{
+                                position: "absolute",
+                                touchAction: "none",
+                                pointerEvents: "auto",
+                                cursor: cursor,
+                                borderRadius: canvas_border_radius,
+                                width: Math.floor(pxl_width),
+                                height: Math.floor(pxl_height),
+                                transform: `scale(${(_screen_zoom_ratio * scale).toFixed(2)})`,
+                                transformOrigin: "left top",
+                                boxSizing: "content-box",
+                                backgroundImage: !is_mobile_or_tablet && p ? `linear-gradient(to left, rgba(
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[1]) / p / 6 * 1 * (p*l/100)).toFixed(2)}
+                                ), rgba(
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[1]) / p / 6 * 2.5 * (p*l/100)).toFixed(2)}
+                                ) 88%), linear-gradient(to top, rgba(
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 2 * (p*l/100)).toFixed(2)}
+                                ), rgba(
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 1.25 * (p*l/100)).toFixed(2)}
+                                ) 88%)`: "none",
+                            }}/>
                         </div>
                     </div>
                 </div>

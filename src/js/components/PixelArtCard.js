@@ -105,13 +105,14 @@ const styles = theme => ({
         "&[score='90']::after": {backgroundImage: `url('${angel_emoji_svg}')`},
         "&[score='100']::after": {backgroundImage: `url('${fire_earth_emoji_svg}')`},
         "& > .MuiCardActionArea-root > div:hover > img, &[dataselected='true'] > .MuiCardActionArea-root > div > img": {
-            transform: "scale(1.18) translateY(-12px)"
+            transform: "scale(1.30) translateY(-12px)",
+            filter: "brightness(1.15)",
         },
         "& > .MuiCardActionArea-root": {
             overflow: "hidden",
         },
         "& > .MuiCardActionArea-root > div:hover > div, &[dataselected='true'] > .MuiCardActionArea-root > div > div": {
-            background: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.009) 11.7%, rgba(0, 0, 0, 0.034) 22.1%, rgba(0, 0, 0, 0.072) 31.2%, rgba(0, 0, 0, 0.123) 39.4%, rgba(0, 0, 0, 0.182) 46.6%, rgba(0, 0, 0, 0.249) 53.1%, rgba(0, 0, 0, 0.32) 58.9%, rgba(0, 0, 0, 0.394) 64.3%, rgba(0, 0, 0, 0.468) 69.3%, rgba(0, 0, 0, 0.54) 74.1%, rgba(0, 0, 0, 0.607) 78.8%, rgba(0, 0, 0, 0.668) 83.6%, rgba(0, 0, 0, 0.721) 88.7%, rgba(0, 0, 0, 0.762) 94.1%, rgba(0, 0, 0, 0.79) 100%)`,
+            background: `linear-gradient(to bottom, rgba(0, 0, 0, 0) calc(0% - 24px), rgba(0, 0, 0, 0.034) calc(22.1% - 24px), rgba(0, 0, 0, 0.123) calc(39.4% - 24px), rgba(0, 0, 0, 0.249) calc(53.1% - 24px), rgba(0, 0, 0, 0.394) calc(64.3% - 24px), rgba(0, 0, 0, 0.54) calc(74.1% - 24px), rgba(0, 0, 0, 0.668) calc(83.6% - 24px), rgba(0, 0, 0, 0.762) calc(94.1% - 24px), rgba(0, 0, 0, 0.79) calc(100% - 24px))`,
             "& svg": {
                 opacity: 1,
                 transform: "scale(4)",
@@ -126,12 +127,13 @@ const styles = theme => ({
     },
     cardMedia: {
         imageRendering: "pixelated",
-        transition: "transform 240ms cubic-bezier(0.4, 0, 0.2, 1)",
+        transition: "transform 240ms cubic-bezier(0.4, 0, 0.2, 1), filter 240ms cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "scale(1)",
+        filter: "brightness(0.85)"
     },
     cardMediaOverlay: {
         zIndex: 0,
-        background: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.009) 11.7%, rgba(0, 0, 0, 0.034) 22.1%, rgba(0, 0, 0, 0.072) 31.2%, rgba(0, 0, 0, 0.123) 39.4%, rgba(0, 0, 0, 0.182) 46.6%, rgba(0, 0, 0, 0.249) 53.1%, rgba(0, 0, 0, 0.32) 58.9%, rgba(0, 0, 0, 0.394) 64.3%, rgba(0, 0, 0, 0.468) 69.3%, rgba(0, 0, 0, 0.54) 74.1%, rgba(0, 0, 0, 0.607) 78.8%, rgba(0, 0, 0, 0.668) 83.6%, rgba(0, 0, 0, 0.721) 88.7%, rgba(0, 0, 0, 0.762) 94.1%, rgba(0, 0, 0, 0.79) 100%)`,
+        background: `linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.034) 22.1%, rgba(0, 0, 0, 0.123) 39.4%, rgba(0, 0, 0, 0.249) 53.1%, rgba(0, 0, 0, 0.394) 64.3%, rgba(0, 0, 0, 0.54) 74.1%, rgba(0, 0, 0, 0.668) 83.6%, rgba(0, 0, 0, 0.762) 94.1%, rgba(0, 0, 0, 0.79) 100%)`,
         transition: "background 240ms cubic-bezier(0.4, 0, 0.2, 1)",
         position: "absolute",
         top: "50%;",

@@ -1142,7 +1142,7 @@ class PixelDialogPost extends React.Component {
                 <Dialog
                     keepMounted={keepMounted}
                     BackdropProps={{
-                        style: {transition: "background 250ms 0ms cubic-bezier(0.4, 0, 0.2, 1)", background: `${_color_palette.background_color}`}
+                        style: {transition: "backgroundImage 250ms 0ms cubic-bezier(0.4, 0, 0.2, 1)", backgroundImage: `linear-gradient(135deg, rgba(255, 255, 255, .1), ${_color_palette.background_color} 50%)`}
                     }}
                     open={open}
                     PaperComponent={"div"}
@@ -1477,7 +1477,8 @@ class PixelDialogPost extends React.Component {
                                             onContextMenu={(e) => {e.preventDefault()}}
                                             onSizeChange={this._handle_size_change}
                                             onLayersChange={this._handle_layers_change}
-                                            perspective={6}
+                                            perspective={3}
+                                            light={4}
                                             onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
                                             onCrossMiddle={(direction, canvas_event_target) => {this._swiped(direction, canvas_event_target)}}
                                             ref={this._set_canvas_ref}
