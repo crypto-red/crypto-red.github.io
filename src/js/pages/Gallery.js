@@ -295,7 +295,7 @@ class Gallery extends React.Component {
         const search_sorting_changed = this.state._search_sorting_tab_index !== state._search_sorting_tab_index;
         const search_mode_query_changed = this.state._search_mode_query !== state._search_mode_query;
 
-        let get_post = Boolean(state._post_author && state._post_permlink && (state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink) && !this.state._post);
+        let get_post = Boolean(state._post_author && state._post_permlink && (state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink) && ((this.state._post || {}).author !== state._post_author));
         let closed_search = Boolean(
             (!state._is_search_mode && this.state._is_search_mode && this.state._search_mode_query !== "") ||
             (state._search_mode_query === "" && this.state._search_mode_query !== "")
@@ -845,12 +845,19 @@ class Gallery extends React.Component {
 
         const { _history, _is_search_mode, _sorting_modes, _sorting_tab_index, _search_sorting_modes, _search_sorting_tab_index, _search_mode_query } = this.state;
 
+        if(!this.state._post_author && !this.state._post_permlink) {
+
+            actions.trigger_sfx("alert_high-intensity");
+        }else {
+
+            actions.trigger_sfx("navigation_transition-left");
+        }
+
         this._handle_art_focus(post);
         const new_pathname = !_is_search_mode ?
             "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]) + "/@" + post.author + "/" + post.permlink:
             "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + encodeURIComponent(_search_mode_query) + "/@" + post.author + "/" + post.permlink;
         _history.push(new_pathname);
-        actions.trigger_sfx("alert_high-intensity");
     };
 
     _handle_vote = (weight) => {
@@ -977,14 +984,15 @@ class Gallery extends React.Component {
 
         const { _post, _posts } = this.state;
 
-        const index = _posts.indexOf(_post);
+        const index = _posts.map(p => p.id).indexOf(_post.id)+1;
+        const _selected_post_index = Math.max(0, Math.min(_posts.length-1, index));
 
-        if(index < _posts.length-1) {
+        if(this.state._post_author && this.state._post_permlink){
 
-            this.setState({_post: [..._posts][index+1]});
-            actions.trigger_sfx("navigation_transition-right");
+            this._handle_art_open(_posts[_selected_post_index]);
+        }else {
 
-            this._update_selected_post_index(index+1);
+            this._update_selected_post_index(_selected_post_index);
         }
     };
 
@@ -992,14 +1000,15 @@ class Gallery extends React.Component {
 
         const { _post, _posts } = this.state;
 
-        const index = _posts.indexOf(_post);
+        const index = _posts.map(p => p.id).indexOf(_post.id)-1;
+        const _selected_post_index = Math.max(0, Math.min(_posts.length-1, index));
 
-        if(index > 0) {
+        if(this.state._post_author && this.state._post_permlink){
 
-            this.setState({_post: [..._posts][index-1]});
-            actions.trigger_sfx("navigation_transition-left");
+            this._handle_art_open(_posts[_selected_post_index]);
+        }else {
 
-            this._update_selected_post_index(index-1);
+            this._update_selected_post_index(_selected_post_index);
         }
     };
 
@@ -1047,7 +1056,14 @@ class Gallery extends React.Component {
             }
 
             _selected_post_index = Math.max(0, Math.min(_posts.length-1, _selected_post_index));
-            this._update_selected_post_index(_selected_post_index);
+
+            if(this.state._post_author && this.state._post_permlink){
+
+                this._handle_art_open(_posts[_selected_post_index]);
+            }else {
+
+                this._update_selected_post_index(_selected_post_index);
+            }
 
             this.setState({_selected_post_index}, () => {
 

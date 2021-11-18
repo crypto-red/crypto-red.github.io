@@ -1142,7 +1142,7 @@ class PixelDialogPost extends React.Component {
                 <Dialog
                     keepMounted={keepMounted}
                     BackdropProps={{
-                        style: {transition: "backgroundImage 250ms 0ms cubic-bezier(0.4, 0, 0.2, 1)", backgroundImage: `linear-gradient(135deg, rgba(255, 255, 255, .1), ${_color_palette.background_color} 50%)`}
+                        style: {transition: "backgroundImage 500ms 0ms cubic-bezier(0.4, 0, 0.2, 1)", backgroundImage: `linear-gradient(135deg, ${_color_palette.secondary_background_color}, ${_color_palette.background_color} 50%)`}
                     }}
                     open={open}
                     PaperComponent={"div"}

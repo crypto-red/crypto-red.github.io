@@ -7076,8 +7076,13 @@ class CanvasPixels extends React.Component {
 
             const background_color = this._blend_colors(darkest_color, "#000000ff", 0.33);
             const background_color_hsl = this._rgb_to_hsl(...this._get_rgba_from_hex(background_color));
-            const new_background_color_rgb = this._hsl_to_rgb(background_color_hsl[0], Math.round(background_color_hsl[1] * 0.50), Math.round(background_color_hsl[2] * 0.75));
-            const new_background_color = this._get_hex_color_from_rgba_values(new_background_color_rgb[0], new_background_color_rgb[1], new_background_color_rgb[2], 222);
+            const new_background_color_rgb = this._hsl_to_rgb(background_color_hsl[0], Math.min(40, Math.round(background_color_hsl[1] * 0.50)), Math.max(10, Math.min(0, Math.round(background_color_hsl[2] * 0.5))));
+            const new_background_color = this._get_hex_color_from_rgba_values(new_background_color_rgb[0], new_background_color_rgb[1], new_background_color_rgb[2], 150);
+
+            const s_background_color = this._blend_colors(brightest_color, "#ffffffff", 0.66);
+            const s_background_color_hsl = this._rgb_to_hsl(...this._get_rgba_from_hex(s_background_color));
+            const s_new_background_color_rgb = this._hsl_to_rgb(s_background_color_hsl[0], Math.min(45, Math.max(35, Math.round(s_background_color_hsl[1] * 0.50))), Math.min(35, Math.max(25, Math.round(s_background_color_hsl[2] * 0.75))));
+            const s_new_background_color = this._get_hex_color_from_rgba_values(s_new_background_color_rgb[0], s_new_background_color_rgb[1], s_new_background_color_rgb[2], 150);
 
 
             callback_function({
@@ -7088,6 +7093,7 @@ class CanvasPixels extends React.Component {
                 darkest_color,
                 brightest_color,
                 background_color: new_background_color,
+                secondary_background_color: s_new_background_color,
             });
 
         };
