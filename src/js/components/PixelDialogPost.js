@@ -371,6 +371,7 @@ class PixelDialogPost extends React.Component {
                 brightest_color: "#ffffffff",
                 darkest_color: "#000000ff",
                 background_color: "#222222ff",
+                average_color_zones: [],
             },
             _image_details: {
                 number_of_colors: null,
@@ -556,18 +557,19 @@ class PixelDialogPost extends React.Component {
 
     _handle_image_load_complete = (_image_details) => {
 
-        this.setState({_loading: false, _layers: null, _image_details});
+        this.setState({_loading: false, _layers: [], _image_details});
 
-        setTimeout(( ) => {
+        setTimeout(() => {
 
             this.state._canvas.get_color_palette( 1/4, (data) => {
 
-                this.setState({_color_palette: data}, () => {
+                this.setState({_color_palette: {...data}}, () => {
 
                     this.forceUpdate();
                 });
             });
-        }, 100);
+
+        }, 250);
 
         if(this.props.on_image_load_complete) {
 
@@ -600,6 +602,7 @@ class PixelDialogPost extends React.Component {
                 brightest_color: "#ffffffff",
                 darkest_color: "#000000ff",
                 background_color: "#222222ff",
+                average_color_zones: [],
             },
             _image_details: {
                 number_of_colors: null,
@@ -1137,12 +1140,19 @@ class PixelDialogPost extends React.Component {
         const is_translating = _has_translation_started && !has_translated;
         const lang = selected_locales_code.split("-")[0];
 
+        const shadows = {boxShadow:
+            `inset 50vw 50vh 20vh 10vh ${_color_palette.average_color_zones[0]}, 
+            inset 50vw -50vh 20vh 10vh ${_color_palette.average_color_zones[3]}, 
+            inset -50vw -50vh 20vh 10vh ${_color_palette.average_color_zones[1]}, 
+            inset -50vw 50vh 20vh 10vh ${_color_palette.average_color_zones[2]}`
+        };
+
         return (
             <div>
                 <Dialog
                     keepMounted={keepMounted}
                     BackdropProps={{
-                        style: {transition: "backgroundImage 500ms 0ms cubic-bezier(0.4, 0, 0.2, 1)", backgroundImage: `linear-gradient(135deg, ${_color_palette.secondary_background_color}, ${_color_palette.background_color} 50%)`}
+                        style: {background: `transparent`}
                     }}
                     open={open}
                     PaperComponent={"div"}
@@ -1452,12 +1462,15 @@ class PixelDialogPost extends React.Component {
                                     </div>
 
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage}>
+                                <div className={classes.contentImage} style={{transition: "box-shadow 500ms 0ms linear", /* background: `linear-gradient(135deg, #aaaaaa22, ${_color_palette.background_color} 50%)`, */ ...shadows}}>
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
                                     <div>
                                         <CanvasPixels
+                                            canvas_wrapper_border_radius={8}
+                                            shadow_size={9}
+                                            shadow_color={_color_palette.background_color}
                                             canvas_wrapper_padding={48}
                                             pxl_width={_width}
                                             pxl_height={_height}
@@ -1477,8 +1490,8 @@ class PixelDialogPost extends React.Component {
                                             onContextMenu={(e) => {e.preventDefault()}}
                                             onSizeChange={this._handle_size_change}
                                             onLayersChange={this._handle_layers_change}
-                                            perspective={3}
-                                            light={4}
+                                            perspective={4}
+                                            light={5}
                                             onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
                                             onCrossMiddle={(direction, canvas_event_target) => {this._swiped(direction, canvas_event_target)}}
                                             ref={this._set_canvas_ref}

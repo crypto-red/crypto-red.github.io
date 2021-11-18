@@ -162,6 +162,8 @@ class CanvasPixels extends React.Component {
         this.state = {
             className: props.className || null,
             perspective: props.perspective || 0,
+            shadow_size: props.shadow_size || 4,
+            shadow_color: props.shadow_color || "#9f9f9f",
             light: props.light || 1,
             perspective_coordinate: [0, 0],
             animation: props.animation || true,
@@ -4311,7 +4313,7 @@ class CanvasPixels extends React.Component {
         }
     };
 
-    _blend_colors = (color_a, color_b, amount = 1, should_return_transparent = false, blend_alpha = true) => {
+    _blend_colors = (color_a, color_b, amount = 1, should_return_transparent = false, alpha_addition = false) => {
 
         amount = Math.min(Math.max(amount, 0), 1);
         color_a = this._format_color(color_a);
@@ -4357,7 +4359,7 @@ class CanvasPixels extends React.Component {
         let mix = [];
         if (base[3] !== 0 && added[3] !== 0) {
 
-            mix[3] = 1 - (1 - added[3]) * (1 - base[3]); // alpha
+            mix[3] = !alpha_addition ? 1 - (1 - added[3]) * (1 - base[3]): (added[3] + base[3]); // alpha
             mix[0] = Math.round((added[0] * added[3] / mix[3]) + (base[0] * base[3] * (1 - added[3]) / mix[3])); // red
             mix[1] = Math.round((added[1] * added[3] / mix[3]) + (base[1] * base[3] * (1 - added[3]) / mix[3])); // green
             mix[2] = Math.round((added[2] * added[3] / mix[3]) + (base[2] * base[3] * (1 - added[3]) / mix[3])); // blue
@@ -4369,6 +4371,7 @@ class CanvasPixels extends React.Component {
             mix = base;
         }
 
+        mix[3] = !alpha_addition ? mix[3]: mix[3] / 2;
         mix[3] *= 255;
 
         return '#' + this._get_hex_value_from_rgb_value(mix[0]) + this._get_hex_value_from_rgb_value(mix[1]) + this._get_hex_value_from_rgb_value(mix[2]) + this._get_hex_value_from_rgb_value(mix[3]);
@@ -5238,14 +5241,17 @@ class CanvasPixels extends React.Component {
         return this._get_average_color_of_selection();
     };
 
-    _get_average_color_of_selection = () => {
+    _get_average_color_of_selection = (_pxl_indexes_of_selection ) => {
 
-        const { _s_pxls, _pxl_indexes_of_selection, _s_pxl_colors, _layer_index } = this.state;
+        const { _s_pxls, _s_pxl_colors, _layer_index } = this.state;
 
         let pxls = [..._s_pxls[_layer_index]];
         let pxl_colors = [..._s_pxl_colors[_layer_index]];
 
         let colors_in_selection_with_occurrence = [];
+
+        _pxl_indexes_of_selection = _pxl_indexes_of_selection || this.state._pxl_indexes_of_selection;
+
         [..._pxl_indexes_of_selection].forEach((pxl_index, iteration, array) => {
 
             const current_pxl_color_index = pxls[pxl_index];
@@ -5269,7 +5275,7 @@ class CanvasPixels extends React.Component {
         Object.entries(colors_in_selection_with_occurrence).forEach((entry) => {
 
             const [current_color_index, occurrence] = entry;
-            average_color = this._blend_colors(average_color, pxl_colors[current_color_index], occurrence / colors_total_occurrence);
+            average_color = this._blend_colors(average_color, pxl_colors[current_color_index], occurrence / colors_total_occurrence, true, true);
         });
 
         return average_color;
@@ -7074,6 +7080,7 @@ class CanvasPixels extends React.Component {
                 }
             });
 
+
             const background_color = this._blend_colors(darkest_color, "#000000ff", 0.33);
             const background_color_hsl = this._rgb_to_hsl(...this._get_rgba_from_hex(background_color));
             const new_background_color_rgb = this._hsl_to_rgb(background_color_hsl[0], Math.min(40, Math.round(background_color_hsl[1] * 0.50)), Math.max(10, Math.min(0, Math.round(background_color_hsl[2] * 0.5))));
@@ -7084,6 +7091,29 @@ class CanvasPixels extends React.Component {
             const s_new_background_color_rgb = this._hsl_to_rgb(s_background_color_hsl[0], Math.min(45, Math.max(35, Math.round(s_background_color_hsl[1] * 0.50))), Math.min(35, Math.max(25, Math.round(s_background_color_hsl[2] * 0.75))));
             const s_new_background_color = this._get_hex_color_from_rgba_values(s_new_background_color_rgb[0], s_new_background_color_rgb[1], s_new_background_color_rgb[2], 150);
 
+            const pxls = [...this.state._s_pxls[0]];
+            const selection_a = this._get_pixels_palette_and_list_from_rectangle(pxls, 0, (pxl_width * pxl_height / 2 + pxl_width / 2))[2];
+            const selection_b = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * pxl_height / 2 + pxl_width / 2), pxl_width)[2];
+            const selection_c = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * pxl_height / 2 + pxl_width / 2), (pxl_width * pxl_height - pxl_width))[2];
+            const selection_d = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * pxl_height / 2 + pxl_width / 2), (pxl_width * pxl_height))[2];
+
+            const normalize_color = (color) => {
+
+                const n_color_rgba = this._get_rgba_from_hex(color);
+                const n_color_hsl = this._rgb_to_hsl(...n_color_rgba);
+                const n_color_rgb = this._hsl_to_rgb(n_color_hsl[0], 45 + Math.round(n_color_hsl[1] * 0.25), 0 + Math.round(n_color_hsl[2] * 0.25));
+                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], Math.max(72, Math.min(128, n_color_rgba[3])));
+
+                return new_n_color;
+            };
+
+            let average_color_zones = [];
+            average_color_zones[0] = this._get_average_color_of_selection(selection_a);
+            average_color_zones[1] = this._get_average_color_of_selection(selection_b);
+            average_color_zones[2] = this._get_average_color_of_selection(selection_c);
+            average_color_zones[3] = this._get_average_color_of_selection(selection_d);
+
+            average_color_zones = [...average_color_zones].map((acz) => {return normalize_color(acz)});
 
             callback_function({
                 colors_with_threshold,
@@ -7094,6 +7124,7 @@ class CanvasPixels extends React.Component {
                 brightest_color,
                 background_color: new_background_color,
                 secondary_background_color: s_new_background_color,
+                average_color_zones,
             });
 
         };
@@ -7523,6 +7554,11 @@ class CanvasPixels extends React.Component {
     _get_shadow = (elevation) => {
 
         function create_shadow(...px) {
+
+            return [
+                `${px[0]}px ${px[3]}px ${px[6]}px ${px[9]}px rgba(0,0,0,${shadow_key_umbra_opacity})`,
+            ].join(',');
+
             return [
                 `${px[0]}px ${px[1]}px ${px[2]}px ${px[3]}px rgba(126,126,126,${shadow_key_umbra_opacity})`,
                 `${px[4]}px ${px[5]}px ${px[6]}px ${px[7]}px rgba(126,126,126,${shadow_key_penumbra_opacity})`,
@@ -7845,6 +7881,8 @@ class CanvasPixels extends React.Component {
             perspective_coordinate,
             perspective,
             light,
+            shadow_size,
+            shadow_color,
         } = this.state;
 
         const p = perspective;
@@ -7879,6 +7917,12 @@ class CanvasPixels extends React.Component {
 
         const l = light / scale;
 
+        const filter_force = (1 - (p/200) * l) + (
+                                    (
+                                        l * (3*p - Math.floor((perspective_coordinate[1]+p)*10) / (p*3*10)) / 2 +
+                                        l * (Math.floor((perspective_coordinate[0]+p)*10) / (p*3*10)) / 2
+                                    ) / (3*p) * (p/100));
+
         return (
             <div ref={this._set_canvas_container_ref} draggable={"false"} style={{boxSizing: "border-box", position: "relative", overflow: "hidden", transform: `translateZ(0px)`, touchAction: "none", pointerEvents: "none"}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
@@ -7909,55 +7953,7 @@ class CanvasPixels extends React.Component {
                                  borderStyle: "solid",
                                  borderColor: "#fff",
                                  backgroundColor: canvas_wrapper_background_color,
-                                 borderRadius: canvas_wrapper_border_radius,
-                                 padding: canvas_wrapper_padding / window.devicePixelRatio * scale,
-                                 position: "fixed",
-                                 width: canvas_wrapper_width,
-                                 height: canvas_wrapper_height,
-                                 transform: `scale(${(1 + scale * (Math.abs(_moves_speed_average_now/8) - 0.25) * 8 / 160).toFixed(2)}) rotateX(${(perspective_coordinate[0] / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] / scale).toFixed(2)}deg)`,
-                                 transformOrigin: "center center",
-                                 boxSizing: "content-box",
-                                 boxShadow: !is_mobile_or_tablet ? shadow: "",
-                                 touchAction: "none",
-                                 pointerEvents: "none",
-                             }}
-                             ref={this._set_canvas_wrapper_ref}>
-                            <canvas
-                                draggable={"false"}
-                                style={{
-                                    position: "absolute",
-                                    touchAction: "none",
-                                    pointerEvents: "auto",
-                                    cursor: cursor,
-                                    borderRadius: canvas_border_radius,
-                                    width: Math.floor(pxl_width),
-                                    height: Math.floor(pxl_height),
-                                    transform: `scale(${(_screen_zoom_ratio * scale).toFixed(2)})`,
-                                    transformOrigin: "left top",
-                                    boxSizing: "content-box",
-                                    filter: !is_mobile_or_tablet && p ? `brightness(${(1 - (p/200) * l) + (
-                                    (
-                                        l * (3*p - Math.floor((perspective_coordinate[1]+p)*10) / (p*3*10)) / 2 + 
-                                        l * (Math.floor((perspective_coordinate[0]+p)*10) / (p*3*10)) / 2
-                                    ) / (3*p) * (p/100))})`: "none",
-                                    ...background_image_style_props,
-                                }}
-                                className={"Canvas-Pixels"}
-                                ref={this._set_canvas_ref}
-                                width={pxl_width}
-                                height={pxl_height}/>
-                            <div style={{
-                                position: "absolute",
-                                touchAction: "none",
-                                pointerEvents: "auto",
-                                cursor: cursor,
-                                borderRadius: canvas_border_radius,
-                                width: Math.floor(pxl_width),
-                                height: Math.floor(pxl_height),
-                                transform: `scale(${(_screen_zoom_ratio * scale).toFixed(2)})`,
-                                transformOrigin: "left top",
-                                boxSizing: "content-box",
-                                backgroundImage: !is_mobile_or_tablet && p ? `linear-gradient(to left, rgba(
+                                 backgroundImage: !is_mobile_or_tablet && p ? `linear-gradient(to left, rgba(
                                 ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
                                 ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
                                 ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
@@ -7978,7 +7974,71 @@ class CanvasPixels extends React.Component {
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
                                 ${(Math.abs(perspective_coordinate[0]) / p / 6 * 1.25 * (p*l/100)).toFixed(2)}
                                 ) 88%)`: "none",
-                            }}/>
+                                 borderRadius: canvas_wrapper_border_radius,
+                                 padding: canvas_wrapper_padding / window.devicePixelRatio * scale,
+                                 position: "fixed",
+                                 width: canvas_wrapper_width,
+                                 height: canvas_wrapper_height,
+                                 transform: `scale(${(1 + scale * (Math.abs(_moves_speed_average_now/8) - 0.25) * 8 / 160).toFixed(2)}) rotateX(${(perspective_coordinate[0] / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] / scale).toFixed(2)}deg)`,
+                                 transformOrigin: "center center",
+                                 boxSizing: "content-box",
+                                 touchAction: "none",
+                                 pointerEvents: "none",
+                                 filter: !is_mobile_or_tablet && p ? `brightness(${filter_force}) contrast(${filter_force}) drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`,
+                             }}
+                             ref={this._set_canvas_wrapper_ref}>
+                            <canvas
+                                draggable={"false"}
+                                style={{
+                                    position: "absolute",
+                                    mixBlendMode: "revert",
+                                    touchAction: "none",
+                                    pointerEvents: "auto",
+                                    cursor: cursor,
+                                    width: Math.floor(pxl_width),
+                                    height: Math.floor(pxl_height),
+                                    transform: `scale(${(_screen_zoom_ratio * scale).toFixed(2)})`,
+                                    transformOrigin: "left top",
+                                    boxSizing: "content-box",
+                                    ...background_image_style_props,
+                                }}
+                                className={"Canvas-Pixels"}
+                                ref={this._set_canvas_ref}
+                                width={pxl_width}
+                                height={pxl_height}/>
+                            <div
+                                draggable={"false"}
+                                style={{
+                                    position: "absolute",
+                                    touchAction: "none",
+                                    pointerEvents: "auto",
+                                    cursor: cursor,
+                                    width: Math.floor(pxl_width),
+                                    height: Math.floor(pxl_height),
+                                    transform: `scale(${(_screen_zoom_ratio * scale).toFixed(2)})`,
+                                    transformOrigin: "left top",
+                                    boxSizing: "content-box",
+                                    backgroundImage: !is_mobile_or_tablet && p ? `linear-gradient(to left, rgba(
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[1]) / p / 6 * 1 * (p*l/100)).toFixed(2)}
+                                ), rgba(
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[1]) / p / 6 * 2.5 * (p*l/100)).toFixed(2)}
+                                ) 88%), linear-gradient(to top, rgba(
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 2 * (p*l/100)).toFixed(2)}
+                                ), rgba(
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 1.25 * (p*l/100)).toFixed(2)}`: ""
+                                }}/>
                         </div>
                     </div>
                 </div>
