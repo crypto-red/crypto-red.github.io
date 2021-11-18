@@ -1052,7 +1052,6 @@ class Pixel extends React.Component {
         const {
             classes,
             _canvas,
-            _canvas_elevation,
             _view_name_index,
             _previous_view_name_index,
             _loading,
@@ -1102,7 +1101,7 @@ class Pixel extends React.Component {
         _menu_data.pos_x = _menu_data.pos_x === -1 ? "out": _menu_data.pos_x;
         _menu_data.pos_y = _menu_data.pos_y === -1 ? "out": _menu_data.pos_y;
 
-        const rgb = 245 - Math.floor(Math.abs(_canvas_elevation) / 2);
+        const rgb = 245 // - Math.floor(Math.abs(_canvas_elevation) / 2);
 
         const drawer = _less_than_1280w ?
             (

@@ -7924,7 +7924,7 @@ class CanvasPixels extends React.Component {
                                     ) / (3*p) * (p/100));
 
         return (
-            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{boxSizing: "border-box", position: "relative", overflow: "hidden", transform: `translateZ(0px)`, touchAction: "none", pointerEvents: "none"}} className={className}>
+            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{boxSizing: "border-box", position: "relative", overflow: "hidden", transform: `translateZ(0px)`, touchAction: "none", pointerEvents: "none", filter: `drop-shadow(inset 0 0 ${shadow_depth*shadow_size}px ${shadow_color})`}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
                      className={"Canvas-Wrapper-Overflow" + (has_shown_canvas_once ? " Shown ": " Not-Shown ")}
                      draggable={"false"}

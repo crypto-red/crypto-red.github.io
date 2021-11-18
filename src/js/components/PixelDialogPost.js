@@ -1141,10 +1141,10 @@ class PixelDialogPost extends React.Component {
         const lang = selected_locales_code.split("-")[0];
 
         const shadows = {boxShadow:
-            `inset 50vw 50vh 20vh 10vh ${_color_palette.average_color_zones[0]}, 
-            inset 50vw -50vh 20vh 10vh ${_color_palette.average_color_zones[3]}, 
-            inset -50vw -50vh 20vh 10vh ${_color_palette.average_color_zones[1]}, 
-            inset -50vw 50vh 20vh 10vh ${_color_palette.average_color_zones[2]}`
+            `inset 50vw 50vh min(0vh, 10vw) min(0vh, 5vw) ${_color_palette.average_color_zones[0]}, 
+            inset 50vw -50vh min(0vh, 10vw) min(0vh, 5vw) ${_color_palette.average_color_zones[3]}, 
+            inset -50vw -50vh min(0vh, 10vw) min(0vh, 5vw) ${_color_palette.average_color_zones[1]}, 
+            inset -50vw 50vh min(0vh, 10vw) min(0vh, 5vw) ${_color_palette.average_color_zones[2]}`
         };
 
         return (
@@ -1462,7 +1462,19 @@ class PixelDialogPost extends React.Component {
                                     </div>
 
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage} style={{transition: "box-shadow 500ms 0ms linear", /* background: `linear-gradient(135deg, #aaaaaa22, ${_color_palette.background_color} 50%)`, */ ...shadows}}>
+                                <div className={classes.contentImage} style={{transition: "background 0ms 0ms linear", background: `linear-gradient(135deg, #ffffff99 9%, ${_color_palette.background_color} 21%)`}}>
+                                    <div style={{
+                                        transition: "background 0ms 0ms linear",
+                                        backgroundImage: `url("${post.image}")`,
+                                        backgroundPosition: "bottom center",
+                                        position: "absolute",
+                                        top: 0,
+                                        left: 0,
+                                        width: "100%",
+                                        height: "100%",
+                                        backgroundSize: "cover",
+                                        filter: "blur(48px) opacity(0.3) saturate(1.2) brightness(0.3) contrast(1.2)",
+                                        transform: "scale(1.2) rotate(-180deg)"}}/>
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
