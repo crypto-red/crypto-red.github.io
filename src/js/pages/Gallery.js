@@ -1315,7 +1315,7 @@ class Gallery extends React.Component {
                     on_next={this._next_current_post}
                     on_previous={this._previous_current_post}
                     on_image_load_complete={() => {setTimeout(() => {this._scroll_to_index()}, 5)}}
-                    keepMounted={true}
+                    keepMounted={false}
                     post={_post}
                     open={_post !== null && _post_author !== null && _post_permlink !== null}
                     onClose={this._handle_pixel_dialog_post_close}
@@ -1323,7 +1323,7 @@ class Gallery extends React.Component {
                 />
 
                 <AccountDialogProfileHive
-                    keepMounted={true}
+                    keepMounted={false}
                     account_name={_post_author}
                     open={_post_author !== null && _post_permlink === null}
                     onClose={this._handle_reset_selected_account}/>
