@@ -1141,7 +1141,8 @@ class PixelDialogPost extends React.Component {
         const lang = selected_locales_code.split("-")[0];
 
         const shadows = {boxShadow:
-            `inset 45vw 45vh max(45vh, 45vw) max(0vh, 0vw) ${_color_palette.average_color_zones[0]}, 
+            `inset 0px 0px max(25vw, 25vh) black,
+            inset 45vw 45vh max(45vh, 45vw) max(0vh, 0vw) ${_color_palette.average_color_zones[0]}, 
             inset 45vw -45vh max(45vh, 45vw) max(0vh, 0vw) ${_color_palette.average_color_zones[3]}, 
             inset -45vw -45vh max(45vh, 45vw) max(0vh, 0vw) ${_color_palette.average_color_zones[1]}, 
             inset -45vw 45vh max(45vh, 45vw) max(0vh, 0vw) ${_color_palette.average_color_zones[2]}`
@@ -1152,7 +1153,7 @@ class PixelDialogPost extends React.Component {
                 <Dialog
                     keepMounted={keepMounted}
                     BackdropProps={{
-                        style: {...shadows, background: "transparent"}
+                        style: {background: `transparent`}
                     }}
                     open={open}
                     closeAfterTransition={true}
@@ -1463,11 +1464,11 @@ class PixelDialogPost extends React.Component {
                                     </div>
 
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage} style={{overflow: "hidden", background: `radial-gradient(circle, ${_color_palette.darkest_color} 25%, ${_color_palette.background_color} 75%, ${_color_palette.average_color_zones[0]} 100%)`}}>
+                                <div className={classes.contentImage} style={{overflow: "hidden", background: `radial-gradient(circle, ${_color_palette.average_color_zones[0]} 0%, ${_color_palette.background_color} 100%)`}}>
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
-                                    <div>
+                                    <div style={{...shadows}}>
                                         <CanvasPixels
                                             canvas_wrapper_border_radius={8}
                                             shadow_size={9}

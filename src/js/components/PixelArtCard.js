@@ -106,7 +106,7 @@ const styles = theme => ({
         "&[score='100']::after": {backgroundImage: `url('${fire_earth_emoji_svg}')`},
         "& > .MuiCardActionArea-root > div:hover > img, &[dataselected='true'] > .MuiCardActionArea-root > div > img": {
             transform: "scale(1.30) translateY(-12px)",
-            filter: "brightness(1.15)",
+            filter: "brightness(1) contrast(1)",
         },
         "& > .MuiCardActionArea-root": {
             overflow: "hidden",
@@ -129,7 +129,7 @@ const styles = theme => ({
         imageRendering: "pixelated",
         transition: "transform 240ms cubic-bezier(0.4, 0, 0.2, 1), filter 240ms cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "scale(1)",
-        filter: "brightness(0.85)"
+        filter: "brightness(0.5) contrast(1)",
     },
     cardMediaOverlay: {
         zIndex: 0,
