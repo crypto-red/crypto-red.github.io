@@ -22,7 +22,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
 import Divider from "@material-ui/core/Divider";
 
-import { lookup_hive_accounts_with_details, get_hive_account_keys } from "../utils/api"
+import { lookup_hive_accounts_with_details, add_hive_master_key } from "../utils/api"
 import api from "../utils/api";
 import actions from "../actions/utils";
 import Card from "@material-ui/core/Card";
@@ -156,7 +156,7 @@ class AccountDialogHive extends React.Component {
 
         this.setState({_trying_hive_login: true}, () => {
 
-            get_hive_account_keys(_account_name_input, _account_password_input, (err, res) => {
+            add_hive_master_key(_account_name_input, _account_password_input, (err, res) => {
 
                 if(err) {
 
