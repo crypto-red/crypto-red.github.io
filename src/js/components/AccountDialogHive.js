@@ -30,6 +30,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Jdenticon from "react-jdenticon";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import Backdrop from "@material-ui/core/Backdrop";
+import {get_hive_account_keys} from "../utils/api-hive";
 
 const styles = theme => ({
     dialog: {
@@ -156,14 +157,14 @@ class AccountDialogHive extends React.Component {
 
         this.setState({_trying_hive_login: true}, () => {
 
-            add_hive_master_key(_account_name_input, _account_password_input, (err, res) => {
+            get_hive_account_keys(_account_name_input, _account_password_input, (err, res) => {
 
                 if(err) {
 
                     this.setState({_trying_hive_login: false, _is_account_password_error: true});
                 }else {
 
-                    api.add_hive_master_key(_account_name_input, _account_password_input, (error, results) => {
+                    add_hive_master_key(_account_name_input, _account_password_input, (error, results) => {
 
                         if(error) {
 

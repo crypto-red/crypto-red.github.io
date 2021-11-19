@@ -521,10 +521,11 @@ function get_hive_account_keys(username = "", master_key = "", callback_function
     // Get private keys
     function process_public_account_callback(error, result){
 
-        if(!error && typeof result[0] !== "undefined") {
+        if(!error && typeof result !== "undefined") {
 
-            let account = result[0];
+            let account = result;
             const keys = _get_hive_account_keys(username, master_key);
+            console.log(keys);
 
             // Verify private and public key match (password)
             if(keys.memo_public_key === account.memo_key) {
@@ -543,7 +544,7 @@ function get_hive_account_keys(username = "", master_key = "", callback_function
     }
 
     // Get public account
-    lookup_hive_accounts_name([username], process_public_account_callback);
+    cached_lookup_hive_accounts_name(username, process_public_account_callback);
 }
 
 function get_hive_send_transaction_info() {
