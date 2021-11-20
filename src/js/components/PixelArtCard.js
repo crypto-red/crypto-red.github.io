@@ -149,6 +149,22 @@ const styles = theme => ({
         },
         width: "100%",
         height: "100%",
+        "&:hover::after": {
+            content: "''",
+            background: "linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 45%, rgba(255, 255, 255, 0.1) 57%, rgba(255, 255, 255, 0) 75%)",
+            height: "100%",
+            width: "100%",
+            position: "absolute",
+            top: 0,
+            transform: "translateY(-150%)",
+            animation: "$scan 2s cubic-bezier(0.4, 0, 0.2, 1) 0s",
+            "@global": {
+                "@keyframes scan": {
+                    "0%": {transform: "translateY(-150%)"},
+                    "100%": {transform: "translateY(100%)"},
+                }
+            }
+        }
     },
     nsTags: {
         position: "absolute",

@@ -7971,6 +7971,7 @@ class CanvasPixels extends React.Component {
                                  transform: `rotateX(${(perspective_coordinate[0] / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] / scale).toFixed(2)}deg)`,
                                  transformOrigin: "center middle",
                                  boxSizing: "content-box",
+                                 overflow: "hidden",
                                  touchAction: "none",
                                  pointerEvents: "none",
                              }}
@@ -7994,7 +7995,8 @@ class CanvasPixels extends React.Component {
                                 ref={this._set_canvas_ref}
                                 width={pxl_width}
                                 height={pxl_height}/>
-                            <div draggable={"false"}
+                            <div className={"Canvas-Pixels-Cover"}
+                                draggable={"false"}
                                  style={{
                                      backgroundImage: !is_mobile_or_tablet && p ? `linear-gradient(to left, rgba(
                                 ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
@@ -8017,7 +8019,6 @@ class CanvasPixels extends React.Component {
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
                                 ${(Math.abs(perspective_coordinate[0]) / p / 6 * 0.15 * (p*l/100)).toFixed(2)}
                                 ))`: "none",
-                                     backgroundBlendMode: "multiply",
                                      borderRadius: canvas_wrapper_border_radius,
                                      padding: 0,
                                      left: 0,

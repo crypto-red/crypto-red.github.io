@@ -223,6 +223,10 @@ function _preprocess_text(content) {
         return` [${match.replaceAll(" ", "")}](${origin}/gallery/newest/search/@${username})`;
     });
 
+    /* DELETE LAST EMPTY SPACE */
+    const last_empty_space_text_regex = /\n$/gm;
+    content = content.replace(last_empty_space_text_regex, "");
+
     return content;
 }
 
@@ -271,7 +275,12 @@ function _format_post(post) {
     const responsabilities = metadata.responsabilities || [];
     const description = _preprocess_text(content);
 
-    let summary = sumBasic(description.split("\n"), 20);
+    let summary = "";
+
+    try { summary = sumBasic(description.split("\n"), 20); } catch(e) {
+
+        summary = description.substring(0, 256);
+    }
 
     const title = ` ${post.title} `;
     let metadata_tags = metadata.tags || [post.category];
