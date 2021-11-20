@@ -1395,7 +1395,7 @@ class PixelDialogPost extends React.Component {
                                                         <p>Discover with TensorFlow's machine learning, what's the intention of your writing, get ready for it.</p>
                                                         <div className={classes.tensorflowWrapper}>
                                                             <Button
-                                                                variant="contained"
+                                                                variant="text"
                                                                 color="primary"
                                                                 disabled={_is_prediction_loading}
                                                                 onClick={this._evaluate_content_with_tensorflow}
@@ -1461,8 +1461,21 @@ class PixelDialogPost extends React.Component {
                                                 <Button onClick={() => {this._download_image(64)}}>64px</Button>
                                             </ButtonGroup>
                                         </CardContent>
-                                    </div>
+                                        <CardContent>
+                                            {
+                                                (open && edit && _drawer_open && _window_width < 1200) &&
+                                                <Button
+                                                    fullWidth
+                                                    variant="contained"
+                                                    color="primary"
+                                                    onClick={this._handle_send_click}
+                                                >
+                                                    Publish the artistic situation
+                                                </Button>
 
+                                            }
+                                        </CardContent>
+                                    </div>
                                 </SwipeableDrawer>
                                 <div className={classes.contentImage} style={{overflow: "hidden", background: `radial-gradient(circle, ${_color_palette.average_color_zones[0]} 0%, ${_color_palette.background_color} 100%)`}}>
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
