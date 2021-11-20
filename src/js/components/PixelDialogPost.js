@@ -92,6 +92,20 @@ const styles = theme => ({
             width: "100vw",
             position: "fixed",
             overflow: "hidden",
+        },
+        "&::after": {
+            mixBlendMode: "screen",
+            position: "absolute",
+            width: "80%",
+            height: "24px",
+            left: "10%",
+            top: "1px",
+            fontFamily: `"Saira"`,
+            background: "radial-gradient(circle, #ffffffaa 0%, transparent 150%)",
+            content: `"ART. SIT. N°"attr(dataid)`,
+            textAlign: "center",
+            color: "white",
+            clipPath: "polygon(0 0, 100% 0, 86% 100%, 14% 100%)",
         }
     },
     contentCanvas: {
@@ -1140,13 +1154,13 @@ class PixelDialogPost extends React.Component {
         const is_translating = _has_translation_started && !has_translated;
         const lang = selected_locales_code.split("-")[0];
 
-        const shadows = {boxShadow:
-            `inset 0px 0px max(25vw, 25vh) black,
-            inset 45vw 45vh max(45vh, 45vw) max(0vh, 0vw) ${_color_palette.average_color_zones[0]}, 
-            inset 45vw -45vh max(45vh, 45vw) max(0vh, 0vw) ${_color_palette.average_color_zones[3]}, 
-            inset -45vw -45vh max(45vh, 45vw) max(0vh, 0vw) ${_color_palette.average_color_zones[1]}, 
-            inset -45vw 45vh max(45vh, 45vw) max(0vh, 0vw) ${_color_palette.average_color_zones[2]}`
-        };
+        const shadows = _color_palette.average_color_zones[0] ? {boxShadow: `rgba(0, 0, 0, 0.90) 0px 0px max(15vw, 15vh) inset, rgba(0, 0, 0, 0.80) 0px 0px max(20vw, 20vh) inset, rgba(0, 0, 0, 0.60) 0px 0px max(25vw, 25vh) inset`, backgroundBlendMode: `normal`, mixBlendMode: `lighten`,
+            backgroundImage:
+            `linear-gradient(45deg, ${_color_palette.average_color_zones[2]}, transparent 60%), 
+            linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, transparent 60%), 
+            linear-gradient(225deg, ${_color_palette.average_color_zones[1]}, transparent 60%), 
+            linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 60%)`
+        }: {boxShadow: `rgba(0, 0, 0, 0.90) 0px 0px max(15vw, 15vh) inset, rgba(0, 0, 0, 0.80) 0px 0px max(20vw, 20vh) inset, rgba(0, 0, 0, 0.60) 0px 0px max(25vw, 25vh) inset`, backgroundBlendMode: `normal`, mixBlendMode: `lighten`};
 
         return (
             <div>
@@ -1477,11 +1491,11 @@ class PixelDialogPost extends React.Component {
                                         </CardContent>
                                     </div>
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage} style={{overflow: "hidden", background: `radial-gradient(circle, ${_color_palette.average_color_zones[0]} 0%, ${_color_palette.background_color} 100%)`}}>
+                                <div className={classes.contentImage} dataid={post.id} style={{backgroundImage: "linear-gradient(to top, rgb(0 0 0 / 66%) 1%, transparent 6%), linear-gradient(to bottom, rgba(255, 255, 255, 1) -24%, rgba(255, 255, 255, 0.9) -12%, rgba(255, 255, 255, 0.8) -6%, rgba(255, 255, 255, 0.4) 2%, rgba(255, 255, 255, 0.2) 9%, transparent 100%)"}}>
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
-                                    <div style={{...shadows}}>
+                                    <div style={{overflow: "hidden", ...shadows}}>
                                         <CanvasPixels
                                             canvas_wrapper_border_radius={8}
                                             shadow_size={9}

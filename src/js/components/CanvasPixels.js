@@ -7093,28 +7093,35 @@ class CanvasPixels extends React.Component {
             let s_new_background_color = this._get_hex_color_from_rgba_values(s_new_background_color_rgb[0], s_new_background_color_rgb[1], s_new_background_color_rgb[2], 32);
             s_new_background_color =  this._filter_pixels(".Brannan", 1, [], [s_new_background_color], false)[1][0];
 
+            let [background_canvas_resized_ctx] = this._get_new_ctx_from_canvas(2, 2, true);
+            background_canvas_resized_ctx.drawImage(img, 0, 0, 2, 2);
+            let background_canvas_resized_image_data = background_canvas_resized_ctx.getImageData(0, 0, 2, 2);
+            let d = this._get_pixels_palette_and_list_from_image_data(background_canvas_resized_image_data, true);
+
+
             const pxls = [...this.state._s_pxls[0]];
-            const selection_a = this._get_pixels_palette_and_list_from_rectangle(pxls, 0, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)))[2];
-            const selection_b = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)), pxl_width)[2];
-            const selection_c = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)), (pxl_width * pxl_height - pxl_width))[2];
-            const selection_d = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)), (pxl_width * pxl_height))[2];
+            let selection_l = [];
+            selection_l[0] = this._get_pixels_palette_and_list_from_rectangle(pxls, 0, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)))[2];
+            selection_l[1] = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)), pxl_width)[2];
+            selection_l[2] = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)), (pxl_width * pxl_height - pxl_width))[2];
+            selection_l[3] = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)), (pxl_width * pxl_height))[2];
 
             const normalize_color = (color) => {
 
                 const n_color_rgba = this._get_rgba_from_hex(color);
                 const n_color_hsl = this._rgb_to_hsl(...n_color_rgba);
-                const n_color_rgb = this._hsl_to_rgb(n_color_hsl[0], 20 + Math.round(n_color_hsl[2] * 0.075) * Math.round(n_color_hsl[2] * 0.075), 20 + Math.round(n_color_hsl[2] * 0.05) * Math.round(n_color_hsl[2] * 0.05));
-                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 10);
+                const n_color_rgb = this._hsl_to_rgb(n_color_hsl[0], 40 + Math.round(n_color_hsl[2] * 0.05) * Math.round(n_color_hsl[2] * 0.05), 25 + Math.round(n_color_hsl[2] * 0.05) * Math.round(n_color_hsl[2] * 0.05));
+                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 40);
 
                 const x =  this._filter_pixels(".Xpro", 1, [], [new_n_color], false)[1][0];
-                return this._filter_pixels(".Brannan", 1, [], [x], false)[1][0];
+                return this._filter_pixels("Old photo", 1, [], [x], false)[1][0];
             };
 
             let average_color_zones = [];
-            average_color_zones[0] = this._get_average_color_of_selection(selection_a);
-            average_color_zones[1] = this._get_average_color_of_selection(selection_b);
-            average_color_zones[2] = this._get_average_color_of_selection(selection_c);
-            average_color_zones[3] = this._get_average_color_of_selection(selection_d);
+            average_color_zones[0] = this._get_average_color_of_selection(selection_l[0]);
+            average_color_zones[1] = this._get_average_color_of_selection(selection_l[1]);
+            average_color_zones[2] = this._get_average_color_of_selection(selection_l[2]);
+            average_color_zones[3] = this._get_average_color_of_selection(selection_l[3]);
 
             average_color_zones = [...average_color_zones].map((acz) => {return normalize_color(acz)});
 
@@ -7962,7 +7969,7 @@ class CanvasPixels extends React.Component {
                                  width: canvas_wrapper_width,
                                  height: canvas_wrapper_height,
                                  transform: `rotateX(${(perspective_coordinate[0] / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] / scale).toFixed(2)}deg)`,
-                                 transformOrigin: "center center",
+                                 transformOrigin: "center middle",
                                  boxSizing: "content-box",
                                  touchAction: "none",
                                  pointerEvents: "none",
@@ -8003,12 +8010,12 @@ class CanvasPixels extends React.Component {
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
-                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 2.5 * (p*l/100)).toFixed(2)}
+                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 1.5 * (p*l/100)).toFixed(2)}
                                 ), rgba(
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
-                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 0.25 * (p*l/100)).toFixed(2)}
+                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 0.15 * (p*l/100)).toFixed(2)}
                                 ))`: "none",
                                      backgroundBlendMode: "multiply",
                                      borderRadius: canvas_wrapper_border_radius,

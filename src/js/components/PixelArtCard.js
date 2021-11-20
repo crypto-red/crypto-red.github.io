@@ -129,7 +129,7 @@ const styles = theme => ({
         imageRendering: "pixelated",
         transition: "transform 240ms cubic-bezier(0.4, 0, 0.2, 1), filter 240ms cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "scale(1)",
-        filter: "brightness(0.5) contrast(1)",
+        filter: "brightness(0.88) contrast(1.14)",
     },
     cardMediaOverlay: {
         zIndex: 0,
