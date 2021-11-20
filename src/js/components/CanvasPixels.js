@@ -7980,7 +7980,6 @@ class CanvasPixels extends React.Component {
                                 draggable={"false"}
                                 style={{
                                     position: "absolute",
-                                    mixBlendMode: "unset",
                                     touchAction: "none",
                                     pointerEvents: "auto",
                                     cursor: cursor,
@@ -8002,7 +8001,7 @@ class CanvasPixels extends React.Component {
                                 ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
                                 ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
                                 ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
-                                ${(Math.abs(perspective_coordinate[1]) / p / 6 * 0.5 * (p*l/100)).toFixed(2)}
+                                ${(Math.abs(perspective_coordinate[1]) / p / 6 * 0.225 * (p*l/100)).toFixed(2)}
                                 ), rgba(
                                 ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
                                 ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
@@ -8012,7 +8011,7 @@ class CanvasPixels extends React.Component {
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
-                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 1.5 * (p*l/100)).toFixed(2)}
+                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 2 * (p*l/100)).toFixed(2)}
                                 ), rgba(
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
                                 ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
@@ -8020,6 +8019,8 @@ class CanvasPixels extends React.Component {
                                 ${(Math.abs(perspective_coordinate[0]) / p / 6 * 0.15 * (p*l/100)).toFixed(2)}
                                 ))`: "none",
                                      borderRadius: canvas_wrapper_border_radius,
+                                     mixBlendMode: "hard-light",
+                                     backgroundBlendMode: "overlay",
                                      padding: 0,
                                      left: 0,
                                      top: 0,

@@ -425,7 +425,7 @@ class DrawerContent extends React.Component {
                     <List>
                         <ListItem button onClick={this._open_gallery_page}>
                             <ChemistryEmojiIcon className={classes.iconLeft} />
-                            <ListItemText primary={`Artistic Situations LAB. (Pixel Arts)`} />
+                            <ListItemText primary={`Artistic Situations and Pixel Art Laboratory`} />
                         </ListItem>
                         <ListItem button onClick={this._open_dashboard_page}>
                             <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />

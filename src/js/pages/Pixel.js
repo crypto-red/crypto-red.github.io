@@ -228,7 +228,7 @@ const styles = theme => ({
     },
     fab: {
         boxShadow: "none !important",
-        background: theme.palette.primary.action,
+        background: theme.palette.secondary.main,
         color: theme.palette.primary.contrastText,
         "&:hover": {
             background: theme.palette.primary.actionLighter,

@@ -88,24 +88,53 @@ const styles = theme => ({
         height: "calc(100vh)",
         position: "relative",
         overflow: "visible",
+        zIndex: 1,
         [theme.breakpoints.down("md")]: {
             width: "100vw",
             position: "fixed",
             overflow: "hidden",
         },
-        "&::after": {
-            mixBlendMode: "screen",
+        "&::before": {
+            textShadow: "0 0px 24px #2b2b2b69",
             position: "absolute",
             width: "80%",
             height: "24px",
             left: "10%",
             top: "1px",
             fontFamily: `"Saira"`,
-            background: "radial-gradient(circle, #ffffffaa 0%, transparent 150%)",
-            content: `"ART. SIT. N°"attr(dataid)`,
+            content: `"ARTISTIC SITUATION N°"attr(dataid)`,
+            [theme.breakpoints.down("sm")]: {
+                content: `"ARTC. SITN. N°"attr(dataid)`,
+            },
             textAlign: "center",
-            color: "white",
+            color: "#2b2b2b69",
+            zIndex: 2,
+        },
+        "&::after": {
+            zIndex: 1,
+            textShadow: "0 0px 12px #000000",
+            mixBlendMode: "screen",
+            position: "absolute",
+            width: "80%",
+            height: "24px",
+            left: "10%",
+            top: "1px",
+            background: "radial-gradient(circle, #ffffffaa 0%, transparent 150%)",
+            content: `""`,
+            textAlign: "center",
             clipPath: "polygon(0 0, 100% 0, 86% 100%, 14% 100%)",
+            animation: "$backgroundglitch 1.2s linear 0s infinite",
+            transition: "background .2s linear 0s",
+            "@global": {
+                "@keyframes backgroundglitch": {
+                    "0%": { background: "radial-gradient(circle, rgba(255, 255, 255, 1) 25%, transparent 125%)" },
+                    "10%": { background: "radial-gradient(circle, rgba(255, 255, 255, .85) 5%, transparent 145%)" },
+                    "50%": { background: "radial-gradient(circle, rgba(255, 255, 255, .80) 10%, transparent 140%)" },
+                    "75%": { background: "radial-gradient(circle, rgba(255, 255, 255, 1) 25%, transparent 125%)" },
+                    "85%": { background: "radial-gradient(circle, rgba(255, 255, 255, .90) 10%, transparent 150%)" },
+                    "100%": { background: "radial-gradient(circle, rgba(255, 255, 255, .75) 35%, transparent 125%)" },
+                }
+            }
         }
     },
     contentCanvas: {
@@ -280,7 +309,7 @@ const styles = theme => ({
         marginRight: 16,
     },
     editFab: {
-        background: theme.palette.primary.action,
+        background: theme.palette.secondary.main,
         color: theme.palette.primary.contrastText,
         "&:hover": {
             background: theme.palette.primary.actionLighter,
@@ -315,7 +344,7 @@ const styles = theme => ({
         },
     },
     sendFab: {
-        background: theme.palette.primary.action,
+        background: theme.palette.secondary.main,
         color: theme.palette.primary.contrastText,
         "&:hover": {
             background: theme.palette.primary.actionLighter,
@@ -759,7 +788,7 @@ class PixelDialogPost extends React.Component {
 
         const { edit, _window_width } = this.state;
 
-        if(_window_width < 1200) {
+        if(_window_width < 1280) {
 
             this._handle_drawer_open(event);
         }
@@ -1477,7 +1506,7 @@ class PixelDialogPost extends React.Component {
                                         </CardContent>
                                         <CardContent>
                                             {
-                                                (open && edit && _drawer_open && _window_width < 1200) &&
+                                                (open && edit && _drawer_open && _window_width < 1280) &&
                                                 <Button
                                                     fullWidth
                                                     variant="contained"
@@ -1491,7 +1520,7 @@ class PixelDialogPost extends React.Component {
                                         </CardContent>
                                     </div>
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage} dataid={post.id} style={{backgroundImage: "linear-gradient(to top, rgb(0 0 0 / 66%) 1%, transparent 6%), linear-gradient(to bottom, rgba(255, 255, 255, 1) -24%, rgba(255, 255, 255, 0.9) -12%, rgba(255, 255, 255, 0.8) -6%, rgba(255, 255, 255, 0.4) 2%, rgba(255, 255, 255, 0.2) 9%, transparent 100%)"}}>
+                                <div className={classes.contentImage} dataid={post.id} style={{backgroundImage: "linear-gradient(to top, rgba(0, 0, 0, 0.66) 1%, transparent 6%), linear-gradient(rgb(255, 255, 255) -24%, rgba(255, 255, 255, 0.9) -12%, rgba(255, 255, 255, 0.8) -6%, rgba(255, 255, 255, 0.4) 2%, rgba(255, 255, 255, 0.2) 9%, transparent 100%), linear-gradient(rgb(255 255 255 / 64%) 0%, rgba(255, 255, 255, 0.4) 3%, rgba(255, 255, 255, 0.2) 8%, rgba(255, 255, 255, 0.1) 10%, transparent 16%)"}}>
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
@@ -1530,7 +1559,7 @@ class PixelDialogPost extends React.Component {
                             </div>
                             <div className={classes.bottomMobileFabs}>
                                 {
-                                    edit && !_drawer_open && _window_width < 1200 &&
+                                    edit && !_drawer_open && _window_width < 1280 &&
                                         <Grow in>
                                             <Fab className={classes.editFab} variant="extended" onClick={this._handle_fab_click}>
                                                 <EditIcon /> Edit
@@ -1538,7 +1567,7 @@ class PixelDialogPost extends React.Component {
                                         </Grow>
                                 }
                                 {
-                                    !edit && !_drawer_open && _window_width < 1200 &&
+                                    !edit && !_drawer_open && _window_width < 1280 &&
                                         <Grow in>
                                             <Fab className={classes.editFab} variant="extended" onClick={this._handle_drawer_open}>
                                                 <EyeIcon /> View
@@ -1548,7 +1577,7 @@ class PixelDialogPost extends React.Component {
                             </div>
                             <div className={classes.bottomDesktopFabs}>
                                 {
-                                    (open && edit && _window_width > 1200) || (open && edit && _drawer_open && _window_width < 1200) ?
+                                    (open && edit && _window_width > 1280) || (open && edit && _drawer_open && _window_width < 1280) ?
                                         <Grow in>
                                             <Fab className={classes.sendFab} variant="extended" onClick={this._handle_send_click}>
                                                 <SendIcon /> Post

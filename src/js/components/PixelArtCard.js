@@ -111,12 +111,30 @@ const styles = theme => ({
         "& > .MuiCardActionArea-root": {
             overflow: "hidden",
         },
-        "& > .MuiCardActionArea-root > div:hover > div, &[dataselected='true'] > .MuiCardActionArea-root > div > div": {
-            background: `linear-gradient(to bottom, rgba(0, 0, 0, 0) calc(0% - 24px), rgba(0, 0, 0, 0.034) calc(22.1% - 24px), rgba(0, 0, 0, 0.123) calc(39.4% - 24px), rgba(0, 0, 0, 0.249) calc(53.1% - 24px), rgba(0, 0, 0, 0.394) calc(64.3% - 24px), rgba(0, 0, 0, 0.54) calc(74.1% - 24px), rgba(0, 0, 0, 0.668) calc(83.6% - 24px), rgba(0, 0, 0, 0.762) calc(94.1% - 24px), rgba(0, 0, 0, 0.79) calc(100% - 24px))`,
-            "& svg": {
+        "& > .MuiCardActionArea-root > div:hover, &[dataselected='true'] > .MuiCardActionArea-root > div": {
+            "& > div:first-child": {
+                background: `linear-gradient(to bottom, rgba(0, 0, 0, 0) calc(0% - 24px), rgba(0, 0, 0, 0.034) calc(22.1% - 24px), rgba(0, 0, 0, 0.123) calc(39.4% - 24px), rgba(0, 0, 0, 0.249) calc(53.1% - 24px), rgba(0, 0, 0, 0.394) calc(64.3% - 24px), rgba(0, 0, 0, 0.54) calc(74.1% - 24px), rgba(0, 0, 0, 0.668) calc(83.6% - 24px), rgba(0, 0, 0, 0.762) calc(94.1% - 24px), rgba(0, 0, 0, 0.79) calc(100% - 24px))`,
+            },
+            "& div svg": {
                 opacity: 1,
                 transform: "scale(4)",
             },
+            "&:first-child::after": {
+                content: "''",
+                background: "linear-gradient(180deg, rgba(255, 255, 255, 0) 15%, rgba(255, 255, 255, 0.2) 45%, rgba(255, 255, 255, 0.075) 60%, rgba(255, 255, 255, 0) 75%)",
+                height: "100%",
+                width: "100%",
+                position: "absolute",
+                top: 0,
+                transform: "translateY(-125%)",
+                animation: "$scan 1125ms cubic-bezier(0.4, 0, 0.2, 1) 125ms",
+                "@global": {
+                    "@keyframes scan": {
+                        "0%": {transform: "translateY(-125%)"},
+                        "100%": {transform: "translateY(85%)"},
+                    }
+                }
+            }
         },
         "&[dataselected='true'] > .MuiCardActionArea-root > div:first-child": {
             "& div:last-child": {
@@ -149,22 +167,6 @@ const styles = theme => ({
         },
         width: "100%",
         height: "100%",
-        "&:hover::after": {
-            content: "''",
-            background: "linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 45%, rgba(255, 255, 255, 0.1) 57%, rgba(255, 255, 255, 0) 75%)",
-            height: "100%",
-            width: "100%",
-            position: "absolute",
-            top: 0,
-            transform: "translateY(-150%)",
-            animation: "$scan 2s cubic-bezier(0.4, 0, 0.2, 1) 0s",
-            "@global": {
-                "@keyframes scan": {
-                    "0%": {transform: "translateY(-150%)"},
-                    "100%": {transform: "translateY(100%)"},
-                }
-            }
-        }
     },
     nsTags: {
         position: "absolute",
@@ -197,12 +199,14 @@ const styles = theme => ({
             lineHeight: "8px",
             backgroundColor: "#fafafa",
             clipPath: "polygon(0 0, calc(66%) 0%, 100% 100%, 100% 0%, 100% 100%, 0 100%, 0% 66%, 0% 33%)",
-            transform: "translate(0px, 0px)",
-            transition: "linear-gradient(180deg, rgba(0, 0, 0, 0) 88%, rgba(0, 0, 0, 0.78))",
+            transform: "translate(-0%, 0px)",
+            opacity: 1,
+            transition: "transform 120ms cubic-bezier(0.4, 0, 0.2, 1), opacity 80ms cubic-bezier(0.4, 0, 0.2, 1) 20ms"
         },
         "&[dataselected='true']::after": {
             backgroundColor: "#d7dbff",
             transform: "translate(-100%, 0px)",
+            opacity: 0,
         },
         "&[dataselected='true']": {
             backgroundColor: "#d7dbff",
