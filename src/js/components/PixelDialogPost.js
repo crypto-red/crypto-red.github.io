@@ -137,6 +137,22 @@ const styles = theme => ({
             }
         }
     },
+    belowContent: {
+        position: "absolute",
+        pointerEvents: "none",
+        touchAction: "none",
+        padding: 64,
+        transform: "translateZ(0px)",
+        top: 0,
+        left: 0,
+        textAlign: "right",
+        width: "100vw",
+        height: "100vh",
+        display: "inline-grid",
+        fontFamily: `"Noto Sans Mono"`,
+        backgroundImage: "linear-gradient(45deg, transparent 0%, transparent 98%, rgba(255, 255, 255, 0.2) 98%, rgba(255, 255, 255, 0.60) 100%), linear-gradient(-45deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.60) 98%, rgba(255, 255, 255, 0.60) 98%, rgba(255, 255, 255, 0.2) 100%)",
+        backgroundSize: "32px 32px",
+    },
     contentCanvas: {
         width: "calc(100vw - 480px)",
         height: "calc(100vh)",
@@ -147,6 +163,31 @@ const styles = theme => ({
             overflow: "hidden",
             position: "fixed",
         }
+    },
+    contentCanvasLight: {
+        "&::after": {
+            content: '""',
+            top: 0,
+            left: 0,
+            position: "absolute",
+            pointerEvents: "none",
+            width: "100%",
+            height: "100%",
+            transform: "translateZ(0px)",
+            filter: "opacity(1)",
+            animation: "$backgroundopacity 1.4s linear infinite",
+            backgroundImage: "linear-gradient(to top, rgba(0, 0, 0, 0.66) 1%, transparent 6%), linear-gradient(rgb(255, 255, 255) -24%, rgba(255, 255, 255, 0.9) -12%, rgba(255, 255, 255, 0.8) -6%, rgba(255, 255, 255, 0.4) 2%, rgba(255, 255, 255, 0.2) 9%, transparent 100%), linear-gradient(rgba(255, 255, 255, 0.64) 0%, rgba(255, 255, 255, 0.4) 3%, rgba(255, 255, 255, 0.2) 8%, rgba(255, 255, 255, 0.1) 10%, transparent 16%)",
+            "@global": {
+                "@keyframes backgroundopacity": {
+                    "0%": { filter: "opacity(1)" },
+                    "10%": { filter: "opacity(.8)" },
+                    "50%": { filter: "opacity(.95)" },
+                    "75%": { filter: "opacity(1)" },
+                    "85%": { filter: "opacity(.9)" },
+                    "100%": { filter: "opacity(1)" },
+                }
+            }
+        },
     },
     drawer: {
         width: 480,
@@ -1187,7 +1228,7 @@ class PixelDialogPost extends React.Component {
         const is_translating = _has_translation_started && !has_translated;
         const lang = selected_locales_code.split("-")[0];
 
-        const shadows = _color_palette.average_color_zones[0] ? {boxShadow: `rgba(0, 0, 0, 0.90) 0px 0px max(15vw, 15vh) inset, rgba(0, 0, 0, 0.80) 0px 0px max(20vw, 20vh) inset, rgba(0, 0, 0, 0.60) 0px 0px max(25vw, 25vh) inset`,
+        const color_box_shadows = _color_palette.average_color_zones[0] ? {boxShadow: `rgba(0, 0, 0, 0.90) 0px 0px max(15vw, 15vh) inset, rgba(0, 0, 0, 0.80) 0px 0px max(20vw, 20vh) inset, rgba(0, 0, 0, 0.60) 0px 0px max(25vw, 25vh) inset`,
             backgroundImage:
             `linear-gradient(45deg, ${_color_palette.average_color_zones[2]}, transparent 60%), 
             linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, transparent 60%), 
@@ -1215,7 +1256,7 @@ class PixelDialogPost extends React.Component {
                     <div className={classes.root}>
                         {
                             !edit && post &&
-                            <div style={{position: "absolute", pointerEvents: "none", touchAction: "none", padding: 64, transform: "translateZ(0px)", top: 0, left: 0, textAlign: "right", width: "100vw", height: "100vh", display: "inline-grid", fontFamily: `"Noto Sans Mono"`, color: _color_palette.secondary_background_color, backgroundImage: "linear-gradient(45deg, transparent 0%, transparent 98%, rgba(255, 255, 255, 0.2) 98%, rgba(255, 255, 255, 0.60) 100%), linear-gradient(-45deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.60) 98%, rgba(255, 255, 255, 0.60) 98%, rgba(255, 255, 255, 0.2) 100%)", backgroundSize: "32px 32px"}}>
+                            <div className={classes.belowContent} style={{color: _color_palette.secondary_background_color}}>
                                 <span>$_WITH_PADDING: FALSE</span>
                                 <span>$_VOTES: {vote_number}</span>
                                 {
@@ -1552,11 +1593,11 @@ class PixelDialogPost extends React.Component {
                                         </CardContent>
                                     </div>
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage} dataid={post.id} style={{transform: "translateZ(0px)", ...shadows}}>
+                                <div className={classes.contentImage} dataid={post.id} style={{transform: "translateZ(0px)", ...color_box_shadows}}>
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
-                                    <div style={{transform: "translateZ(0px)", backgroundImage: "linear-gradient(to top, rgba(0, 0, 0, 0.66) 1%, transparent 6%), linear-gradient(rgb(255, 255, 255) -24%, rgba(255, 255, 255, 0.9) -12%, rgba(255, 255, 255, 0.8) -6%, rgba(255, 255, 255, 0.4) 2%, rgba(255, 255, 255, 0.2) 9%, transparent 100%), linear-gradient(rgba(255, 255, 255, 0.64) 0%, rgba(255, 255, 255, 0.4) 3%, rgba(255, 255, 255, 0.2) 8%, rgba(255, 255, 255, 0.1) 10%, transparent 16%)", mixBlendMode: "screen"}}>
+                                    <div className={classes.contentCanvasLight}>
                                         <CanvasPixels
                                             canvas_wrapper_border_radius={8}
                                             shadow_size={9}

@@ -7101,9 +7101,9 @@ class CanvasPixels extends React.Component {
 
             const s_background_color = this._blend_colors(brightest_color, "#ffffffff", 0.66);
             const s_background_color_hsl = this._rgb_to_hsl(...this._get_rgba_from_hex(s_background_color));
-            const s_new_background_color_rgb = this._hsl_to_rgb((s_background_color_hsl[0] + 180 + 360) % 360, 75 + Math.round(s_background_color_hsl[1] * 0.05 * s_background_color_hsl[1] * 0.05), 40 + Math.round(s_background_color_hsl[2] * 0.05 *s_background_color_hsl[2] * 0.05));
-            let s_new_background_color = this._get_hex_color_from_rgba_values(s_new_background_color_rgb[0], s_new_background_color_rgb[1], s_new_background_color_rgb[2], 255);
-            s_new_background_color =  this._filter_pixels(".1997", 1, [], [s_new_background_color], false)[1][0];
+            const s_new_background_color_rgb = this._hsl_to_rgb((s_background_color_hsl[0] + 180 + 360) % 360, 55 + Math.round(s_background_color_hsl[1] * 0.05 * s_background_color_hsl[1] * 0.05), 55 + Math.round(s_background_color_hsl[2] * 0.05 *s_background_color_hsl[2] * 0.05));
+            let s_new_background_color = this._get_hex_color_from_rgba_values(s_new_background_color_rgb[0], s_new_background_color_rgb[1], s_new_background_color_rgb[2], 128);
+            s_new_background_color =  this._filter_pixels(".Xpro", 1, [], [s_new_background_color], false)[1][0];
 
             let [background_canvas_resized_ctx] = this._get_new_ctx_from_canvas(2, 2, true);
             background_canvas_resized_ctx.drawImage(img, 0, 0, 2, 2);
@@ -7123,10 +7123,10 @@ class CanvasPixels extends React.Component {
                 const n_color_rgba = this._get_rgba_from_hex(color);
                 const n_color_hsl = this._rgb_to_hsl(...n_color_rgba);
                 const n_color_rgb = this._hsl_to_rgb(n_color_hsl[0], 40 + Math.round(n_color_hsl[2] * 0.05) * Math.round(n_color_hsl[2] * 0.05), 25 + Math.round(n_color_hsl[2] * 0.05) * Math.round(n_color_hsl[2] * 0.05));
-                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 40);
+                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 33);
 
                 const x =  this._filter_pixels(".Xpro", 1, [], [new_n_color], false)[1][0];
-                return this._filter_pixels("Old photo", 1, [], [x], false)[1][0];
+                return this._filter_pixels(".Brannan", 1, [], [x], false)[1][0];
             };
 
             let average_color_zones = [];
@@ -8037,7 +8037,7 @@ class CanvasPixels extends React.Component {
                                     ))`: "none",
                                          borderRadius: canvas_wrapper_border_radius,
                                          mixBlendMode: "hard-light",
-                                         backgroundBlendMode: "overlay",
+                                         backgroundBlendMode: "initial",
                                          padding: 0,
                                          left: 0,
                                          top: 0,
