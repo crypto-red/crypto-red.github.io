@@ -353,31 +353,28 @@ class CanvasPixels extends React.Component {
             "}";
 
         const pixelated_css =
-            ".Canvas-Pixels, .Canvas-Wrapper, .MuiTouchRipple-root {" +
-                "-ms-interpolation-mode: -webkit-optimize-contrast;" +
-                "image-rendering: nearest-neighbor;" +
+            ".Canvas-Pixels, .Canvas-Wrapper-MoveXY, .Canvas-Wrapper, .MuiTouchRipple-root {" +
                 "image-rendering: optimizeSpeed;" +
-                "image-rendering: -webkit-optimize-contrast;" +
-                "image-rendering: optimize-contrast;" +
                 "image-rendering: -o-pixelated;" +
-                "-ms-interpolation-mode: nearest-neighbor;" +
                 "image-rendering: pixelated;" +
                 "-ms-touch-action: none;" +
                 "touch-action: none;" +
+                "pointer-events: none;"+
             "}";
 
         const canvas_wrapper_css =
             `.Canvas-Wrapper-Overflow.Shown {
-                transform: scale(1);
+                transform: translateZ(0px);
                 animation-name: canvanimation;
                 animation-fill-mode: inherit;
                 animation-duration: 1000ms;
                 animation-delay: 0ms;
                 animation-timing-function: linear;
                 transition: opacity 0ms 0ms linear;
+                pointer-events: all;
             }
-            .Canvas-Wrapper-Overflow.Hidden {
-                transform: scale(1);
+            .Canvas-Wrapper-Overflow {
+                transform: translateZ(0px) scale(1);
                 opacity: 0 !important,
                 transform-origin: center center !important;
                 transition: opacity 1000ms 0ms linear;
@@ -7104,9 +7101,9 @@ class CanvasPixels extends React.Component {
 
             const s_background_color = this._blend_colors(brightest_color, "#ffffffff", 0.66);
             const s_background_color_hsl = this._rgb_to_hsl(...this._get_rgba_from_hex(s_background_color));
-            const s_new_background_color_rgb = this._hsl_to_rgb(s_background_color_hsl[0], Math.min(45, Math.max(35, Math.round(s_background_color_hsl[1] * 0.50))), Math.min(35, Math.max(25, Math.round(s_background_color_hsl[2] * 0.75))));
-            let s_new_background_color = this._get_hex_color_from_rgba_values(s_new_background_color_rgb[0], s_new_background_color_rgb[1], s_new_background_color_rgb[2], 32);
-            s_new_background_color =  this._filter_pixels(".Brannan", 1, [], [s_new_background_color], false)[1][0];
+            const s_new_background_color_rgb = this._hsl_to_rgb((s_background_color_hsl[0] + 180 + 360) % 360, 75 + Math.round(s_background_color_hsl[1] * 0.05 * s_background_color_hsl[1] * 0.05), 40 + Math.round(s_background_color_hsl[2] * 0.05 *s_background_color_hsl[2] * 0.05));
+            let s_new_background_color = this._get_hex_color_from_rgba_values(s_new_background_color_rgb[0], s_new_background_color_rgb[1], s_new_background_color_rgb[2], 255);
+            s_new_background_color =  this._filter_pixels(".1997", 1, [], [s_new_background_color], false)[1][0];
 
             let [background_canvas_resized_ctx] = this._get_new_ctx_from_canvas(2, 2, true);
             background_canvas_resized_ctx.drawImage(img, 0, 0, 2, 2);
@@ -7965,12 +7962,13 @@ class CanvasPixels extends React.Component {
                          touchAction: "none",
                          pointerEvents: "all",
                      }}>
-                    <div style={{
-                        boxSizing: "content-box",
-                        position: "fixed",
-                        transform: `translate3d(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px, 0px)`,
-                        transformOrigin: "center center",
-                        perspective: `${Math.max(canvas_wrapper_width, canvas_wrapper_height)}px`
+                    <div className={"Canvas-Wrapper-MoveXY"}
+                        style={{
+                            boxSizing: "content-box",
+                            position: "fixed",
+                            transform: `translate3d(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px, 0px)`,
+                            transformOrigin: "center center",
+                            perspective: `${Math.max(canvas_wrapper_width, canvas_wrapper_height)}px`
                     }}>
                         <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
                              draggable={"false"}
@@ -7980,7 +7978,7 @@ class CanvasPixels extends React.Component {
                                  borderColor: "#fff",
                                  backgroundColor: canvas_wrapper_background_color,
                                  borderRadius: canvas_wrapper_border_radius,
-                                 padding: Math.round(canvas_wrapper_padding / window.devicePixelRatio * scale),
+                                 padding: Math.floor(canvas_wrapper_padding / window.devicePixelRatio * scale),
                                  position: "fixed",
                                  width: canvas_wrapper_width,
                                  height: canvas_wrapper_height,
@@ -8001,7 +7999,7 @@ class CanvasPixels extends React.Component {
                                     cursor: cursor,
                                     width: Math.floor(pxl_width),
                                     height: Math.floor(pxl_height),
-                                    transform: `scale(${(_screen_zoom_ratio * scale).toFixed(2)})`,
+                                    transform: `scale(${(_screen_zoom_ratio * scale).toFixed(3)})`,
                                     transformOrigin: "left top",
                                     boxSizing: "content-box",
                                     ...background_image_style_props,
@@ -8044,12 +8042,12 @@ class CanvasPixels extends React.Component {
                                          left: 0,
                                          top: 0,
                                          position: "absolute",
-                                         width: canvas_wrapper_width + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale),
-                                         height: canvas_wrapper_height + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale),
+                                         width: Math.ceil(canvas_wrapper_width + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale)),
+                                         height: Math.ceil(canvas_wrapper_height + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale)),
                                          boxSizing: "content-box",
                                          touchAction: "none",
                                          pointerEvents: "none",
-                                         filter: !is_mobile_or_tablet && p ? `brightness(${filter_force}) contrast(${filter_force}) drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`,
+                                         filter: Boolean(!is_mobile_or_tablet && p) && `brightness(${filter_force}) contrast(${filter_force})` // drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})
                                  }}/>
                             }
                         </div>

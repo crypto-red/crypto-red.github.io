@@ -114,7 +114,6 @@ const styles = theme => ({
         "&::after": {
             zIndex: 1,
             textShadow: "0 0px 12px #000000",
-            mixBlendMode: "screen",
             position: "absolute",
             width: "80%",
             height: "24px",
@@ -1188,13 +1187,13 @@ class PixelDialogPost extends React.Component {
         const is_translating = _has_translation_started && !has_translated;
         const lang = selected_locales_code.split("-")[0];
 
-        const shadows = _color_palette.average_color_zones[0] ? {boxShadow: `rgba(0, 0, 0, 0.90) 0px 0px max(15vw, 15vh) inset, rgba(0, 0, 0, 0.80) 0px 0px max(20vw, 20vh) inset, rgba(0, 0, 0, 0.60) 0px 0px max(25vw, 25vh) inset`, backgroundBlendMode: `normal`, mixBlendMode: `lighten`,
+        const shadows = _color_palette.average_color_zones[0] ? {boxShadow: `rgba(0, 0, 0, 0.90) 0px 0px max(15vw, 15vh) inset, rgba(0, 0, 0, 0.80) 0px 0px max(20vw, 20vh) inset, rgba(0, 0, 0, 0.60) 0px 0px max(25vw, 25vh) inset`,
             backgroundImage:
             `linear-gradient(45deg, ${_color_palette.average_color_zones[2]}, transparent 60%), 
             linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, transparent 60%), 
             linear-gradient(225deg, ${_color_palette.average_color_zones[1]}, transparent 60%), 
             linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 60%)`
-        }: {boxShadow: `rgba(0, 0, 0, 0.90) 0px 0px max(15vw, 15vh) inset, rgba(0, 0, 0, 0.80) 0px 0px max(20vw, 20vh) inset, rgba(0, 0, 0, 0.60) 0px 0px max(25vw, 25vh) inset`, backgroundBlendMode: `normal`, mixBlendMode: `lighten`};
+        }: {boxShadow: `rgba(0, 0, 0, 0.90) 0px 0px max(15vw, 15vh) inset, rgba(0, 0, 0, 0.80) 0px 0px max(20vw, 20vh) inset, rgba(0, 0, 0, 0.60) 0px 0px max(25vw, 25vh) inset`};
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
@@ -1216,7 +1215,7 @@ class PixelDialogPost extends React.Component {
                     <div className={classes.root}>
                         {
                             !edit && post &&
-                            <div style={{position: "absolute", pointerEvents: "none", touchAction: "none", top: 0, right: "64px", textAlign: "right", width: "calc(100% - 64px)", height: "100%", display: "inline-grid", fontFamily: `"Noto Sans Mono"`, color: _color_palette.brightest_color}}>
+                            <div style={{position: "absolute", pointerEvents: "none", touchAction: "none", padding: 64, transform: "translateZ(0px)", top: 0, left: 0, textAlign: "right", width: "100vw", height: "100vh", display: "inline-grid", fontFamily: `"Noto Sans Mono"`, color: _color_palette.secondary_background_color, backgroundImage: "linear-gradient(45deg, transparent 0%, transparent 98%, rgba(255, 255, 255, 0.2) 98%, rgba(255, 255, 255, 0.60) 100%), linear-gradient(-45deg, rgba(0, 0, 0, 0.60) 0%, rgba(0, 0, 0, 0.60) 98%, rgba(255, 255, 255, 0.60) 98%, rgba(255, 255, 255, 0.2) 100%)", backgroundSize: "32px 32px"}}>
                                 <span>$_WITH_PADDING: FALSE</span>
                                 <span>$_VOTES: {vote_number}</span>
                                 {
@@ -1553,11 +1552,11 @@ class PixelDialogPost extends React.Component {
                                         </CardContent>
                                     </div>
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage} dataid={post.id} style={{backgroundImage: "linear-gradient(to top, rgba(0, 0, 0, 0.66) 1%, transparent 6%), linear-gradient(rgb(255, 255, 255) -24%, rgba(255, 255, 255, 0.9) -12%, rgba(255, 255, 255, 0.8) -6%, rgba(255, 255, 255, 0.4) 2%, rgba(255, 255, 255, 0.2) 9%, transparent 100%), linear-gradient(rgb(255 255 255 / 64%) 0%, rgba(255, 255, 255, 0.4) 3%, rgba(255, 255, 255, 0.2) 8%, rgba(255, 255, 255, 0.1) 10%, transparent 16%)"}}>
+                                <div className={classes.contentImage} dataid={post.id} style={{transform: "translateZ(0px)", ...shadows}}>
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
-                                    <div style={{overflow: "hidden", ...shadows}}>
+                                    <div style={{transform: "translateZ(0px)", backgroundImage: "linear-gradient(to top, rgba(0, 0, 0, 0.4) 1%, transparent 6%), linear-gradient(rgb(255, 255, 255) -24%, rgba(255, 255, 255, 0.6) -12%, rgba(255, 255, 255, 0.6) -6%, rgba(255, 255, 255, 0.3) 2%, rgba(255, 255, 255, 0.15) 9%, transparent 100%), linear-gradient(rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.3) 3%, rgba(255, 255, 255, 0.15) 8%, rgba(255, 255, 255, 0.066) 10%, transparent 16%)", mixBlendMode: "screen"}}>
                                         <CanvasPixels
                                             canvas_wrapper_border_radius={8}
                                             shadow_size={9}
