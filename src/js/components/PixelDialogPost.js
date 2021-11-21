@@ -105,7 +105,7 @@ const styles = theme => ({
             fontFamily: `"Saira"`,
             content: `"--+ ARTISTIC SITUATION N°"attr(dataid)" +--"`,
             [theme.breakpoints.down("sm")]: {
-                content: `"--+ ARTC. SITN. N°"attr(dataid)" +--"`,
+                content: `"ARTC. SITN. N°"attr(dataid)`,
             },
             textAlign: "center",
             color: "#00000099",
@@ -151,8 +151,13 @@ const styles = theme => ({
         display: "inline-grid",
         fontFamily: `"Noto Sans Mono"`,
         backgroundImage: "linear-gradient(-45deg, rgb(255 255 255 / 10%) 0%,    rgb(255 255 255 / 10%) 10%, #ffffff00 10%, #ffffff00 100%),\n" +
+                         "linear-gradient(  45deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 10%) 10%, #ffffff00 10%, #ffffff00 100%),\n" +
+                         "linear-gradient(-45deg, rgb(255 255 255 / 10%) 0%,    rgb(255 255 255 / 10%) 10%, #ffffff00 10%, #ffffff00 100%),\n" +
                          "linear-gradient(  45deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 10%) 10%, #ffffff00 10%, #ffffff00 100%)",
         backgroundSize: "10px 10px",
+        [theme.breakpoints.down("sm")]: {
+            contentVisibility: `hidden`,
+        },
     },
     contentCanvas: {
         width: "calc(100vw - 480px)",
@@ -1230,13 +1235,15 @@ class PixelDialogPost extends React.Component {
         const is_translating = _has_translation_started && !has_translated;
         const lang = selected_locales_code.split("-")[0];
 
-        const color_box_shadows = _color_palette.average_color_zones[0] ? {backgroundColor: "rgb(96 96 96 / 33%)", boxShadow: `rgba(0, 0, 0, 0.9) 0px -20vw max(40vw, 40vh) inset, rgba(0, 0, 0, 0.4) 0px -30vw max(60vw, 40vh) inset, rgba(0, 0, 0, 0.2) 0px -37vw max(75vw, 75vh) inset`,
+        const color_box_shadows = _color_palette.average_color_zones[0] ? {
             backgroundImage:
             `linear-gradient(45deg, ${_color_palette.average_color_zones[2]}, transparent 66%), 
             linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, transparent 66%), 
             linear-gradient(225deg, ${_color_palette.average_color_zones[1]}, transparent 66%), 
-            linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 66%)`
-        }: {backgroundColor: "rgb(96 96 96 / 33%)", boxShadow: `rgba(0, 0, 0, 0.9) 0px -20vw max(40vw, 40vh) inset, rgba(0, 0, 0, 0.4) 0px -30vw max(60vw, 40vh) inset, rgba(0, 0, 0, 0.2) 0px -37vw max(75vw, 75vh) inset`};
+            linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 66%),
+            linear-gradient(rgba(255, 255, 255, 0.28), transparent), radial-gradient(rgb(0, 0, 0), rgba(255, 255, 255, 0))`,
+            backgroundBlendMode: "difference",
+        }: {backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.28), transparent), radial-gradient(rgb(0, 0, 0), rgba(255, 255, 255, 0))`, backgroundBlendMode: "difference",};
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
@@ -1608,7 +1615,7 @@ class PixelDialogPost extends React.Component {
                                             shadow_size={9}
                                             shadow_color={_color_palette.background_color}
                                             canvas_wrapper_padding={14}
-                                            canvas_wrapper_background_color={"#ffffff33"}
+                                            canvas_wrapper_background_color={"#ffffffaa"}
                                             pxl_width={_width}
                                             pxl_height={_height}
                                             key={"canvas-post-edit"}
