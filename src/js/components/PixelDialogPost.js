@@ -1230,13 +1230,13 @@ class PixelDialogPost extends React.Component {
         const is_translating = _has_translation_started && !has_translated;
         const lang = selected_locales_code.split("-")[0];
 
-        const color_box_shadows = _color_palette.average_color_zones[0] ? {boxShadow: `rgba(0, 0, 0, 0.7) 0px -10vw max(30vw, 30vh) inset, rgba(0, 0, 0, 0.4) 0px -14vw max(40vw, 40vh) inset, rgba(0, 0, 0, 0.2) 0px -15vw max(50vw, 50vh) inset`,
+        const color_box_shadows = _color_palette.average_color_zones[0] ? {backgroundColor: "rgb(96 96 96 / 33%)", boxShadow: `rgba(0, 0, 0, 0.9) 0px -20vw max(40vw, 40vh) inset, rgba(0, 0, 0, 0.4) 0px -30vw max(60vw, 40vh) inset, rgba(0, 0, 0, 0.2) 0px -37vw max(75vw, 75vh) inset`,
             backgroundImage:
-            `linear-gradient(45deg, ${_color_palette.average_color_zones[2]}, transparent 60%), 
-            linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, transparent 60%), 
-            linear-gradient(225deg, ${_color_palette.average_color_zones[1]}, transparent 60%), 
-            linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 60%)`
-        }: {boxShadow: `rgba(0, 0, 0, 0.7) 0px -10vw max(30vw, 30vh) inset, rgba(0, 0, 0, 0.4) 0px -14vw max(40vw, 40vh) inset, rgba(0, 0, 0, 0.2) 0px -15vw max(50vw, 50vh) inset`};
+            `linear-gradient(45deg, ${_color_palette.average_color_zones[2]}, transparent 66%), 
+            linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, transparent 66%), 
+            linear-gradient(225deg, ${_color_palette.average_color_zones[1]}, transparent 66%), 
+            linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 66%)`
+        }: {backgroundColor: "rgb(96 96 96 / 33%)", boxShadow: `rgba(0, 0, 0, 0.9) 0px -20vw max(40vw, 40vh) inset, rgba(0, 0, 0, 0.4) 0px -30vw max(60vw, 40vh) inset, rgba(0, 0, 0, 0.2) 0px -37vw max(75vw, 75vh) inset`};
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
