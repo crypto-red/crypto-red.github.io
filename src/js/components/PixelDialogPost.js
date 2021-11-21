@@ -96,7 +96,7 @@ const styles = theme => ({
             overflow: "hidden",
         },
         "&::before": {
-            textShadow: "0 0px 24px #2b2b2b69",
+            textShadow: "0 0px 24px #2b2b2b00",
             position: "absolute",
             width: "80%",
             height: "24px",
@@ -108,7 +108,7 @@ const styles = theme => ({
                 content: `"ARTC. SITN. N°"attr(dataid)`,
             },
             textAlign: "center",
-            color: "#00000099",
+            color: "#00000057",
             zIndex: 2,
         },
         "&::after": {
@@ -1241,9 +1241,9 @@ class PixelDialogPost extends React.Component {
             linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, transparent 66%), 
             linear-gradient(225deg, ${_color_palette.average_color_zones[1]}, transparent 66%), 
             linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 66%),
-            linear-gradient(rgba(255, 255, 255, 0.28), transparent), radial-gradient(rgb(0, 0, 0), rgba(255, 255, 255, 0))`,
-            backgroundBlendMode: "difference",
-        }: {backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.28), transparent), radial-gradient(rgb(0, 0, 0), rgba(255, 255, 255, 0))`, backgroundBlendMode: "difference",};
+            linear-gradient(rgb(117 117 117 / 50%), #000000a1), radial-gradient(rgb(0 0 0 / 2%), rgb(0 0 0 / 69%))`,
+            backgroundBlendMode: "multiply",
+        }: {backgroundImage: `linear-gradient(rgb(117 117 117 / 50%), #000000a1), radial-gradient(rgb(0 0 0 / 2%), rgb(0 0 0 / 69%))`, backgroundBlendMode: "multiply",};
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
