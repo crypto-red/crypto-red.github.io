@@ -317,6 +317,7 @@ class CanvasPixels extends React.Component {
             _loading_base64_img_changed: 0,
             _hidden: true,
             _intervals: [],
+            _kb: 0,
         };
     };
 
@@ -395,6 +396,19 @@ class CanvasPixels extends React.Component {
             }` +
             ".Canvas-Wrapper {" +
                 "transition: box-shadow 0ms 0ms linear, transform 240ms 0ms linear;" +
+            "}" +
+            ".Canvas-Pixels-Cover::after {" +
+                `top: 0;
+                left: 0;
+                width: 100%;
+                content: ""attr(datatext)"";
+                padding: 0px 0px 8px 12px;
+                position: fixed;
+                transform: translate(0px, -100%);
+                line-height: 20px;
+                font-size: 14px;
+                font-family: "Noto Sans Mono";
+                color: #FAFAFAAA;` +
             "}" +
             ".Canvas-Wrapper.MOVE:not(.Canvas-Focused), .Canvas-Wrapper.PICKER:not(.Canvas-Focused) {" +
                 "cursor: grab;" +
@@ -4379,15 +4393,16 @@ class CanvasPixels extends React.Component {
 
     _notify_estimate_size = () => {
 
-        if(this.props.on_kb_change) {
+        this.get_base64_png_data_url(1, (base64) => {
 
-            this.get_base64_png_data_url(1, (base64) => {
+            const bytes = 3 * Math.ceil((base64.length/4));
+            this.setState({_kb: bytes / 1000});
 
-                const bytes = 3 * Math.ceil((base64.length/4));
+            if(this.props.on_kb_change) {
+
                 this.props.on_kb_change(bytes / 1000);
-            });
-
-        }
+            }
+        });
     };
 
     _update_canvas = (force_update = false, do_not_cancel_animation = false) => {
@@ -7893,6 +7908,7 @@ class CanvasPixels extends React.Component {
             light,
             shadow_size,
             shadow_color,
+            _kb,
         } = this.state;
 
         const p = perspective;
@@ -7964,14 +7980,14 @@ class CanvasPixels extends React.Component {
                                  borderColor: "#fff",
                                  backgroundColor: canvas_wrapper_background_color,
                                  borderRadius: canvas_wrapper_border_radius,
-                                 padding: canvas_wrapper_padding / window.devicePixelRatio * scale,
+                                 padding: Math.round(canvas_wrapper_padding / window.devicePixelRatio * scale),
                                  position: "fixed",
                                  width: canvas_wrapper_width,
                                  height: canvas_wrapper_height,
                                  transform: `rotateX(${(perspective_coordinate[0] / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] / scale).toFixed(2)}deg)`,
                                  transformOrigin: "center middle",
                                  boxSizing: "content-box",
-                                 overflow: "hidden",
+                                 overflow: "visible",
                                  touchAction: "none",
                                  pointerEvents: "none",
                              }}
@@ -7994,44 +8010,48 @@ class CanvasPixels extends React.Component {
                                 ref={this._set_canvas_ref}
                                 width={pxl_width}
                                 height={pxl_height}/>
-                            <div className={"Canvas-Pixels-Cover"}
-                                draggable={"false"}
-                                 style={{
-                                     backgroundImage: !is_mobile_or_tablet && p ? `linear-gradient(to left, rgba(
-                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
-                                ${(Math.abs(perspective_coordinate[1]) / p / 6 * 0.225 * (p*l/100)).toFixed(2)}
-                                ), rgba(
-                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
-                                ${(Math.abs(perspective_coordinate[1]) / p / 6 * 3 * (p*l/100)).toFixed(2)}
-                                )), linear-gradient(to top, rgba(
-                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
-                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 2 * (p*l/100)).toFixed(2)}
-                                ), rgba(
-                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
-                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 0.15 * (p*l/100)).toFixed(2)}
-                                ))`: "none",
-                                     borderRadius: canvas_wrapper_border_radius,
-                                     mixBlendMode: "hard-light",
-                                     backgroundBlendMode: "overlay",
-                                     padding: 0,
-                                     left: 0,
-                                     top: 0,
-                                     position: "absolute",
-                                     width: canvas_wrapper_width + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale),
-                                     height: canvas_wrapper_height + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale),
-                                     boxSizing: "content-box",
-                                     touchAction: "none",
-                                     pointerEvents: "none",
-                                     filter: !is_mobile_or_tablet && p ? `brightness(${filter_force}) contrast(${filter_force}) drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`,
+                            {
+                                Boolean(!is_mobile_or_tablet && p) &&
+                                <div className={"Canvas-Pixels-Cover"}
+                                    datatext={`${pxl_width}:${pxl_height} . S${_screen_zoom_ratio.toFixed(2)} Z${scale.toFixed(2)} . ${_kb.toFixed(2)}Kb`}
+                                    draggable={"false"}
+                                     style={{
+                                         backgroundImage: !is_mobile_or_tablet && p ? `linear-gradient(to left, rgba(
+                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
+                                    ${(Math.abs(perspective_coordinate[1]) / p / 6 * 0.225 * (p*l/100)).toFixed(2)}
+                                    ), rgba(
+                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
+                                    ${(Math.abs(perspective_coordinate[1]) / p / 6 * 3 * (p*l/100)).toFixed(2)}
+                                    )), linear-gradient(to top, rgba(
+                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
+                                    ${(Math.abs(perspective_coordinate[0]) / p / 6 * 2 * (p*l/100)).toFixed(2)}
+                                    ), rgba(
+                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
+                                    ${(Math.abs(perspective_coordinate[0]) / p / 6 * 0.15 * (p*l/100)).toFixed(2)}
+                                    ))`: "none",
+                                         borderRadius: canvas_wrapper_border_radius,
+                                         mixBlendMode: "hard-light",
+                                         backgroundBlendMode: "overlay",
+                                         padding: 0,
+                                         left: 0,
+                                         top: 0,
+                                         position: "absolute",
+                                         width: canvas_wrapper_width + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale),
+                                         height: canvas_wrapper_height + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale),
+                                         boxSizing: "content-box",
+                                         touchAction: "none",
+                                         pointerEvents: "none",
+                                         filter: !is_mobile_or_tablet && p ? `brightness(${filter_force}) contrast(${filter_force}) drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`,
                                  }}/>
+                            }
                         </div>
                     </div>
                 </div>

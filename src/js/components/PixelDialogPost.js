@@ -58,6 +58,7 @@ import {postJSON} from "../utils/load-json";
 import {clean_json_text} from "../utils/json";
 import ReactDOM from "react-dom";
 import {Card} from "@material-ui/core";
+import price_formatter from "../utils/price-formatter";
 
 const TRANSLATION_AVAILABLE = ["en", "ar", "zh", "nl", "fi", "fr", "de", "hi", "hu", "id", "ga", "it", "ja", "ko", "pl", "pt", "ru", "es", "sv", "tr", "uk", "vi"];
 
@@ -107,7 +108,7 @@ const styles = theme => ({
                 content: `"ARTC. SITN. N°"attr(dataid)`,
             },
             textAlign: "center",
-            color: "#2b2b2b69",
+            color: "#00000099",
             zIndex: 2,
         },
         "&::after": {
@@ -398,6 +399,8 @@ class PixelDialogPost extends React.Component {
             post: props.post,
             edit: props.edit || false,
             selected_locales_code: props.selected_locales_code || "en-US",
+            hbd_market: props.hbd_market || {},
+            selected_currency: props.selected_currency || "USD",
             _title_input: "",
             _description_input: "",
             _canvas: null,
@@ -1167,6 +1170,8 @@ class PixelDialogPost extends React.Component {
             selected_locales_code,
             _is_description_collapsed,
             _responsabilities,
+            selected_currency,
+            hbd_market,
         } = this.state;
 
         const post = this.state.post || {};
@@ -1191,6 +1196,9 @@ class PixelDialogPost extends React.Component {
             linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 60%)`
         }: {boxShadow: `rgba(0, 0, 0, 0.90) 0px 0px max(15vw, 15vh) inset, rgba(0, 0, 0, 0.80) 0px 0px max(20vw, 20vh) inset, rgba(0, 0, 0, 0.60) 0px 0px max(25vw, 25vh) inset`, backgroundBlendMode: `normal`, mixBlendMode: `lighten`};
 
+        const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
+        const balance_fiat = (post.dollar_payout || 0) * hbd_price;
+
         return (
             <div>
                 <Dialog
@@ -1206,6 +1214,31 @@ class PixelDialogPost extends React.Component {
                     onExited={(event) => {this.props.onExited && this.props.onExited(event)}}
                 >
                     <div className={classes.root}>
+                        {
+                            !edit && post &&
+                            <div style={{position: "absolute", pointerEvents: "none", touchAction: "none", top: 0, right: "64px", textAlign: "right", width: "calc(100% - 64px)", height: "100%", display: "inline-grid", fontFamily: `"Noto Sans Mono"`, color: _color_palette.brightest_color}}>
+                                <span>$_WITH_PADDING: FALSE</span>
+                                <span>$_VOTES: {vote_number}</span>
+                                {
+                                    vote_number > 0 &&
+                                    <span>
+                                                    {post.active_votes.slice(0, 10).map((v, index) => {
+
+                                                        return <span key={index}>@{v.voter} () -> {v.percent}%<br/></span>;
+                                                    })}
+                                                </span>
+                                }
+                                <span>$_AUTHOR: @{post.author}</span>
+                                <span>$_TAGS: #{tags.join(", #").toUpperCase()}</span>
+                                <span>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span>
+                                <span>$_V_PER_COL: {price_formatter(balance_fiat / layer.colors.length, selected_currency, selected_locales_code)}</span>
+                                <span>$_COLORS: {layer.colors.length}</span>
+                                <span>$_HAS_TRANSLATED_[{document.documentElement.lang.toUpperCase()}]: {has_translated ? "TRUE": "FALSE"}</span>
+                                <span>$_IS_TRANSLATING_[{document.documentElement.lang.toUpperCase()}]: {is_translating ? "TRUE": "FALSE"}</span>
+                                <span>$_WIN_WIDTH: {_window_width}</span>
+                                <span>$_AI_COMPUTING: {_is_prediction_loading ? "TRUE": "FALSE"}</span>
+                            </div>
+                        }
                         <div className={classes.content}>
                             <div className={classes.contentInner}>
                                 <SwipeableDrawer
@@ -1555,7 +1588,7 @@ class PixelDialogPost extends React.Component {
                                             ref={this._set_canvas_ref}
                                         />
                                     </div>
-                                    </div>
+                                </div>
                             </div>
                             <div className={classes.bottomMobileFabs}>
                                 {

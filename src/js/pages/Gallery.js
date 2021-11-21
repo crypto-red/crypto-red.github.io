@@ -1203,8 +1203,8 @@ class Gallery extends React.Component {
 
     render() {
 
-        const { classes,  _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _dialog_post_closed_count, _started_on_post_dialog } = this.state;
-        const { _cell_positioner, _cell_measurer_cache, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
+        const { classes, _selected_currency, _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _dialog_post_closed_count, _started_on_post_dialog } = this.state;
+        const { _cell_positioner, _hbd_market, _cell_measurer_cache, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
 
         const width = _window_width;
         const height = _window_height;
@@ -1312,6 +1312,8 @@ class Gallery extends React.Component {
 
                 <PixelDialogPost
                     selected_locales_code={_selected_locales_code}
+                    selected_currency={_selected_currency}
+                    hbd_market={_hbd_market}
                     on_next={this._next_current_post}
                     on_previous={this._previous_current_post}
                     on_image_load_complete={() => {setTimeout(() => {this._scroll_to_index()}, 5)}}
