@@ -1556,7 +1556,7 @@ class PixelDialogPost extends React.Component {
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
-                                    <div style={{transform: "translateZ(0px)", backgroundImage: "linear-gradient(to top, rgba(0, 0, 0, 0.4) 1%, transparent 6%), linear-gradient(rgb(255, 255, 255) -24%, rgba(255, 255, 255, 0.6) -12%, rgba(255, 255, 255, 0.6) -6%, rgba(255, 255, 255, 0.3) 2%, rgba(255, 255, 255, 0.15) 9%, transparent 100%), linear-gradient(rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.3) 3%, rgba(255, 255, 255, 0.15) 8%, rgba(255, 255, 255, 0.066) 10%, transparent 16%)", mixBlendMode: "screen"}}>
+                                    <div style={{transform: "translateZ(0px)", backgroundImage: "linear-gradient(to top, rgba(0, 0, 0, 0.66) 1%, transparent 6%), linear-gradient(rgb(255, 255, 255) -24%, rgba(255, 255, 255, 0.9) -12%, rgba(255, 255, 255, 0.8) -6%, rgba(255, 255, 255, 0.4) 2%, rgba(255, 255, 255, 0.2) 9%, transparent 100%), linear-gradient(rgba(255, 255, 255, 0.64) 0%, rgba(255, 255, 255, 0.4) 3%, rgba(255, 255, 255, 0.2) 8%, rgba(255, 255, 255, 0.1) 10%, transparent 16%)", mixBlendMode: "screen"}}>
                                         <CanvasPixels
                                             canvas_wrapper_border_radius={8}
                                             shadow_size={9}
