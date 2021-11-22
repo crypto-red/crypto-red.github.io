@@ -49,6 +49,9 @@ window.mobileAndTabletCheck = function() {
 };
 
 let is_mobile_or_tablet = window.mobileAndTabletCheck();
+var screen = window.screen;
+var orientation = (screen.orientation || {}).type || screen.mozOrientation || screen.msOrientation;
+
 
 setInterval(function(){
 
@@ -596,6 +599,26 @@ class CanvasPixels extends React.Component {
         x = Math.max(-10, Math.min(10, x));
         let y = event.accelerationIncludingGravity.y;
         y = Math.max(-10, Math.min(10, y));
+
+        switch(orientation) {
+
+            case "portrait-primary":
+                x = x;
+                y = y;
+                break;
+            case "portrait-secondary":
+                x = -x;
+                y = -y;
+                break;
+            case "landscape-primary":
+                x = y;
+                y = x;
+                break;
+            case "landscape-secondary":
+                x = -y;
+                y = -x;
+                break;
+        }
 
         if(is_mobile_or_tablet) {
 
