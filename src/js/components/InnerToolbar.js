@@ -15,7 +15,7 @@ import SearchIcon from "@material-ui/icons/Search";
 
 const styles = theme => ({
     "@keyframes innerToolbarCyberPunkAnimation": {
-        "0%": { left: "0%"},
+        "0%": { left: "-20%"},
         "100%": { left: "70%"}
     },
     root: {
@@ -43,7 +43,7 @@ const styles = theme => ({
         "&::before": {
             display: "flex",
             top: 0,
-            left: 0,
+            left: "-20%",
             "content": "\"\"",
             position: "absolute",
             height: 40,

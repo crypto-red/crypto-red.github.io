@@ -96,19 +96,19 @@ const styles = theme => ({
             overflow: "hidden",
         },
         "&::before": {
-            textShadow: "0 0px 24px #2b2b2b00",
+            textShadow: "0 0px 24px #000000ff",
             position: "absolute",
             width: "80%",
             height: "24px",
             left: "10%",
             top: "1px",
             fontFamily: `"Saira"`,
-            content: `"--+ ARTISTIC SITUATION N°"attr(dataid)" +--"`,
+            content: `"ARTISTIC SITUATION N°"attr(dataid)`,
             [theme.breakpoints.down("sm")]: {
                 content: `"ARTC. SITN. N°"attr(dataid)`,
             },
             textAlign: "center",
-            color: "#00000057",
+            color: "rgb(0 0 0 / 50%)",
             zIndex: 2,
         },
         "&::after": {
@@ -141,7 +141,7 @@ const styles = theme => ({
         position: "absolute",
         pointerEvents: "none",
         touchAction: "none",
-        padding: 64,
+        padding: 16,
         filter: "opacity(1)",
         top: 0,
         left: 0,
@@ -150,11 +150,12 @@ const styles = theme => ({
         height: "100vh",
         display: "inline-grid",
         fontFamily: `"Noto Sans Mono"`,
-        backgroundImage: "linear-gradient(-45deg, rgb(255 255 255 / 10%) 0%,    rgb(255 255 255 / 10%) 10%, #ffffff00 10%, #ffffff00 100%),\n" +
-                         "linear-gradient(  45deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 10%) 10%, #ffffff00 10%, #ffffff00 100%),\n" +
-                         "linear-gradient(-45deg, rgb(255 255 255 / 10%) 0%,    rgb(255 255 255 / 10%) 10%, #ffffff00 10%, #ffffff00 100%),\n" +
-                         "linear-gradient(  45deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 10%) 10%, #ffffff00 10%, #ffffff00 100%)",
-        backgroundSize: "10px 10px",
+        backgroundImage:
+            `linear-gradient(-45deg, rgb(255 255 255) 0%,    rgb(255 255 255) 5%, #ffffff00 5%, #ffffff00 100%),
+            linear-gradient(  45deg, rgb(255 255 255) 0%, rgb(255 255 255) 5%, #ffffff00 5%, #ffffff00 100%),
+            linear-gradient(-90deg, rgb(255 255 255 / 10%) 0%,    rgb(255 255 255 / 10%) 5%, #ffffff00 5%, #ffffff00 100%),
+            linear-gradient(  0deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 10%) 5%, #ffffff00 5%, #ffffff00 100%)`,
+        backgroundSize: "20px 20px",
         [theme.breakpoints.down("sm")]: {
             contentVisibility: `hidden`,
         },
@@ -1241,9 +1242,9 @@ class PixelDialogPost extends React.Component {
             linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, transparent 66%), 
             linear-gradient(225deg, ${_color_palette.average_color_zones[1]}, transparent 66%), 
             linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 66%),
-            linear-gradient(rgb(117 117 117 / 50%), #000000a1), radial-gradient(rgb(0 0 0 / 2%), rgb(0 0 0 / 69%))`,
-            backgroundBlendMode: "multiply",
-        }: {backgroundImage: `linear-gradient(rgb(117 117 117 / 50%), #000000a1), radial-gradient(rgb(0 0 0 / 2%), rgb(0 0 0 / 69%))`, backgroundBlendMode: "multiply",};
+            linear-gradient(rgba(255, 255, 255, 0.29), rgba(0, 0, 0, 0.7)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))`,
+            backgroundBlendMode: "hard-light",
+        }: {backgroundBlendMode: "hard-light", backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.29), rgba(0, 0, 0, 0.7)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))`,};
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
@@ -1265,7 +1266,7 @@ class PixelDialogPost extends React.Component {
                     <div className={classes.root}>
                         {
                             !edit && post &&
-                            <div className={classes.belowContent} style={{color: _color_palette.foreground_color}}>
+                            <div className={classes.belowContent} style={{color: "white"}}>
                                 <span>$_WHAT? Who's there...</span>
                                 <span>$_ARTC_SITUATION_DATA: TRUE</span>
                                 <span>$_VOTES: {vote_number}</span>
@@ -1287,8 +1288,8 @@ class PixelDialogPost extends React.Component {
                                 <span>$_IS_TRANSLATING_[{document.documentElement.lang.toUpperCase()}]: {is_translating ? "TRUE": "FALSE"}</span>
                                 <span>$_WIN_WIDTH: {_window_width}</span>
                                 <span>$_AI_COMPUTING: {_is_prediction_loading ? "TRUE": "FALSE"}</span>
-                                <span>$NFT_TESTS: Chimpanzee and punks show current behaviour.<br/>Suggestion: prepare moving to humanoid trials to speed up artistic res.</span>
-                                <span>Please remain c_l_md... Outer dark project. [NAMECODE] B.O.</span>
+                                <span>$NFT_TESTS: For chimpanzee and punks they show current attention.<br/>[SUGG.]: prepare moving to humanoid trials to speed up artistic response.</span>
+                                <span>Please remain CALM... Outer dark project [NAMEC.] Black.Ops. (Decentralize Everything)</span>
                             </div>
                         }
                         <div className={classes.content}>
@@ -1605,7 +1606,7 @@ class PixelDialogPost extends React.Component {
                                         </CardContent>
                                     </div>
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage} dataid={post.id} style={{filter: "opacity(1)", ...color_box_shadows}}>
+                                <div className={classes.contentImage} dataid={post.id} style={{filter: "brightness(1.25)", ...color_box_shadows}}>
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
