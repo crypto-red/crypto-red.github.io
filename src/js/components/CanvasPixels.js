@@ -434,6 +434,7 @@ class CanvasPixels extends React.Component {
         this._notify_layers_and_compute_thumbnails_change();
 
         window.addEventListener("resize", this._updated_dimensions);
+        window.addEventListener("devicemotion", this._handle_motion_changes);
         this._updated_dimensions();
         this.setState({_intervals});
     }
@@ -589,12 +590,31 @@ class CanvasPixels extends React.Component {
         }
     }
 
+    _handle_motion_changes = (event) => {
+
+        let x = event.accelerationIncludingGravity.x;
+        x = Math.max(-10, Math.min(10, x));
+        let y = event.accelerationIncludingGravity.y;
+        y = Math.max(-10, Math.min(10, y));
+
+        if(is_mobile_or_tablet) {
+
+            this.setState({perspective_coordinate: [y, x]}, () => {
+
+                this._request_force_update(false, true);
+            });
+        }
+    };
+
     set_perspective_coordinate = (array) => {
 
-        this.setState({perspective_coordinate: array}, () => {
+        if(!is_mobile_or_tablet) {
 
-            this._request_force_update(false, true);
-        });
+            this.setState({perspective_coordinate: array}, () => {
+
+                this._request_force_update(false, true);
+            });
+        }
     };
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -2207,6 +2227,7 @@ class CanvasPixels extends React.Component {
         const { _canvas_wrapper_overflow, _intervals } = this.state;
 
         window.removeEventListener("resize", this._updated_dimensions);
+        window.addEventListener("devicemotion", this._handle_motion_changes);
         _canvas_wrapper_overflow.removeEventListener("wheel", this.handle_canvas_wrapper_overflow_wheel);
         _canvas_wrapper_overflow.removeEventListener("pointerdown", this._handle_canvas_wrapper_overflow_pointer_down);
         _canvas_wrapper_overflow.removeEventListener("pointermove", this._handle_canvas_wrapper_overflow_pointer_move);
@@ -8017,12 +8038,12 @@ class CanvasPixels extends React.Component {
                                 width={pxl_width}
                                 height={pxl_height}/>
                             {
-                                Boolean(!is_mobile_or_tablet && p) &&
+                                Boolean(p) &&
                                 <div className={"Canvas-Pixels-Cover"}
                                     datatext={`${pxl_width}:${pxl_height} // x${_screen_zoom_ratio.toFixed(2)} ${scale.toFixed(2)}x // ${_kb.toFixed(2)}Kb`}
                                     draggable={"false"}
                                      style={{
-                                         backgroundImage: !is_mobile_or_tablet && p ? `linear-gradient(to left, rgba(
+                                         backgroundImage: p ? `linear-gradient(to left, rgba(
                                     ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
                                     ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
                                     ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
@@ -8055,7 +8076,7 @@ class CanvasPixels extends React.Component {
                                          boxSizing: "content-box",
                                          touchAction: "none",
                                          pointerEvents: "none",
-                                         filter: Boolean(!is_mobile_or_tablet && p) && `brightness(${filter_force}) contrast(${filter_force})` // drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})
+                                         filter: Boolean(p) && `brightness(${filter_force}) contrast(${filter_force})` // drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})
                                  }}/>
                             }
                         </div>
