@@ -7130,11 +7130,11 @@ class CanvasPixels extends React.Component {
 
                 const n_color_rgba = this._get_rgba_from_hex(color);
                 const n_color_hsl = this._rgb_to_hsl(...n_color_rgba);
-                const n_color_rgb = this._hsl_to_rgb(n_color_hsl[0], 50, 30);
-                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 60);
+                const n_color_rgb = this._hsl_to_rgb(n_color_hsl[0], 75, 20);
+                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 96);
 
                 const x =  this._filter_pixels(".Xpro", 1, [], [new_n_color], false)[1][0];
-                return this._filter_pixels(".Gingham", 1, [], [x], false)[1][0];
+                return this._filter_pixels(".Xpro", 1, [], [x], false)[1][0];
             };
 
             let average_color_zones = [];
