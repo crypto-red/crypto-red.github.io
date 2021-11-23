@@ -359,6 +359,8 @@ class CanvasPixels extends React.Component {
                 "touch-action: none;" +
                 "pointer-events: none;" +
                 "backface-visibility: hidden;" +
+                "mix-blend-mode: normal;" +
+                "background-blend-mode: normal;" +
             "}";
 
         const canvas_wrapper_css =
@@ -623,7 +625,7 @@ class CanvasPixels extends React.Component {
                 break;
         }
 
-        if(is_mobile_or_tablet && this.state.p) {
+        if(is_mobile_or_tablet && this.state.perspective) {
 
             this.setState({perspective_coordinate: [y, x]}, () => {
 
@@ -634,7 +636,7 @@ class CanvasPixels extends React.Component {
 
     set_perspective_coordinate = (array) => {
 
-        if(!is_mobile_or_tablet && this.state.p) {
+        if(!is_mobile_or_tablet && this.state.perspective) {
 
             this.setState({perspective_coordinate: array}, () => {
 
@@ -8047,6 +8049,7 @@ class CanvasPixels extends React.Component {
                         <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
                              draggable={"false"}
                              style={{
+                                 mixBlendMode: "hard-light",
                                  borderWidth: canvas_wrapper_border_width,
                                  borderStyle: "solid",
                                  borderColor: "#fff",
@@ -8056,7 +8059,7 @@ class CanvasPixels extends React.Component {
                                  position: "fixed",
                                  width: canvas_wrapper_width,
                                  height: canvas_wrapper_height,
-                                 transform: `rotateX(${(perspective_coordinate[0] / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] / scale).toFixed(2)}deg)`,
+                                 transform: `rotateZ(0deg) rotateX(${(perspective_coordinate[0] / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] / scale).toFixed(2)}deg)`,
                                  transformOrigin: "center middle",
                                  boxSizing: "content-box",
                                  overflow: "visible",
@@ -8112,8 +8115,6 @@ class CanvasPixels extends React.Component {
                                     ${(Math.abs(perspective_coordinate[0]) / p / 6 * 0.15 * (p*l/100)).toFixed(2)}
                                     ))`: "none",
                                          borderRadius: canvas_wrapper_border_radius,
-                                         mixBlendMode: "hard-light",
-                                         backgroundBlendMode: "initial",
                                          padding: 0,
                                          left: 0,
                                          top: 0,
