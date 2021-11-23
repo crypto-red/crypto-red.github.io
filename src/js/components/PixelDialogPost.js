@@ -162,10 +162,21 @@ const styles = theme => ({
         height: "calc(100vh)",
         position: "absolute",
         overflow: "visible",
+        //mixBlendMode: "exclusion",
         [theme.breakpoints.down("md")]: {
             width: "100vw",
             overflow: "hidden",
             position: "fixed",
+        },
+        "&::after": {
+            content: `""`,
+            position: "fixed",
+            left: "-75vw",
+            top: "-30vh",
+            width: "250vw",
+            height: "50vh",
+            backgroundImage: "radial-gradient(farthest-corner at center -50%, white, transparent 70%)",
+            pointerEvents: "none",
         }
     },
     contentCanvasLight: {
@@ -179,7 +190,7 @@ const styles = theme => ({
             height: "100%",
             filter: "opacity(1)",
             animation: "$backgroundopacity 2.4s linear infinite",
-            backgroundImage: "radial-gradient(circle, #00000000, rgb(0 0 0 / 25%)), linear-gradient(to top, rgba(0, 0, 0, 0.66) 1%, transparent 6%), linear-gradient(rgb(255, 255, 255) -24%, rgba(255, 255, 255, 0.9) -12%, rgba(255, 255, 255, 0.8) -6%, rgba(255, 255, 255, 0.4) 2%, rgba(255, 255, 255, 0.2) 9%, transparent 100%), linear-gradient(rgba(255, 255, 255, 0.64) 0%, rgba(255, 255, 255, 0.4) 3%, rgba(255, 255, 255, 0.2) 8%, rgba(255, 255, 255, 0.1) 10%, transparent 16%)",
+            backgroundImage: "radial-gradient(circle, #00000000, rgb(0 0 0 / 25%)), linear-gradient(to top, rgba(0, 0, 0, 0.66) 1%, transparent 6%)",
             "@global": {
                 "@keyframes backgroundopacity": {
                     "0%": { filter: "opacity(1)" },
