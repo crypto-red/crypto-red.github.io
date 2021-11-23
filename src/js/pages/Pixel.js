@@ -722,6 +722,11 @@ class Pixel extends React.Component {
     _handle_load = (process) => {
 
         this.setState({_loading: true, _loading_process: process});
+
+        if(process === "image_load"){
+
+            actions.trigger_sfx("FullHorizonThrow");
+        }
     };
 
     _handle_load_complete = (process, data) => {
@@ -739,7 +744,7 @@ class Pixel extends React.Component {
         }else if(process === "image_load"){
 
             actions.trigger_snackbar(`DONE! We've imported an image with my now ${data.number_of_colors} colors.`);
-            actions.trigger_sfx("navigation_selection-complete-celebration");
+            actions.trigger_sfx("PrometheusVertical2");
             actions.jamy_update("happy");
             this._handle_edit_drawer_close();
         }

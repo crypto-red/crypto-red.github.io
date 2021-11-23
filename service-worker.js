@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v27.4";
+var CACHE = "network-or-cache-v27.5";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -10,19 +10,22 @@ self.addEventListener("install", function(evt) {
     cache.addAll([
       "/",
       "/404.html",
-      "/client.min.js?v=27.4",
+      "/client.min.js?v=27.5",
       "/src/fonts/NotoSans-Regular.ttf",
       "/src/fonts/NotoSansMono-Regular.ttf",
       "/src/fonts/Saira-Regular.ttf",
       "/src/sounds/sfx/md/alert_error-01.wav",
       "/src/sounds/sfx/md/navigation_transition-left.wav",
       "/src/sounds/sfx/md/alert_high-intensity.wav",
+      "/src/sounds/sfx/md/FullHorizonThrow.wav",
       "/src/sounds/sfx/md/navigation_transition-right.wav",
+      "/src/sounds/sfx/md/PrometheusVertical2.wav",
       "/src/sounds/sfx/md/hero_decorative-celebration-01.wav",
       "/src/sounds/sfx/md/state-change_confirm-down.wav",
       "/src/sounds/sfx/md/hero_decorative-celebration-02.wav",
       "/src/sounds/sfx/md/state-change_confirm-up.wav",
       "/src/sounds/sfx/md/hero_decorative-celebration-03.wav",
+      "/src/sounds/sfx/md/MazeImpact5.wav",
       "/src/sounds/sfx/md/ui_camera-shutter.wav",
       "/src/sounds/sfx/md/navigation_backward-selection-minimal.wav",
       "/src/sounds/sfx/md/ui_loading.wav",

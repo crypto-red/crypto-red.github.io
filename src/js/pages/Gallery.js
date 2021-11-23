@@ -711,7 +711,7 @@ class Gallery extends React.Component {
             `/gallery/${_search_sorting_modes[_search_sorting_tab_index]}/search/${encodeURIComponent(_search_mode_query)}/@${author}`:
             `/gallery/${_sorting_modes[_sorting_tab_index] || _sorting_modes[0]}/@${author}`;
         _history.push(new_pathname);
-        actions.trigger_sfx("alert_high-intensity");
+        actions.trigger_sfx("MazeImpact5");
     };
 
     _init_cell_measurements = (callback_function = () => {}) => {
@@ -854,7 +854,7 @@ class Gallery extends React.Component {
 
         if(!this.state._post_author && !this.state._post_permlink) {
 
-            actions.trigger_sfx("alert_high-intensity");
+            actions.trigger_sfx("MazeImpact5");
         }else {
 
             actions.trigger_sfx("navigation_transition-left");
@@ -974,7 +974,7 @@ class Gallery extends React.Component {
     _handle_pixel_dialog_post_closed = () => {
 
         this.setState({_post: null, _post_closed_at: Date.now()});
-        actions.trigger_sfx("state-change_confirm-down");
+        actions.trigger_sfx("HardVertical1", 0.6);
     };
 
     _handle_pixel_dialog_post_close = () => {
@@ -1166,7 +1166,7 @@ class Gallery extends React.Component {
         const { _history, _previous_pathname, pathname } = this.state;
 
         _history.push(pathname.replace(/\/\@[a-z0-9-\.]+$/gm, ""));
-        actions.trigger_sfx("state-change_confirm-down");
+        actions.trigger_sfx("HardVertical1", 0.6);
     };
 
     _open_editor = () => {
@@ -1317,7 +1317,7 @@ class Gallery extends React.Component {
                     on_next={this._next_current_post}
                     on_previous={this._previous_current_post}
                     on_image_load_complete={() => {setTimeout(() => {this._scroll_to_index()}, 5)}}
-                    keepMounted={false}
+                    keepMounted={true}
                     post={_post}
                     open={_post !== null && _post_author !== null && _post_permlink !== null}
                     onClose={this._handle_pixel_dialog_post_close}

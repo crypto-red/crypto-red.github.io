@@ -2158,9 +2158,11 @@ class CanvasPixels extends React.Component {
 
                 this._notify_size_change();
                 this._notify_layers_change();
-                this._notify_image_load_complete();
                 this._update_screen_zoom_ratio(true);
-                this.to_less_color(2/64);
+                this._to_less_color(2/64, () => {
+
+                    this._notify_image_load_complete();
+                });
             });
 
         }, 50);
@@ -5829,12 +5831,31 @@ class CanvasPixels extends React.Component {
 
     to_less_color = (threshold = 1/16, callback_function = () => {}) => {
 
-        if(this.props.onLoad) { this.props.onLoad("less_color"); }
 
-        this._to_less_color(threshold, (result) => {
+        if(this.props.onLoad) {
 
-            callback_function(result);
-            if(this.props.onLoadComplete) { this.props.onLoadComplete("less_color", result); }
+            if(threshold === "auto") {
+
+                this.props.onLoad("less_color_auto");
+            }else {
+
+                this.props.onLoad("less_color_auto");
+            }
+        }
+
+        this._to_less_color(threshold, (results) => {
+
+            callback_function(results);
+            if(this.props.onLoadComplete) {
+
+                if(threshold === "auto") {
+
+                    if(this.props.onLoadComplete) { this.props.onLoadComplete("less_color_auto", results); }
+                }else {
+
+                    if(this.props.onLoadComplete) { this.props.onLoadComplete("less_color_auto", results); }
+                }
+            }
         });
     }
 
@@ -6254,7 +6275,6 @@ class CanvasPixels extends React.Component {
 
     _to_less_color = (threshold, callback_function = () => {}) => {
 
-        if(this.props.onLoad) { this.props.onLoad("less_color_auto"); }
         const { _layer_index } = this.state;
         let { _s_pxls, _s_pxl_colors } = this.state;
 
@@ -6273,7 +6293,6 @@ class CanvasPixels extends React.Component {
             this.setState({_s_pxls, _s_pxl_colors, _last_action_timestamp: Date.now()}, () => {
 
                 this._update_canvas();
-                if(this.props.onLoadComplete) { this.props.onLoadComplete("less_color_auto", results); }
                 callback_function(results);
             });
         })();
@@ -7952,7 +7971,6 @@ class CanvasPixels extends React.Component {
             _hidden,
             show_image_only_before_canvas_set,
             has_shown_canvas_once,
-            perspective_coordinate,
             perspective,
             light,
             shadow_size,
@@ -7960,7 +7978,11 @@ class CanvasPixels extends React.Component {
             _kb,
         } = this.state;
 
+        let { perspective_coordinate } = this.state;
         const p = perspective;
+
+        perspective_coordinate[0] = is_mobile_or_tablet ? perspective_coordinate[0] * 1.5: perspective_coordinate[0];
+        perspective_coordinate[1] = is_mobile_or_tablet ? perspective_coordinate[1] * 1.5: perspective_coordinate[1];
 
         let background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
             {

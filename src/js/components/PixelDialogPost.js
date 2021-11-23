@@ -156,9 +156,6 @@ const styles = theme => ({
             linear-gradient(-90deg, rgb(255 255 255 / 10%) 0%,    rgb(255 255 255 / 10%) 5%, #ffffff00 5%, #ffffff00 100%),
             linear-gradient(  0deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 10%) 5%, #ffffff00 5%, #ffffff00 100%)`,
         backgroundSize: "20px 20px",
-        [theme.breakpoints.down("sm")]: {
-            contentVisibility: `hidden`,
-        },
     },
     contentCanvas: {
         width: "calc(100vw - 480px)",
@@ -1259,6 +1256,7 @@ class PixelDialogPost extends React.Component {
                     open={open}
                     closeAfterTransition={true}
                     PaperComponent={"div"}
+                    TransitionProps={{enter: false, exit: false}}
                     fullScreen
                     onClose={(event) => {this.props.onClose(event)}}
                     onExited={(event) => {this.props.onExited && this.props.onExited(event)}}
