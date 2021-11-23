@@ -1323,6 +1323,7 @@ class Pixel extends React.Component {
                                     dont_show_canvas_until_img_set={_is_pixel_dialog_post_edit_open}
                                     dont_show_canvas={_is_pixel_dialog_post_edit_open}
                                     tool={_tool}
+                                    canvas_wrapper_padding={32}
                                     hide_canvas_content={_hide_canvas_content}
                                     show_original_image_in_background={_show_original_image_in_background}
                                     show_transparent_image_in_background={_show_transparent_image_in_background}

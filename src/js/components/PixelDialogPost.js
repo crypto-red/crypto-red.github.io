@@ -101,9 +101,9 @@ const styles = theme => ({
             width: "80%",
             height: "24px",
             left: "10%",
-            top: "1px",
+            top: "0px",
             fontFamily: `"Saira"`,
-            content: `"ARTISTIC SITUATION N°"attr(dataid)`,
+            content: `"▼ [ARTISTIC SITUATION] N°"attr(dataid)" ▼"`,
             [theme.breakpoints.down("sm")]: {
                 content: `"ARTC. SITN. N°"attr(dataid)`,
             },
@@ -118,23 +118,11 @@ const styles = theme => ({
             width: "80%",
             height: "24px",
             left: "10%",
-            top: "1px",
-            background: "#ffffffaa 0%)",
+            top: "0px",
+            background: "#ffffff",
             content: `""`,
             textAlign: "center",
             clipPath: "polygon(0 0, 100% 0, 80% 100%, 20% 100%)",
-            animation: "$backgroundglitch 2.4s linear 0s infinite",
-            transition: "background .0s linear 0s",
-            "@global": {
-                "@keyframes backgroundglitch": {
-                    "0%": { background: "rgba(255, 255, 255, 1)" },
-                    "10%": { background: "rgba(255, 255, 255, .85)" },
-                    "50%": { background: "rgba(255, 255, 255, .80)" },
-                    "75%": { background: "rgba(255, 255, 255, 1)" },
-                    "85%": { background: "rgba(255, 255, 255, .90)" },
-                    "100%": { background: "rgba(255, 255, 255, .75)" },
-                }
-            }
         }
     },
     belowContent: {
@@ -151,11 +139,11 @@ const styles = theme => ({
         display: "inline-grid",
         fontFamily: `"Noto Sans Mono"`,
         backgroundImage:
-            `linear-gradient(-45deg, rgb(255 255 255) 0%,    rgb(255 255 255) 5%, #ffffff00 5%, #ffffff00 100%),
-            linear-gradient(  45deg, rgb(255 255 255) 0%, rgb(255 255 255) 5%, #ffffff00 5%, #ffffff00 100%),
-            linear-gradient(-90deg, rgb(255 255 255 / 10%) 0%,    rgb(255 255 255 / 10%) 5%, #ffffff00 5%, #ffffff00 100%),
-            linear-gradient(  0deg, rgb(255 255 255 / 10%) 0%, rgb(255 255 255 / 10%) 5%, #ffffff00 5%, #ffffff00 100%)`,
-        backgroundSize: "20px 20px",
+            `linear-gradient(-225deg, rgb(255 255 255) 0%,    rgb(255 255 255) 5%, #ffffff00 5%, #ffffff00 100%),
+            linear-gradient(  225deg, rgb(255 255 255) 0%, rgb(255 255 255) 5%, #ffffff00 5%, #ffffff00 100%),
+            linear-gradient(-90deg, rgb(255 255 255 / 25%) 0%,    rgb(255 255 255 / 25%) 5%, #ffffff00 5%, #ffffff00 100%),
+            linear-gradient(  0deg, rgb(255 255 255 / 25%) 0%, rgb(255 255 255 / 25%) 5%, #ffffff00 5%, #ffffff00 100%)`,
+        backgroundSize: "1em 1em",
     },
     contentCanvas: {
         width: "calc(100vw - 480px)",
@@ -175,7 +163,7 @@ const styles = theme => ({
             top: "-30vh",
             width: "250vw",
             height: "50vh",
-            backgroundImage: "radial-gradient(farthest-corner at center -50%, white, transparent 70%)",
+            backgroundImage: "radial-gradient(farthest-corner at center -50%, rgba(255, 255, 255, 0.75) 20%, transparent 70%)",
             pointerEvents: "none",
         }
     },
@@ -1251,8 +1239,8 @@ class PixelDialogPost extends React.Component {
             linear-gradient(225deg, ${_color_palette.average_color_zones[1]}, transparent 66%), 
             linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 66%),
             linear-gradient(rgba(255, 255, 255, 0.29), rgba(0, 0, 0, 0.7)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))`,
-            backgroundBlendMode: "hard-light",
-        }: {backgroundBlendMode: "hard-light", backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.29), rgba(0, 0, 0, 0.7)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))`,};
+            backgroundBlendMode: "multiply",
+        }: {backgroundBlendMode: "multiply", backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.29), rgba(0, 0, 0, 0.7)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))`,};
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
@@ -1276,8 +1264,9 @@ class PixelDialogPost extends React.Component {
                         {
                             !edit && post &&
                             <div className={classes.belowContent} style={{color: "white"}}>
-                                <span>$_WHAT? Who's there...</span>
-                                <span>$_ARTC_SITUATION_DATA: TRUE</span>
+                                <span>$_U_agent? N°{window.navigator.userAgent}</span>
+                                <span>$_POST_SERIAL? N°{post.id}</span>
+                                <span>$_ARTISTIC_SITUATION_TYPE: PIXEL ART</span>
                                 <span>$_VOTES: {vote_number}</span>
                                 {
                                     vote_number > 0 &&
@@ -1289,17 +1278,32 @@ class PixelDialogPost extends React.Component {
                                                 </span>
                                 }
                                 <span>$_AUTHOR: @{post.author}</span>
+                                {
+                                    post.author === "mes" &&
+                                        <pre>{
+                                            `@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                                            @                            @@@@@@%((((((((((((((((
+                                            @                           &@@@@@@(((((((((((((((((
+                                            @                           @@@@@@((((((((((((((((((
+                                            @                          @@@@@@(((((((((((((((((((
+                                            @               &@@@      @@@@@@#(((((((((((((((((((
+                                            @          @@@@@@@@@@    ,@@@@@@((((((((((((((((((((
+                                            @          .@@@@@@@@@@   @@@@@@(((((((((((((((((((((
+                                            @                @@@@@@.@@@@@@((((((((((((((((((((((
+                                            @                 @@@@@@@@@@@#((((((((((((((((((((((
+                                            @                  @@@@@@@@@@(((((((((((((((((((((((`
+                                        }</pre>
+                                }
                                 <span>$_TAGS: #{tags.join(", #").toUpperCase()}</span>
                                 <span>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span>
                                 <span>$_V_PER_COL: {price_formatter(balance_fiat / layer.colors.length, selected_currency, selected_locales_code)}</span>
                                 <span>$_COLORS: {layer.colors.length}</span>
                                 <span>$_HAS_TRANSLATED_[{document.documentElement.lang.toUpperCase()}]: {has_translated ? "TRUE": "FALSE"}</span>
                                 <span>$_IS_TRANSLATING_[{document.documentElement.lang.toUpperCase()}]: {is_translating ? "TRUE": "FALSE"}</span>
-                                <span>$_WIN_WIDTH: {_window_width}</span>
+                                <span>$_WIN_WIDTH: {_window_width}px</span>
                                 <span>$_AI_COMPUTING: {_is_prediction_loading ? "TRUE": "FALSE"}</span>
-                                <span>$NFT_TESTS: For chimpanzee and punks they show current attention.<br/>[SUGG.]: prepare moving to humanoid trials to speed up artistic response.</span>
-                                <span>Please remain CALM... Outer dark project [NAMEC.] Black.Ops. (Decentralize Everything)</span>
-                                <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>{Date.now()}</span>
+                                <span>$NFT_TESTS: For chimpanzee and punks they show current attention.<br/>[SUGG.]: prepare moving to humanoid trials to speed up artistic process. <br />Please remain CALM... Outer dark project [NAMEC.] Black.Ops. (Decentralize Everything)</span>
+                                <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>FORCE IS HACKED {Date.now()}</span>
                             </div>
                         }
                         <div className={classes.content}>
@@ -1616,7 +1620,7 @@ class PixelDialogPost extends React.Component {
                                         </CardContent>
                                     </div>
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage} dataid={post.id} style={{filter: "brightness(1.25)", ...color_box_shadows}}>
+                                <div className={classes.contentImage} dataid={post.id} style={{filter: "brightness(1)", ...color_box_shadows}}>
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
@@ -1626,7 +1630,7 @@ class PixelDialogPost extends React.Component {
                                             shadow_size={9}
                                             shadow_color={_color_palette.background_color}
                                             canvas_wrapper_padding={32}
-                                            canvas_wrapper_background_color={"#ffffffff"}
+                                            canvas_wrapper_background_color={"#ffffff33"}
                                             pxl_width={_width}
                                             pxl_height={_height}
                                             key={"canvas-post-edit"}

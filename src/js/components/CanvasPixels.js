@@ -398,7 +398,7 @@ class CanvasPixels extends React.Component {
             ".Canvas-Pixels-Cover::after {" +
                 `top: 0;
                 left: 0;
-                width: calc(100% - 12px);
+                width: calc(60% - 12px);
                 content: ""attr(datatexttop)"";
                 padding: 0px 0px 8px 12px;
                 position: fixed;
@@ -410,8 +410,8 @@ class CanvasPixels extends React.Component {
             "}" +
             ".Canvas-Pixels-Cover::before {" +
                 `bottom: 0;
-                left: 0;
-                width: calc(100% - 12px);
+                right: 0;
+                width: calc(80% - 12px);
                 text-align: right;
                 content: ""attr(datatextbottom)"";
                 padding: 8px 12px 0px 0px;
@@ -7198,11 +7198,11 @@ class CanvasPixels extends React.Component {
 
                 const n_color_rgba = this._get_rgba_from_hex(color);
                 const n_color_hsl = this._rgb_to_hsl(...n_color_rgba);
-                const n_color_rgb = this._hsl_to_rgb(n_color_hsl[0], 75, 20);
+                const n_color_rgb = this._hsl_to_rgb(n_color_hsl[0], 60, 20);
                 const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 96);
 
-                const x =  this._filter_pixels(".Xpro", 1, [], [new_n_color], false)[1][0];
-                return this._filter_pixels(".Xpro", 1, [], [x], false)[1][0];
+                const x =  this._filter_pixels("Old photo", 1, [], [new_n_color], false)[1][0];
+                return this._filter_pixels(".Hefe", 1, [], [x], false)[1][0];
             };
 
             let average_color_zones = [];
@@ -7984,7 +7984,7 @@ class CanvasPixels extends React.Component {
         } = this.state;
 
         let { perspective_coordinate } = this.state;
-        const p = is_mobile_or_tablet ? perspective * scale * 3.5: perspective;
+        const p = is_mobile_or_tablet ? perspective * 1.5 / 4: perspective / 4;
 
         let background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
             {
@@ -8014,7 +8014,7 @@ class CanvasPixels extends React.Component {
         const canvas_wrapper_width = Math.round(pxl_width * _screen_zoom_ratio * scale);
         const canvas_wrapper_height = Math.round(pxl_height * _screen_zoom_ratio * scale);
 
-        const l = is_mobile_or_tablet ? light * 1.5: light / scale;
+        const l = is_mobile_or_tablet ? light * p * 1.5 * 2: light * p * 2;
 
         const filter_force = (1 - (p/200) * l) + (
                                     (
@@ -8022,6 +8022,7 @@ class CanvasPixels extends React.Component {
                                         l * (Math.floor((perspective_coordinate[0]+p)*10) / (p*3*10)) / 2
                                     ) / (3*p) * (p/100));
 
+        const padding = Math.floor(canvas_wrapper_padding / window.devicePixelRatio * scale);
         return (
             <div ref={this._set_canvas_container_ref} draggable={"false"} style={{boxSizing: "border-box", position: "relative", overflow: "hidden", transform: `translateZ(0px)`, touchAction: "none", pointerEvents: "none", filter: `drop-shadow(inset 0 0 ${shadow_depth*shadow_size}px ${shadow_color})`}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
@@ -8053,18 +8054,21 @@ class CanvasPixels extends React.Component {
                                  borderWidth: canvas_wrapper_border_width,
                                  borderStyle: "solid",
                                  borderColor: "#fff",
-                                 backgroundColor: canvas_wrapper_background_color,
+                                 /*backgroundColor: canvas_wrapper_background_color,*/
+                                 backgroundImage: `linear-gradient(to right, #FAFAFA ${padding/2.5}px, ${canvas_wrapper_background_color} ${padding/2.5}px)`, //, repeating-linear-gradient(-45deg, rgba(255, 255, 255, .75) 0px, rgba(255, 255, 255, .75) ${padding}px, rgba(255, 255, 255, 0.5) ${padding}px, rgba(255, 255, 255, 0.5) ${padding*2}px)`,*/
                                  borderRadius: canvas_wrapper_border_radius,
-                                 padding: Math.floor(canvas_wrapper_padding / window.devicePixelRatio * scale),
+                                 padding: padding,
                                  position: "fixed",
+                                 clipPath: `polygon(calc(100% - 10%) 0%, 100% 0%, 100% 200%, ${padding * 1.5}px 100%, 0% calc(100% - ${padding * 1.5}px), 0% -100%, calc(100% - 25%) 0%, calc(100% - 25%) ${padding}px, calc(100% - 15%) ${padding}px)`,
                                  width: canvas_wrapper_width,
                                  height: canvas_wrapper_height,
-                                 transform: `rotateZ(0deg) rotateX(${(perspective_coordinate[0] / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] / scale).toFixed(2)}deg)`,
+                                 transform: `rotateZ(0deg) rotateX(${(perspective_coordinate[0] * p / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] * p / scale).toFixed(2)}deg)`,
                                  transformOrigin: "center middle",
                                  boxSizing: "content-box",
                                  overflow: "visible",
                                  touchAction: "none",
                                  pointerEvents: "none",
+                                 filter: `drop-shadow(0px, 0px, ${padding/2.5}px)`,
                              }}
                              ref={this._set_canvas_wrapper_ref}>
                             <canvas
@@ -8088,16 +8092,15 @@ class CanvasPixels extends React.Component {
                             {
                                 Boolean(p) &&
                                 <div className={"Canvas-Pixels-Cover"}
-                                    datatexttop={`D[${pxl_width}, ${pxl_height}]px // S[${_kb.toFixed(2)}]Kb`}
-                                    datatextbottom={`Z[${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}]x // R[${(perspective_coordinate[0] / scale).toFixed(2)}, ${(perspective_coordinate[1] / scale).toFixed(2)}]deg`}
-
+                                    datatexttop={`█▶ D[${pxl_width}, ${pxl_height}]px // S[${_kb.toFixed(2)}]Kb`}
+                                    datatextbottom={`ΔZ[${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}]x // ΔR[${(perspective_coordinate[0] * p / scale).toFixed(2)}, ${(perspective_coordinate[1] * p / scale).toFixed(2)}]° ◀█`}
                                      draggable={"false"}
                                      style={{
                                          backgroundImage: p ? `linear-gradient(to left, rgba(
                                     ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
                                     ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
                                     ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
-                                    ${(Math.abs(perspective_coordinate[1]) / p / 6 * 0.225 * (p*l/100)).toFixed(2)}
+                                    ${(Math.abs(perspective_coordinate[1]) / p / 6 * 0.3 * (p*l/100)).toFixed(2)}
                                     ), rgba(
                                     ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
                                     ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
@@ -8112,7 +8115,7 @@ class CanvasPixels extends React.Component {
                                     ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
                                     ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
                                     ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
-                                    ${(Math.abs(perspective_coordinate[0]) / p / 6 * 0.15 * (p*l/100)).toFixed(2)}
+                                    ${(Math.abs(perspective_coordinate[0]) / p / 6 * 1 * (p*l/100)).toFixed(2)}
                                     ))`: "none",
                                          borderRadius: canvas_wrapper_border_radius,
                                          padding: 0,
