@@ -1245,7 +1245,6 @@ class PixelDialogPost extends React.Component {
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
-        const warn_base64 = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMTAgOTAiIHdpZHRoPSIyODAiIGhlaWdodD0iMTIwIiB4bWxuczp2PSJodHRwczovL3ZlY3RhLmlvL25hbm8iPjxkZWZzPjxjbGlwUGF0aCBpZD0iQSI+PHBhdGggZD0iTTAgMGgyMTB2OTBIMHoiLz48L2NsaXBQYXRoPjwvZGVmcz48ZyBjbGlwLXBhdGg9InVybCgjQSkiIGZpbGw9IiNmZmYiPjxwYXRoIGQ9Ik0zMS4xMjUtOS45NDVMNTIuOTQtLjAyIDYuNDQ1IDEwMi4xNzktMTUuMzcgOTIuMjU0em0zNC4xNTMtLjAwMkw4Ny4wOTMtLjAyMiA0MC41OTkgMTAyLjE3N2wtMjEuODE1LTkuOTI1em0zNC4xNTMtLjAwMmwyMS44MTUgOS45MjUtNDYuNDk1IDEwMi4xOTgtMjEuODE1LTkuOTI1em0zNC4xNTMtLjAwMmwyMS44MTUgOS45MjUtNDYuNDk1IDEwMi4xOTgtMjEuODE1LTkuOTI1em0zNC4xNTMtLjAwMmwyMS44MTUgOS45MjUtNDYuNDk1IDEwMi4xOTgtMjEuODE1LTkuOTI1em0zNC4xNTQtLjAwMkwyMjMuNzA2LS4wM2wtNDYuNDk1IDEwMi4xOTgtMjEuODE1LTkuOTI1eiIvPjwvZz48L3N2Zz4=";
 
         return (
             <div>
@@ -1289,7 +1288,6 @@ class PixelDialogPost extends React.Component {
                                 <span>$_AI_COMPUTING: {_is_prediction_loading ? "TRUE": "FALSE"}</span>
                                 <span>$NFT_TESTS: For chimpanzee and punks they show current attention.<br/>[SUGG.]: prepare moving to humanoid trials to speed up artistic response.</span>
                                 <span>Please remain CALM... Outer dark project [NAMEC.] Black.Ops. (Decentralize Everything)</span>
-                                <img src={warn_base64} style={{opacity: 0.5, position: "absolute", top: "20%", left: "15%", transform: "translate(-50%, -50%) scale(0.5)"}}/>
                                 <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>{Date.now()}</span>
                             </div>
                         }
@@ -1613,16 +1611,16 @@ class PixelDialogPost extends React.Component {
                                     </IconButton>
                                     <div className={classes.contentCanvasLight}>
                                         <CanvasPixels
-                                            canvas_wrapper_border_radius={4}
+                                            canvas_wrapper_border_radius={2}
                                             shadow_size={9}
                                             shadow_color={_color_palette.background_color}
-                                            canvas_wrapper_padding={14}
-                                            canvas_wrapper_background_color={"#ffffffaa"}
+                                            canvas_wrapper_padding={32}
+                                            canvas_wrapper_background_color={"#ffffffff"}
                                             pxl_width={_width}
                                             pxl_height={_height}
                                             key={"canvas-post-edit"}
                                             default_size={1000}
-                                            default_scale={0.6}
+                                            default_scale={0.666}
                                             no_actions={true}
                                             show_original_image_in_background={false}
                                             dont_show_canvas_until_img_set={true}
@@ -1634,13 +1632,11 @@ class PixelDialogPost extends React.Component {
                                             tool={"MOVE"}
                                             show_transparent_image_in_background={false}
                                             onContextMenu={(e) => {e.preventDefault()}}
-                                            onRightClick={() => {if(this.props.on_next){this.props.on_next()}}}
                                             onSizeChange={this._handle_size_change}
                                             onLayersChange={this._handle_layers_change}
                                             perspective={5}
                                             light={7}
                                             onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
-                                            onCrossMiddle={(direction, canvas_event_target) => {this._swiped(direction, canvas_event_target)}}
                                             ref={this._set_canvas_ref}
                                         />
                                     </div>

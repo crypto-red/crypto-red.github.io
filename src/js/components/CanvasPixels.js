@@ -357,7 +357,8 @@ class CanvasPixels extends React.Component {
             ".Canvas-Pixels, .Canvas-Wrapper-MoveXY, .Canvas-Wrapper, .Canvas-Pixels-Cover {" +
                 "image-rendering: pixelated;" +
                 "touch-action: none;" +
-                "pointer-events: none;"+
+                "pointer-events: none;" +
+                "backface-visibility: hidden;" +
             "}";
 
         const canvas_wrapper_css =
@@ -622,7 +623,7 @@ class CanvasPixels extends React.Component {
                 break;
         }
 
-        if(is_mobile_or_tablet) {
+        if(is_mobile_or_tablet && this.state.p) {
 
             this.setState({perspective_coordinate: [y, x]}, () => {
 
@@ -633,7 +634,7 @@ class CanvasPixels extends React.Component {
 
     set_perspective_coordinate = (array) => {
 
-        if(!is_mobile_or_tablet) {
+        if(!is_mobile_or_tablet && this.state.p) {
 
             this.setState({perspective_coordinate: array}, () => {
 
@@ -8084,8 +8085,8 @@ class CanvasPixels extends React.Component {
                             {
                                 Boolean(p) &&
                                 <div className={"Canvas-Pixels-Cover"}
-                                    datatexttop={`W(${pxl_width}) H(${pxl_height}) // ${_kb.toFixed(2)}Kb`}
-                                    datatextbottom={`z(${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}) // r(${(perspective_coordinate[0] / scale).toFixed(2)}, ${(perspective_coordinate[1] / scale).toFixed(2)})`}
+                                    datatexttop={`D[${pxl_width}, ${pxl_height}]px // S[${_kb.toFixed(2)}]Kb`}
+                                    datatextbottom={`Z[${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}]x // R[${(perspective_coordinate[0] / scale).toFixed(2)}, ${(perspective_coordinate[1] / scale).toFixed(2)}]deg`}
 
                                      draggable={"false"}
                                      style={{
