@@ -615,13 +615,13 @@ class CanvasPixels extends React.Component {
                 break;
             case "landscape-primary":
 
-                x = y;
-                y = -previous_x;
+                x = -y;
+                y = previous_x;
                 break;
             case "landscape-secondary":
 
-                x = -y;
-                y = previous_x;
+                x = y;
+                y = -previous_x;
                 break;
         }
 
@@ -7984,7 +7984,7 @@ class CanvasPixels extends React.Component {
         } = this.state;
 
         let { perspective_coordinate } = this.state;
-        const p = is_mobile_or_tablet ? perspective * 2.25: perspective;
+        const p = is_mobile_or_tablet ? perspective * 3.5: perspective;
 
         let background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
             {
@@ -8014,7 +8014,7 @@ class CanvasPixels extends React.Component {
         const canvas_wrapper_width = Math.round(pxl_width * _screen_zoom_ratio * scale);
         const canvas_wrapper_height = Math.round(pxl_height * _screen_zoom_ratio * scale);
 
-        const l = light / scale;
+        const l = is_mobile_or_tablet ? light / scale * 1.5: light / scale;
 
         const filter_force = (1 - (p/200) * l) + (
                                     (

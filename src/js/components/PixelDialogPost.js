@@ -1634,6 +1634,7 @@ class PixelDialogPost extends React.Component {
                                             tool={"MOVE"}
                                             show_transparent_image_in_background={false}
                                             onContextMenu={(e) => {e.preventDefault()}}
+                                            onRightClick={() => {if(this.props.on_next){this.props.on_next()}}}
                                             onSizeChange={this._handle_size_change}
                                             onLayersChange={this._handle_layers_change}
                                             perspective={5}
