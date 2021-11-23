@@ -1245,6 +1245,7 @@ class PixelDialogPost extends React.Component {
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
+        const warn_base64 = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMTAgOTAiIHdpZHRoPSIyODAiIGhlaWdodD0iMTIwIiB4bWxuczp2PSJodHRwczovL3ZlY3RhLmlvL25hbm8iPjxkZWZzPjxjbGlwUGF0aCBpZD0iQSI+PHBhdGggZD0iTTAgMGgyMTB2OTBIMHoiLz48L2NsaXBQYXRoPjwvZGVmcz48ZyBjbGlwLXBhdGg9InVybCgjQSkiIGZpbGw9IiNmZmYiPjxwYXRoIGQ9Ik0zMS4xMjUtOS45NDVMNTIuOTQtLjAyIDYuNDQ1IDEwMi4xNzktMTUuMzcgOTIuMjU0em0zNC4xNTMtLjAwMkw4Ny4wOTMtLjAyMiA0MC41OTkgMTAyLjE3N2wtMjEuODE1LTkuOTI1em0zNC4xNTMtLjAwMmwyMS44MTUgOS45MjUtNDYuNDk1IDEwMi4xOTgtMjEuODE1LTkuOTI1em0zNC4xNTMtLjAwMmwyMS44MTUgOS45MjUtNDYuNDk1IDEwMi4xOTgtMjEuODE1LTkuOTI1em0zNC4xNTMtLjAwMmwyMS44MTUgOS45MjUtNDYuNDk1IDEwMi4xOTgtMjEuODE1LTkuOTI1em0zNC4xNTQtLjAwMkwyMjMuNzA2LS4wM2wtNDYuNDk1IDEwMi4xOTgtMjEuODE1LTkuOTI1eiIvPjwvZz48L3N2Zz4=";
 
         return (
             <div>
@@ -1288,6 +1289,8 @@ class PixelDialogPost extends React.Component {
                                 <span>$_AI_COMPUTING: {_is_prediction_loading ? "TRUE": "FALSE"}</span>
                                 <span>$NFT_TESTS: For chimpanzee and punks they show current attention.<br/>[SUGG.]: prepare moving to humanoid trials to speed up artistic response.</span>
                                 <span>Please remain CALM... Outer dark project [NAMEC.] Black.Ops. (Decentralize Everything)</span>
+                                <img src={warn_base64} style={{position: "absolute", top: "20%", left: "15%", transform: "translate(-50%, -50%) scale(0.5)"}}/>
+                                <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>{Date.now()}</span>
                             </div>
                         }
                         <div className={classes.content}>

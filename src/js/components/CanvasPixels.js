@@ -616,12 +616,12 @@ class CanvasPixels extends React.Component {
             case "landscape-primary":
 
                 x = y;
-                y = previous_x;
+                y = -previous_x;
                 break;
             case "landscape-secondary":
 
                 x = -y;
-                y = -previous_x;
+                y = previous_x;
                 break;
         }
 
@@ -7984,7 +7984,7 @@ class CanvasPixels extends React.Component {
         } = this.state;
 
         let { perspective_coordinate } = this.state;
-        const p = is_mobile_or_tablet ? perspective * 1.5: perspective;
+        const p = is_mobile_or_tablet ? perspective * 2.25: perspective;
 
         let background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
             {
@@ -8088,7 +8088,7 @@ class CanvasPixels extends React.Component {
                                 Boolean(p) &&
                                 <div className={"Canvas-Pixels-Cover"}
                                     datatexttop={`W(${pxl_width}) H(${pxl_height}) // ${_kb.toFixed(2)}Kb`}
-                                    datatextbottom={`s0(${_screen_zoom_ratio.toFixed(2)}) s1(${scale.toFixed(2)}) // rX(${(perspective_coordinate[0] / scale).toFixed(2)}) rY(${(perspective_coordinate[1] / scale).toFixed(2)})`}
+                                    datatextbottom={`z0(${_screen_zoom_ratio.toFixed(2)}) z1(${scale.toFixed(2)}) // rX(${(perspective_coordinate[0] / scale).toFixed(2)}) rY(${(perspective_coordinate[1] / scale).toFixed(2)})`}
 
                                      draggable={"false"}
                                      style={{
