@@ -354,11 +354,8 @@ class CanvasPixels extends React.Component {
             "}";
 
         const pixelated_css =
-            ".Canvas-Pixels, .Canvas-Wrapper-MoveXY, .Canvas-Wrapper, .MuiTouchRipple-root {" +
-                "image-rendering: optimizeSpeed;" +
-                "image-rendering: -o-pixelated;" +
+            ".Canvas-Pixels, .Canvas-Wrapper-MoveXY, .Canvas-Wrapper, .Canvas-Pixels-Cover {" +
                 "image-rendering: pixelated;" +
-                "-ms-touch-action: none;" +
                 "touch-action: none;" +
                 "pointer-events: none;"+
             "}";
@@ -7984,7 +7981,7 @@ class CanvasPixels extends React.Component {
         } = this.state;
 
         let { perspective_coordinate } = this.state;
-        const p = is_mobile_or_tablet ? perspective * 3.5: perspective;
+        const p = is_mobile_or_tablet ? perspective * scale * 3.5: perspective;
 
         let background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
             {
@@ -8014,7 +8011,7 @@ class CanvasPixels extends React.Component {
         const canvas_wrapper_width = Math.round(pxl_width * _screen_zoom_ratio * scale);
         const canvas_wrapper_height = Math.round(pxl_height * _screen_zoom_ratio * scale);
 
-        const l = is_mobile_or_tablet ? light / scale * 1.5: light / scale;
+        const l = is_mobile_or_tablet ? light * 1.5: light / scale;
 
         const filter_force = (1 - (p/200) * l) + (
                                     (
@@ -8088,7 +8085,7 @@ class CanvasPixels extends React.Component {
                                 Boolean(p) &&
                                 <div className={"Canvas-Pixels-Cover"}
                                     datatexttop={`W(${pxl_width}) H(${pxl_height}) // ${_kb.toFixed(2)}Kb`}
-                                    datatextbottom={`z0(${_screen_zoom_ratio.toFixed(2)}) z1(${scale.toFixed(2)}) // rX(${(perspective_coordinate[0] / scale).toFixed(2)}) rY(${(perspective_coordinate[1] / scale).toFixed(2)})`}
+                                    datatextbottom={`z(${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}) // r(${(perspective_coordinate[0] / scale).toFixed(2)}, ${(perspective_coordinate[1] / scale).toFixed(2)})`}
 
                                      draggable={"false"}
                                      style={{

@@ -1289,7 +1289,7 @@ class PixelDialogPost extends React.Component {
                                 <span>$_AI_COMPUTING: {_is_prediction_loading ? "TRUE": "FALSE"}</span>
                                 <span>$NFT_TESTS: For chimpanzee and punks they show current attention.<br/>[SUGG.]: prepare moving to humanoid trials to speed up artistic response.</span>
                                 <span>Please remain CALM... Outer dark project [NAMEC.] Black.Ops. (Decentralize Everything)</span>
-                                <img src={warn_base64} style={{position: "absolute", top: "20%", left: "15%", transform: "translate(-50%, -50%) scale(0.5)"}}/>
+                                <img src={warn_base64} style={{opacity: 0.5, position: "absolute", top: "20%", left: "15%", transform: "translate(-50%, -50%) scale(0.5)"}}/>
                                 <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>{Date.now()}</span>
                             </div>
                         }
