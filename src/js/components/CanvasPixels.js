@@ -597,6 +597,8 @@ class CanvasPixels extends React.Component {
 
         let x = event.accelerationIncludingGravity.x;
         x = Math.max(-10, Math.min(10, x));
+        let previous_x = x;
+
         let y = event.accelerationIncludingGravity.y;
         y = Math.max(-10, Math.min(10, y));
 
@@ -611,12 +613,14 @@ class CanvasPixels extends React.Component {
                 y = -y;
                 break;
             case "landscape-primary":
+
                 x = y;
-                y = x;
+                y = previous_x;
                 break;
             case "landscape-secondary":
+
                 x = -y;
-                y = -x;
+                y = -previous_x;
                 break;
         }
 
@@ -7979,10 +7983,7 @@ class CanvasPixels extends React.Component {
         } = this.state;
 
         let { perspective_coordinate } = this.state;
-        const p = perspective;
-
-        perspective_coordinate[0] = is_mobile_or_tablet ? perspective_coordinate[0] * 1.5: perspective_coordinate[0];
-        perspective_coordinate[1] = is_mobile_or_tablet ? perspective_coordinate[1] * 1.5: perspective_coordinate[1];
+        const p = is_mobile_or_tablet ? perspective * 1.5: perspective;
 
         let background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
             {
