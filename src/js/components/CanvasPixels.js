@@ -49,8 +49,6 @@ window.mobileAndTabletCheck = function() {
 };
 
 let is_mobile_or_tablet = window.mobileAndTabletCheck();
-var screen = window.screen;
-var orientation = (screen.orientation || {}).type || screen.mozOrientation || screen.msOrientation;
 
 
 setInterval(function(){
@@ -401,7 +399,7 @@ class CanvasPixels extends React.Component {
                 `top: 0;
                 left: 0;
                 width: calc(100% - 12px);
-                content: ""attr(datatext)"";
+                content: ""attr(datatexttop)"";
                 padding: 0px 0px 8px 12px;
                 position: fixed;
                 transform: translate(0px, -100%);
@@ -415,7 +413,7 @@ class CanvasPixels extends React.Component {
                 left: 0;
                 width: calc(100% - 12px);
                 text-align: right;
-                content: "N_F_T = PXL_ART extension of ARTC_SITN";
+                content: ""attr(datatextbottom)"";
                 padding: 8px 12px 0px 0px;
                 position: fixed;
                 transform: translate(0px, 100%);
@@ -594,6 +592,9 @@ class CanvasPixels extends React.Component {
     }
 
     _handle_motion_changes = (event) => {
+
+        let screen = window.screen;
+        let orientation = (screen.orientation || {}).type || screen.mozOrientation || screen.msOrientation;
 
         let x = event.accelerationIncludingGravity.x;
         x = Math.max(-10, Math.min(10, x));
@@ -8086,8 +8087,10 @@ class CanvasPixels extends React.Component {
                             {
                                 Boolean(p) &&
                                 <div className={"Canvas-Pixels-Cover"}
-                                    datatext={`${pxl_width}:${pxl_height} // x${_screen_zoom_ratio.toFixed(2)} ${scale.toFixed(2)}x // ${_kb.toFixed(2)}Kb`}
-                                    draggable={"false"}
+                                    datatexttop={`W(${pxl_width}) H(${pxl_height}) // ${_kb.toFixed(2)}Kb`}
+                                    datatextbottom={`s0(${_screen_zoom_ratio.toFixed(2)}) s1(${scale.toFixed(2)}) // rX(${(perspective_coordinate[0] / scale).toFixed(2)}) rY(${(perspective_coordinate[1] / scale).toFixed(2)})`}
+
+                                     draggable={"false"}
                                      style={{
                                          backgroundImage: p ? `linear-gradient(to left, rgba(
                                     ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},

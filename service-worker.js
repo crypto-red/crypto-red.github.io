@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v27.6";
+var CACHE = "network-or-cache-v27.7";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -10,7 +10,7 @@ self.addEventListener("install", function(evt) {
     cache.addAll([
       "/",
       "/404.html",
-      "/client.min.js?v=27.6",
+      "/client.min.js?v=27.7",
       "/src/fonts/NotoSans-Regular.ttf",
       "/src/fonts/NotoSansMono-Regular.ttf",
       "/src/fonts/Saira-Regular.ttf",
