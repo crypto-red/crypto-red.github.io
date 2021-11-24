@@ -627,8 +627,9 @@ class CanvasPixels extends React.Component {
 
         if(is_mobile_or_tablet && this.state.perspective) {
 
-            this.setState({perspective_coordinate: [y, x]}, () => {
+            this.setState({perspective_coordinate: [x, y]}, () => {
 
+                this._notify_perspective_coordinate_changes([x, y]);
                 this._request_force_update(false, true);
             });
         }
@@ -640,8 +641,17 @@ class CanvasPixels extends React.Component {
 
             this.setState({perspective_coordinate: array}, () => {
 
+                this._notify_perspective_coordinate_changes(array);
                 this._request_force_update(false, true);
             });
+        }
+    };
+
+    _notify_perspective_coordinate_changes = (array) => {
+
+        if(this.props.onPerspectiveCoordinateChanges) {
+
+            this.props.onPerspectiveCoordinateChanges(array);
         }
     };
 
@@ -3530,7 +3540,7 @@ class CanvasPixels extends React.Component {
             const x = perspective * ((pos_x_in_canvas_container - pos.canvas_container.width / 2) / (pos.canvas_container.width / 2));
             const y = -perspective * ((pos_y_in_canvas_container - pos.canvas_container.height / 2) / (pos.canvas_container.height / 2));
 
-            this.set_perspective_coordinate([y < 0 ? y : 2 * y, x > 5 ? x : x * 2]);
+            this.set_perspective_coordinate([x > 5 ? x : x * 2, y < 0 ? y : 2 * y]);
         }
     }
 
@@ -8018,8 +8028,8 @@ class CanvasPixels extends React.Component {
 
         const filter_force = (1 - (p/200) * l) + (
                                     (
-                                        l * (3*p - Math.floor((perspective_coordinate[1]+p)*10) / (p*3*10)) / 2 +
-                                        l * (Math.floor((perspective_coordinate[0]+p)*10) / (p*3*10)) / 2
+                                        l * (3*p - Math.floor((perspective_coordinate[0]+p)*10) / (p*3*10)) / 2 +
+                                        l * (Math.floor((perspective_coordinate[1]+p)*10) / (p*3*10)) / 2
                                     ) / (3*p) * (p/100));
 
         const padding = Math.floor(canvas_wrapper_padding / window.devicePixelRatio * scale);
@@ -8062,7 +8072,7 @@ class CanvasPixels extends React.Component {
                                  clipPath: `polygon(calc(100% - 10%) 0%, 100% 0%, 100% 200%, ${padding}px 100%, 0% calc(100% - ${padding}px), 0% -100%, calc(100% - 25%) 0%, calc(100% - 25%) ${padding / 2.5}px, calc(100% - 15%) ${padding / 2.5}px)`,
                                  width: canvas_wrapper_width,
                                  height: canvas_wrapper_height,
-                                 transform: `rotateZ(0deg) rotateX(${(perspective_coordinate[0] * p / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] * p / scale).toFixed(2)}deg)`,
+                                 transform: `rotateZ(0deg) rotateX(${(perspective_coordinate[1] * p / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[0] * p / scale).toFixed(2)}deg)`,
                                  transformOrigin: "center middle",
                                  boxSizing: "content-box",
                                  overflow: "visible",
@@ -8093,29 +8103,29 @@ class CanvasPixels extends React.Component {
                                 Boolean(p) &&
                                 <div className={"Canvas-Pixels-Cover"}
                                     datatexttop={`▶ D[${pxl_width}, ${pxl_height}]px // S[${_kb.toFixed(2)}]Kb`}
-                                    datatextbottom={`ΔZ[${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}]x // ΔR[${(perspective_coordinate[0] * p / scale).toFixed(2)}, ${(perspective_coordinate[1] * p / scale).toFixed(2)}]° ◀`}
+                                    datatextbottom={`ΔZ[${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}]x // ΔR[${(perspective_coordinate[1] * p / scale).toFixed(2)}, ${(perspective_coordinate[0] * p / scale).toFixed(2)}]° ◀`}
                                      draggable={"false"}
                                      style={{
                                          backgroundImage: p ? `linear-gradient(to left, rgba(
-                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
-                                    ${(Math.abs(perspective_coordinate[1]) / p / 6 * 0.3 * (p*l/100)).toFixed(2)}
+                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
+                                    ${(Math.abs(perspective_coordinate[0]) / p / 6 * 0.3 * (p*l/100)).toFixed(2)}
                                     ), rgba(
-                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                    ${255 - Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
-                                    ${(Math.abs(perspective_coordinate[1]) / p / 6 * 3 * (p*l/100)).toFixed(2)}
+                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
+                                    ${(Math.abs(perspective_coordinate[0]) / p / 6 * 3 * (p*l/100)).toFixed(2)}
                                     )), linear-gradient(to top, rgba(
-                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
-                                    ${(Math.abs(perspective_coordinate[0]) / p / 6 * 2 * (p*l/100)).toFixed(2)}
+                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
+                                    ${(Math.abs(perspective_coordinate[1]) / p / 6 * 2 * (p*l/100)).toFixed(2)}
                                     ), rgba(
-                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                    ${Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
-                                    ${(Math.abs(perspective_coordinate[0]) / p / 6 * 1 * (p*l/100)).toFixed(2)}
+                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
+                                    ${(Math.abs(perspective_coordinate[1]) / p / 6 * 1 * (p*l/100)).toFixed(2)}
                                     ))`: "none",
                                          borderRadius: canvas_wrapper_border_radius,
                                          padding: 0,

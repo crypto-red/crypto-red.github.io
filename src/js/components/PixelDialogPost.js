@@ -59,6 +59,10 @@ import {clean_json_text} from "../utils/json";
 import ReactDOM from "react-dom";
 import {Card} from "@material-ui/core";
 import price_formatter from "../utils/price-formatter";
+import get_svg_in_b64 from "../utils/svgToBase64";
+import Scifisc from "../icons/Scifisc";
+import Scifiss from "../icons/Scifiss";
+import Scifist from "../icons/Scifist";
 
 const TRANSLATION_AVAILABLE = ["en", "ar", "zh", "nl", "fi", "fr", "de", "hi", "hu", "id", "ga", "it", "ja", "ko", "pl", "pt", "ru", "es", "sv", "tr", "uk", "vi"];
 
@@ -126,17 +130,18 @@ const styles = theme => ({
         }
     },
     belowContent: {
+        width: "calc(100vw - 480px)",
+        height: "100vh",
         position: "absolute",
+        [theme.breakpoints.down("md")]: {
+            width: "100vw",
+        },
         pointerEvents: "none",
         touchAction: "none",
         padding: 16,
-        filter: "opacity(.5) blur(1px)",
         top: 0,
-        left: 0,
+        right: 0,
         textAlign: "right",
-        width: "100vw",
-        height: "100vh",
-        display: "inline-grid",
         fontFamily: `"Noto Sans Mono"`,
         backgroundImage:
             `linear-gradient(-225deg, rgb(255 255 255) 0%,    rgb(255 255 255) 5%, #ffffff00 5%, #ffffff00 100%),
@@ -452,6 +457,9 @@ class PixelDialogPost extends React.Component {
             _drawer_tab_index: 0,
             _layer_index: 0,
             _layers: null,
+            _sc_svg: "",
+            _ss_svg: "",
+            _st_svg: "",
             _color_palette: {
                 _colors_removed: 0,
                 colors_remaining: 0,
@@ -490,6 +498,7 @@ class PixelDialogPost extends React.Component {
             },
             _x: 0,
             _y: 0,
+            _p: [0, 0]
         };
     };
 
@@ -652,7 +661,10 @@ class PixelDialogPost extends React.Component {
 
             this.state._canvas.get_color_palette( 1/4, (data) => {
 
-                this.setState({_color_palette: {...data}}, () => {
+                const _sc_svg = get_svg_in_b64(<Scifisc color={data.brightest_color}/>);
+                const _ss_svg = get_svg_in_b64(<Scifiss color={data.brightest_color}/>);
+                const _st_svg = get_svg_in_b64(<Scifist color={data.brightest_color}/>);
+                this.setState({_color_palette: {...data}, _sc_svg, _ss_svg, _st_svg}, () => {
 
                     this.forceUpdate();
                 });
@@ -1185,6 +1197,14 @@ class PixelDialogPost extends React.Component {
         this.setState({ _responsabilities });
     };
 
+    _handle_perspective = (array) => {
+
+        this.setState({_p: array}, ( ) => {
+
+            this.forceUpdate();
+        });
+    };
+
     render() {
 
         const {
@@ -1216,6 +1236,10 @@ class PixelDialogPost extends React.Component {
             _responsabilities,
             selected_currency,
             hbd_market,
+            _p,
+            _sc_svg,
+            _ss_svg,
+            _st_svg,
         } = this.state;
 
         const post = this.state.post || {};
@@ -1239,8 +1263,8 @@ class PixelDialogPost extends React.Component {
             linear-gradient(225deg, ${_color_palette.average_color_zones[1]}, transparent 66%), 
             linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 66%),
             linear-gradient(rgba(255, 255, 255, 0.29), rgba(0, 0, 0, 0.7)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))`,
-            backgroundBlendMode: "multiply",
-        }: {backgroundBlendMode: "multiply", backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.29), rgba(0, 0, 0, 0.7)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))`,};
+            backgroundBlendMode: "hard-light",
+        }: {backgroundBlendMode: "hard-light", backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.29), rgba(0, 0, 0, 0.7)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))`,};
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
@@ -1264,32 +1288,33 @@ class PixelDialogPost extends React.Component {
                         {
                             !edit && post &&
                             <div className={classes.belowContent} style={{color: "white"}}>
-                                <span style={{position: "absolute", bottom: "50%", right: 32, width: "66%", color: "#ffffff57"}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
-                                <div style={{position: "absolute", top: 0, width: "100%", height: "100%", display: "grid", left: 0, color: "#ffffff57", textAlign: "left", fontWeight: "bold", letterSpacing: "1em"}}>
-                                    {"000000000000000000000000000000000000100000010000011000000000000000000000000000000000000000000000000000000000000000000110001101111111111111111000011100000011111111111111000000000000000000000000000000000000000000000111100111100000000000000000000100000001110000011111000000000000000000000000000000000000111000010111000000111100111111001000000000000000110011111111111111111111111111111111111100000010111111111110000011111111011111111000000001111110100111011111111111111111110010000000000000000001111111111111111111111011101111000111000111111111011111111111111111111111111111111111000000000011111111111111111111100000000111000011000011110011111111111111111111111111111111111100000000000001111111111111111110000110100011000000001100111000111111111111111111111111111111100111100000000000110001111111111111100111110000000000001110000001111111111111111111111111111110000010000000000111100000111111111111110011111110000000000111011111111111111111111111111111111111111001110000000000000000011111111111111011111111000000000001101111111111111111111111111111111111111000011000000000000000000011111111111111111101000000000000001111111111101001111111111111111111111110000100000000000000000011111111111101111110100000000000011111111110100100011111111111111111111111011000000000000000000011111111111111111000000000000000011100101010111111001111111111111111111110001000000000000000000011111111111111100100000000000000000110000101011111100111111111111111110001100110000000000000000000111111111111100000000000000000000001111000000001111111111111111111111110010110000000000000000000001111111111110000000000000000000011111110110000111111111111111111111111100011000000000000000000000111111111110000000000000000000001111111111111111111111111111111111111111001000000000000000000000011111000001000000000000000000001111111111111111110011011111111111111111100000000000000000000000000011100000000000000000000000001111111111111111011111100011111111111111100000000000000000000000000011110010111000000000000000001111111111111111100111110001111110111101000000000000000000000000000000011001001110000000000000000011111111111111110011111000011110011111000100000000000000000000000000001111000101110000000000000011111111111111111111111000001110000011100011100000000000000000000000000100111000000000000000000001111111111111111111000000000011000001111000110000000000000000000000000000001100010000000000000000011111111111111111111100000001100000101100000110000000000000000000000000000011110101000000000000000111111111111111111110000000111000101000010111000000000000000000000000000000111111111000000000000001110111111111111110000000000100010100101000000000000000000000000000000000000111111110000000000000000000111111111110000000000000000100011100000000000000000000000000000000000111111111010000000000000000011111111110000000000000000001101101110101000000000000000000000000000111111111111100000000000000000111111111000000000000000000010010100111110011000000000000000000000011111111111111100000000000000011111110000000000000000000001110000000101111100000000000000000000001111111111111110000000000000001111111000000000000000000000011011110011111011000000000000000000000111111111111111000000000000000011111100000000000000000000000000110000000000100000000000000000000000111111111111000000000000000111111111000110000000000000000000000011110000000000000000000000000000011111111111100000000000000011111111100110000000000000000000011111101100000000000000000000000000000011111111110000000000000001111111100111100000000000000000111111111110000000000000000000000000000001111111111000000000000000011111110011100000000000000000001111111111000000000000000000000000000000111111110000000000000000000111110001110000000000000000001111111111111000000000000000000000000000011111110000000000000000000011111000000000000000000000011111111111111100000000000000000000000000001111111000000000000000000000111000000000000000000000000111111111111100000000000000000000000000000111110100000000000000000000011000000000000000000000000000000011111100000100000000000000000000000011111000000000000000000000000000000000000000000000000000000000111100000011000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000001100000000000000000000000010000000000000000000000000000000000000000000000000000000000000111000101000000000000000000000000011100000000000000000000000000000000000000000000000000000000000001000110000000000000000000000000000110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000011000000000000000000000000000000000000000000000000000000000000000000000"
-                                        .match(/.{1,97}/g).map((chunck) => {
-                                            return <pre>{chunck.replaceAll("0", " ").replaceAll("1", "▼")}</pre>
-                                        })
-                                    }
-                                </div>
-                                <span>$_U_agent? N°{window.navigator.userAgent}</span>
-                                <span>$_POST_SERIAL? N°{post.id}</span>
-                                <span>$_ARTISTIC_SITUATION_TYPE: PIXEL ART</span>
-                                <span>$_VOTES: {vote_number}</span>
-                                {
-                                    vote_number > 0 &&
-                                    <span>
+                                <div style={{position: "relative", height: "100%"}}>
+                                    <div style={{position: "relative", height: "100%", transform: "translateZ(0px)"}}>
+                                        <img src={_sc_svg} style={{position: "absolute", bottom: 0, right: 0, width: "100%", height: "100%", transform: `translate(${_p[0]*10-50}px, ${_p[1]*10-50}px)`}}/>
+                                        <img src={_ss_svg} style={{position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${_p[0]-5}px, ${_p[1]-5}px)`}}/>
+                                        <img src={_ss_svg} style={{position: "absolute", top: 128, right: 128, width: 32, height: 168, transformOrigin: "top right", transform: `scale(2) rotate(90deg) translate(${_p[0]*2-10}px, ${_p[1]*2-10}px)`}}/>
+                                        <img src={_st_svg} style={{position: "absolute", bottom: 128, right: 128, width: 168, height: 168, transformOrigin: "middle center", transform: `scale(1.5) rotate(180deg) translate(${_p[0]*1.5-7.5}px, ${_p[1]*1.5-7.5}px)`}}/>
+                                        <span style={{position: "absolute", bottom: "50%", right: 32, width: "66%", color: "#ffffff99"}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
+                                    </div>
+                                    <div style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%", display: "inline-grid"}}>
+                                        <span>$_U_agent? N°{window.navigator.userAgent}</span>
+                                        <span>$_POST_SERIAL? N°{post.id}</span>
+                                        <span>$_ARTISTIC_SITUATION_TYPE: PIXEL ART</span>
+                                        <span>$_VOTES: {vote_number}</span>
+                                        {
+                                            vote_number > 0 &&
+                                            <span>
                                                     {post.active_votes.slice(0, 10).map((v, index) => {
 
                                                         return <span key={index}>@{v.voter} () -> {v.percent}%<br/></span>;
                                                     })}
                                                 </span>
-                                }
-                                <span>$_AUTHOR: @{post.author}</span>
-                                {
-                                    post.author === "mes" &&
-                                        <pre>{
-                                            `@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+                                        }
+                                        <span>$_AUTHOR: @{post.author}</span>
+                                        {
+                                            post.author === "mes" &&
+                                            <pre>{
+                                                `@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                                             @                            @@@@@@%((((((((((((((((
                                             @                           &@@@@@@(((((((((((((((((
                                             @                           @@@@@@((((((((((((((((((
@@ -1300,18 +1325,20 @@ class PixelDialogPost extends React.Component {
                                             @                @@@@@@.@@@@@@((((((((((((((((((((((
                                             @                 @@@@@@@@@@@#((((((((((((((((((((((
                                             @                  @@@@@@@@@@(((((((((((((((((((((((`
-                                        }</pre>
-                                }
-                                <span>$_TAGS: #{tags.join(", #").toUpperCase()}</span>
-                                <span>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span>
-                                <span>$_V_PER_COL: {price_formatter(balance_fiat / layer.colors.length, selected_currency, selected_locales_code)}</span>
-                                <span>$_COLORS: {layer.colors.length}</span>
-                                <span>$_HAS_TRANSLATED_[{document.documentElement.lang.toUpperCase()}]: {has_translated ? "TRUE": "FALSE"}</span>
-                                <span>$_IS_TRANSLATING_[{document.documentElement.lang.toUpperCase()}]: {is_translating ? "TRUE": "FALSE"}</span>
-                                <span>$_WIN_WIDTH: {_window_width}px</span>
-                                <span>$_AI_COMPUTING: {_is_prediction_loading ? "TRUE": "FALSE"}</span>
-                                <span>$NFT_TESTS: For chimpanzee and punks they show current attention.<br/>[SUGG.]: prepare moving to humanoid trials to speed up artistic process. <br />Please remain CALM... Outer dark project [NAMEC.] Black.Ops. (Decentralize Everything)</span>
-                                <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>"PM ops" H4ck3D - POWER "{Date.now()}" IN YOUR VEINS</span>
+                                            }</pre>
+                                        }
+                                        <span>$_TAGS: #{tags.join(", #").toUpperCase()}</span>
+                                        <span>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span>
+                                        <span>$_V_PER_COL: {price_formatter(balance_fiat / layer.colors.length, selected_currency, selected_locales_code)}</span>
+                                        <span>$_COLORS: {layer.colors.length}</span>
+                                        <span>$_HAS_TRANSLATED_[{document.documentElement.lang.toUpperCase()}]: {has_translated ? "TRUE": "FALSE"}</span>
+                                        <span>$_IS_TRANSLATING_[{document.documentElement.lang.toUpperCase()}]: {is_translating ? "TRUE": "FALSE"}</span>
+                                        <span>$_WIN_WIDTH: {_window_width}px</span>
+                                        <span>$_AI_COMPUTING: {_is_prediction_loading ? "TRUE": "FALSE"}</span>
+                                        <span>$NFT_TESTS: For chimpanzee and punks they show current attention.<br/>[SUGG.]: prepare moving to humanoid trials to speed up artistic process. <br />Please remain CALM... Outer dark project [NAMEC.] Black.Ops. (Decentralize Everything)</span>
+                                        <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>"PM ops" SYSTEM 50% SHUTDOWN - POWER "{Date.now()}" IN YOUR VEINS</span>
+                                    </div>
+                                 </div>
                             </div>
                         }
                         <div className={classes.content}>
@@ -1657,6 +1684,7 @@ class PixelDialogPost extends React.Component {
                                             onContextMenu={(e) => {e.preventDefault()}}
                                             onSizeChange={this._handle_size_change}
                                             onLayersChange={this._handle_layers_change}
+                                            onPerspectiveCoordinateChanges={this._handle_perspective}
                                             perspective={5}
                                             light={7}
                                             onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
