@@ -168,10 +168,21 @@ class PixelDialogPostBelowContent extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
+        let image_changed = this.state.sc_svg !== new_props.sc_svg;
         this.setState(new_props, () => {
 
-            this._request_force_update(true, true);
+            if(image_changed) {
+
+                this._request_force_update();
+            }else if(!is_mobile_or_tablet) {
+
+                this._request_force_update(true, true);
+            }
         });
+    }
+
+    shouldComponentUpdate(nextProps, nextState, nextContext) {
+        return false;
     }
 
     _request_force_update = (can_be_cancelable = false, especially_dont_force = false, callback_function = () => {}) => {
@@ -220,16 +231,16 @@ class PixelDialogPostBelowContent extends React.Component {
         return (
             <div className={classname} style={{backgroundImage:
                     `url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTMzLjMzMyIgaGVpZ2h0PSIxMzMuMzMzIiB4bWxuczp2PSJodHRwczovL3ZlY3RhLmlvL25hbm8iPjxkZWZzPjxjbGlwUGF0aCBpZD0iQSI+PHBhdGggZD0iTTAgMGgxMDB2MTAwSDB6Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI0EpIiBmaWxsPSIjZmZmIj48cGF0aCBkPSJNNTAuMDA1IDMyaDBjLjYyMSAwIDEuMTI1Ljg5NiAxLjEyNSAydjMyYzAgMS4xMDQtLjUwNCAyLTEuMTI1IDJoMGMtLjYyMSAwLTEuMTI1LS44OTYtMS4xMjUtMlYzNGMwLTEuMTA0LjUwNC0yIDEuMTI1LTJ6Ii8+PHBhdGggZD0iTTMyIDUwaDBjMC0uNjkgMS4wMDItMS4yNSAyLjIzNi0xLjI1aDMxLjUyOGMxLjIzNCAwIDIuMjM2LjU2IDIuMjM2IDEuMjVoMGMwIC42OS0xLjAwMiAxLjI1LTIuMjM2IDEuMjVIMzQuMjM2QzMzLjAwMiA1MS4yNSAzMiA1MC42OSAzMiA1MHoiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjE2LjUiIGN5PSIxNi41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjMzLjI1IiBjeT0iMTYuNSIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSI1MCIgY3k9IjE2LjUiIHI9IjEuNSIvPjxjaXJjbGUgdmVjdG9yLWVmZmVjdD0ibm9uLXNjYWxpbmctc3Ryb2tlIiBjeD0iNjYuNzUiIGN5PSIxNi41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjgzLjc1IiBjeT0iMTYuNSIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSIxNi41IiBjeT0iMzMuNSIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSIzMy4yNSIgY3k9IjMzLjUiIHI9IjEuNSIvPjxjaXJjbGUgdmVjdG9yLWVmZmVjdD0ibm9uLXNjYWxpbmctc3Ryb2tlIiBjeD0iNjYuNzUiIGN5PSIzMy41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjgzLjc1IiBjeT0iMzMuNSIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSIxNi4zNzUiIGN5PSI1MCIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSI4My42MjUiIGN5PSI1MCIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSIxNi4yNSIgY3k9IjY2LjUiIHI9IjEuNSIvPjxjaXJjbGUgdmVjdG9yLWVmZmVjdD0ibm9uLXNjYWxpbmctc3Ryb2tlIiBjeD0iMzMiIGN5PSI2Ni41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjY2LjUiIGN5PSI2Ni41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjgzLjUiIGN5PSI2Ni41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjE2LjI1IiBjeT0iODMuNSIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSIzMyIgY3k9IjgzLjUiIHI9IjEuNSIvPjxjaXJjbGUgdmVjdG9yLWVmZmVjdD0ibm9uLXNjYWxpbmctc3Ryb2tlIiBjeD0iNDkuNzUiIGN5PSI4My41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjY2LjUiIGN5PSI4My41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjgzLjUiIGN5PSI4My41IiByPSIxLjUiLz48L2c+PC9zdmc+")`,
-                backgroundRepeat: "repeat", backgroundSize: `${Math.ceil(100*(pz*2.5))}px ${Math.ceil(100*(pz*2.5))}px`, backgroundPosition: `${(px*5-25)*pz}px ${(py*5-25)*pz}px`, color: "white", backgroundOrigin: "center"}}>
+                backgroundRepeat: "repeat", backgroundSize: `${Math.ceil(100*(pz*2.5) / 5)}px ${Math.ceil(100*(pz*2.5) / 5)}px`, backgroundPosition: `${(px*5-25)*pz}px ${(py*5-25)*pz}px`, color: "white", backgroundOrigin: "center"}}>
                 <div style={{position: "relative", height: "100%"}}>
                     <div style={{position: "relative", height: "100%"}}>
-                        <img src={sc_svg} style={{transition: "transform .1s linear 0s", position: "absolute", bottom: 0, right: 0, width: "100%", height: "100%", transform: `translate(${(px*10-50)*pz}px, ${(py*10-50)*pz}px)`}}/>
-                        <img src={ss_svg} style={{transition: "transform .1s linear 0s", position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px-5)*pz}px, ${(py-5)*pz}px)`}}/>
-                        <img src={ss_svg} style={{transition: "transform .1s linear 0s", position: "absolute", top: 128, right: 128, width: 32, height: 168, transformOrigin: "top right", transform: `scale(2) rotate(90deg) translate(${(px-5)*pz}px, ${(py-5)*pz}px)`}}/>
-                        <img src={st_svg} style={{transition: "transform .1s linear 0s", position: "absolute", bottom: 128, right: 128, width: 168, height: 168, transformOrigin: "middle center", transform: `scale(1.5) rotate(180deg) translate(${(px-5)*pz}px, ${(py-5)*pz}px)`}}/>
+                        <img src={sc_svg} style={{transition: "transform .1s linear 0s", position: "absolute", bottom: 0, right: 0, width: "100%", height: "100%", transform: `translate(${(px*20-100)*pz}px, ${(py*20-100)*pz}px)`}}/>
+                        <img src={ss_svg} style={{transition: "transform .1s linear 0s", position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*2-10)*pz}px, ${(py*2-10)*pz}px)`}}/>
+                        <img src={ss_svg} style={{transition: "transform .1s linear 0s", position: "absolute", top: 128, right: 128, width: 32, height: 168, transformOrigin: "top right", transform: `scale(2) rotate(90deg) translate(${(px*4-20)*pz}px, ${(py*4-20)*pz}px)`}}/>
+                        <img src={st_svg} style={{transition: "transform .1s linear 0s", position: "absolute", bottom: 128, right: 128, width: 168, height: 168, transformOrigin: "middle center", transform: `scale(1.5) rotate(180deg) translate(${(px*8-40)*pz}px, ${(py*8-40)*pz}px)`}}/>
                         <span style={{position: "absolute", bottom: "50%", right: 32, width: "66%", color: "#ffffff99"}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
                     </div>
-                    <div style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%", display: "inline-grid"}}>
+                    <div style={is_mobile_or_tablet ? {display: "none"}: {position: "absolute", left: 0, top: 0, width: "100%", height: "100%", display: "inline-grid"}}>
                         <span>$_U_agent? N°{window.navigator.userAgent}</span>
                         <span>$_POST_SERIAL? N°{post.id}</span>
                         <span>$_ARTISTIC_SITUATION_TYPE: PIXEL ART</span>

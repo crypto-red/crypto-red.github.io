@@ -13,10 +13,14 @@ const styles = theme => ({
         color: theme.palette.primary.contrastText,
         height: "100%",
         position: "relative",
+        backgroundImage: "linear-gradient(-45deg, #01022f 40px, transparent 40px), linear-gradient(1800deg, #01022f 12px, transparent 12px)",
+        clipPath: "polygon(0% 0%, 0% 100%, calc(100% - 56px) 100%, 100% calc(100% - 56px), 100% calc(100% - 42px), calc(100% - 42px) 100%, 100% 100%, 100% 0%)",
     },
     basic: {
         height: "100%",
         position: "relative",
+        backgroundImage: "linear-gradient(-45deg, #e9e9e9 40px, transparent 40px), linear-gradient(180deg, #e9e9e9 12px, transparent 12px)",
+        clipPath: "polygon(0% 0%, 0% 100%, calc(100% - 56px) 100%, 100% calc(100% - 56px), 100% calc(100% - 42px), calc(100% - 42px) 100%, 100% 100%, 100% 0%)",
     },
     cardContainer: {
         width: "100%",
@@ -55,6 +59,7 @@ const styles = theme => ({
         verticalAlign: "inherit",
         justifyContent: "inherit",
         height: "100%",
+        filter: "drop-shadow(0px 1px 2px #999)",
     }
 });
 

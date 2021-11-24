@@ -61,6 +61,8 @@ import Scifisc from "../icons/Scifisc";
 import Scifiss from "../icons/Scifiss";
 import Scifist from "../icons/Scifist";
 import PixelDialogPostBelowContent from "./PixelDialogPostBelowContent";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 
 const TRANSLATION_AVAILABLE = ["en", "ar", "zh", "nl", "fi", "fr", "de", "hi", "hu", "id", "ga", "it", "ja", "ko", "pl", "pt", "ru", "es", "sv", "tr", "uk", "vi"];
 
@@ -345,6 +347,22 @@ const styles = theme => ({
         zIndex: 1199,
         gap: 16,
         height: 48,
+        [theme.breakpoints.up("lg")]: {
+            display: "none",
+            pointerEvents: "none",
+        },
+    },
+    bottomMobileViewFabs: {
+        display: "flex",
+        position: "fixed",
+        bottom: theme.spacing(2),
+        right: theme.spacing(2),
+        zIndex: 1199,
+        gap: 16,
+        height: 48,
+        "& > button": {
+            color: "white",
+        },
         [theme.breakpoints.up("lg")]: {
             display: "none",
             pointerEvents: "none",
@@ -1653,9 +1671,17 @@ class PixelDialogPost extends React.Component {
                                 {
                                     !edit && !_drawer_open && _window_width < 1280 &&
                                         <Grow in>
-                                            <Fab className={classes.editFab} variant="extended" onClick={this._handle_drawer_open}>
-                                                <EyeIcon /> View
-                                            </Fab>
+                                            <div  className={classes.bottomMobileViewFabs}>
+                                                <Fab variant="extended" onClick={() => {if(this.props.on_previous) { this.props.on_previous()}}}>
+                                                    <ArrowBackIcon/> Back
+                                                </Fab>
+                                                <Fab variant="extended" onClick={this._handle_drawer_open}>
+                                                    <EyeIcon /> View
+                                                </Fab>
+                                                <Fab variant="extended" onClick={() => {if(this.props.on_next) { this.props.on_next()}}}>
+                                                    Next <ArrowForwardIcon/>
+                                                </Fab>
+                                            </div>
                                         </Grow>
                                 }
                             </div>

@@ -16,7 +16,6 @@ import actions from "../actions/utils";
 
 import DollarEmojiSvg from "../twemoji/react/1F911";
 import AngelEmojiSvg from "../twemoji/react/1F607";
-import HundredEmojiSvg from "../twemoji/react/1F4Af";
 import HearthEmojiSvg from "../twemoji/react/2665";
 import EarthEmojiSvg from "../twemoji/react/1F30D";
 
@@ -32,7 +31,7 @@ const styles = theme => ({
     backgroundImage: {
         width: "100%",
         minHeight: "calc(100vh - 160px)",
-        backgroundImage: "url(/src/images/world_blue.png)",
+        backgroundImage: "radial-gradient(ellipse farthest-corner, #2e51ff85, #ffffff00 66%), url(/src/images/world_blue.png)",
         position: "absolute",
         backgroundSize: "125%",
         backgroundPosition: "-100% 0%",
@@ -221,7 +220,7 @@ class Home extends React.Component {
                     <div className={classes.headerContainer}>
                         <h1 className={classes.title}>
                             <span>The <span className={classes.blue}>100% free </span></span><img src={get_svg_in_b64(<DollarEmojiSvg />)} className="emoji bounce"/><br />
-                            <span>and <span className={classes.blue}>open-source</span> <img className={"emoji"} src={get_svg_in_b64(<HundredEmojiSvg />)}/></span><br />
+                            <span>and <span className={classes.blue}>open-source</span></span><br />
                             <span><img src={get_svg_in_b64(<AngelEmojiSvg />)} className="emoji"/> crypto wallet.</span>
                         </h1>
                         <h2 className={classes.subtitle}>
