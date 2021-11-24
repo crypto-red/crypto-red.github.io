@@ -7199,7 +7199,7 @@ class CanvasPixels extends React.Component {
                 const n_color_rgba = this._get_rgba_from_hex(color);
                 const n_color_hsl = this._rgb_to_hsl(...n_color_rgba);
                 const n_color_rgb = this._hsl_to_rgb(n_color_hsl[0], 60, 20);
-                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 96);
+                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 48);
 
                 const x =  this._filter_pixels("Old photo", 1, [], [new_n_color], false)[1][0];
                 return this._filter_pixels(".Hefe", 1, [], [x], false)[1][0];
@@ -8055,11 +8055,11 @@ class CanvasPixels extends React.Component {
                                  borderStyle: "solid",
                                  borderColor: "#fff",
                                  /*backgroundColor: canvas_wrapper_background_color,*/
-                                 backgroundImage: `linear-gradient(to right, #FAFAFA ${padding/2.5}px, ${canvas_wrapper_background_color} ${padding/2.5}px)`, //, repeating-linear-gradient(-45deg, rgba(255, 255, 255, .75) 0px, rgba(255, 255, 255, .75) ${padding}px, rgba(255, 255, 255, 0.5) ${padding}px, rgba(255, 255, 255, 0.5) ${padding*2}px)`,*/
+                                 backgroundImage: `linear-gradient(to top, ${canvas_wrapper_background_color} ${padding/2.5}px, #ffffff33 ${padding/2.5}px)`, //, repeating-linear-gradient(-45deg, rgba(255, 255, 255, .75) 0px, rgba(255, 255, 255, .75) ${padding}px, rgba(255, 255, 255, 0.5) ${padding}px, rgba(255, 255, 255, 0.5) ${padding*2}px)`,*/
                                  borderRadius: canvas_wrapper_border_radius,
                                  padding: padding,
                                  position: "fixed",
-                                 clipPath: `polygon(calc(100% - 10%) 0%, 100% 0%, 100% 200%, ${padding * 1.5}px 100%, 0% calc(100% - ${padding * 1.5}px), 0% -100%, calc(100% - 25%) 0%, calc(100% - 25%) ${padding}px, calc(100% - 15%) ${padding}px)`,
+                                 clipPath: `polygon(calc(100% - 10%) 0%, 100% 0%, 100% 200%, ${padding}px 100%, 0% calc(100% - ${padding}px), 0% -100%, calc(100% - 25%) 0%, calc(100% - 25%) ${padding / 2.5}px, calc(100% - 15%) ${padding / 2.5}px)`,
                                  width: canvas_wrapper_width,
                                  height: canvas_wrapper_height,
                                  transform: `rotateZ(0deg) rotateX(${(perspective_coordinate[0] * p / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[1] * p / scale).toFixed(2)}deg)`,
@@ -8092,8 +8092,8 @@ class CanvasPixels extends React.Component {
                             {
                                 Boolean(p) &&
                                 <div className={"Canvas-Pixels-Cover"}
-                                    datatexttop={`█▶ D[${pxl_width}, ${pxl_height}]px // S[${_kb.toFixed(2)}]Kb`}
-                                    datatextbottom={`ΔZ[${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}]x // ΔR[${(perspective_coordinate[0] * p / scale).toFixed(2)}, ${(perspective_coordinate[1] * p / scale).toFixed(2)}]° ◀█`}
+                                    datatexttop={`▶ D[${pxl_width}, ${pxl_height}]px // S[${_kb.toFixed(2)}]Kb`}
+                                    datatextbottom={`ΔZ[${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}]x // ΔR[${(perspective_coordinate[0] * p / scale).toFixed(2)}, ${(perspective_coordinate[1] * p / scale).toFixed(2)}]° ◀`}
                                      draggable={"false"}
                                      style={{
                                          backgroundImage: p ? `linear-gradient(to left, rgba(
