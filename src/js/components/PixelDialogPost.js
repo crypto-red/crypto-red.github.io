@@ -31,7 +31,6 @@ import RedditIcon from "../icons/Reddit";
 import CloseIcon from "@material-ui/icons/Close";
 import SendIcon from "@material-ui/icons/Send";
 import TextField from "@material-ui/core/TextField";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
 import gfm from "remark-gfm";
 import ReactMarkdown from "react-markdown";
 import Fab from "@material-ui/core/Fab";
@@ -57,12 +56,11 @@ import actions from "../actions/utils";
 import {postJSON} from "../utils/load-json";
 import {clean_json_text} from "../utils/json";
 import ReactDOM from "react-dom";
-import {Card} from "@material-ui/core";
-import price_formatter from "../utils/price-formatter";
 import get_svg_in_b64 from "../utils/svgToBase64";
 import Scifisc from "../icons/Scifisc";
 import Scifiss from "../icons/Scifiss";
 import Scifist from "../icons/Scifist";
+import PixelDialogPostBelowContent from "./PixelDialogPostBelowContent";
 
 const TRANSLATION_AVAILABLE = ["en", "ar", "zh", "nl", "fi", "fr", "de", "hi", "hu", "id", "ga", "it", "ja", "ko", "pl", "pt", "ru", "es", "sv", "tr", "uk", "vi"];
 
@@ -107,7 +105,7 @@ const styles = theme => ({
             left: "10%",
             top: "0px",
             fontFamily: `"Saira"`,
-            content: `"▼ [ARTISTIC SITUATION] N°"attr(dataid)" ▼"`,
+            content: `"ARTISTIC SITUATION N°"attr(dataid)""`,
             [theme.breakpoints.down("sm")]: {
                 content: `"ARTC. SITN. N°"attr(dataid)`,
             },
@@ -143,12 +141,6 @@ const styles = theme => ({
         right: 0,
         textAlign: "right",
         fontFamily: `"Noto Sans Mono"`,
-        backgroundImage:
-            `linear-gradient(-225deg, rgb(255 255 255) 0%,    rgb(255 255 255) 5%, #ffffff00 5%, #ffffff00 100%),
-            linear-gradient(  225deg, rgb(255 255 255) 0%, rgb(255 255 255) 5%, #ffffff00 5%, #ffffff00 100%),
-            linear-gradient(-90deg, rgb(255 255 255 / 25%) 0%,    rgb(255 255 255 / 25%) 5%, #ffffff00 5%, #ffffff00 100%),
-            linear-gradient(  0deg, rgb(255 255 255 / 25%) 0%, rgb(255 255 255 / 25%) 5%, #ffffff00 5%, #ffffff00 100%)`,
-        backgroundSize: "1em 1em",
     },
     contentCanvas: {
         width: "calc(100vw - 480px)",
@@ -173,28 +165,7 @@ const styles = theme => ({
         }
     },
     contentCanvasLight: {
-        "&::after": {
-            content: '""',
-            top: 0,
-            left: 0,
-            position: "absolute",
-            pointerEvents: "none",
-            width: "100%",
-            height: "100%",
-            filter: "opacity(1)",
-            animation: "$backgroundopacity 2.4s linear infinite",
-            backgroundImage: "radial-gradient(circle, #00000000, rgb(0 0 0 / 25%)), linear-gradient(to top, rgba(0, 0, 0, 0.66) 1%, transparent 6%)",
-            "@global": {
-                "@keyframes backgroundopacity": {
-                    "0%": { filter: "opacity(1)" },
-                    "10%": { filter: "opacity(.8)" },
-                    "50%": { filter: "opacity(.95)" },
-                    "75%": { filter: "opacity(1)" },
-                    "85%": { filter: "opacity(.9)" },
-                    "100%": { filter: "opacity(1)" },
-                }
-            }
-        },
+
     },
     drawer: {
         width: 480,
@@ -498,7 +469,9 @@ class PixelDialogPost extends React.Component {
             },
             _x: 0,
             _y: 0,
-            _p: [0, 0]
+            _px: 0,
+            _py: 0,
+            _pz: 1,
         };
     };
 
@@ -659,23 +632,31 @@ class PixelDialogPost extends React.Component {
 
         setTimeout(() => {
 
-            this.state._canvas.get_color_palette( 1/4, (data) => {
+            if(typeof this.state._canvas.get_color_palette !== "undefined") {
 
-                const _sc_svg = get_svg_in_b64(<Scifisc color={data.brightest_color}/>);
-                const _ss_svg = get_svg_in_b64(<Scifiss color={data.brightest_color}/>);
-                const _st_svg = get_svg_in_b64(<Scifist color={data.brightest_color}/>);
-                this.setState({_color_palette: {...data}, _sc_svg, _ss_svg, _st_svg}, () => {
+                this.state._canvas.get_color_palette( 1/4, (data) => {
 
-                    this.forceUpdate();
+                    const _sc_svg = get_svg_in_b64(<Scifisc color={data.brightest_color_with_half_saturation}/>);
+                    const _ss_svg = get_svg_in_b64(<Scifiss color={data.brightest_color_with_half_saturation}/>);
+                    const _st_svg = get_svg_in_b64(<Scifist color={data.brightest_color_with_half_saturation}/>);
+                    this.setState({_color_palette: {...data}, _sc_svg, _ss_svg, _st_svg}, () => {
+
+                        this.forceUpdate();
+
+                        if(this.props.on_image_load_complete) {
+
+                            this.props.on_image_load_complete();
+                        }
+
+                    });
                 });
-            });
 
-        }, 250);
+            }else {
 
-        if(this.props.on_image_load_complete) {
+                this._handle_image_load_complete(_image_details);
+            }
 
-            this.props.on_image_load_complete();
-        }
+        }, 100);
     };
 
     _handle_size_change = (_width, _height) => {
@@ -1199,7 +1180,7 @@ class PixelDialogPost extends React.Component {
 
     _handle_perspective = (array) => {
 
-        this.setState({_p: array}, ( ) => {
+        this.setState({_px: array[0], _py: array[1], _pz: array[2]}, () => {
 
             this.forceUpdate();
         });
@@ -1236,7 +1217,9 @@ class PixelDialogPost extends React.Component {
             _responsabilities,
             selected_currency,
             hbd_market,
-            _p,
+            _px,
+            _py,
+            _pz,
             _sc_svg,
             _ss_svg,
             _st_svg,
@@ -1258,13 +1241,11 @@ class PixelDialogPost extends React.Component {
 
         const color_box_shadows = _color_palette.average_color_zones[0] ? {
             backgroundImage:
-            `linear-gradient(45deg, ${_color_palette.average_color_zones[2]}, transparent 66%), 
-            linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, transparent 66%), 
-            linear-gradient(225deg, ${_color_palette.average_color_zones[1]}, transparent 66%), 
-            linear-gradient(315deg, ${_color_palette.average_color_zones[3]}, transparent 66%),
-            linear-gradient(rgba(255, 255, 255, 0.29), rgba(0, 0, 0, 0.7)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))`,
-            backgroundBlendMode: "hard-light",
-        }: {backgroundBlendMode: "hard-light", backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.29), rgba(0, 0, 0, 0.7)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7))`,};
+            `linear-gradient(45deg, ${_color_palette.average_color_zones[2]}, ${_color_palette.average_color_zones[1]}), 
+            linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, ${_color_palette.average_color_zones[3]}), 
+            linear-gradient(rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 1)), radial-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 1))`,
+            backgroundBlendMode: "unset",
+        }: {backgroundBlendMode: "unset", backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 1)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 1))`,};
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
@@ -1287,59 +1268,26 @@ class PixelDialogPost extends React.Component {
                     <div className={classes.root}>
                         {
                             !edit && post &&
-                            <div className={classes.belowContent} style={{color: "white"}}>
-                                <div style={{position: "relative", height: "100%"}}>
-                                    <div style={{position: "relative", height: "100%", transform: "translateZ(0px)"}}>
-                                        <img src={_sc_svg} style={{position: "absolute", bottom: 0, right: 0, width: "100%", height: "100%", transform: `translate(${_p[0]*10-50}px, ${_p[1]*10-50}px)`}}/>
-                                        <img src={_ss_svg} style={{position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${_p[0]-5}px, ${_p[1]-5}px)`}}/>
-                                        <img src={_ss_svg} style={{position: "absolute", top: 128, right: 128, width: 32, height: 168, transformOrigin: "top right", transform: `scale(2) rotate(90deg) translate(${_p[0]*2-10}px, ${_p[1]*2-10}px)`}}/>
-                                        <img src={_st_svg} style={{position: "absolute", bottom: 128, right: 128, width: 168, height: 168, transformOrigin: "middle center", transform: `scale(1.5) rotate(180deg) translate(${_p[0]*1.5-7.5}px, ${_p[1]*1.5-7.5}px)`}}/>
-                                        <span style={{position: "absolute", bottom: "50%", right: 32, width: "66%", color: "#ffffff99"}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
-                                    </div>
-                                    <div style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%", display: "inline-grid"}}>
-                                        <span>$_U_agent? N°{window.navigator.userAgent}</span>
-                                        <span>$_POST_SERIAL? N°{post.id}</span>
-                                        <span>$_ARTISTIC_SITUATION_TYPE: PIXEL ART</span>
-                                        <span>$_VOTES: {vote_number}</span>
-                                        {
-                                            vote_number > 0 &&
-                                            <span>
-                                                    {post.active_votes.slice(0, 10).map((v, index) => {
-
-                                                        return <span key={index}>@{v.voter} () -> {v.percent}%<br/></span>;
-                                                    })}
-                                                </span>
-                                        }
-                                        <span>$_AUTHOR: @{post.author}</span>
-                                        {
-                                            post.author === "mes" &&
-                                            <pre>{
-                                                `@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-                                            @                            @@@@@@%((((((((((((((((
-                                            @                           &@@@@@@(((((((((((((((((
-                                            @                           @@@@@@((((((((((((((((((
-                                            @                          @@@@@@(((((((((((((((((((
-                                            @               &@@@      @@@@@@#(((((((((((((((((((
-                                            @          @@@@@@@@@@    ,@@@@@@((((((((((((((((((((
-                                            @          .@@@@@@@@@@   @@@@@@(((((((((((((((((((((
-                                            @                @@@@@@.@@@@@@((((((((((((((((((((((
-                                            @                 @@@@@@@@@@@#((((((((((((((((((((((
-                                            @                  @@@@@@@@@@(((((((((((((((((((((((`
-                                            }</pre>
-                                        }
-                                        <span>$_TAGS: #{tags.join(", #").toUpperCase()}</span>
-                                        <span>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span>
-                                        <span>$_V_PER_COL: {price_formatter(balance_fiat / layer.colors.length, selected_currency, selected_locales_code)}</span>
-                                        <span>$_COLORS: {layer.colors.length}</span>
-                                        <span>$_HAS_TRANSLATED_[{document.documentElement.lang.toUpperCase()}]: {has_translated ? "TRUE": "FALSE"}</span>
-                                        <span>$_IS_TRANSLATING_[{document.documentElement.lang.toUpperCase()}]: {is_translating ? "TRUE": "FALSE"}</span>
-                                        <span>$_WIN_WIDTH: {_window_width}px</span>
-                                        <span>$_AI_COMPUTING: {_is_prediction_loading ? "TRUE": "FALSE"}</span>
-                                        <span>$NFT_TESTS: For chimpanzee and punks they show current attention.<br/>[SUGG.]: prepare moving to humanoid trials to speed up artistic process. <br />Please remain CALM... Outer dark project [NAMEC.] Black.Ops. (Decentralize Everything)</span>
-                                        <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>"PM ops" SYSTEM 50% SHUTDOWN - POWER "{Date.now()}" IN YOUR VEINS</span>
-                                    </div>
-                                 </div>
-                            </div>
+                            <PixelDialogPostBelowContent
+                                post={post}
+                                balance_fiat={balance_fiat}
+                                selected_locales_code={selected_locales_code}
+                                hbd_market={hbd_market}
+                                selected_currency={selected_currency}
+                                layers={layers}
+                                sc_svg={_sc_svg}
+                                ss_svg={_ss_svg}
+                                st_svg={_st_svg}
+                                window_width={_window_width}
+                                is_prediction_loading={_is_prediction_loading}
+                                tags_input={_tags_input}
+                                translated_description={_translated_description}
+                                translated_title={_translated_title}
+                                has_translation_started={_has_translation_started}
+                                px={_px}
+                                py={_py}
+                                pz={_pz}
+                                classname={classes.belowContent} />
                         }
                         <div className={classes.content}>
                             <div className={classes.contentInner}>

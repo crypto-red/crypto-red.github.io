@@ -361,6 +361,7 @@ class CanvasPixels extends React.Component {
                 "backface-visibility: hidden;" +
                 "mix-blend-mode: normal;" +
                 "background-blend-mode: normal;" +
+                "animation: transform .1s linear 0s;" +
             "}";
 
         const canvas_wrapper_css =
@@ -629,8 +630,10 @@ class CanvasPixels extends React.Component {
 
             this.setState({perspective_coordinate: [x, y]}, () => {
 
-                this._notify_perspective_coordinate_changes([x, y]);
-                this._request_force_update(false, true);
+                this._request_force_update(true, true, () => {
+
+                    this._notify_perspective_coordinate_changes([x, y, this.state.scale]);
+                });
             });
         }
     };
@@ -641,8 +644,10 @@ class CanvasPixels extends React.Component {
 
             this.setState({perspective_coordinate: array}, () => {
 
-                this._notify_perspective_coordinate_changes(array);
-                this._request_force_update(false, true);
+                this._request_force_update(true, true, () => {
+
+                    this._notify_perspective_coordinate_changes(array.concat([this.state.scale]));
+                });
             });
         }
     };
@@ -7091,6 +7096,19 @@ class CanvasPixels extends React.Component {
                 return Math.round(h / 5) * 5 + l / 10 + s/ 100 < Math.round(h2 / 5) * 5 + l2 / 10 + s2 / 100;
             });
 
+            let brightest_color_with_half_saturation = colors[0];
+            colors.forEach((ca) => {
+
+                const [r, g, b] = this.get_rgba_from_hex(ca);
+                const [h, s, l] = this._rgb_to_hsl(r, g, b);
+
+                if(s >= 50) {
+
+                    brightest_color_with_half_saturation = ca;
+                    return;
+                }
+            });
+
             colors = [...colors].map((current_color) => {
 
                 let smaller_difference = 1;
@@ -7209,10 +7227,10 @@ class CanvasPixels extends React.Component {
                 const n_color_rgba = this._get_rgba_from_hex(color);
                 const n_color_hsl = this._rgb_to_hsl(...n_color_rgba);
                 const n_color_rgb = this._hsl_to_rgb(n_color_hsl[0], 60, 20);
-                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 48);
+                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 12);
 
                 const x =  this._filter_pixels("Old photo", 1, [], [new_n_color], false)[1][0];
-                return this._filter_pixels(".Hefe", 1, [], [x], false)[1][0];
+                return this._filter_pixels(".Xpro", 1, [], [x], false)[1][0];
             };
 
             let average_color_zones = [];
@@ -7230,6 +7248,7 @@ class CanvasPixels extends React.Component {
                 colors,
                 darkest_color,
                 brightest_color,
+                brightest_color_with_half_saturation,
                 background_color: new_background_color,
                 foreground_color: s_new_foreground_color,
                 average_color_zones,

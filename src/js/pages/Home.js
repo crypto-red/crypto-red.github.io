@@ -32,12 +32,12 @@ const styles = theme => ({
     backgroundImage: {
         width: "100%",
         minHeight: "calc(100vh - 160px)",
-        backgroundImage: "url(/src/images/investment-data.svg)",
+        backgroundImage: "url(/src/images/world_blue.png)",
         position: "absolute",
-        backgroundSize: "contain",
-        backgroundPosition: "center center",
+        backgroundSize: "125%",
+        backgroundPosition: "-100% 0%",
         backgroundRepeat: "no-repeat",
-        backgroundOrigin: "content-box",
+        backgroundOrigin: "border-box",
         padding: theme.spacing(8),
         [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(4)
@@ -59,6 +59,9 @@ const styles = theme => ({
         bottom: 0,
         backgroundColor: "rgba(192, 192, 192, .5)",
         borderRadius: 4,
+        [theme.breakpoints.down("sm")]: {
+            display: "none",
+        },
     },
     fab: {
         position: "fixed",
