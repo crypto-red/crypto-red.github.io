@@ -7227,10 +7227,10 @@ class CanvasPixels extends React.Component {
                 const n_color_rgba = this._get_rgba_from_hex(color);
                 const n_color_hsl = this._rgb_to_hsl(...n_color_rgba);
                 const n_color_rgb = this._hsl_to_rgb(n_color_hsl[0], 60, 20);
-                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 12);
+                const new_n_color = this._get_hex_color_from_rgba_values(n_color_rgb[0], n_color_rgb[1], n_color_rgb[2], 36);
 
                 const x =  this._filter_pixels("Old photo", 1, [], [new_n_color], false)[1][0];
-                return this._filter_pixels(".Xpro", 1, [], [x], false)[1][0];
+                return this._filter_pixels("Bronze", 1, [], [x], false)[1][0];
             };
 
             let average_color_zones = [];
@@ -7249,6 +7249,7 @@ class CanvasPixels extends React.Component {
                 darkest_color,
                 brightest_color,
                 brightest_color_with_half_saturation,
+                inverse_brightest_color_with_half_saturation: this._invert_hex_color(brightest_color_with_half_saturation),
                 background_color: new_background_color,
                 foreground_color: s_new_foreground_color,
                 average_color_zones,
@@ -8084,7 +8085,7 @@ class CanvasPixels extends React.Component {
                                  borderStyle: "solid",
                                  borderColor: "#fff",
                                  /*backgroundColor: canvas_wrapper_background_color,*/
-                                 backgroundImage: `linear-gradient(to top, ${canvas_wrapper_background_color} ${padding/2.5}px, #ffffff33 ${padding/2.5}px)`, //, repeating-linear-gradient(-45deg, rgba(255, 255, 255, .75) 0px, rgba(255, 255, 255, .75) ${padding}px, rgba(255, 255, 255, 0.5) ${padding}px, rgba(255, 255, 255, 0.5) ${padding*2}px)`,*/
+                                 backgroundImage: `linear-gradient(to top, ${canvas_wrapper_background_color} ${padding/2.5}px, ${this._blend_colors(canvas_wrapper_background_color, "#00000000", .6)} ${padding/2.5}px, #ffffff00 150%)`, //, repeating-linear-gradient(-45deg, rgba(255, 255, 255, .75) 0px, rgba(255, 255, 255, .75) ${padding}px, rgba(255, 255, 255, 0.5) ${padding}px, rgba(255, 255, 255, 0.5) ${padding*2}px)`,*/
                                  borderRadius: canvas_wrapper_border_radius,
                                  padding: padding,
                                  position: "fixed",

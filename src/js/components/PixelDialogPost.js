@@ -63,6 +63,7 @@ import Scifist from "../icons/Scifist";
 import PixelDialogPostBelowContent from "./PixelDialogPostBelowContent";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import Scifisg from "../icons/Scifisg";
 
 const TRANSLATION_AVAILABLE = ["en", "ar", "zh", "nl", "fi", "fr", "de", "hi", "hu", "id", "ga", "it", "ja", "ko", "pl", "pt", "ru", "es", "sv", "tr", "uk", "vi"];
 
@@ -156,13 +157,13 @@ const styles = theme => ({
             position: "fixed",
         },
         "&::after": {
-            content: `""`,
+            content: ``,
             position: "fixed",
-            left: "-75vw",
-            top: "-30vh",
+            left: "-175vw",
+            top: "-100vh",
             width: "250vw",
-            height: "50vh",
-            backgroundImage: "radial-gradient(farthest-corner at center -50%, rgba(255, 255, 255, 0.75) 20%, transparent 70%)",
+            height: "200vh",
+            backgroundImage: "radial-gradient(farthest-corner at center -50%, rgba(255, 255, 255, .36) 50%, rgb(0 0 0 / 72%) 72%)",
             pointerEvents: "none",
         }
     },
@@ -449,6 +450,7 @@ class PixelDialogPost extends React.Component {
             _sc_svg: "",
             _ss_svg: "",
             _st_svg: "",
+            _sg_svg: "",
             _color_palette: {
                 _colors_removed: 0,
                 colors_remaining: 0,
@@ -654,10 +656,11 @@ class PixelDialogPost extends React.Component {
 
                 this.state._canvas.get_color_palette( 1/4, (data) => {
 
-                    const _sc_svg = get_svg_in_b64(<Scifisc color={data.brightest_color_with_half_saturation}/>);
-                    const _ss_svg = get_svg_in_b64(<Scifiss color={data.brightest_color_with_half_saturation}/>);
-                    const _st_svg = get_svg_in_b64(<Scifist color={data.brightest_color_with_half_saturation}/>);
-                    this.setState({_color_palette: {...data}, _sc_svg, _ss_svg, _st_svg}, () => {
+                    const _sc_svg = get_svg_in_b64(<Scifisc color={data.inverse_brightest_color_with_half_saturation}/>);
+                    const _ss_svg = get_svg_in_b64(<Scifiss color={data.inverse_brightest_color_with_half_saturation}/>);
+                    const _st_svg = get_svg_in_b64(<Scifist color={data.inverse_brightest_color_with_half_saturation}/>);
+                    const _sg_svg = get_svg_in_b64(<Scifisg color={data.inverse_brightest_color_with_half_saturation}/>);
+                    this.setState({_color_palette: {...data}, _sc_svg, _ss_svg, _st_svg, _sg_svg}, () => {
 
                         this.forceUpdate();
 
@@ -1241,6 +1244,7 @@ class PixelDialogPost extends React.Component {
             _sc_svg,
             _ss_svg,
             _st_svg,
+            _sg_svg,
         } = this.state;
 
         const post = this.state.post || {};
@@ -1261,9 +1265,9 @@ class PixelDialogPost extends React.Component {
             backgroundImage:
             `linear-gradient(45deg, ${_color_palette.average_color_zones[2]}, ${_color_palette.average_color_zones[1]}), 
             linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, ${_color_palette.average_color_zones[3]}), 
-            linear-gradient(rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 1)), radial-gradient(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 1))`,
-            backgroundBlendMode: "unset",
-        }: {backgroundBlendMode: "unset", backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 1)), radial-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 1))`,};
+            linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`,
+            backgroundBlendMode: "multiply",
+        }: {backgroundBlendMode: "multiply", backgroundImage: `linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`,};
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
@@ -1272,9 +1276,6 @@ class PixelDialogPost extends React.Component {
             <div>
                 <Dialog
                     keepMounted={keepMounted}
-                    BackdropProps={{
-                        style: {background: `transparent`}
-                    }}
                     open={open}
                     closeAfterTransition={true}
                     PaperComponent={"div"}
@@ -1296,6 +1297,7 @@ class PixelDialogPost extends React.Component {
                                 sc_svg={_sc_svg}
                                 ss_svg={_ss_svg}
                                 st_svg={_st_svg}
+                                sg_svg={_sg_svg}
                                 window_width={_window_width}
                                 is_prediction_loading={_is_prediction_loading}
                                 tags_input={_tags_input}
@@ -1621,7 +1623,7 @@ class PixelDialogPost extends React.Component {
                                         </CardContent>
                                     </div>
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage} dataid={post.id} style={{filter: "brightness(1)", ...color_box_shadows}}>
+                                <div className={classes.contentImage} dataid={post.id} style={{...color_box_shadows}}>
                                     <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                         <CloseIcon fontSize="large" />
                                     </IconButton>
