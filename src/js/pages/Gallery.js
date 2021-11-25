@@ -1283,13 +1283,13 @@ class Gallery extends React.Component {
                             {
                                 _loading_posts ||  (_post_author !== null && _post_permlink !== null) ?
                                     <div key={"loading_posts"}>
-                                        <h1><ShufflingSpanText  animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Gathering [...artistic situations...]"}/></h1>
-                                        <h3><ShufflingSpanText  animation_delay_ms={300} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Waiting on finding [pixel arts...]"}/></h3>
+                                        <h1><ShufflingSpanText  animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: `"Share Tech Mono"`}} text={"Gathering [...artistic situations...]"}/></h1>
+                                        <h3><ShufflingSpanText  animation_delay_ms={300} animation_duration_ms={250} style={{fontFamily: `"Share Tech Mono"`}} text={"Waiting on finding [pixel arts...]"}/></h3>
                                         {_is_search_mode && <h4>Powered in partnership with Ecency.com</h4>}
                                     </div>:
                                     <div key={"not_loading_posts"}>
-                                        <h1><ShufflingSpanText animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"Nothingness = [...artistic situations]"}/></h1>
-                                        <h3><ShufflingSpanText animation_delay_ms={300} animation_duration_ms={250} style={{fontFamily: `"Noto Sans Mono"`}} text={"No [pixel arts...] in those"}/></h3>
+                                        <h1><ShufflingSpanText animation_delay_ms={0} animation_duration_ms={250} style={{fontFamily: `"Share Tech Mono"`}} text={"Nothingness = [...artistic situations]"}/></h1>
+                                        <h3><ShufflingSpanText animation_delay_ms={300} animation_duration_ms={250} style={{fontFamily: `"Share Tech Mono"`}} text={"No [pixel arts...] in those"}/></h3>
                                         <div className={classes.cyberExhibitionImage} />
                                     </div>
 

@@ -1544,7 +1544,7 @@ class Pixel extends React.Component {
                 </Grow>
                 <Backdrop className={classes.backdrop} open={_loading} keepMounted={false}>
                     <div className={classes.backdropTextContent}>
-                        {_loading && <h1><ShufflingSpanText style={{fontFamily: `"Noto Sans Mono"`}} text={"Please wait..."} animation_delay_ms={0} animation_duration_ms={250}/></h1>}
+                        {_loading && <h1><ShufflingSpanText style={{fontFamily: `"Share Tech Mono"`}} text={"Please wait..."} animation_delay_ms={0} animation_duration_ms={250}/></h1>}
                         {_loading && _loading_process === "image_load" && <h4><ShufflingSpanText text={"Computing your image's initial dimensions."} animation_delay_ms={300} animation_duration_ms={500}/></h4>}
                         {_loading && _loading_process === "less_color" && <h4><ShufflingSpanText text={"Computing your image's colors to be fewer than before."} animation_delay_ms={300} animation_duration_ms={500}/></h4>}
                         {_loading && _loading_process === "less_color_auto" && <h4><ShufflingSpanText text={"Computing your image's colors to be quite a lot fewer than before."} animation_delay_ms={500} animation_duration_ms={500}/></h4>}
