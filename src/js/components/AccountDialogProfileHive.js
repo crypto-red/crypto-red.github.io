@@ -85,28 +85,44 @@ const styles = theme => ({
         transform: "translate(0, -50%)",
         textAlign: "center",
         left: 0,
+        filter: "drop-shadow(0px 0px 8px black)",
     },
     cardImage: {
-        width: 128,
-        height: 128,
-        clipPath: "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);",
+        width: 160,
+        height: 160,
+        padding: 12,
         display: "inline-block",
         cursor: "pointer",
         pointerEvents: "all",
-        zIndex: 1,
+        zIndex: 6,
         margin: "auto",
         backgroundPosition: "center center",
         backgroundColor: theme.palette.primary.light,
         backgroundSize: "cover",
+        backgroundClip: "content-box",
+        backgroundAttachment: "content-box",
         transform: "scale(1)",
+        borderRadius: "50%",
         transition: "transform 160ms cubic-bezier(0, 0, 0.2, 1), clip-path 160ms cubic-bezier(0, 0, 0.2, 1)",
         "&:hover": {
             clipPath: "circle(50%)",
             transform: "scale(2)",
+        },
+        "&::after": {
+            content: `""`,
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+            backgroundImage: "linear-gradient(58deg, rgb(230, 185, 168) 10%, rgb(90, 115, 253) 48%, rgb(163, 238, 244) 86%)",
+            mixBlendMode: "soft-light",
+            top: 0,
+            left: 0,
         }
     },
     reputation: {
         margin: "-16px auto auto -16px",
+        borderRadius: "50%",
         position: "absolute",
         boxSizing: "content-box",
         cursor: "pointer",
@@ -116,9 +132,40 @@ const styles = theme => ({
         height: 19,
         padding: 8,
         display: "inline-block",
-        clipPath: "polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);",
-        backgroundColor: theme.palette.primary.dark,
-        color: theme.palette.primary.contrastText,
+        backgroundColor: "rgb(163, 238, 244)",
+        color: "white",
+        transformOrigin: "top right",
+        transform: "rotate(10deg) translate(17px, 16px)",
+        "& > span": {
+            transform: "rotate(-10deg) translate(-13px, 0px)",
+            position: "absolute",
+            transformOrigin: "bottom",
+            fontSize: 16,
+        },
+        "&::before": {
+            content: `""`,
+            backgroundColor: "rgb(163, 238, 244)",
+            width: 40,
+            height: 100,
+            position: "absolute",
+            transform: "translate(18px, 0px) rotate(79deg)",
+            top: 0,
+            right: 0,
+            transformOrigin: "left top",
+            zIndex: -1,
+        },
+        "&::after": {
+            content: `""`,
+            backgroundColor: "rgb(163, 238, 244)",
+            width: 40,
+            height: 100,
+            position: "absolute",
+            transform: "translate(0px, 19px) rotate(12deg)",
+            top: 0,
+            right: 0,
+            transformOrigin: "right top",
+            zIndex: -1,
+        }
     },
     cardContent: {
         marginTop: 64,
@@ -270,9 +317,9 @@ class AccountDialogProfileHive extends React.Component {
                         </div>
                     </CardActionArea>
                     <div className={classes.cardImageBox}>
-                        <div className={classes.cardImage} style={{backgroundSize: "cover !important", backgroundImage: _account.profile_image ? `url(${_account.profile_image})`: ""}}></div>
+                        <div className={classes.cardImage} style={{backgroundSize: "cover !important", backgroundImage: _account.profile_image ? `url(${_account.profile_image}), linear-gradient(148deg, #a3eef4 10%, #5a73fd 48%, #e6b9a8 86%)`: ""}}></div>
                         <Tooltip title="Reputation" aria-label="Reputation">
-                            <div className={classes.reputation}>{_reputation}</div>
+                            <div className={classes.reputation}><span>{_reputation}</span></div>
                         </Tooltip>
                     </div>
                     <CardContent className={classes.cardContent}>

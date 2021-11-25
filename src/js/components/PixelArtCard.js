@@ -210,6 +210,8 @@ const styles = theme => ({
         },
         "&[dataselected='true']": {
             backgroundColor: "#d7dbff",
+            backgroundImage: `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaQAAAAOCAYAAABgvGgJAAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAC4jAAAuIwF4pT92AAAAB3RJTUUH5QsZByU4FSJ3aQAAAtVJREFUeNrtmz1rVEEUhp+TrAohuMZCQcXKLo1IjK2CP8HGyhSmsgkiEYNgEhO18wcIGolWNjY2ImgtqVNYWYggKORDUTTZ1yKTsG7uxsuG7M7snAe22N0LOzvnPeeduXOukQCSKkAvaVMzsz84TkZIOgw8By4APW386XfAZTP7VjeWI8Cl8HY9vDb5aGZvPGKdpZKAoKvAGDAIWMJzvSjpoZktueycTMyoCtwEhtpsRgBngFuSZupy7itwFLhdcP0nSZNm9sQj54a0k6AngBGgmvhcnwf6JM26KTmZmFEnc/cgcCWMZcbMlsysJukuG3dbJhoWuCeBO5JkZnMeQTeknQQ90AVzXQ3/xRpWbY7TzWY00OGcazSlNUlTwYxGGq7fB4xK+mxmrz2S7cdc0G1nGXgKFJpSOC/bX//RVrDMfrpkHTej3eecpF7gVJPrl8zsi0ezA4Yk6UBkY+oHxrvUjP5rSpJOAzeAE0ANWKv7+i3wwMzk0s2qyKfS1BNz7m7m3H3geyKhj7oRqoQut8ZfVsMm6UWEoh4i/TOj3ZjSVWASON6oAWAamHJTymrHkUpTT+y5uwwsJGRIi0CUjVDBYMaA4Sa6/AG8Al4CfWU1bJJ+RRiIHvJgJ1MaDaZ0rHHVEQxp2st1FmaUWlNP7LlbS0gCq8AcEF0jVGjnn6e4nX81fHcvLKLHy2q4klHxj5Fth65bKwWzR5LWgIv8e6YEMChp2Mze+xRmYUYDPiNZLnajbISqa+cfZntj3ArwrMCMSmnYJP12jUa9U2p639XM1n3q3IycfOtDB7RZCdq8VqDNlbAzmm3FjCCBB2Mz3CmVPnQN4nC6ixyaepw21Ic94hBwjuLbbx+Ax2w0L1xvRcO+Q4pvJZTSoauzN4aUQ1OPk2Z96AfOsvHgMQU7pIWwO2pJw25I8VHzKcgeP9d1Yq4PPSXG15KG/ZaPFyPHcbw+RDG+v6jTMXQ4YXZLAAAAAElFTkSuQmCC")`,
+            backgroundRepeat: "repeat-x",
         },
         "& > *": {
             opacity: .5,
@@ -393,7 +395,7 @@ class PixelArtCard extends React.Component {
                             }
                         </div>
                     </div>
-                    <CardContent datatags={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
+                    <CardContent style={{backgroundPosition: `${post.timestamp / 1000 % 100}% 100%`}} datatags={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
                         <Typography gutterBottom variant={"h5"} component="h2">
                             <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>{postprocess_text(post.title)}</ReactMarkdown>
                         </Typography>

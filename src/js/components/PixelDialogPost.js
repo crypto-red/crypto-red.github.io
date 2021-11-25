@@ -1308,6 +1308,7 @@ class PixelDialogPost extends React.Component {
                                 px={_px}
                                 py={_py}
                                 pz={_pz}
+                                color={_color_palette.inverse_brightest_color_with_half_saturation}
                                 classname={classes.belowContent} />
                         }
                         <div className={classes.content}>

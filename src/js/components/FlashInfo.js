@@ -9,7 +9,7 @@ const styles = theme => ({
     flashInfo: {
         position: "relative",
         padding: theme.spacing(1),
-        background: `linear-gradient(135deg,#202f54 48px, #060e23 120px, #060e23 calc(100% - 256px), #903838)`,
+        background: `linear-gradient(135deg,#202f54 48px, #060e23 120px, #060e23 calc(100% - 256px), #389070)`,
         color: theme.palette.primary.contrastText,
         display: "flex",
         [theme.breakpoints.down("sm")]: {
