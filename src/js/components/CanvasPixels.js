@@ -8014,6 +8014,10 @@ class CanvasPixels extends React.Component {
         } = this.state;
 
         let { perspective_coordinate } = this.state;
+
+        perspective_coordinate[0] = is_mobile_or_tablet ? Math.floor(perspective_coordinate[0] / 2) * 2: perspective_coordinate[0];
+        perspective_coordinate[1] = is_mobile_or_tablet ? Math.floor(perspective_coordinate[1] / 2) * 2: perspective_coordinate[1];
+
         const p = is_mobile_or_tablet ? perspective * 1.5 / 4: perspective / 4;
 
         let background_image_style_props = show_original_image_in_background && typeof _base64_original_images[_original_image_index] !== "undefined" ?
@@ -8044,7 +8048,7 @@ class CanvasPixels extends React.Component {
         const canvas_wrapper_width = Math.round(pxl_width * _screen_zoom_ratio * scale);
         const canvas_wrapper_height = Math.round(pxl_height * _screen_zoom_ratio * scale);
 
-        const l = is_mobile_or_tablet ? light * p * 1.5 * 2: light * p * 2;
+        const l = is_mobile_or_tablet ? light * p * 0.5 * 2: light * p * 2;
 
         const filter_force = (1 - (p/200) * l) + (
                                     (

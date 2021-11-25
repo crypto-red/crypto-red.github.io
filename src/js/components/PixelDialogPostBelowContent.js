@@ -236,13 +236,14 @@ class PixelDialogPostBelowContent extends React.Component {
                 backgroundRepeat: "repeat", backgroundSize: `${Math.ceil(100*(pz*2.5) / 4)}px ${Math.ceil(100*(pz*2.5) / 4)}px`, backgroundPosition: `${(px*30-150)*pz}px ${(py*30-150)*pz}px`, color: "black", backgroundOrigin: "center"}}>
                 <div style={{position: "relative", height: "100%"}}>
                     <div style={{position: "relative", height: "100%"}}>
-                        <img src={sc_svg} style={{zIndex: 11, transition: "transform .1s linear 0s", position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
-                        <img src={ss_svg} style={{zIndex: 11, transition: "transform .1s linear 0s", position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*5-25)*pz}px, ${(py*5-20)*pz}px)`}}/>
+                        <div style={{position: "absolute", zIndex: 14, width: "100%", height: "100%", top: 0, left: 0, backgroundImage: `url("${window.location.origin}/src/images/dust_overlay.png")`, backgroundSize: "cover", filter: "opacity(0.4) blur(2px) grayscale(1)"}}></div>
+                        <img src={sc_svg} style={{zIndex: is_mobile_or_tablet ? 1: 11, transition: "transform .1s linear 0s", position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
+                        <img src={ss_svg} style={{zIndex: is_mobile_or_tablet ? 1: 11, transition: "transform .1s linear 0s", position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*5-25)*pz}px, ${(py*5-20)*pz}px)`}}/>
                         <img src={sg_svg} style={{transition: "transform .1s linear 0s", position: "absolute", top: 372, right: 372, width: 372, height: 372, transformOrigin: "top right", transform: `translate(${(px*10-50)*pz}px, ${(py*10-50)*pz}px)`}}/>
                         <img src={st_svg} style={{transition: "transform .1s linear 0s", position: "absolute", bottom: 256, right: 256, width: 336, height: 336, transformOrigin: "middle center", transform: `translate(${(px*15-75)*pz}px, ${(py*15-75)*pz}px)`}}/>
                         <span style={{position: "absolute", bottom: "50%", right: 32, width: "66%", color: "#ffffff99"}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
                     </div>
-                    <div style={is_mobile_or_tablet ? {display: "none"}: {position: "absolute", left: 0, top: 0, width: "100%", height: "100%", display: "inline-grid"}}>
+                    <div style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%", display: "inline-grid"}}>
                         <span>$_U_agent? N°{window.navigator.userAgent}</span>
                         <span>$_POST_SERIAL? N°{post.id}</span>
                         <span>$_ARTISTIC_SITUATION_TYPE: PIXEL ART</span>

@@ -139,7 +139,7 @@ const styles = theme => ({
         },
         pointerEvents: "none",
         touchAction: "none",
-        padding: 16,
+        padding: 0,
         top: 0,
         right: 0,
         textAlign: "right",
@@ -361,6 +361,7 @@ const styles = theme => ({
         zIndex: 1199,
         gap: 16,
         height: 48,
+        justifyContent: "space-between",
         "& > button": {
             color: "white",
         },
