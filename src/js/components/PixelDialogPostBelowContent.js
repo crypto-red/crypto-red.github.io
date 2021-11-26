@@ -240,7 +240,7 @@ class PixelDialogPostBelowContent extends React.Component {
                 backgroundRepeat: "repeat", backgroundSize: `${Math.ceil(100*(pz*2.5) / 4)}px ${Math.ceil(100*(pz*2.5) / 4)}px`, backgroundPosition: `${(px*30-150)*pz}px ${(py*30-150)*pz}px`, color: "black", backgroundOrigin: "center"}}>
                 <div style={{position: "relative", height: "100%"}}>
                     <div style={{position: "relative", height: "100%"}}>
-                        <div style={{filter: "opacity(.5)", position: "absolute", color: color, zIndex: 14, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundSize: 450, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
+                        <div style={{filter: "opacity(.75)", position: "absolute", color: color, zIndex: 14, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 560, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
                             <p>$_AUTHOR: @{post.author}</p>
                             <p>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</p>
                             <p>$_VOTES: {vote_number}</p>

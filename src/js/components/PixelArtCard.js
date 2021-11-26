@@ -117,7 +117,7 @@ const styles = theme => ({
             },
             "& div img": {
                 opacity: 1,
-                transform: "scale(4)",
+                transform: "translate(-50%, -50%) scale(4)",
             },
             "&:first-child::after": {
                 content: "''",
@@ -158,7 +158,7 @@ const styles = theme => ({
         left: "50%",
         transform: "translate(-50%, -50%)",
         "& > img": {
-            transform: "scale(1)",
+            transform: "translate(-50%, -50%) scale(1)",
             transition: "transform 240ms cubic-bezier(0.4, 0, 0.2, 1), opacity 240ms cubic-bezier(0.4, 0, 0.2, 1)",
             position: "absolute",
             left: "50%",

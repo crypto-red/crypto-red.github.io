@@ -105,9 +105,9 @@ const styles = theme => ({
             textShadow: "0 0px 24px #000000ff",
             position: "absolute",
             width: "80%",
-            height: "24px",
+            height: "32px",
             left: "10%",
-            top: "4px",
+            top: "6px",
             fontFamily: `"Share Tech Mono"`,
             content: `"ARTISTIC SITUATION N°"attr(dataid)""`,
             [theme.breakpoints.down("sm")]: {
@@ -122,7 +122,7 @@ const styles = theme => ({
             textShadow: "0 0px 12px #000000",
             position: "absolute",
             width: "80%",
-            height: "24px",
+            height: "32px",
             left: "10%",
             top: "0px",
             background: "#000000",
@@ -1639,7 +1639,7 @@ class PixelDialogPost extends React.Component {
                                             canvas_wrapper_border_radius={2}
                                             shadow_size={9}
                                             shadow_color={_color_palette.background_color}
-                                            canvas_wrapper_padding={32}
+                                            canvas_wrapper_padding={24}
                                             canvas_wrapper_background_color={_color_palette.brightest_color}
                                             pxl_width={_width}
                                             pxl_height={_height}
