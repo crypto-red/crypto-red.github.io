@@ -19,11 +19,11 @@ function SciFiGrid(props) {
             </defs>
             <g clipPath="url(#prefix__a)">
                 <clipPath id="prefix__b">
-                    <path fill={props.color} d="M0 0h450v450H0z" />
+                    <path fill={props.color} fillOpacity={0.75} d="M0 0h450v450H0z" />
                 </clipPath>
                 <g clipPath="url(#prefix__b)">
                     <clipPath id="prefix__c">
-                        <path fill={props.color} d="M0 0h450v450H0z" />
+                        <path fill={props.color} fillOpacity={0.75} d="M0 0h450v450H0z" />
                     </clipPath>
                     <g clipPath="url(#prefix__c)">
                         <path d="M.108 0H450v450H.108V0z" fill="none" />
@@ -31,7 +31,7 @@ function SciFiGrid(props) {
                             <path
                                 d="M-900-900H900V900H-900V-900zM.108 0H450v450H.108V0z"
                                 fillRule="evenodd"
-                                fill={props.color}
+                                fill={props.color} fillOpacity={0.75}
                             />
                         </clipPath>
                         <g clipPath="url(#prefix__d)">
@@ -40,7 +40,7 @@ function SciFiGrid(props) {
                                 <path
                                     d="M-900-900H900V900H-900V-900zM.108 0H450v450H.108V0z"
                                     fillRule="evenodd"
-                                    fill={props.color}
+                                    fill={props.color} fillOpacity={0.75}
                                 />
                             </clipPath>
                             <g clipPath="url(#prefix__e)">
@@ -56,7 +56,7 @@ function SciFiGrid(props) {
                                         y="-200%"
                                         width="400%"
                                         height="400%"
-                                        fill={props.color}
+                                        fill={props.color} fillOpacity={0.75}
                                     />
                                     <path d="M.108 0H450v450H.108V0z" />
                                 </mask>
@@ -77,7 +77,7 @@ function SciFiGrid(props) {
                             <path
                                 d="M-900-900H900V900H-900V-900zM150.126 0v450V0z"
                                 fillRule="evenodd"
-                                fill={props.color}
+                                fill={props.color} fillOpacity={0.75}
                             />
                         </clipPath>
                         <g clipPath="url(#prefix__g)">
@@ -85,7 +85,7 @@ function SciFiGrid(props) {
                                 <path
                                     d="M-900-900H900V900H-900V-900zM150.126 0v450V0z"
                                     fillRule="evenodd"
-                                    fill={props.color}
+                                    fill={props.color} fillOpacity={0.75}
                                 />
                             </clipPath>
                             <g clipPath="url(#prefix__h)">
@@ -101,7 +101,7 @@ function SciFiGrid(props) {
                                         y="-200%"
                                         width="400%"
                                         height="400%"
-                                        fill={props.color}
+                                        fill={props.color} fillOpacity={0.75}
                                     />
                                     <path d="M150.126 0v450" />
                                 </mask>
@@ -121,7 +121,7 @@ function SciFiGrid(props) {
                             <path
                                 d="M-900-900H900V900H-900V-900zM299.982 0v450V0z"
                                 fillRule="evenodd"
-                                fill={props.color}
+                                fill={props.color} fillOpacity={0.75}
                             />
                         </clipPath>
                         <g clipPath="url(#prefix__j)">
@@ -129,7 +129,7 @@ function SciFiGrid(props) {
                                 <path
                                     d="M-900-900H900V900H-900V-900zM299.982 0v450V0z"
                                     fillRule="evenodd"
-                                    fill={props.color}
+                                    fill={props.color} fillOpacity={0.75}
                                 />
                             </clipPath>
                             <g clipPath="url(#prefix__k)">
@@ -145,7 +145,7 @@ function SciFiGrid(props) {
                                         y="-200%"
                                         width="400%"
                                         height="400%"
-                                        fill={props.color}
+                                        fill={props.color} fillOpacity={0.75}
                                     />
                                     <path d="M299.982 0v450" />
                                 </mask>
@@ -165,7 +165,7 @@ function SciFiGrid(props) {
                             <path
                                 d="M-900-900H900V900H-900V-900zM.054 299.928h450-450z"
                                 fillRule="evenodd"
-                                fill={props.color}
+                                fill={props.color} fillOpacity={0.75}
                             />
                         </clipPath>
                         <g clipPath="url(#prefix__m)">
@@ -173,7 +173,7 @@ function SciFiGrid(props) {
                                 <path
                                     d="M-900-900H900V900H-900V-900zM.054 299.928h450-450z"
                                     fillRule="evenodd"
-                                    fill={props.color}
+                                    fill={props.color} fillOpacity={0.75}
                                 />
                             </clipPath>
                             <g clipPath="url(#prefix__n)">
@@ -189,7 +189,7 @@ function SciFiGrid(props) {
                                         y="-200%"
                                         width="400%"
                                         height="400%"
-                                        fill={props.color}
+                                        fill={props.color} fillOpacity={0.75}
                                     />
                                     <path d="M.054 299.928h450" />
                                 </mask>
@@ -209,7 +209,7 @@ function SciFiGrid(props) {
                             <path
                                 d="M-900-900H900V900H-900V-900zM.054 150.072h450-450z"
                                 fillRule="evenodd"
-                                fill={props.color}
+                                fill={props.color} fillOpacity={0.75}
                             />
                         </clipPath>
                         <g clipPath="url(#prefix__p)">
@@ -217,7 +217,7 @@ function SciFiGrid(props) {
                                 <path
                                     d="M-900-900H900V900H-900V-900zM.054 150.072h450-450z"
                                     fillRule="evenodd"
-                                    fill={props.color}
+                                    fill={props.color} fillOpacity={0.75}
                                 />
                             </clipPath>
                             <g clipPath="url(#prefix__q)">
@@ -233,7 +233,7 @@ function SciFiGrid(props) {
                                         y="-200%"
                                         width="400%"
                                         height="400%"
-                                        fill={props.color}
+                                        fill={props.color} fillOpacity={0.75}
                                     />
                                     <path d="M.054 150.072h450" />
                                 </mask>
@@ -250,22 +250,22 @@ function SciFiGrid(props) {
                             </g>
                         </g>
                         <path
-                            fill="#262626"
+                            fill={props.secondary}
                             fillOpacity={0.05}
                             d="M300.09 299.928H450V450H300.09z"
                         />
                         <path fill="none" d="M.108 0H450v450H.108z" />
                         <clipPath id="prefix__s">
-                            <path fill={props.color} d="M.108 0H450v450H.108z" />
+                            <path fill={props.color} fillOpacity={0.75} d="M.108 0H450v450H.108z" />
                         </clipPath>
                         <g clipPath="url(#prefix__s)">
                             <path fill="none" d="M.108 0H450v450H.108z" />
                             <clipPath id="prefix__t">
-                                <path fill={props.color} d="M.108 0H450v450H.108z" />
+                                <path fill={props.color} fillOpacity={0.75} d="M.108 0H450v450H.108z" />
                             </clipPath>
                             <g clipPath="url(#prefix__t)">
                                 <mask id="prefix__u">
-                                    <path fill={props.color} d="M.108 0H450v450H.108z" />
+                                    <path fill={props.color} fillOpacity={0.75} d="M.108 0H450v450H.108z" />
                                 </mask>
                                 <path fill="none" d="M.108 0H450v450H.108z" />
                                 <path
@@ -281,7 +281,7 @@ function SciFiGrid(props) {
                                 />
                             </g>
                         </g>
-                        <path fill={props.color} d="M415 428h23v10h-23z" />
+                        <path fill={props.color} fillOpacity={0.75} d="M415 428h23v10h-23z" />
                         <path
                             fill={props.color}
                             fillOpacity={0.2}
@@ -303,7 +303,7 @@ function SciFiGrid(props) {
                         cx={150.5}
                         cy={150.5}
                         r={112.5}
-                        fill="#262626"
+                        fill={props.secondary}
                         fillOpacity={0.07}
                     />
                     <circle
@@ -311,7 +311,7 @@ function SciFiGrid(props) {
                         cx={150.5}
                         cy={150.5}
                         r={112.5}
-                        fill="#262626"
+                        fill={props.secondary}
                         fillOpacity={0.07}
                         mask="url(#prefix__v)"
                         strokeWidth={2}
@@ -323,7 +323,7 @@ function SciFiGrid(props) {
                         <path
                             d="M-900-900H900V900H-900V-900zM150.054 100.096V200.12 100.096z"
                             fillRule="evenodd"
-                            fill={props.color}
+                            fill={props.color} fillOpacity={0.75}
                         />
                     </clipPath>
                     <g clipPath="url(#prefix__w)">
@@ -333,7 +333,7 @@ function SciFiGrid(props) {
                                 y="-200%"
                                 width="400%"
                                 height="400%"
-                                fill={props.color}
+                                fill={props.color} fillOpacity={0.75}
                             />
                             <path d="M150.054 100.096V200.12" />
                         </mask>
@@ -352,7 +352,7 @@ function SciFiGrid(props) {
                         <path
                             d="M-900-900H900V900H-900V-900zM100.006 150.144H200.03 100.006z"
                             fillRule="evenodd"
-                            fill={props.color}
+                            fill={props.color} fillOpacity={0.75}
                         />
                     </clipPath>
                     <g clipPath="url(#prefix__y)">
@@ -362,7 +362,7 @@ function SciFiGrid(props) {
                                 y="-200%"
                                 width="400%"
                                 height="400%"
-                                fill={props.color}
+                                fill={props.color} fillOpacity={0.75}
                             />
                             <path d="M100.006 150.144H200.03" />
                         </mask>

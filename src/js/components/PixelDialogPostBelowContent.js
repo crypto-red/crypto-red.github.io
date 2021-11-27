@@ -156,6 +156,7 @@ class PixelDialogPostBelowContent extends React.Component {
             st_svg: props.st_svg,
             sg_svg: props.sg_svg,
             g_svg: props.g_svg,
+            h_svg: props.h_svg,
             window_width: props.window_width,
             is_prediction_loading: props.is_prediction_loading,
             tags_input: props.tags_input,
@@ -223,6 +224,7 @@ class PixelDialogPostBelowContent extends React.Component {
             sg_svg,
             st_svg,
             g_svg,
+            h_svg,
         } = this.state;
 
         const post = this.state.post || {};
@@ -236,11 +238,11 @@ class PixelDialogPostBelowContent extends React.Component {
 
         return (
             <div className={classname} style={{backgroundImage:
-                    `url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMTMzLjMzMyIgaGVpZ2h0PSIxMzMuMzMzIiB4bWxuczp2PSJodHRwczovL3ZlY3RhLmlvL25hbm8iPjxkZWZzPjxjbGlwUGF0aCBpZD0iQSI+PHBhdGggZD0iTTAgMGgxMDB2MTAwSDB6Ii8+PC9jbGlwUGF0aD48L2RlZnM+PGcgY2xpcC1wYXRoPSJ1cmwoI0EpIiBmaWxsPSIjZmZmIj48cGF0aCBkPSJNNTAuMDA1IDMyaDBjLjYyMSAwIDEuMTI1Ljg5NiAxLjEyNSAydjMyYzAgMS4xMDQtLjUwNCAyLTEuMTI1IDJoMGMtLjYyMSAwLTEuMTI1LS44OTYtMS4xMjUtMlYzNGMwLTEuMTA0LjUwNC0yIDEuMTI1LTJ6Ii8+PHBhdGggZD0iTTMyIDUwaDBjMC0uNjkgMS4wMDItMS4yNSAyLjIzNi0xLjI1aDMxLjUyOGMxLjIzNCAwIDIuMjM2LjU2IDIuMjM2IDEuMjVoMGMwIC42OS0xLjAwMiAxLjI1LTIuMjM2IDEuMjVIMzQuMjM2QzMzLjAwMiA1MS4yNSAzMiA1MC42OSAzMiA1MHoiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjE2LjUiIGN5PSIxNi41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjMzLjI1IiBjeT0iMTYuNSIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSI1MCIgY3k9IjE2LjUiIHI9IjEuNSIvPjxjaXJjbGUgdmVjdG9yLWVmZmVjdD0ibm9uLXNjYWxpbmctc3Ryb2tlIiBjeD0iNjYuNzUiIGN5PSIxNi41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjgzLjc1IiBjeT0iMTYuNSIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSIxNi41IiBjeT0iMzMuNSIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSIzMy4yNSIgY3k9IjMzLjUiIHI9IjEuNSIvPjxjaXJjbGUgdmVjdG9yLWVmZmVjdD0ibm9uLXNjYWxpbmctc3Ryb2tlIiBjeD0iNjYuNzUiIGN5PSIzMy41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjgzLjc1IiBjeT0iMzMuNSIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSIxNi4zNzUiIGN5PSI1MCIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSI4My42MjUiIGN5PSI1MCIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSIxNi4yNSIgY3k9IjY2LjUiIHI9IjEuNSIvPjxjaXJjbGUgdmVjdG9yLWVmZmVjdD0ibm9uLXNjYWxpbmctc3Ryb2tlIiBjeD0iMzMiIGN5PSI2Ni41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjY2LjUiIGN5PSI2Ni41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjgzLjUiIGN5PSI2Ni41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjE2LjI1IiBjeT0iODMuNSIgcj0iMS41Ii8+PGNpcmNsZSB2ZWN0b3ItZWZmZWN0PSJub24tc2NhbGluZy1zdHJva2UiIGN4PSIzMyIgY3k9IjgzLjUiIHI9IjEuNSIvPjxjaXJjbGUgdmVjdG9yLWVmZmVjdD0ibm9uLXNjYWxpbmctc3Ryb2tlIiBjeD0iNDkuNzUiIGN5PSI4My41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjY2LjUiIGN5PSI4My41IiByPSIxLjUiLz48Y2lyY2xlIHZlY3Rvci1lZmZlY3Q9Im5vbi1zY2FsaW5nLXN0cm9rZSIgY3g9IjgzLjUiIGN5PSI4My41IiByPSIxLjUiLz48L2c+PC9zdmc+")`,
-                backgroundRepeat: "repeat", backgroundSize: `${Math.ceil(100*(pz*2.5) / 4)}px ${Math.ceil(100*(pz*2.5) / 4)}px`, backgroundPosition: `${(px*30-150)*pz}px ${(py*30-150)*pz}px`, color: "black", backgroundOrigin: "center"}}>
+                    `url("${h_svg}")`,
+                backgroundRepeat: "repeat", backgroundSize: `${Math.ceil(150*(pz))}px ${Math.ceil(172*(pz))}px`, backgroundPosition: `${(px*30-150)*pz}px ${(py*30-150)*pz}px`, color: "black", backgroundOrigin: "center"}}>
                 <div style={{position: "relative", height: "100%"}}>
                     <div style={{position: "relative", height: "100%"}}>
-                        <div style={{filter: "opacity(.75)", position: "absolute", color: color, zIndex: 14, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 560, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
+                        <div style={{filter: "opacity(.5)", position: "absolute", color: color, zIndex: 14, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
                             <p>$_AUTHOR: @{post.author}</p>
                             <p>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</p>
                             <p>$_VOTES: {vote_number}</p>

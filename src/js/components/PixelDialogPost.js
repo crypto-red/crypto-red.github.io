@@ -65,6 +65,7 @@ import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import Scifisg from "../icons/Scifisg";
 import SciFiGrid from "../icons/SciFiGrid";
+import HexGrid from "../icons/HexGrid";
 
 const TRANSLATION_AVAILABLE = ["en", "ar", "zh", "nl", "fi", "fr", "de", "hi", "hu", "id", "ga", "it", "ja", "ko", "pl", "pt", "ru", "es", "sv", "tr", "uk", "vi"];
 
@@ -105,11 +106,11 @@ const styles = theme => ({
             textShadow: "0 0px 24px #000000ff",
             position: "absolute",
             width: "80%",
-            height: "32px",
+            height: "30px",
             left: "10%",
-            top: "6px",
+            top: "5px",
             fontFamily: `"Share Tech Mono"`,
-            content: `"ARTISTIC SITUATION N°"attr(dataid)""`,
+            content: `"...ARTISTIC SITUATION N°"attr(dataid)"..."`,
             [theme.breakpoints.down("sm")]: {
                 content: `"ARTC. SITN. N°"attr(dataid)`,
             },
@@ -122,7 +123,7 @@ const styles = theme => ({
             textShadow: "0 0px 12px #000000",
             position: "absolute",
             width: "80%",
-            height: "32px",
+            height: "30px",
             left: "10%",
             top: "0px",
             background: "#000000",
@@ -151,6 +152,7 @@ const styles = theme => ({
         height: "calc(100vh)",
         position: "absolute",
         overflow: "visible",
+        backgroundImage: "radial-gradient(transparent 66%, #000000)",
         //mixBlendMode: "exclusion",
         [theme.breakpoints.down("md")]: {
             width: "100vw",
@@ -663,8 +665,9 @@ class PixelDialogPost extends React.Component {
                     const _ss_svg = get_svg_in_b64(<Scifiss color={data.inverse_brightest_color_with_half_saturation}/>);
                     const _st_svg = get_svg_in_b64(<Scifist color={data.inverse_brightest_color_with_half_saturation}/>);
                     const _sg_svg = get_svg_in_b64(<Scifisg color={data.inverse_brightest_color_with_half_saturation}/>);
-                    const _g_svg = get_svg_in_b64(<SciFiGrid color={data.inverse_brightest_color_with_half_saturation}/>);
-                    this.setState({_color_palette: {...data}, _sc_svg, _ss_svg, _st_svg, _sg_svg, _g_svg}, () => {
+                    const _g_svg = get_svg_in_b64(<SciFiGrid secondary={data.darkest_color} color={data.inverse_brightest_color_with_half_saturation}/>);
+                    const _h_svg = get_svg_in_b64(<HexGrid color={"#fff"}/>);
+                    this.setState({_color_palette: {...data}, _sc_svg, _ss_svg, _st_svg, _sg_svg, _g_svg, _h_svg}, () => {
 
                         this.forceUpdate();
 
@@ -1250,6 +1253,7 @@ class PixelDialogPost extends React.Component {
             _st_svg,
             _sg_svg,
             _g_svg,
+            _h_svg,
         } = this.state;
 
         const post = this.state.post || {};
@@ -1304,6 +1308,7 @@ class PixelDialogPost extends React.Component {
                                 st_svg={_st_svg}
                                 sg_svg={_sg_svg}
                                 g_svg={_g_svg}
+                                h_svg={_h_svg}
                                 window_width={_window_width}
                                 is_prediction_loading={_is_prediction_loading}
                                 tags_input={_tags_input}
