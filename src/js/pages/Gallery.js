@@ -25,10 +25,7 @@ import { search_on_hive, get_hive_posts, get_hive_post, vote_on_hive_post } from
 import actions from "../actions/utils";
 import api from "../utils/api";
 import {HISTORY} from "../utils/constants";
-import Fab from "@material-ui/core/Fab";
-import AddIcon from "@material-ui/icons/Add";
-import PhotoEmojiIcon from "../twemoji/react/1F4F7";
-import {t} from "../utils/t";
+import pixel_laboratory from "../../images/pixel-laboratory-base64";
 import Grow from "@material-ui/core/Grow";
 import ShufflingSpanText from "../components/ShufflingSpanText";
 import get_svg_in_b64 from "../utils/svgToBase64";
@@ -174,18 +171,10 @@ const styles = theme => ({
         }
     },
     fab: {
+        cursor: "pointer",
         position: "fixed",
-        backgroundColor: theme.palette.secondary.main,
-        color: theme.palette.primary.contrastText,
-        transition: "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, opacity 204ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 136ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
-        "&:hover": {
-            backgroundColor: theme.palette.primary.actionLighter,
-        },
         bottom: theme.spacing(2),
         right: theme.spacing(2),
-        "& svg": {
-            marginRight: 4
-        }
     },
     cyberExhibitionImage: {
         opacity: 0,
@@ -1331,9 +1320,9 @@ class Gallery extends React.Component {
                     onClose={this._handle_reset_selected_account}/>
 
                 <Grow in>
-                    <Fab className={classes.fab} variant="extended" onClick={this._open_editor}>
-                        <AddIcon style={{height: "1.8em"}} /> Situation
-                    </Fab>
+                    <img onClick={this._open_editor} className={classes.fab} style={{height: "42px", filter: "drop-shadow(0px 0px 8px black)"}}
+                         src={pixel_laboratory}
+                    />
                 </Grow>
 
             </div>

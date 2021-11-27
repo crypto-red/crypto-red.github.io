@@ -87,6 +87,7 @@ import RotateRightIcon from "../icons/RotateRight";
 import SwapHorizontalIcon from "../icons/SwapHorizontal";
 import SwapVerticalIcon from "../icons/SwapVertical";
 
+import pixel_laboratory from "../../images/pixel-laboratory-base64";
 import MagnifyPlusIcon from "../icons/MagnifyPlus";
 import MagnifyMinusIcon from "../icons/MagnifyMinus";
 import NavigationIcon from "../icons/Navigation";
@@ -1081,7 +1082,19 @@ class PixelToolboxSwipeableViews extends React.Component {
                                     <span>Information</span>
                                 </ListSubheader>
                                 <ListItem>
-                                    <ListItemText className={classes.ListItemText} primary={"This is FINALLY an exhibition of PIXEL ARTS, each of those pixel arts are ENCAPSULATED into a SITUATION OF ART, made by an artist, the author of the blog post (serving to store theses situations and to search for them in the database which is a real blockchain). An artistic situation born in the mind of its creator, before being realized and published to the blockchain. Theses data, on the blockchain, belongs to you and stays as it were trough advanced cryptography implementation, nevertheless, changes occurring to the situation like comments among other could make the real-life situation change too thus INFLUENCING BACK THINGS like the correction brought by, it’s publisher and therefore the publisher him(her)self."}></ListItemText>
+                                    <ListItemText className={classes.ListItemText} primary={
+                                        <div>
+                                            <img style={{width: "100%"}}
+                                                 src={pixel_laboratory}
+                                            />
+                                            <p>Be careful, your artistic situations will now mostly outlives you in terms of life span, thoses pixels arts you publish are 100% stored on the blockchain, and for free, limited in function of your account's value.</p>
+                                            <p>This does mean we're finally in a real context where things now mostly live forever. Enjoy our laboratory!</p>
+                                            <blockquote>
+                                                “Time moves in one direction, memory another. We are that strange species that constructs artifacts intended to counter the natural flow of forgetting.”<br />
+                                            ― William Gibson, Distrust That Particular Flavor
+                                            </blockquote>
+                                        </div>
+                                    }></ListItemText>
                                 </ListItem>
                             </List>
                         );

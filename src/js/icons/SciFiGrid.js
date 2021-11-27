@@ -295,7 +295,7 @@ function SciFiGrid(props) {
                             cy={150.5}
                             r={112.5}
                             fill={props.color}
-                            fillOpacity={0.07}
+                            fillOpacity={0.2}
                         />
                     </mask>
                     <circle
@@ -304,7 +304,7 @@ function SciFiGrid(props) {
                         cy={150.5}
                         r={112.5}
                         fill={props.secondary}
-                        fillOpacity={0.07}
+                        fillOpacity={0.2}
                     />
                     <circle
                         vectorEffect="non-scaling-stroke"
@@ -312,7 +312,7 @@ function SciFiGrid(props) {
                         cy={150.5}
                         r={112.5}
                         fill={props.secondary}
-                        fillOpacity={0.07}
+                        fillOpacity={0.2}
                         mask="url(#prefix__v)"
                         strokeWidth={2}
                         stroke={props.color}

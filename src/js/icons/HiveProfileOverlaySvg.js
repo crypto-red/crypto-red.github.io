@@ -32,11 +32,11 @@ function HiveProfileOverlaySvg(props) {
                         gradientTransform="matrix(1120 0 0 433 82 985)"
                         gradientUnits="userSpaceOnUse"
                     >
-                        <stop offset="8.333%" stopColor="#ffffb3" />
-                        <stop offset="28.75%" stopColor="#3bf3e9" />
-                        <stop offset="29.167%" stopColor="#23f1f0" />
-                        <stop offset="65%" stopColor="#fb0ffa" />
-                        <stop offset="100%" stopColor="#fd1ff5" />
+                        <stop offset="8.333%" stopColor={"#cdffa7"} />
+                        <stop offset="28.75%" stopColor={"#ffe695"} />
+                        <stop offset="29.167%" stopColor={"#a6fffe"} />
+                        <stop offset="65%" stopColor={"#ffa7fe"} />
+                        <stop offset="100%" stopColor={"#9394ff"} />
                     </linearGradient>
                     <mask id="prefix__d" x="-200%" y="-200%" width="400%" height="400%">
                         <rect x="-200%" y="-200%" width="400%" height="400%" fill={props.color} />
@@ -66,11 +66,11 @@ function HiveProfileOverlaySvg(props) {
                         gradientTransform="matrix(-1116 0 0 433 4034 985)"
                         gradientUnits="userSpaceOnUse"
                     >
-                        <stop offset="8.333%" stopColor="#ffffb3" />
-                        <stop offset="28.75%" stopColor="#3bf3e9" />
-                        <stop offset="29.167%" stopColor="#23f1f0" />
-                        <stop offset="65%" stopColor="#fb0ffa" />
-                        <stop offset="100%" stopColor="#fd1ff5" />
+                        <stop offset="8.333%" stopColor={"#ffffb3"} />
+                        <stop offset="28.75%" stopColor={"#98fff7"} />
+                        <stop offset="29.167%" stopColor={"#ca7fff"} />
+                        <stop offset="65%" stopColor={"#9cb8ff"} />
+                        <stop offset="100%" stopColor={"#ff9ac7"} />
                     </linearGradient>
                     <mask id="prefix__f" x="-200%" y="-200%" width="400%" height="400%">
                         <rect x="-200%" y="-200%" width="400%" height="400%" fill={props.color} />

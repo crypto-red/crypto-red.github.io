@@ -56,6 +56,15 @@ const styles = theme => ({
         backgroundSize: "134% 134%",
         background: `url("${svg_overlay}")`,
     },
+    cardHeaderBefore: {
+        content: `""`,
+        position: "absolute",
+        top: 0,
+        width: "100%",
+        height: 14,
+        backgroundImage: "linear-gradient(90deg, rgb(230, 185, 168) 10%, rgb(90, 115, 253) 48%, rgb(163, 238, 244) 86%)",
+        filter: "saturate(10)",
+    },
     cardHeaderTop: {
         display: "flex",
         position: "absolute",
@@ -301,6 +310,7 @@ class AccountDialogProfileHive extends React.Component {
                         keepMounted={keepMounted}>
                     <CardActionArea>
                         <div className={classes.cardHeader}>
+                            <div className={classes.cardHeaderBefore}></div>
                             <div className={classes.cardHeaderImage} style={{backgroundSize: "cover !important", backgroundImage: _account.cover_image ? `url(${_account.cover_image})`: ""}}></div>
                             <div className={classes.cardHeaderContent}>
                                 <div className={classes.cardHeaderTop}>
