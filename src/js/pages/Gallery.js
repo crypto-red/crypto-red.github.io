@@ -1320,7 +1320,7 @@ class Gallery extends React.Component {
                     onClose={this._handle_reset_selected_account}/>
 
                 <Grow in>
-                    <img onClick={this._open_editor} className={classes.fab} style={{height: "42px", filter: "drop-shadow(0px 0px 8px black)"}}
+                    <img onClick={this._open_editor} className={classes.fab} style={{height: 88, filter: "drop-shadow(0px 0px 8px black)"}}
                          src={pixel_laboratory}
                     />
                 </Grow>
