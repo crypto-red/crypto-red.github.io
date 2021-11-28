@@ -1355,7 +1355,7 @@ class Pixel extends React.Component {
                                     convert_scale={1}
                                     default_size={_import_size}
                                     ideal_size={_import_size}
-                                    max_size={_import_size*2}
+                                    max_size={_import_size*1.25}
                                     fast_drawing={true}
                                     px_per_px={1}/>
                                 <TouchRipple

@@ -998,12 +998,13 @@ class CanvasPixels extends React.Component {
 
         let { _layers } = this.state;
         let all_layers = [];
+        let all_layers_length = 0;
 
         (async () => {
 
              const maybe_set_layers = () => {
 
-                if(all_layers.length === _layers.length) {
+                if(all_layers_length === _layers.length) {
                     this.setState({_layers: [...all_layers]}, () => {
 
                         this._notify_layers_change();
@@ -1033,6 +1034,7 @@ class CanvasPixels extends React.Component {
                                 layer.thumbnail = thumbnail;
                                 layer.data = this.get_layer_data(index);
                                 all_layers[index] = layer;
+                                all_layers_length++;
                                 maybe_set_layers();
                             });
                         }
@@ -1043,6 +1045,7 @@ class CanvasPixels extends React.Component {
                             layer.thumbnail = thumbnail;
                             layer.data = this.get_layer_data(index);
                             all_layers[index] = layer;
+                            all_layers_length++;
                             maybe_set_layers();
                         });
                     }
@@ -1053,6 +1056,7 @@ class CanvasPixels extends React.Component {
                         layer.thumbnail = thumbnail;
                         layer.data = this.get_layer_data(index);
                         all_layers[index] = layer;
+                        all_layers_length++;
                         maybe_set_layers();
                     });
                 }
