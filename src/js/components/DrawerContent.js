@@ -36,7 +36,6 @@ import LockIcon from "@material-ui/icons/Lock";
 import AtmIcon from "@material-ui/icons/Atm";
 import FeedbackIcon from "@material-ui/icons/Feedback";
 import ForumIcon from "@material-ui/icons/Forum";
-import artistic_situation from "../../images/artistic-situation-base64";
 
 import QrCodeScanIcon from "../icons/QrCodeScan";
 import CryptDialog from "../components/CryptDialog";
@@ -419,9 +418,10 @@ class DrawerContent extends React.Component {
                 </Dialog>
                 <Fade in timeout={500}>
                     <div>
-                        <img style={{width: "100%", cursor: "pointer", filter: "drop-shadow(0px 0px 8px black)"}} src={artistic_situation}
-                             onClick={this._open_gallery_page} />
                         <List>
+                            <ListItem button onClick={this._open_gallery_page}>
+                                <ListItemText primary={"[NFTs] Art. Situations"} />
+                            </ListItem>
                             <ListItem button onClick={this._open_dashboard_page}>
                                 <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />
                             </ListItem>
