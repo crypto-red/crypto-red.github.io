@@ -242,7 +242,7 @@ class PixelDialogPostBelowContent extends React.Component {
                 backgroundRepeat: "repeat", backgroundSize: `${Math.ceil(150*(pz))}px ${Math.ceil(172*(pz))}px`, backgroundPosition: `${(px*30-150)*pz}px ${(py*30-150)*pz}px`, color: "black", backgroundOrigin: "center"}}>
                 <div style={{position: "relative", height: "100%"}}>
                     <div style={{position: "relative", height: "100%"}}>
-                        <div style={{filter: "opacity(.75)", textShadow: `rgb(0 70 255 / 60%) 1.08243px 0px 1px, rgb(255 50 0 / 60%) -1.08243px 0px 1px, 0px 0px 4px`, position: "absolute", color: color, zIndex: 14, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
+                        <div style={{filter: "opacity(.33)", textShadow: `rgb(0 70 255 / 60%) 1.08243px 0px 1px, rgb(255 50 0 / 60%) -1.08243px 0px 1px, 0px 0px 4px`, position: "absolute", color: color, zIndex: 14, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
                             <p>$_AUTHOR: @{post.author}</p>
                             <p>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</p>
                             <p>$_VOTES: {vote_number}</p>
