@@ -8062,7 +8062,7 @@ class CanvasPixels extends React.Component {
 
         const padding = Math.floor(canvas_wrapper_padding / window.devicePixelRatio * scale);
         return (
-            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{boxSizing: "border-box", position: "relative", overflow: "hidden", transform: `translateZ(0px)`, touchAction: "none", pointerEvents: "none", filter: `drop-shadow(inset 0 0 ${shadow_depth*shadow_size}px ${shadow_color})`}} className={className}>
+            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{boxSizing: "border-box", position: "relative", overflow: "hidden", touchAction: "none", pointerEvents: "none", contain: "strict"}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
                      className={"Canvas-Wrapper-Overflow" + (has_shown_canvas_once ? " Shown ": " Not-Shown ")}
                      draggable={"false"}
@@ -8078,16 +8078,21 @@ class CanvasPixels extends React.Component {
                          pointerEvents: "all",
                      }}>
                     <div className={"Canvas-Wrapper-MoveXY"}
-                        style={{
+                         draggable={"false"}
+                         style={{
+                            willChange: "transform",
+                             pointerEvents: "none",
+                             touchAction: "none",
                             boxSizing: "content-box",
                             position: "fixed",
-                            transform: `translate3d(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px, 0px)`,
+                            transform: `translate(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px)`,
                             transformOrigin: "center center",
                             perspective: `${Math.max(canvas_wrapper_width, canvas_wrapper_height)}px`
                     }}>
                         <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
                              draggable={"false"}
                              style={{
+                                 willChange: "transform",
                                  mixBlendMode: "hard-light",
                                  borderWidth: canvas_wrapper_border_width,
                                  borderStyle: "solid",
@@ -8114,7 +8119,7 @@ class CanvasPixels extends React.Component {
                                 style={{
                                     position: "absolute",
                                     touchAction: "none",
-                                    pointerEvents: "auto",
+                                    pointerEvents: "none",
                                     cursor: cursor,
                                     width: Math.floor(pxl_width),
                                     height: Math.floor(pxl_height),
@@ -8132,6 +8137,7 @@ class CanvasPixels extends React.Component {
                                 <div className={"Canvas-Pixels-Cover"}
                                     datatexttop={`D[${pxl_width}, ${pxl_height}]px // S[${_kb.toFixed(2)}]Kb`}
                                     datatextbottom={`ΔZ[${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}]x // ΔR[${(perspective_coordinate[1] * p / scale).toFixed(2)}, ${(perspective_coordinate[0] * p / scale).toFixed(2)}]°`}
+                                     willChange={"transform"}
                                      draggable={"false"}
                                      style={{
                                          backgroundImage: p ? `linear-gradient(to left, rgba(
@@ -8183,6 +8189,8 @@ class CanvasPixels extends React.Component {
                     backgroundPosition: "bottom",
                     backgroundRepeatY: "no-repeat",
                     backgroundSize: `${Math.round(scale * _screen_zoom_ratio * 5 * 5)}px`,
+                    pointerEvents: "none",
+                    touchAction: "none",
                 }}><span>[{parseFloat(scale * _screen_zoom_ratio).toFixed(2)}x]</span></div>
             </div>
         );

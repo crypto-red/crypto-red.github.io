@@ -136,10 +136,10 @@ const styles = theme => ({
             padding: "88px 16px 32px 16px",
             margin: 0,
             scrollBehavior: "smooth",
+            willChange: "scroll-position !important",
             overflow: "overlay",
             "& > .ReactVirtualized__Masonry__innerScrollContainer": {
                 overflow: "visible !important",
-                transform: "translateZ(0px)",
             }
         }
     },

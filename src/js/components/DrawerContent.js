@@ -44,7 +44,6 @@ import QRCodeToolsDialog from "../components/QRCodeToolsDialog";
 import { HISTORY, COINS } from "../utils/constants";
 import api from "../utils/api";
 import actions from "../actions/utils";
-import CyberExhibition from "../icons/CyberExhibition";
 
 const styles = theme => ({
     nested: {
@@ -420,7 +419,7 @@ class DrawerContent extends React.Component {
                     <div>
                         <List>
                             <ListItem button onClick={this._open_gallery_page}>
-                                <ListItemText primary={"[NFTs] Art. Situations"} />
+                                <ListItemText primary={"PIXELARTVERSE 2.5D"} />
                             </ListItem>
                             <ListItem button onClick={this._open_dashboard_page}>
                                 <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />
