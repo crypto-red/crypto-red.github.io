@@ -175,7 +175,6 @@ function _format_account(account) {
     const hive = Number(account.balance.split(" ")[0]);
     const hbd = Number(account.hbd_balance.split(" ")[0]);
 
-    console.log(account);
     const account_formatted = {
         name: account.name,
         memo_key: account.memo_key,

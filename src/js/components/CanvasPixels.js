@@ -1801,7 +1801,7 @@ class CanvasPixels extends React.Component {
             let width = image_obj.width;
             let height = image_obj.height;
 
-            if(pxl_width > width && pxl_height > height) {
+            if(true || pxl_width > width && pxl_height > height) {
 
                 let [canvas_ctx] = this._get_new_ctx_from_canvas(width, height, false);
                 canvas_ctx.drawImage(image_obj, 0, 0, width, height);
@@ -8117,9 +8117,10 @@ class CanvasPixels extends React.Component {
                             <canvas
                                 draggable={"false"}
                                 style={{
+                                    willChange: "transform",
                                     position: "absolute",
                                     touchAction: "none",
-                                    pointerEvents: "none",
+                                    pointerEvents: "auto",
                                     cursor: cursor,
                                     width: Math.floor(pxl_width),
                                     height: Math.floor(pxl_height),

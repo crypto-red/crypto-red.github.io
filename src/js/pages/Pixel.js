@@ -58,12 +58,12 @@ import SelectColorIcon from "../icons/SelectColor";
 import SelectRemoveDifferenceIcon from "../icons/SelectRemoveDifference";
 
 import PixelDialogPost from "../components/PixelDialogPost";
-import IconButton from "@material-ui/core/IconButton";
-import InfoIcon from "@material-ui/icons/Info";
 
 import { post_hive_pixel_art } from "../utils/api";
 import ShufflingSpanText from "../components/ShufflingSpanText";
-import PixelDialogInfo from "../components/PixelDialogInfo";
+import ImageFileDialog from "../components/ImageFileDialog";
+
+import DATA_IMG from "../utils/ressource-pixel";
 
 const styles = theme => ({
     green: {
@@ -277,6 +277,9 @@ class Pixel extends React.Component {
         this.state = {
             classes: props.classes,
             _history: HISTORY,
+            _library_dialog_open: false,
+            _library: DATA_IMG,
+            _library_type: "open",
             _view_name_index: 1,
             _previous_view_name_index: 1,
             _view_names: ["palette", "image", "layers", "tools", "selection", "effects", "filters"],
@@ -679,6 +682,37 @@ class Pixel extends React.Component {
         input.click();
     };
 
+    _upload_image_library = () => {
+
+        this.setState({_library_dialog_open: true, _library_type: "open"});
+    };
+
+    _close_library = () => {
+
+        this.setState({_library_dialog_open: false});
+    };
+
+    _from_library = (base64) => {
+
+
+        const { _canvas, _library_type } = this.state;
+        let img = new Image;
+        img.src = base64;
+
+        img.onload = () => {
+
+            if(_library_type === "open") {
+
+                _canvas.set_canvas_from_image(img);
+            }else if(_library_type === "import"){
+
+                _canvas.import_image_on_canvas(img, base64);
+            }
+
+            this._close_library();
+        };
+    };
+
     _handle_file_upload = (event) => {
 
         const { _canvas } = this.state;
@@ -717,6 +751,11 @@ class Pixel extends React.Component {
         document.body.removeChild(input);
         input.setAttribute("type", "file");
         input.click();
+    };
+
+    _import_image_library = () => {
+
+        this.setState({_library_dialog_open: true, _library_type: "import"});
     };
 
     _handle_load = (process) => {
@@ -1093,7 +1132,9 @@ class Pixel extends React.Component {
             _menu_event,
             _is_pixel_dialog_post_edit_open,
             _base64_url,
-            _is_dialog_info_open,
+            _library_dialog_open,
+            _library,
+            _library_type,
             _less_than_1280w,
         } = this.state;
 
@@ -1201,7 +1242,9 @@ class Pixel extends React.Component {
                                 on_current_color_change={this._handle_current_color_change}
                                 on_view_name_change={this._handle_view_name_change}
                                 on_upload_image={this._upload_image}
+                                on_upload_image_library={this._upload_image_library}
                                 on_import_image={this._import_image}
+                                on_import_image_library={this._import_image_library}
                                 on_download_image={this._download_image}
                                 on_request_publish={this._handle_is_pixel_dialog_post_edit_open}
                             />
@@ -1298,7 +1341,9 @@ class Pixel extends React.Component {
                                 on_current_color_change={this._handle_current_color_change}
                                 on_view_name_change={this._handle_view_name_change}
                                 on_upload_image={this._upload_image}
+                                on_upload_image_library={this._upload_image_library}
                                 on_import_image={this._import_image}
+                                on_import_image_library={this._import_image_library}
                                 on_download_image={this._download_image}
                                 on_request_publish={this._handle_is_pixel_dialog_post_edit_open}
                             />
@@ -1560,7 +1605,15 @@ class Pixel extends React.Component {
                     open={_is_pixel_dialog_post_edit_open}
                     onClose={this._handle_pixel_dialog_post_edit_close}
                     onRequestSend={this._handle_post_pixel_art}
-                    edit={true}/>
+                    edit={true}
+                />
+
+                    <ImageFileDialog
+                        open={_library_dialog_open}
+                        object={_library_type === "open" ? _library["backgrounds"]: _library_type === "import" ? _library["items"]: _library}
+                        onClose={this._close_library}
+                        onSelectImage={this._from_library}
+                    />
             </div>
         );
     }

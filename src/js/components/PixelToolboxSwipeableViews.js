@@ -395,11 +395,27 @@ class PixelToolboxSwipeableViews extends React.Component {
         }
     };
 
+    _import_image_from_libary = () => {
+
+        if(this.props.on_import_image_library) {
+
+            this.props.on_import_image_library();
+        }
+    };
+
     _upload_image = () => {
 
         if(this.props.on_upload_image) {
 
             this.props.on_upload_image();
+        }
+    };
+
+    _upload_image_from_library = () => {
+
+        if(this.props.on_upload_image_library) {
+
+            this.props.on_upload_image_library();
         }
     };
 
@@ -675,6 +691,7 @@ class PixelToolboxSwipeableViews extends React.Component {
                     icon: <ImportIcon />,
                     text: "Import image",
                     tools: [
+                        {icon: <FileImportIcon />, text: "Library to import", sub: "", on_click: () => {this._import_image_from_libary()}},
                         {icon: <FileImportIcon />, text: "Import image", sub: "[CTRL + I]", on_click: () => {this._import_image()}},
                         {icon: <FileImportIcon />, text: "Confirm import", sub: "[Enter]", disabled: !is_image_import_mode, on_click: () => {canvas.confirm_import()}},
                     ]
@@ -1004,10 +1021,22 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                     </ListItemIcon>
                                                     <ListItemText className={classes.ListItemText} primary={"Open image"} secondary={"[CTRL + O]"}/>
                                                 </ListItem>
+                                                <ListItem button onClick={() => {this._upload_image_from_library()}}>
+                                                    <ListItemIcon className={classes.listItemIcon}>
+                                                        <ImagePlusIcon />
+                                                    </ListItemIcon>
+                                                    <ListItemText className={classes.ListItemText} primary={"Library to new"} secondary={""}/>
+                                                </ListItem>
                                             </div>
-                                            <FormLabel style={{padding: "24px 0px 12px 24px"}} component="legend">Estimate final size</FormLabel>
+                                            <FormLabel style={{padding: "24px 0px 12px 24px"}} component="legend">CHOOSE FINAL SIZE</FormLabel>
                                             <div className={classes.listItems}>
                                                 <RadioGroup row name="Import size" onChange={this._set_import_size} value={import_size} style={{margin: "12px 11px"}}>
+                                                    <FormControlLabel
+                                                        value={"16"}
+                                                        control={<Radio color="primary" />}
+                                                        label="16px"
+                                                        labelPlacement="bottom"
+                                                    />
                                                     <FormControlLabel
                                                         value={"32"}
                                                         control={<Radio color="primary" />}
@@ -1033,7 +1062,19 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                         labelPlacement="bottom"
                                                     />
                                                     <FormControlLabel
+                                                        value={"160"}
+                                                        control={<Radio color="primary" />}
+                                                        label="160px"
+                                                        labelPlacement="bottom"
+                                                    />
+                                                    <FormControlLabel
                                                         value={"192"}
+                                                        control={<Radio color="primary" />}
+                                                        label="192px"
+                                                        labelPlacement="bottom"
+                                                    />
+                                                    <FormControlLabel
+                                                        value={"224"}
                                                         control={<Radio color="primary" />}
                                                         label="192px"
                                                         labelPlacement="bottom"
@@ -1042,6 +1083,18 @@ class PixelToolboxSwipeableViews extends React.Component {
                                                         value={"256"}
                                                         control={<Radio color="primary" />}
                                                         label="256px"
+                                                        labelPlacement="bottom"
+                                                    />
+                                                    <FormControlLabel
+                                                        value={"320"}
+                                                        control={<Radio color="primary" />}
+                                                        label="320px"
+                                                        labelPlacement="bottom"
+                                                    />
+                                                    <FormControlLabel
+                                                        value={"384"}
+                                                        control={<Radio color="primary" />}
+                                                        label="384px"
                                                         labelPlacement="bottom"
                                                     />
                                                 </RadioGroup>
