@@ -36,6 +36,8 @@ import ReactMarkdown from "react-markdown";
 import Fab from "@material-ui/core/Fab";
 import EditIcon from "@material-ui/icons/Edit";
 import EyeIcon from "../icons/Eye";
+import TdOnIcon from "../icons/3dOn";
+import TdOffIcon from "../icons/3dOff";
 import Grow from "@material-ui/core/Grow";
 import Chip from "@material-ui/core/Chip";
 import CircularProgress from "@material-ui/core/CircularProgress";
@@ -320,12 +322,18 @@ const styles = theme => ({
             width: "100vw"
         },
     },
-    closeButtonIcon: {
-        color: "#fff",
+    topRightFabButtons: {
         position: "fixed",
         top: theme.spacing(2),
         right: theme.spacing(2),
         zIndex: 1,
+    },
+    perspectiveButtonIcon: {
+        color: "#fff",
+        marginRight: 16,
+    },
+    closeButtonIcon: {
+        color: "#fff",
     },
     scrollerButton: {
         flexGrow: 1,
@@ -497,6 +505,7 @@ class PixelDialogPost extends React.Component {
             _px: 0,
             _py: 0,
             _pz: 1,
+            _perspective_depth: 5,
         };
     };
 
@@ -695,12 +704,21 @@ class PixelDialogPost extends React.Component {
         });
     };
 
+    _toggle_perspective = () => {
+
+        this.setState({_perspective_depth: this.state._perspective_depth ? 0: 5}, () => {
+
+            this.forceUpdate();
+        });
+    };
+
     _handle_close = (event) => {
 
         this.props.onClose(event);
         this.state._canvas.to_selection_none();
         this.state._canvas.set_canvas_hidden();
         this.setState({
+            _perspective_depth: 5,
             _loading: true,
             _drawer_tab_index: 0,
             _layer_index: 0,
@@ -1254,6 +1272,7 @@ class PixelDialogPost extends React.Component {
             _sg_svg,
             _g_svg,
             _h_svg,
+            _perspective_depth,
         } = this.state;
 
         const post = this.state.post || {};
@@ -1612,11 +1631,10 @@ class PixelDialogPost extends React.Component {
                                         <CardContent className={classes.scrollOverflowMaxWidthMobile} style={{margin: "0 16 24 16", padding: "0"}}>
                                             <ButtonGroup style={{margin: "12px 16px"}}>
                                                 <Button onClick={() => {this._download_image(1)}}>1px</Button>
-                                                <Button onClick={() => {this._download_image(8)}}>8px</Button>
                                                 <Button onClick={() => {this._download_image(16)}}>16px</Button>
                                                 <Button onClick={() => {this._download_image(32)}}>32px</Button>
-                                                <Button onClick={() => {this._download_image(48)}}>48px</Button>
                                                 <Button onClick={() => {this._download_image(64)}}>64px</Button>
+                                                <Button onClick={() => {this._download_image(128)}}>128px</Button>
                                             </ButtonGroup>
                                         </CardContent>
                                         <CardContent>
@@ -1636,9 +1654,14 @@ class PixelDialogPost extends React.Component {
                                     </div>
                                 </SwipeableDrawer>
                                 <div className={classes.contentImage} dataid={post.id} style={{...color_box_shadows}}>
-                                    <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
-                                        <CloseIcon fontSize="large" />
-                                    </IconButton>
+                                    <div className={classes.topRightFabButtons}>
+                                        <IconButton onClick={this._toggle_perspective} className={classes.perspectiveButtonIcon}>
+                                            {_perspective_depth ? <TdOffIcon fontSize="large" />: <TdOnIcon fontSize="large" />}
+                                        </IconButton>
+                                        <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
+                                            <CloseIcon fontSize="large" />
+                                        </IconButton>
+                                    </div>
                                     <div className={classes.contentCanvasLight}>
                                         <CanvasPixels
                                             canvas_wrapper_border_radius={2}
@@ -1665,7 +1688,7 @@ class PixelDialogPost extends React.Component {
                                             onSizeChange={this._handle_size_change}
                                             onLayersChange={this._handle_layers_change}
                                             onPerspectiveCoordinateChanges={this._handle_perspective}
-                                            perspective={5}
+                                            perspective={_perspective_depth}
                                             light={7}
                                             onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
                                             ref={this._set_canvas_ref}

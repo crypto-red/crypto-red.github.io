@@ -39,13 +39,6 @@ function HexGrid(props) {
                     fillRule="evenodd"
                     fill={props.color}
                 />
-                <path
-                    d="M210 345.322h682-682 0zm4 642.542h682-682 0zM-354.95.891h682-682 0zM780 .891h682-682 0zM-347.475 644h682-682 0zm1134.95 0h682-682 0zm-1140.95 644.672h682-682 0zm1134.95 0h682-682z"
-                    fill="none"
-                    strokeWidth={3}
-                    stroke={props.color}
-                    strokeMiterlimit={1.5}
-                />
             </g>
         </svg>
     )

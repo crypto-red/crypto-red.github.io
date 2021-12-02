@@ -139,7 +139,9 @@ const styles = theme => ({
             willChange: "scroll-position !important",
             overflow: "overlay",
             "& > .ReactVirtualized__Masonry__innerScrollContainer": {
+                contentVisibility: "auto",
                 overflow: "visible !important",
+                contain: "strict",
             }
         }
     },
