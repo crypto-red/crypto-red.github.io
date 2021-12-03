@@ -465,7 +465,11 @@ class Gallery extends React.Component {
 
     _load_more_posts = () => {
 
-        const { _posts, _start_author, _start_permlink, _sorting_modes, _sorting_tab_index, _loading_posts } = this.state;
+        const { _posts, _start_author, _start_permlink, _sorting_modes, _sorting_tab_index, _loading_posts, _history, _previous_pathname } = this.state;
+
+        const load_from_cache = _history.length < 5;
+
+        console.log(_history.length, _previous_pathname);
 
         if (!_loading_posts) {
 
@@ -475,11 +479,12 @@ class Gallery extends React.Component {
                 this.forceUpdate(() => {
 
                     get_hive_posts({
-                        limit: 21,
+                        limit: load_from_cache ? 20: 10,
                         tag: "pixel-art",
                         sorting: _sorting_modes[_sorting_tab_index] || _sorting_modes[0],
                         start_author: _start_author,
-                        start_permlink: _start_permlink
+                        start_permlink: _start_permlink,
+                        cached_query: load_from_cache,
                     }, (err, data) => {
 
                         if (((data || {}).posts || []).length >= 1) {
@@ -495,7 +500,6 @@ class Gallery extends React.Component {
 
                                 this.forceUpdate(() => {
 
-                                    this._recompute_cell_measurements();
                                 });
 
                                 actions.trigger_loading_update(100);
@@ -665,7 +669,7 @@ class Gallery extends React.Component {
         this.setState({_top_scroll_of_el_by_index, _height_of_el_by_index});
 
         return (
-            <CellMeasurer cache={_cell_measurer_cache} index={index} key={`${key}`} parent={parent}>
+            <CellMeasurer cache={_cell_measurer_cache} index={index} key={`${key}`} parent={parent} style={{contain: "paint size"}}>
                 <PixelArtCard
                     key={`${post.id}`}
                     rowIndex={rowIndex}

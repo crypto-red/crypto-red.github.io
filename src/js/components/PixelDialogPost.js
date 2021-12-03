@@ -1352,6 +1352,7 @@ class PixelDialogPost extends React.Component {
                         <div className={classes.content}>
                             <div className={classes.contentInner}>
                                 <SwipeableDrawer
+                                    style={{contentVisibility: "auto"}}
                                     swipeAreaWidth={50}
                                     keepMounted={keepMounted}
                                     ModalProps={{BackdropProps:{classes: {root: classes.drawerModalBackdropRoot}}}}

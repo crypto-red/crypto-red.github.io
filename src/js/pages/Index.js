@@ -35,7 +35,7 @@ import JamySad from "../icons/JamySad";
 import JamyShocked from "../icons/JamyShocked";
 import JamySuspicious from "../icons/JamySuspicious";
 
-import api from "../utils/api";
+import api, {get_hive_posts} from "../utils/api";
 import sound_api from "../utils/sound-api";
 import { update_meta_title } from "../utils/meta-tags";
 import { PAGE_ROUTES, HISTORY } from "../utils/constants";
@@ -187,6 +187,15 @@ class Index extends React.Component {
             }
 
         }, 1000);
+
+        get_hive_posts({
+            limit: 20,
+            tag: "pixel-art",
+            sorting: "created",
+            start_author: "",
+            start_permlink: "",
+            cached_query: false,
+        }, () => {});
     }
 
     componentWillUnmount() {

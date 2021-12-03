@@ -2,6 +2,7 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles"
 
 import price_formatter from "../utils/price-formatter";
+import SwipeableDrawer from "@material-ui/core/SwipeableDrawer";
 
 const styles = theme => ({
 });
@@ -238,6 +239,7 @@ class PixelDialogPostBelowContent extends React.Component {
 
         return (
             <div className={classname} style={{
+                contentVisibility: "auto",
                 willChange: "background-position",
                 backgroundImage: `url("${h_svg}")`,
                 backgroundRepeat: "repeat",

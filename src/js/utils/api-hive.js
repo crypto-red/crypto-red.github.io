@@ -678,12 +678,14 @@ function get_hive_public_key(hive_username, hive_password) {
 function cached_get_hive_post(parameters, callback_function) {
 
     const force_query = parameters.force_query || false;
+    const cached_query = parameters.cached_query || false;
+
     let { author, permlink } = parameters;
     author = author.replace("@", "");
 
     _cache_data(
         hive_posts_db,
-        force_query ? 0: 5 * 60 * 1000,
+        cached_query ? 7 * 24 * 60 * 60 * 1000: force_query ? 0: 5 * 60 * 1000,
         "author-@"+author+"_permlink-"+permlink,
         get_hive_post,
         { author, permlink },
@@ -710,6 +712,9 @@ function get_hive_post(parameters, callback_function) {
 
 function cached_get_hive_posts(parameters, callback_function) {
 
+
+    const cached_query = parameters.cached_query || false;
+
     function pre_callback_function(err, data) {
 
         if(data) {
@@ -719,7 +724,7 @@ function cached_get_hive_posts(parameters, callback_function) {
 
             data.posts.forEach((p) => {
 
-                cached_get_hive_post({author: p.author, permlink: p.permlink}, function(err2, data2) {
+                cached_get_hive_post({cached_query, author: p.author, permlink: p.permlink}, function(err2, data2) {
 
                     if(!err2 && data2) {
 

@@ -5341,21 +5341,20 @@ class CanvasPixels extends React.Component {
         let pxls = [..._s_pxls[_layer_index]];
         let pxl_colors = [..._s_pxl_colors[_layer_index]];
 
+        const colors_index = [...new Set(pxls)];
         let colors_in_selection_with_occurrence = [];
+
+        colors_index.forEach((ci) => {
+
+            colors_in_selection_with_occurrence[ci] = 1;
+        });
 
         _pxl_indexes_of_selection = _pxl_indexes_of_selection || this.state._pxl_indexes_of_selection;
 
-        [..._pxl_indexes_of_selection].forEach((pxl_index, iteration, array) => {
+        [..._pxl_indexes_of_selection].forEach((pxl_index) => {
 
             const current_pxl_color_index = pxls[pxl_index];
-
-            if(typeof colors_in_selection_with_occurrence[current_pxl_color_index] === "undefined") {
-
-                colors_in_selection_with_occurrence[current_pxl_color_index] = 1;
-            }else {
-
-                colors_in_selection_with_occurrence[current_pxl_color_index] ++;
-            }
+            colors_in_selection_with_occurrence[current_pxl_color_index] ++;
         });
 
         let colors_total_occurrence = 0;
