@@ -89,6 +89,7 @@ function _get_default_settings() {
         jamy_enabled: false,
         fees: 1,
         panic: false,
+        enable_3d: false,
         onboarding: true,
         help: {
             topup: true,

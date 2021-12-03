@@ -49,7 +49,7 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import Checkbox from "@material-ui/core/Checkbox";
 
 import * as toxicity from "@tensorflow-models/toxicity";
-import {lookup_hive_accounts_name} from "../utils/api";
+import api, {lookup_hive_accounts_name} from "../utils/api";
 import {postprocess_text} from "../utils/api-hive";
 import {HISTORY} from "../utils/constants";
 import TimeAgo from "javascript-time-ago";
@@ -505,7 +505,7 @@ class PixelDialogPost extends React.Component {
             _px: 0,
             _py: 0,
             _pz: 1,
-            _perspective_depth: 5,
+            _perspective_depth: props.enable_3d ? 5: 0,
         };
     };
 
@@ -706,6 +706,15 @@ class PixelDialogPost extends React.Component {
 
     _toggle_perspective = () => {
 
+        if(this.state._perspective_depth){
+
+
+            api.set_settings({enable_3d: false});
+        }else {
+
+            api.set_settings({enable_3d: true});
+        }
+
         this.setState({_perspective_depth: this.state._perspective_depth ? 0: 5}, () => {
 
             this.forceUpdate();
@@ -718,7 +727,6 @@ class PixelDialogPost extends React.Component {
         this.state._canvas.to_selection_none();
         this.state._canvas.set_canvas_hidden();
         this.setState({
-            _perspective_depth: 5,
             _loading: true,
             _drawer_tab_index: 0,
             _layer_index: 0,
@@ -1273,6 +1281,7 @@ class PixelDialogPost extends React.Component {
             _g_svg,
             _h_svg,
             _perspective_depth,
+            enable_3d,
         } = this.state;
 
         const post = this.state.post || {};
@@ -1314,7 +1323,7 @@ class PixelDialogPost extends React.Component {
                 >
                     <div className={classes.root}>
                         {
-                            !edit && post &&
+                            !edit && post && _perspective_depth &&
                             <PixelDialogPostBelowContent
                                 post={post}
                                 balance_fiat={balance_fiat}

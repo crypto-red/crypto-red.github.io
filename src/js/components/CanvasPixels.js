@@ -3447,7 +3447,7 @@ class CanvasPixels extends React.Component {
 
         const [x, y] = _previous_single_pointer_down_x_y;
 
-        if(_previous_single_pointer_down_timestamp + 400 > Date.now() && _pointer_events.length === 1 && Math.abs(x - event.pageX) < 10 && Math.abs(y - event.pageY) < 10) {
+        if(_previous_single_pointer_down_timestamp + 400 > Date.now() && _pointer_events.length === 1 && Math.abs(x - event.pageX) < 20 && Math.abs(y - event.pageY) < 20) {
 
             setTimeout(() => {
 
