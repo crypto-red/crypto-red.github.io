@@ -28,6 +28,13 @@ function HexGrid(props) {
                         strokeWidth={3}
                     />
                 </g>
+                <circle
+                    vectorEffect="non-scaling-stroke"
+                    cx={75}
+                    cy={103.5}
+                    r={7}
+                    fill={props.color}
+                />
             </g>
         </svg>
     )

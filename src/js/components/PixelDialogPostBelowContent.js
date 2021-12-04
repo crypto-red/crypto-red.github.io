@@ -239,17 +239,18 @@ class PixelDialogPostBelowContent extends React.Component {
 
         return (
             <div className={classname} style={{
-                contentVisibility: "auto",
+                contain: "size style",
+                contentVisibility: h_svg ? "visible": "hidden",
                 willChange: "background-position",
                 backgroundImage: `url("${h_svg}")`,
                 backgroundRepeat: "repeat",
-                backgroundSize: `${Math.ceil(150*(pz))}px ${Math.ceil(172*(pz))}px`,
-                backgroundPosition: `${(px*30-150)*pz}px ${(py*30-150)*pz}px`,
+                backgroundSize: `${Math.ceil(200*(pz))}px ${Math.ceil(229.3*(pz))}px`,
+                backgroundPosition: `${(px*30-200)*pz}px ${(py*30-229)*pz}px`,
                 color: "black",
                 backgroundOrigin: "center"}}>
                 <div style={{position: "relative", height: "100%"}}>
                     <div style={{position: "relative", height: "100%"}}>
-                        <div style={{filter: "opacity(.5)", textShadow: `rgb(0 70 255 / 60%) 1.08243px 0px 1px, rgb(255 50 0 / 60%) -1.08243px 0px 1px, 0px 0px 4px`, position: "absolute", color: color, zIndex: 14, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
+                        <div style={{textShadow: `rgb(0 70 255 / 60%) 1.08243px 0px 1px, rgb(255 50 0 / 60%) -1.08243px 0px 1px, 0px 0px 4px`, position: "absolute", color: color, zIndex: 14, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
                             <p>$_AUTHOR: @{post.author}</p>
                             <p>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</p>
                             <p>$_VOTES: {vote_number}</p>
@@ -261,7 +262,7 @@ class PixelDialogPostBelowContent extends React.Component {
                             <p>$_WIN_WIDTH: {window_width}px</p>
                             <p>$_AI_COMPUTING: {is_prediction_loading ? "TRUE": "FALSE"}</p>
                         </div>
-                        <img src={sc_svg} style={{willChange: "transform", zIndex: is_mobile_or_tablet ? 1: 11, filter: "drop-shadow(1px 2px 3px red) drop-shadow(-1px -2px 3px blue)", transition: "transform .1s linear 0s", position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
+                        <img src={sc_svg} style={{willChange: "transform", zIndex: is_mobile_or_tablet ? 1: 11, transition: "transform .1s linear 0s", position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
                         <img src={ss_svg} style={{willChange: "transform", zIndex: is_mobile_or_tablet ? 1: 11, transition: "transform .1s linear 0s", position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*5-25)*pz}px, ${(py*5-20)*pz}px)`}}/>
                         <img src={sg_svg} style={{willChange: "transform", transition: "transform .1s linear 0s", position: "absolute", top: 372, right: 372, width: 372, height: 372, transformOrigin: "top right", transform: `translate(${(px*10-50)*pz}px, ${(py*10-50)*pz}px)`}}/>
                         <img src={st_svg} style={{willChange: "transform", transition: "transform .1s linear 0s", position: "absolute", bottom: 256, right: 256, width: 336, height: 336, transformOrigin: "middle center", transform: `translate(${(px*15-75)*pz}px, ${(py*15-75)*pz}px)`}}/>

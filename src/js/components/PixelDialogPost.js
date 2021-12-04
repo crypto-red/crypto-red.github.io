@@ -450,6 +450,7 @@ class PixelDialogPost extends React.Component {
             selected_locales_code: props.selected_locales_code || "en-US",
             hbd_market: props.hbd_market || {},
             selected_currency: props.selected_currency || "USD",
+            enable_3d: props.enable_3d,
             _title_input: "",
             _description_input: "",
             _canvas: null,
@@ -505,7 +506,7 @@ class PixelDialogPost extends React.Component {
             _px: 0,
             _py: 0,
             _pz: 1,
-            _perspective_depth: props.enable_3d ? 5: 0,
+            _perspective_depth: 5,
         };
     };
 
@@ -670,7 +671,7 @@ class PixelDialogPost extends React.Component {
 
                 this.state._canvas.get_color_palette( 1/4, (data) => {
 
-                    const _sc_svg = get_svg_in_b64(<Scifisc color={data.inverse_brightest_color_with_half_saturation}/>);
+                    const _sc_svg = get_svg_in_b64(<Scifisc username={this.state.post.author} color={data.inverse_brightest_color_with_half_saturation}/>);
                     const _ss_svg = get_svg_in_b64(<Scifiss color={data.inverse_brightest_color_with_half_saturation}/>);
                     const _st_svg = get_svg_in_b64(<Scifist color={data.inverse_brightest_color_with_half_saturation}/>);
                     const _sg_svg = get_svg_in_b64(<Scifisg color={data.inverse_brightest_color_with_half_saturation}/>);
@@ -706,7 +707,7 @@ class PixelDialogPost extends React.Component {
 
     _toggle_perspective = () => {
 
-        if(this.state._perspective_depth){
+        if(this.state.enable_3d){
 
 
             api.set_settings({enable_3d: false});
@@ -715,7 +716,7 @@ class PixelDialogPost extends React.Component {
             api.set_settings({enable_3d: true});
         }
 
-        this.setState({_perspective_depth: this.state._perspective_depth ? 0: 5}, () => {
+        this.setState({enable_3d: !this.state.enable_3d}, () => {
 
             this.forceUpdate();
         });
@@ -1323,7 +1324,7 @@ class PixelDialogPost extends React.Component {
                 >
                     <div className={classes.root}>
                         {
-                            !edit && post && _perspective_depth &&
+                            !edit && post && _perspective_depth && enable_3d &&
                             <PixelDialogPostBelowContent
                                 post={post}
                                 balance_fiat={balance_fiat}
@@ -1666,7 +1667,7 @@ class PixelDialogPost extends React.Component {
                                 <div className={classes.contentImage} dataid={post.id} style={{...color_box_shadows}}>
                                     <div className={classes.topRightFabButtons}>
                                         <IconButton onClick={this._toggle_perspective} className={classes.perspectiveButtonIcon}>
-                                            {_perspective_depth ? <TdOffIcon fontSize="large" />: <TdOnIcon fontSize="large" />}
+                                            {enable_3d ? <TdOffIcon fontSize="large" />: <TdOnIcon fontSize="large" />}
                                         </IconButton>
                                         <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
                                             <CloseIcon fontSize="large" />
@@ -1698,7 +1699,7 @@ class PixelDialogPost extends React.Component {
                                             onSizeChange={this._handle_size_change}
                                             onLayersChange={this._handle_layers_change}
                                             onPerspectiveCoordinateChanges={this._handle_perspective}
-                                            perspective={_perspective_depth}
+                                            perspective={enable_3d ? _perspective_depth: 0}
                                             light={7}
                                             onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
                                             ref={this._set_canvas_ref}
