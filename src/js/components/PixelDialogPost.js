@@ -710,17 +710,20 @@ class PixelDialogPost extends React.Component {
         if(this.state.enable_3d){
 
 
-            api.set_settings({enable_3d: false});
+            api.set_settings({enable_3d: false}, this._on_settings_changed);
         }else {
 
-            api.set_settings({enable_3d: true});
+            api.set_settings({enable_3d: true}, this._on_settings_changed);
         }
-
-        this.setState({enable_3d: !this.state.enable_3d}, () => {
-
-            this.forceUpdate();
-        });
     };
+
+    _on_settings_changed = () => {
+
+        if(this.props.on_settings_changed){
+
+            this.props.on_settings_changed();
+        }
+    }
 
     _handle_close = (event) => {
 

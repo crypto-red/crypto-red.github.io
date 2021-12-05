@@ -400,7 +400,10 @@ class Gallery extends React.Component {
             const _enable_3d = typeof settings.enable_3d !== "undefined" ? settings.enable_3d: false;
 
             api.get_coins_markets(["hive_dollar"], _selected_currency.toLowerCase(), this._set_coins_markets);
-            this.setState({  _selected_locales_code, _selected_currency, _enable_3d });
+            this.setState({  _selected_locales_code, _selected_currency, _enable_3d }, () => {
+
+                this.forceUpdate();
+            });
         }
     };
 
@@ -1320,6 +1323,7 @@ class Gallery extends React.Component {
                     open={_post !== null && _post_author !== null && _post_permlink !== null}
                     onClose={this._handle_pixel_dialog_post_close}
                     onExited={this._handle_pixel_dialog_post_exited}
+                    on_settings_changed={this._update_settings}
                 />
 
                 <AccountDialogProfileHive

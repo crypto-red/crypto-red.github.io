@@ -1009,22 +1009,35 @@ class CanvasPixels extends React.Component {
                 }
             }
 
-            state_history[history_position]._layers.forEach((layer, index) => {
+            if(typeof state_history[history_position] !== "undefined") {
 
-                layer = {...(state_history[history_position]._layers[index] || {})};
+                state_history[history_position]._layers.forEach((layer, index) => {
 
-                if(previous_history_position !== history_position) {
+                    layer = {...(state_history[history_position]._layers[index] || {})};
 
-                    if(typeof state_history[previous_history_position]._layers[index] !== "undefined" && typeof state_history[history_position]._layers[index] !== "undefined") {
+                    if(previous_history_position !== history_position) {
 
-                        if(
-                            state_history[previous_history_position]._s_pxls[index] !== state_history[history_position]._s_pxls[index] ||
-                            state_history[previous_history_position]._s_pxl_colors[index] !== state_history[history_position]._s_pxl_colors[index] ||
-                            state_history[previous_history_position]._layers[index].opacity !== state_history[history_position]._layers[index].opacity ||
-                            state_history[previous_history_position]._layers[index].hidden !== state_history[history_position]._layers[index].hidden ||
-                            state_history[previous_history_position]._layers[index].id !== state_history[history_position]._layers[index].id
-                        ) {
+                        if(typeof state_history[previous_history_position]._layers[index] !== "undefined" && typeof state_history[history_position]._layers[index] !== "undefined") {
 
+                            if(
+                                state_history[previous_history_position]._s_pxls[index] !== state_history[history_position]._s_pxls[index] ||
+                                state_history[previous_history_position]._s_pxl_colors[index] !== state_history[history_position]._s_pxl_colors[index] ||
+                                state_history[previous_history_position]._layers[index].opacity !== state_history[history_position]._layers[index].opacity ||
+                                state_history[previous_history_position]._layers[index].hidden !== state_history[history_position]._layers[index].hidden ||
+                                state_history[previous_history_position]._layers[index].id !== state_history[history_position]._layers[index].id
+                            ) {
+
+
+                                this.get_layer_base64_png_data_url(index, (thumbnail) => {
+
+                                    layer.thumbnail = thumbnail;
+                                    layer.data = this.get_layer_data(index);
+                                    all_layers[index] = layer;
+                                    all_layers_length++;
+                                    maybe_set_layers();
+                                });
+                            }
+                        }else {
 
                             this.get_layer_base64_png_data_url(index, (thumbnail) => {
 
@@ -1035,7 +1048,7 @@ class CanvasPixels extends React.Component {
                                 maybe_set_layers();
                             });
                         }
-                    }else {
+                    }else if(parseInt(history_position) === 0) {
 
                         this.get_layer_base64_png_data_url(index, (thumbnail) => {
 
@@ -1046,18 +1059,8 @@ class CanvasPixels extends React.Component {
                             maybe_set_layers();
                         });
                     }
-                }else if(parseInt(history_position) === 0) {
-
-                    this.get_layer_base64_png_data_url(index, (thumbnail) => {
-
-                        layer.thumbnail = thumbnail;
-                        layer.data = this.get_layer_data(index);
-                        all_layers[index] = layer;
-                        all_layers_length++;
-                        maybe_set_layers();
-                    });
-                }
-            });
+                });
+            }
         })();
     };
 
