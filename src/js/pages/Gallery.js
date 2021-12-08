@@ -138,10 +138,13 @@ const styles = theme => ({
             padding: "88px 16px 32px 16px",
             margin: 0,
             scrollBehavior: "smooth",
+            overscrollBehavior: "none",
             willChange: "scroll-position !important",
             overflow: "overlay",
             "& > .ReactVirtualized__Masonry__innerScrollContainer": {
                 contentVisibility: "auto",
+                overscrollBehavior: "none",
+                pointerEvents: "none",
                 overflow: "visible !important",
                 contain: "size layout paint style",
             }
@@ -253,7 +256,7 @@ class Gallery extends React.Component {
             _column_count: 4,
             _column_width: 356,
             _load_more_threshold: 2000,
-            _overscan_by_pixels: 2000,
+            _overscan_by_pixels: 3000,
             _cell_positioner: null,
             _cell_positioner_config: null,
             _masonry: null,

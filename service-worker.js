@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v31.3";
+var CACHE = "network-or-cache-v32";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -7,7 +7,7 @@ self.addEventListener("install", function(evt) {
   // to the cache. Ask the service worker to keep installing until the
   // returning promise resolves.
   evt.waitUntil(caches.open(CACHE).then(function (cache) {
-    cache.addAll([
+    return cache.addAll([
       "/",
       "/404.html",
       "/client.min.js",

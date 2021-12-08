@@ -46,6 +46,7 @@ const styles = theme => ({
         borderRadius: 4,
         backgroundColor: "transparent",
         willChange: "top, left, width, height",
+        pointerEvents: "auto",
         "&::before": {
             content: "''",
             background: "#100d4e",
@@ -319,6 +320,7 @@ class PixelArtCard extends React.Component {
             new_props.key !== this.state.key ||
             new_props.style.left !== this.state.style.left ||
             new_props.style.top !== this.state.style.top ||
+            new_props.style.height !== this.state.style.height ||
             new_props.image_height !== this.state.image_height ||
             new_props.image_width !== this.state.image_width ||
             new_props.rowIndex !== this.state.rowIndex ||
