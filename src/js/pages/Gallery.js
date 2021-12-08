@@ -139,6 +139,7 @@ const styles = theme => ({
             margin: 0,
             scrollBehavior: "smooth",
             overscrollBehavior: "none",
+            touchAction: "pan-y",
             willChange: "scroll-position !important",
             overflow: "overlay",
             "& > .ReactVirtualized__Masonry__innerScrollContainer": {

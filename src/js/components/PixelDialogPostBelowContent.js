@@ -164,8 +164,8 @@ class PixelDialogPostBelowContent extends React.Component {
             translated_description: props.translated_description,
             translated_title: props.translated_title,
             has_translation_started: props.has_translation_started,
-            px: Math.floor(props.px * 2.5) / 2.5,
-            py: Math.floor(props.py * 2.5) / 2.5,
+            px: Math.floor(props.px * 10) / 10,
+            py: Math.floor(props.py * 10) / 10,
             pz: props.pz,
             color: props.color,
         };
@@ -241,6 +241,7 @@ class PixelDialogPostBelowContent extends React.Component {
             <div className={classname} style={{
                 contain: "size style",
                 pointerEvents: "none",
+                touchAction: "none",
                 contentVisibility: h_svg ? "auto": "hidden",
                 willChange: "background-position, contents",
                 backgroundImage: `url("${h_svg}")`,
