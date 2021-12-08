@@ -45,6 +45,7 @@ const styles = theme => ({
         height: "auto",
         borderRadius: 4,
         backgroundColor: "transparent",
+        willChange: "top, left, width, height",
         "&::before": {
             content: "''",
             background: "#100d4e",
@@ -283,6 +284,7 @@ class PixelArtCard extends React.Component {
         super(props);
         this.state = {
             image_height: props.image_height || 0,
+            image_width: props.image_width || 0,
             key: props.key,
             rowIndex: props.rowIndex,
             columnIndex: props.columnIndex,
@@ -306,21 +308,19 @@ class PixelArtCard extends React.Component {
 
             this.setState({_shown: true},() =>{
 
-                this.forceUpdate();
+                //this.forceUpdate();
             });
         }, this.state.fade_in)
     }
 
     shouldComponentUpdate(new_props) {
 
-        if(new_props.selected && !this.state.selected) {
-
-            ReactDOM.findDOMNode(this).focus();
-        }
-
         return (
             new_props.key !== this.state.key ||
+            new_props.style.left !== this.state.style.left ||
+            new_props.style.top !== this.state.style.top ||
             new_props.image_height !== this.state.image_height ||
+            new_props.image_width !== this.state.image_width ||
             new_props.rowIndex !== this.state.rowIndex ||
             new_props.columnIndex !== this.state.columnIndex ||
             new_props.post !== this.state.post ||
@@ -337,7 +337,7 @@ class PixelArtCard extends React.Component {
 
     render() {
 
-        const { key, image_height, rowIndex, columnIndex, style, classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading, _shown  } = this.state;
+        const { key, image_width, image_height, rowIndex, columnIndex, style, classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading, _shown  } = this.state;
 
         const vote_number = (post.active_votes || []).length;
         const tags = post.tags ? post.tags: [];
@@ -350,11 +350,11 @@ class PixelArtCard extends React.Component {
 
         return (
             <Card key={key} ref={this.props.ref} elevation={4} className={classes.card}
-                  style={_shown ? {...herited_style, opacity: 1, transition: `opacity 175ms cubic-bezier(0.4, 0, 0.2, 1) 0ms`}: {...herited_style, opacity: 0, transition: "opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 0ms"}}
+                  style={{...herited_style}}
                   score={Math.round(post.voting_ratio / 10) * 10}
                   dataselected={selected ? "true": "false"}>
                 <CardActionArea>
-                    <div style={{height: image_height, display: "block", position: "relative", overflow: "hidden"}}>
+                    <div style={{contain: "layout style paint size", width: image_width ,height: image_height, display: "block", position: "relative", overflow: "hidden"}}>
                         <CardMedia
                             className={classes.cardMedia}
                             component="img"

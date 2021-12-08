@@ -59,11 +59,12 @@ import SelectRemoveDifferenceIcon from "../icons/SelectRemoveDifference";
 
 import PixelDialogPost from "../components/PixelDialogPost";
 
-import { post_hive_pixel_art } from "../utils/api";
+import { post_hive_pixel_art, unlogged_post_hive_pixel_art } from "../utils/api-hive";
 import ShufflingSpanText from "../components/ShufflingSpanText";
 import ImageFileDialog from "../components/ImageFileDialog";
 
 import DATA_IMG from "../utils/ressource-pixel";
+import AccountDialogHiveKey from "../components/AccountDialogHiveKey";
 
 const styles = theme => ({
     green: {
@@ -330,6 +331,7 @@ class Pixel extends React.Component {
             _base64_url: "",
             _logged_account: {},
             _less_than_1280w: false,
+            _dialog_hive_key_open: false,
         };
     };
 
@@ -1064,31 +1066,62 @@ class Pixel extends React.Component {
         const { _logged_account } = this.state;
         const {title, description, image, tags, metadata} = data;
 
-        if(_logged_account.hive_username) {
+        if(_logged_account) {
 
-            post_hive_pixel_art(title, image, description, tags, metadata, _logged_account.hive_username, _logged_account.hive_password, (err, res) => {
+            if(_logged_account.hive_username) {
 
-                if(!err) {
+                post_hive_pixel_art(title, image, description, tags, metadata, _logged_account.hive_username, _logged_account.hive_password, (err, res) => {
 
-                    this._handle_pixel_dialog_post_edit_close();
-                    actions.trigger_snackbar("You've successfully published a pixel art post");
-                    actions.trigger_sfx("navigation_selection-complete-celebration");
-                    actions.jamy_update("happy");
-                }else {
+                    if(!err) {
 
-                    console.log(err);
-                    actions.trigger_snackbar("Unable to publish a pixel art post");
-                    actions.trigger_sfx("alert_error-01");
-                    actions.jamy_update("angry");
-                }
-            });
+                        this._handle_pixel_dialog_post_edit_close();
+                        actions.trigger_snackbar("You've successfully published a pixel art post");
+                        actions.trigger_sfx("navigation_selection-complete-celebration");
+                        actions.jamy_update("happy");
+                    }else {
+
+                        actions.trigger_snackbar("Unable to publish a pixel art post");
+                        actions.trigger_sfx("alert_error-01");
+                        actions.jamy_update("angry");
+                    }
+                });
+            }else {
+
+                this.setState({_dialog_hive_key_open: true, _final_post_data: data});
+            }
+
         }else {
 
-            actions.trigger_snackbar("You are not logged onto Hive");
-            actions.trigger_sfx("alert_error-01");
-            actions.jamy_update("sad");
+            this.setState({_dialog_hive_key_open: true, _final_post_data: data});
         }
 
+    };
+
+    _handle_dialog_hive_key_close = () => {
+
+        this.setState({_dialog_hive_key_open: false});
+    };
+
+    _try_post_from_unlogged = (username, key, callback_function) => {
+
+        const {title, description, image, tags, metadata} = this.state._final_post_data;
+        unlogged_post_hive_pixel_art(title, image, description, tags, metadata, username, key, callback_function);
+    };
+
+    _handle_try_post_from_unlogged_error = () => {
+
+        actions.trigger_snackbar("Unable to publish a pixel art post");
+        actions.trigger_sfx("alert_error-01");
+        actions.jamy_update("angry");
+    };
+
+    _handle_try_post_from_unlogged_complete = () => {
+
+        this._handle_dialog_hive_key_close();
+        this._handle_pixel_dialog_post_edit_close();
+        actions.trigger_snackbar("You've successfully published a pixel art post");
+        actions.trigger_sfx("navigation_selection-complete-celebration");
+        actions.jamy_update("happy");
     };
 
     render() {
@@ -1136,6 +1169,7 @@ class Pixel extends React.Component {
             _library,
             _library_type,
             _less_than_1280w,
+            _dialog_hive_key_open,
         } = this.state;
 
         let { _logged_account } = this.state;
@@ -1608,12 +1642,19 @@ class Pixel extends React.Component {
                     edit={true}
                 />
 
-                    <ImageFileDialog
-                        open={_library_dialog_open}
-                        object={_library_type === "open" ? _library["backgrounds"]: _library_type === "import" ? _library["items"]: _library}
-                        onClose={this._close_library}
-                        onSelectImage={this._from_library}
-                    />
+                <ImageFileDialog
+                    open={_library_dialog_open}
+                    object={_library_type === "open" ? _library["backgrounds"]: _library_type === "import" ? _library["items"]: _library}
+                    onClose={this._close_library}
+                    onSelectImage={this._from_library}
+                />
+
+                <AccountDialogHiveKey open={_dialog_hive_key_open}
+                                      key_type={"POSTING"}
+                                      key_function={this._try_post_from_unlogged}
+                                      onClose={this._handle_dialog_hive_key_close}
+                                      onError={this._handle_try_post_from_unlogged_error}
+                                      onComplete={this._handle_try_post_from_unlogged_complete}/>
             </div>
         );
     }

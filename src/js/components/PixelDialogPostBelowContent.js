@@ -241,7 +241,7 @@ class PixelDialogPostBelowContent extends React.Component {
             <div className={classname} style={{
                 contain: "size style",
                 contentVisibility: h_svg ? "visible": "hidden",
-                willChange: "background-position",
+                willChange: "background-position, contents",
                 backgroundImage: `url("${h_svg}")`,
                 backgroundRepeat: "repeat",
                 backgroundSize: `${Math.ceil(200*(pz))}px ${Math.ceil(229.3*(pz))}px`,

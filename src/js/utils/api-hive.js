@@ -685,7 +685,7 @@ function cached_get_hive_post(parameters, callback_function) {
 
     _cache_data(
         hive_posts_db,
-        cached_query ? 7 * 24 * 60 * 60 * 1000: force_query ? 0: 5 * 60 * 1000,
+        cached_query ? 7 * 24 * 60 * 60 * 1000: force_query ? 0: 1 * 60 * 1000,
         "author-@"+author+"_permlink-"+permlink,
         get_hive_post,
         { author, permlink },
@@ -794,7 +794,7 @@ function get_hive_posts(parameters, callback_function) {
 
                     _cache_data(
                         hive_posts_db,
-                        5 * 60 * 1000,
+                        1 * 60 * 1000,
                         "author-@"+pn.author+"_permlink-"+pn.permlink,
                         function (post) {
                             return post;
@@ -828,7 +828,12 @@ function get_hive_posts(parameters, callback_function) {
     });
 }
 
-function post_hive_pixel_art(title, image, description, tags, metadata, username, master_key, callback_function) {
+function unlogged_post_hive_pixel_art(title, image, description, tags, metadata, username, posting_key, callback_function) {
+
+    post_hive_pixel_art(title, image, description, tags, metadata, username, "", callback_function, posting_key);
+}
+
+function post_hive_pixel_art(title, image, description, tags, metadata, username, master_key, callback_function, posting_key = null) {
 
     tags.splice(tags.indexOf("pixel-art"), 1);
 
@@ -841,10 +846,10 @@ function post_hive_pixel_art(title, image, description, tags, metadata, username
 
     tags.unshift("pixel-art");
 
-    post_hive_post(title, body, tags, metadata, username, permlink, master_key, callback_function);
+    post_hive_post(title, body, tags, metadata, username, permlink, master_key, callback_function, posting_key);
 }
 
-function post_hive_post(title, body, tags, metadata, username, permlink, master_key, callback_function) {
+function post_hive_post(title, body, tags, metadata, username, permlink, master_key, callback_function, posting_key = null) {
 
     const APPLICATION_RELEASE = "CRYPTO.RED 0.0.4";
     const REWARD_BENEFICIARIES = [
@@ -885,7 +890,7 @@ function post_hive_post(title, body, tags, metadata, username, permlink, master_
         }else {
 
             hiveJS.broadcast.commentOptions(
-                _get_hive_account_keys(username, master_key).posting_private_key,
+                posting_key ? posting_key: _get_hive_account_keys(username, master_key).posting_private_key,
                 username,
                 permlink,
                 max_accepted_payout,
@@ -898,10 +903,10 @@ function post_hive_post(title, body, tags, metadata, username, permlink, master_
         }
     }
 
-    if(username && master_key) {
+    if(username && (master_key || posting_key)) {
 
         hiveJS.broadcast.comment(
-            _get_hive_account_keys(username, master_key).posting_private_key,
+            posting_key ? posting_key: _get_hive_account_keys(username, master_key).posting_private_key,
             '',
             category,
             username,
@@ -917,10 +922,15 @@ function post_hive_post(title, body, tags, metadata, username, permlink, master_
     }
 }
 
-function vote_on_hive_post(author, permlink, weight, username, master_key, callback_function) {
+function unlogged_vote_on_hive_post(author, permlink, weight, username, posting_key, callback_function) {
+
+    vote_on_hive_post(author, permlink, weight, username, "", callback_function, posting_key);
+}
+
+function vote_on_hive_post(author, permlink, weight, username, master_key, callback_function, posting_key = null) {
 
     hiveJS.broadcast.vote(
-        _get_hive_account_keys(username, master_key).posting_private_key,
+        posting_key ? posting_key: _get_hive_account_keys(username, master_key).posting_private_key,
         username,
         author,
         permlink,
@@ -929,7 +939,6 @@ function vote_on_hive_post(author, permlink, weight, username, master_key, callb
 
             if(!err) {
 
-                console.log(result);
                 callback_function(null, true);
             }else {
 
@@ -1081,7 +1090,9 @@ module.exports = {
     get_hive_post: cached_get_hive_post,
     post_hive_post: post_hive_post,
     post_hive_pixel_art: post_hive_pixel_art,
+    unlogged_post_hive_pixel_art: unlogged_post_hive_pixel_art,
     vote_on_hive_post: vote_on_hive_post,
+    unlogged_vote_on_hive_post: unlogged_vote_on_hive_post,
     search_on_hive: cached_search_on_hive,
     postprocess_text: postprocess_text,
 };

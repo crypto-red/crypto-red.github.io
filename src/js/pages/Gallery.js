@@ -22,6 +22,7 @@ import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
 import MenuVotesPixelPost from "../components/MenuVotesPixelPost";
 
 import { search_on_hive, get_hive_posts, get_hive_post, vote_on_hive_post } from "../utils/api"
+import { unlogged_vote_on_hive_post } from "../utils/api-hive"
 import actions from "../actions/utils";
 import api from "../utils/api";
 import {HISTORY} from "../utils/constants";
@@ -30,6 +31,7 @@ import Grow from "@material-ui/core/Grow";
 import ShufflingSpanText from "../components/ShufflingSpanText";
 import get_svg_in_b64 from "../utils/svgToBase64";
 import CyberExhibition from "../icons/CyberExhibition";
+import AccountDialogHiveKey from "../components/AccountDialogHiveKey";
 const cyber_exhibition_svg = get_svg_in_b64(<CyberExhibition />);
 
 window.mobileAndTabletCheck = function() {
@@ -141,7 +143,7 @@ const styles = theme => ({
             "& > .ReactVirtualized__Masonry__innerScrollContainer": {
                 contentVisibility: "auto",
                 overflow: "visible !important",
-                contain: "strict",
+                contain: "size layout paint style",
             }
         }
     },
@@ -267,7 +269,7 @@ class Gallery extends React.Component {
             _dialog_post_closed_count: 0,
             _votes_anchor: null,
             _votes: [],
-
+            _dialog_hive_key_open: false,
         };
     };
 
@@ -411,10 +413,7 @@ class Gallery extends React.Component {
 
         if(!error && data)  {
 
-            this.setState({_hbd_market: data[0]}, () => {
-
-                this._recompute_cell_measurements();
-            });
+            this.setState({_hbd_market: data[0]});
         }
     };
 
@@ -558,10 +557,7 @@ class Gallery extends React.Component {
 
                             this.setState({_loading_posts: false, _posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
 
-                                this.forceUpdate(() => {
-
-                                    this._recompute_cell_measurements();
-                                });
+                                this.forceUpdate();
                                 actions.trigger_loading_update(100);
                             });
                         }else {
@@ -682,6 +678,7 @@ class Gallery extends React.Component {
                     selected={selected}
                     post={post}
                     image_height={image_height}
+                    image_width={_column_width}
                     is_loading={is_loading}
                     hbd_market={_hbd_market}
                     selected_currency={_selected_currency}
@@ -877,54 +874,80 @@ class Gallery extends React.Component {
 
                 if(!err) {
 
-                    let { _posts } = this.state;
-
-                    this.setState({_reaction_selected_post_loading: {..._reaction_selected_post}}, () => {
-
-                        this.forceUpdate();
-
-                        setTimeout(() => {
-
-                            get_hive_post({author: _reaction_selected_post.author, permlink: _reaction_selected_post.permlink, force_query: true}, (err, data) => {
-
-                                if(data) {
-
-                                    _posts = _posts.map((post, index) => {
-
-                                        if(post.id === data.id) { return data; }
-                                        return post;
-                                    });
-
-                                    this.setState({_posts, _reaction_selected_post_loading: null}, () => {
-
-                                        this.forceUpdate();
-                                    });
-
-                                    this._handle_art_reaction(null, data);
-                                }
-                            });
-
-                        }, 12 * 1000);
-                    });
-
-                    actions.trigger_snackbar("You voted!");
-                    actions.trigger_sfx("hero_decorative-celebration-03");
-                    actions.jamy_update("happy");
-                    this._handle_reaction_menu_close();
+                    this._handle_vote_success();
                 }else {
 
-                    actions.trigger_snackbar(err);
-                    actions.trigger_sfx("alert_error-01");
-                    actions.jamy_update("angry");
+                    this._handle_vote_error(err);
                 }
             });
         }else {
 
-            actions.trigger_snackbar("Please connect to Hive first.");
-            actions.trigger_sfx("alert_error-01");
-            actions.jamy_update("sad");
-        }
+            this.setState({_dialog_hive_key_open: true, _reaction_selected_weight: weight}, () => {
 
+                this.forceUpdate();
+            });
+        }
+    };
+
+    _handle_dialog_hive_key_close = () => {
+
+        this.setState({_dialog_hive_key_open: false}, () => {
+
+            this.forceUpdate();
+        });
+    };
+
+    _try_unlogged_vote = (username, private_key, callback_function) => {
+
+        const { _reaction_selected_post, _reaction_selected_weight } = this.state;
+        unlogged_vote_on_hive_post(_reaction_selected_post.author, _reaction_selected_post.permlink, _reaction_selected_weight, username, private_key, callback_function);
+    };
+
+    _handle_vote_success = () => {
+
+        const { _reaction_selected_post } = this.state;
+        let { _posts } = this.state;
+
+        this.setState({_dialog_hive_key_open: false, _reaction_selected_post_loading: {..._reaction_selected_post}}, () => {
+
+            this.forceUpdate();
+
+            setTimeout(() => {
+
+                get_hive_post({author: _reaction_selected_post.author, permlink: _reaction_selected_post.permlink, force_query: true}, (err, data) => {
+
+                    if(data) {
+
+                        _posts = _posts.map((post, index) => {
+
+                            if(post.id === data.id) { return data; }
+                            return post;
+                        });
+
+                        this.setState({_posts, _reaction_selected_post_loading: null}, () => {
+
+                            this.forceUpdate();
+                        });
+
+                        this._handle_art_reaction(null, data);
+                    }
+                });
+
+            }, 12 * 1000);
+        });
+
+        actions.trigger_snackbar("You voted!");
+        actions.trigger_sfx("hero_decorative-celebration-03");
+        actions.jamy_update("happy");
+        this._handle_reaction_menu_close();
+
+    };
+
+    _handle_vote_error = (err) => {
+
+        actions.trigger_snackbar("Unable to vote");
+        actions.trigger_sfx("alert_error-01");
+        actions.jamy_update("angry");
     };
     
     _handle_art_reaction = (event, post) => {
@@ -1203,7 +1226,7 @@ class Gallery extends React.Component {
 
     render() {
 
-        const { classes, _enable_3d, _selected_currency, _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _dialog_post_closed_count, _started_on_post_dialog } = this.state;
+        const { classes, _enable_3d, _dialog_hive_key_open, _selected_currency, _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _dialog_post_closed_count, _started_on_post_dialog } = this.state;
         const { _cell_positioner, _hbd_market, _cell_measurer_cache, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
 
         const width = _window_width;
@@ -1297,6 +1320,12 @@ class Gallery extends React.Component {
                         </div>
                 }
 
+                <Grow in>
+                    <img onClick={this._open_editor} className={classes.fab} style={{maxWidth: "100%", height: 64, filter: "drop-shadow(0px 0px 8px black)"}}
+                         src={pixel_laboratory}
+                    />
+                </Grow>
+
                 <MenuReactionPixelPost
                     keepMounted={false}
                     event={_reaction_click_event}
@@ -1332,11 +1361,12 @@ class Gallery extends React.Component {
                     open={_post_author !== null && _post_permlink === null}
                     onClose={this._handle_reset_selected_account}/>
 
-                <Grow in>
-                    <img onClick={this._open_editor} className={classes.fab} style={{maxWidth: "100%", height: 64, filter: "drop-shadow(0px 0px 8px black)"}}
-                         src={pixel_laboratory}
-                    />
-                </Grow>
+                <AccountDialogHiveKey open={_dialog_hive_key_open}
+                                      key_type={"POSTING"}
+                                      key_function={this._try_unlogged_vote}
+                                      onClose={this._handle_dialog_hive_key_close}
+                                      onError={this._handle_vote_error}
+                                      onComplete={this._handle_vote_success}/>
 
             </div>
         );

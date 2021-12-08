@@ -177,7 +177,6 @@ class AccountDialogHive extends React.Component {
 
                             this.setState({_trying_hive_login: false, _is_account_password_error: false, _account_name_input: "", _account_password_input: ""}, () => {
 
-                                console.log(results);
                                 this._on_complete();
                             });
                         }

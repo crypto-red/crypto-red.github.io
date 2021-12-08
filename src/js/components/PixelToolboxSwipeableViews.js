@@ -1101,14 +1101,14 @@ class PixelToolboxSwipeableViews extends React.Component {
                                             </div>
                                             <ListSubheader className={classes.listSubHeader}>
                                                 <span><ImportIcon /></span>
-                                                <span>{is_connected_to_hive ? "Post on Hive": "Please login onto Hive"}</span>
+                                                <span>{"Post on Hive"}</span>
                                             </ListSubheader>
                                             <div className={classes.listItems}>
-                                                <ListItem disabled={!is_connected_to_hive} button onClick={() => {this._publish()}}>
+                                                <ListItem button onClick={() => {this._publish()}}>
                                                     <ListItemIcon className={classes.listItemIcon}>
                                                         <PublishIcon />
                                                     </ListItemIcon>
-                                                    <ListItemText className={classes.ListItemText} primary={"Publish"}/>
+                                                    <ListItemText className={classes.ListItemText} primary={is_connected_to_hive ? "Publish": "Publish with posting key"}/>
                                                 </ListItem>
                                                 <ListItem disabled={is_connected_to_hive} button onClick={() => {this._to_account()}}>
                                                     <ListItemIcon className={classes.listItemIcon}>

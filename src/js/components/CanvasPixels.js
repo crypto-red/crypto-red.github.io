@@ -2183,7 +2183,7 @@ class CanvasPixels extends React.Component {
                 this._notify_size_change();
                 this._notify_layers_change();
                 this._update_screen_zoom_ratio(true);
-                this._to_less_color(2/64, () => {
+                this._to_less_color(is_mobile_or_tablet ? 1/16: 1/32, () => {
 
                     this._notify_image_load_complete();
                 });
@@ -5130,6 +5130,56 @@ class CanvasPixels extends React.Component {
         if(this.props.onSizeChange) { this.props.onSizeChange(pxl_width, pxl_height); }
     };
 
+    import_JSON_state = (json) => {
+
+        const { _base64_original_images, _json_state_history } = JSON.parse(json);
+        const {state_history, history_position} = JSON.parse(_json_state_history);
+        const { _original_image_index, pxl_width, pxl_height, _pxl_indexes_of_selection, _s_pxl_colors, _s_pxls, _layers, _layer_index, _pencil_mirror_index } = state_history[history_position];
+
+        this.setState({
+            _original_image_index: - 1,
+            _pencil_mirror_index,
+            pxl_width,
+            pxl_height,
+            _s_pxls,
+            _s_pxl_colors,
+            _pxl_indexes_of_selection_drawn: this.state._pxl_indexes_of_selection,
+            _pxl_indexes_of_selection: new Set([..._pxl_indexes_of_selection]),
+            _layers,
+            _old_layers: [...this.state._layers],
+            _layer_index,
+            _base64_original_images,
+            _json_state_history,
+            _is_there_new_dimension: true,
+        }, () => {
+
+            this.setState({_original_image_index});
+
+            this._notify_layers_and_compute_thumbnails_change();
+            this._notify_can_undo_redo_change();
+            this._notify_is_something_selected();
+            this._notify_size_change();
+            this._request_force_update();
+        });
+
+    };
+
+    export_JSON_state = (callback_function) => {
+
+        const {_base64_original_images, _json_state_history} = this.state;
+
+        this.get_base64_png_data_url(1, (base64) => {
+
+            const bytes = 3 * Math.ceil((base64.length/4));
+            callback_function(JSON.stringify({
+                kb: bytes / 1000,
+                preview: base64,
+                _base64_original_images,
+                _json_state_history,
+            }));
+        });
+    };
+
     _can_undo = () => {
 
         const { _json_state_history } = this.state;
@@ -5151,7 +5201,7 @@ class CanvasPixels extends React.Component {
 
             previous_history_position = history_position;
             history_position--;
-            const { _original_image_index, pxl_width, pxl_height, _pxl_indexes_of_selection, _s_pxl_colors, _s_pxls, _layers, _layer_index, _pencil_mirror_index } = state_history[history_position];;
+            const { _original_image_index, pxl_width, pxl_height, _pxl_indexes_of_selection, _s_pxl_colors, _s_pxls, _layers, _layer_index, _pencil_mirror_index } = state_history[history_position];
             const new_json_state_history = JSON.stringify({state_history, history_position, previous_history_position});
             const has_new_dimension = Boolean(pxl_width !== this.state.pxl_width || pxl_height !== this.state.pxl_height);
 
@@ -7266,7 +7316,7 @@ class CanvasPixels extends React.Component {
         });
     };
 
-    _remove_close_pxl_colors = async(pxls = [], pxl_colors  = [], bucket_threshold = null, threshold_steps = null, color_number_bonus = 0, best_color_number = null, callback_function = () =>{}) => {
+    _remove_close_pxl_colors = async(pxls = [], pxl_colors  = [], bucket_threshold = null, threshold_steps = null, color_number_bonus = 8, best_color_number = null, callback_function = () =>{}) => {
 
         const this_state_bucket_threshold = this.state.bucket_threshold;
 
@@ -7520,7 +7570,7 @@ class CanvasPixels extends React.Component {
             let is_bucket_threshold_auto_goal_reached = !is_bucket_threshold_auto;
             let bucket_threshold_auto_goal_target = 6;
             let bucket_threshold_auto_goal_attempt = new Set();
-            best_color_number = best_color_number !== null ? best_color_number: Math.max(Math.cbrt(original_pxl_colors.length) * (2/3) + color_number_bonus, 16);
+            best_color_number = best_color_number !== null ? best_color_number: Math.max(Math.sqrt(original_pxl_colors.length) + color_number_bonus, 24);
 
             if(best_color_number < 2 || best_color_number > pxl_colors.length) {
 
@@ -7563,40 +7613,40 @@ class CanvasPixels extends React.Component {
                 let new_pxl_colors = Array.from(reduced_pxl_colors);
 
                 for (let i = 1; i <= threshold_steps; i += 1) {
-
+                
                     let threshold = bucket_threshold * (i / threshold_steps);
                     const weight_applied_to_color_usage_difference = i / threshold_steps;
-
+                    
                     indexes_of_colors_proceed.clear();
                     let pxl_colors_usage = new Array(new_pxl_colors.length).fill(0);
-
+                    
                     Array.from(new_pxls).forEach((pxl) => {
-
+                    
                         pxl_colors_usage[pxl]++;
                     });
-
+                    
                     Array.from(new_pxl_colors).forEach((color_a, index_of_color_a) => {
-
+                    
                         if(!indexes_of_colors_proceed.has(index_of_color_a)) {
-
+                    
                             const color_a_usage = pxl_colors_usage[index_of_color_a];
-
+                    
                             Array.from(new_pxl_colors).forEach((color_b, index_of_color_b) => {
-
+                    
                                 if(!indexes_of_colors_proceed.has(index_of_color_b)) {
-
+                    
                                     const color_b_usage = pxl_colors_usage[index_of_color_b];
                                     const color_a_more_used = color_a_usage > color_b_usage;
-
+                    
                                     const color_usage_difference = color_a_more_used ? color_a_usage / color_b_usage: color_b_usage / color_a_usage;
                                     const weighted_threshold = (threshold + (threshold * (1 - 1 / color_usage_difference) * weight_applied_to_color_usage_difference)) / (1 + weight_applied_to_color_usage_difference);
-
+                    
                                     if(this_match_color(color_a, color_b, weighted_threshold)) {
-
+                    
                                         const color = color_a_more_used ?
                                             this_blend_colors(original_pxl_colors[index_of_color_a], original_pxl_colors[index_of_color_b], 1 / (color_usage_difference), true):
                                             this_blend_colors(original_pxl_colors[index_of_color_b], original_pxl_colors[index_of_color_a], 1 / (color_usage_difference), true);
-
+                    
                                         original_pxl_colors[index_of_color_a] = color;
                                         original_pxl_colors[index_of_color_b] = color;
                                         indexes_of_colors_proceed.add(index_of_color_a);
@@ -7606,7 +7656,7 @@ class CanvasPixels extends React.Component {
                             });
                         }
                     });
-
+                    
                     let r = this_remove_duplicate_pxl_colors(new_pxls, original_pxl_colors);
                     new_pxls = r[0];
                     new_pxl_colors = r[1];
@@ -8061,34 +8111,37 @@ class CanvasPixels extends React.Component {
 
         const padding = Math.floor(canvas_wrapper_padding / window.devicePixelRatio * scale);
         return (
-            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{ contentVisibility: "auto", boxSizing: "border-box", position: "relative", overflow: "hidden", touchAction: "none", pointerEvents: "none"}} className={className}>
+            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{ willChange: "contents", contentVisibility: "auto", boxSizing: "border-box", position: "relative", overflow: "hidden", touchAction: "none", pointerEvents: "none"}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
                      className={"Canvas-Wrapper-Overflow" + (has_shown_canvas_once ? " Shown ": " Not-Shown ")}
                      draggable={"false"}
                      style={{
-                         transition: `opacity ${animation ? animation_duration / 2: 0}ms cubic-bezier(0, 0, 0.2, 1) 200ms`,
-                         opacity: _hidden || !has_shown_canvas_once ? 0: "inherit",
+                         willChange: "transform",
+                         transition: `transform ${animation ? animation_duration / 2: 0}ms cubic-bezier(0, 0, 0.2, 1) 200ms`,
+                         transform: `opacity(${_hidden || !has_shown_canvas_once ? "0": "1"}`,
                          height: "100%",
                          width: "100%",
                          overflow: "visible",
                          position: "absolute",
                          boxSizing: "border-box",
                          touchAction: "none",
-                         pointerEvents: "all",
+                         pointerEvents: "auto",
                          cursor: cursor,
+                         contain: "style size layout",
                      }}>
                     <div className={"Canvas-Wrapper-MoveXY"}
                          draggable={"false"}
                          style={{
-                            willChange: "transform, perspective",
+                             willChange: "transform, perspective",
                              pointerEvents: "none",
                              touchAction: "none",
-                            boxSizing: "content-box",
-                            position: "absolute",
-                            transform: `translate(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px)`,
-                            transformOrigin: "center center",
-                            perspective: `${Math.max(canvas_wrapper_width, canvas_wrapper_height)}px`
-                    }}>
+                             boxSizing: "content-box",
+                             position: "absolute",
+                             transform: `translate(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px)`,
+                             transformOrigin: "center center",
+                             perspective: `${Math.max(canvas_wrapper_width, canvas_wrapper_height)}px`,
+                             contain: "style size layout"
+                         }}>
                         <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
                              draggable={"false"}
                              style={{
@@ -8105,12 +8158,13 @@ class CanvasPixels extends React.Component {
                                  clipPath: `polygon(calc(100% - 10%) 0%, 100% 0%, 100% 200%, ${padding}px 100%, 0% calc(100% - ${padding}px), 0% -100%, calc(100% - 25%) 0%, calc(100% - 25%) ${padding / 1.5}px, calc(100% - 15%) ${padding / 1.5}px)`,
                                  width: canvas_wrapper_width,
                                  height: canvas_wrapper_height,
-                                 transform: `rotateZ(0deg) rotateX(${(perspective_coordinate[1] * p / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[0] * p / scale).toFixed(2)}deg)`,
+                                 transform: `rotateX(${(perspective_coordinate[1] * p / scale).toFixed(3)}deg) rotateY(${(perspective_coordinate[0] * p / scale).toFixed(3)}deg)`,
                                  transformOrigin: "center middle",
                                  boxSizing: "content-box",
                                  overflow: "visible",
                                  touchAction: "none",
                                  pointerEvents: "none",
+                                 contain: "style size layout",
                              }}
                              ref={this._set_canvas_wrapper_ref}>
                             <canvas
@@ -8124,6 +8178,7 @@ class CanvasPixels extends React.Component {
                                     transform: `scale(${(_screen_zoom_ratio * scale).toFixed(3)})`,
                                     transformOrigin: "left top",
                                     boxSizing: "content-box",
+                                    contain: "style size layout paint",
                                     ...background_image_style_props,
                                 }}
                                 className={"Canvas-Pixels"}
@@ -8168,6 +8223,7 @@ class CanvasPixels extends React.Component {
                                          boxSizing: "content-box",
                                          touchAction: "none",
                                          pointerEvents: "none",
+                                         contain: "style size layout paint",
                                          willChange: "filter, background-image",
                                          filter: Boolean(p) && `brightness(${filter_force}) contrast(${filter_force})` // drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})
                                  }}/>
@@ -8189,6 +8245,7 @@ class CanvasPixels extends React.Component {
                     backgroundSize: `${Math.round(scale * _screen_zoom_ratio * 5 * 5)}px`,
                     pointerEvents: "none",
                     touchAction: "none",
+                    contain: "style size layout",
                 }}><span>[{parseFloat(scale * _screen_zoom_ratio).toFixed(2)}x]</span></div>
             </div>
         );
