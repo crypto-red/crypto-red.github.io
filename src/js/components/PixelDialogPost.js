@@ -97,7 +97,7 @@ const styles = theme => ({
         width: "calc(100vw - 480px)",
         height: "calc(100vh)",
         position: "relative",
-        overflow: "visible",
+        overflow: "hidden",
         zIndex: 1,
         [theme.breakpoints.down("md")]: {
             width: "100vw",
@@ -148,32 +148,21 @@ const styles = theme => ({
         right: 0,
         textAlign: "right",
         fontFamily: `"Share Tech Mono"`,
+        overflow: "hidden",
     },
     contentCanvas: {
         width: "calc(100vw - 480px)",
         height: "calc(100vh)",
         position: "absolute",
-        overflow: "visible",
-        backgroundImage: "radial-gradient(transparent 66%, #000000)",
-        //mixBlendMode: "exclusion",
+        overflow: "hidden",
+        mixBlendMode: "exclusion",
         [theme.breakpoints.down("md")]: {
             width: "100vw",
             overflow: "hidden",
             position: "fixed",
-        },
-        "&::after": {
-            content: ``,
-            position: "fixed",
-            left: "-175vw",
-            top: "-100vh",
-            width: "250vw",
-            height: "200vh",
-            backgroundImage: "radial-gradient(farthest-corner at center -50%, rgba(255, 255, 255, .36) 50%, rgb(0 0 0 / 72%) 72%)",
-            pointerEvents: "none",
         }
     },
     contentCanvasLight: {
-
     },
     drawer: {
         width: 480,
@@ -1314,7 +1303,7 @@ class PixelDialogPost extends React.Component {
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
 
         return (
-            <div>
+            <div style={{contentVisibility: "auto", contain: "layout paint size style"}}>
                 <Dialog
                     keepMounted={keepMounted}
                     open={open}
@@ -1356,7 +1345,7 @@ class PixelDialogPost extends React.Component {
                         <div className={classes.content}>
                             <div className={classes.contentInner}>
                                 <SwipeableDrawer
-                                    style={{contentVisibility: "auto"}}
+                                    style={{containIntrinsicSize: "480px 100vh", contentVisibility: "auto", contain: "layout paint size style"}}
                                     swipeAreaWidth={50}
                                     keepMounted={keepMounted}
                                     ModalProps={{BackdropProps:{classes: {root: classes.drawerModalBackdropRoot}}}}
@@ -1667,7 +1656,7 @@ class PixelDialogPost extends React.Component {
                                         </CardContent>
                                     </div>
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage} dataid={post.id} style={{...color_box_shadows}}>
+                                <div className={classes.contentImage} dataid={post.id}>
                                     <div className={classes.topRightFabButtons}>
                                         <IconButton onClick={this._toggle_perspective} className={classes.perspectiveButtonIcon}>
                                             {enable_3d ? <TdOffIcon fontSize="large" />: <TdOnIcon fontSize="large" />}
@@ -1676,9 +1665,10 @@ class PixelDialogPost extends React.Component {
                                             <CloseIcon fontSize="large" />
                                         </IconButton>
                                     </div>
-                                    <div className={classes.contentCanvasLight}>
+                                    <div className={classes.contentCanvasLight} style={{...color_box_shadows}}>
                                         <CanvasPixels
-                                            canvas_wrapper_border_radius={2}
+                                            canvas_wrapper_border_radius={0}
+                                            canvas_wrapper_border_width={0}
                                             shadow_size={9}
                                             shadow_color={_color_palette.background_color}
                                             canvas_wrapper_padding={24}

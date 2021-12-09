@@ -19,6 +19,12 @@ const overrides = {
             "h1 > p, h2 > p, h3 > p, h4 > p, h5 > p, h6 > p": {
                 margin: 0,
             },
+            ".pixelated": {
+                imageRendering: "pixelated",
+                "& *": {
+                    imageRendering: "crisp-edges",
+                }
+            },
             ".emoji": {
                 verticalAlign: "middle",
                 height: "1em",

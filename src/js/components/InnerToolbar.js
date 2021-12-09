@@ -312,7 +312,7 @@ class InnerToolbar extends React.Component {
                                         onChange={this._handle_search_input_change}
                                         value={_search_bar_value}
                                     />:
-                                    <span className={classes.innerToolbarText} style={pathname.includes("gallery") ? {width: "calc(100% - 36px)", overflow: "scroll"}: {}}>
+                                    <span className={classes.innerToolbarText} style={pathname.includes("gallery") ? {width: "calc(100% - 36px)", overflow: "overlay"}: {}}>
                                         <Fade in={know_if_logged}><Link className={classes.link} to={logged_account ? "/": "/"}>{know_if_logged ? logged_account ? logged_account.name: t( "components.inner_toolbar.guest"): ""} </Link></Fade>
                                         {pathame_items}
                                     </span>

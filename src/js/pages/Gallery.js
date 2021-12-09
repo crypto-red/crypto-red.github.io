@@ -674,7 +674,7 @@ class Gallery extends React.Component {
         return (
             <CellMeasurer cache={_cell_measurer_cache} index={index} key={`${key}`} parent={parent} style={{contain: "paint size"}}>
                 <PixelArtCard
-                    key={`${post.id}`}
+                    id={post.id}
                     rowIndex={rowIndex}
                     columnIndex={columnIndex}
                     style={style}

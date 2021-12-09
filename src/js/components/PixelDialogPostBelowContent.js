@@ -47,7 +47,7 @@ const loop = (render, do_not_cancel_animation, force_update) => {
 
     try {
 
-        let skip_frame_rate = 30;
+        let skip_frame_rate = 40;
 
         let now = Date.now();
         let running_smoothly = true;
@@ -164,8 +164,8 @@ class PixelDialogPostBelowContent extends React.Component {
             translated_description: props.translated_description,
             translated_title: props.translated_title,
             has_translation_started: props.has_translation_started,
-            px: Math.floor(props.px * 10) / 10,
-            py: Math.floor(props.py * 10) / 10,
+            px: props.px,
+            py: props.py,
             pz: props.pz,
             color: props.color,
         };
@@ -173,32 +173,35 @@ class PixelDialogPostBelowContent extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        let image_changed = this.state.sc_svg !== new_props.sc_svg;
+        let image_changed = this.state.layers !== new_props.layers;
+        let perspective_changed =
+            this.state.px !== new_props.px ||
+            this.state.py !== new_props.py ||
+            this.state.pz !== new_props.pz;
+
+
         this.setState(new_props, () => {
 
             if(image_changed) {
 
                 this._request_force_update();
-            }else if(!is_mobile_or_tablet) {
+            }else if(perspective_changed) {
 
                 this._request_force_update(true, true);
             }
         });
     }
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
+    shouldComponentUpdate() {
         return false;
     }
 
-    _request_force_update = (can_be_cancelable = false, especially_dont_force = false, callback_function = () => {}) => {
+    _request_force_update = (can_be_cancelable = false, especially_dont_force = false) => {
 
 
         anim_loop(() => {
 
-            this.forceUpdate(() => {
-
-                callback_function();
-            });
+            this.forceUpdate();
         }, !can_be_cancelable, !especially_dont_force);
     }
 
@@ -239,15 +242,18 @@ class PixelDialogPostBelowContent extends React.Component {
 
         return (
             <div className={classname} style={{
-                contain: "size style",
                 pointerEvents: "none",
+                textRendering: "optimizespeed",
+                imageRendering: "optimizespeed",
                 touchAction: "none",
-                contentVisibility: h_svg ? "auto": "hidden",
+                contain: "size style",
+                visibility: h_svg ? "inherit": "hidden",
                 willChange: "background-position, contents",
+                transition: "background-position .25s linear 0s",
                 backgroundImage: `url("${h_svg}")`,
                 backgroundRepeat: "repeat",
-                backgroundSize: `${Math.ceil(200*(pz))}px ${Math.ceil(229.3*(pz))}px`,
-                backgroundPosition: `${(px*30-200)*pz}px ${(py*30-229)*pz}px`,
+                backgroundSize: `${Math.ceil(.5*200)}px ${Math.ceil(.5*229.3)}px`,
+                backgroundPosition: `${Math.round((px*5-200)*pz)}px ${Math.round((py*5-229.3)*pz)}px`,
                 color: "black",
                 backgroundOrigin: "center"}}>
                 <div style={{position: "relative", height: "100%"}}>
@@ -264,10 +270,10 @@ class PixelDialogPostBelowContent extends React.Component {
                             <p>$_WIN_WIDTH: {window_width}px</p>
                             <p>$_AI_COMPUTING: {is_prediction_loading ? "TRUE": "FALSE"}</p>
                         </div>
-                        <img src={sc_svg} style={{willChange: "transform", zIndex: is_mobile_or_tablet ? 1: 11, transition: "transform .1s linear 0s", position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
-                        <img src={ss_svg} style={{willChange: "transform", zIndex: is_mobile_or_tablet ? 1: 11, transition: "transform .1s linear 0s", position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*5-25)*pz}px, ${(py*5-20)*pz}px)`}}/>
-                        <img src={sg_svg} style={{willChange: "transform", transition: "transform .1s linear 0s", position: "absolute", top: 372, right: 372, width: 372, height: 372, transformOrigin: "top right", transform: `translate(${(px*10-50)*pz}px, ${(py*10-50)*pz}px)`}}/>
-                        <img src={st_svg} style={{willChange: "transform", transition: "transform .1s linear 0s", position: "absolute", bottom: 256, right: 256, width: 336, height: 336, transformOrigin: "middle center", transform: `translate(${(px*15-75)*pz}px, ${(py*15-75)*pz}px)`}}/>
+                        <img src={sc_svg} style={{willChange: "transform", filter: "opacity(0.5)",  zIndex: is_mobile_or_tablet ? 1: 14, transition: "transform .25s linear 0s", position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
+                        <img src={ss_svg} style={{willChange: "transform", zIndex: is_mobile_or_tablet ? 1: 14, transition: "transform .25s linear 0s", position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*5-25)*pz}px, ${(py*5-20)*pz}px)`}}/>
+                        <img src={sg_svg} style={{willChange: "transform", transition: "transform .25s linear 0s", position: "absolute", top: 372, right: 372, width: 372, height: 372, transformOrigin: "top right", transform: `translate(${(px*10-50)*pz}px, ${(py*10-50)*pz}px)`}}/>
+                        <img src={st_svg} style={{willChange: "transform", transition: "transform .25s linear 0s", position: "absolute", bottom: 256, right: 256, width: 336, height: 336, transformOrigin: "middle center", transform: `translate(${(px*15-75)*pz}px, ${(py*15-75)*pz}px)`}}/>
                         <span style={{position: "absolute", bottom: "50%", right: 32, width: "66%", color: "#ffffff99", fontFamily: `"Special Elite"`}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
                     </div>
                     <div style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%", display: "inline-grid"}}>
@@ -282,7 +288,7 @@ class PixelDialogPostBelowContent extends React.Component {
                             </span>
                         }
                         <span>$NFT_TESTS: For chimpanzee and punks they show current attention.<br/>[SUGG.]: prepare moving to humanoid trials to speed up artistic process. <br />Please remain CALM... Outer dark project [NAMEC.] Black.Ops. (Decentralize Everything)</span>
-                        <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>"PM ops" SYSTEM {49.5 + parseFloat(Math.random().toFixed(6))}% SHUTDOWN - POWER "{Date.now()}" IN YOUR VEINS</span>
+                        <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>"Para-Monetary Ops" SYSTEM 49.5% SHUTDOWN - POWER "NOW" IN YOUR VEINS</span>
                     </div>
                 </div>
             </div>

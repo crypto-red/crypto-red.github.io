@@ -117,7 +117,7 @@ const styles = theme => ({
             "& > div:first-child": {
                 background: `linear-gradient(to bottom, rgba(0, 0, 0, 0) calc(0% - 24px), rgba(0, 0, 0, 0.034) calc(22.1% - 24px), rgba(0, 0, 0, 0.123) calc(39.4% - 24px), rgba(0, 0, 0, 0.249) calc(53.1% - 24px), rgba(0, 0, 0, 0.394) calc(64.3% - 24px), rgba(0, 0, 0, 0.54) calc(74.1% - 24px), rgba(0, 0, 0, 0.668) calc(83.6% - 24px), rgba(0, 0, 0, 0.762) calc(94.1% - 24px), rgba(0, 0, 0, 0.79) calc(100% - 24px))`,
             },
-            "& div img": {
+            "& > div > div > img": {
                 opacity: 1,
                 transform: "translate(-50%, -50%) scale(4)",
             },
@@ -146,7 +146,6 @@ const styles = theme => ({
         }
     },
     cardMedia: {
-        imageRendering: "pixelated",
         transition: "transform 240ms cubic-bezier(0.4, 0, 0.2, 1), filter 240ms cubic-bezier(0.4, 0, 0.2, 1)",
         transform: "scale(1)",
         filter: "brightness(0.88) contrast(1.14)",
@@ -317,6 +316,8 @@ class PixelArtCard extends React.Component {
     shouldComponentUpdate(new_props) {
 
         return (
+            new_props.id !== this.state.id ||
+            new_props.index !== this.state.index ||
             new_props.key !== this.state.key ||
             new_props.style.left !== this.state.style.left ||
             new_props.style.top !== this.state.style.top ||
@@ -357,13 +358,15 @@ class PixelArtCard extends React.Component {
                   dataselected={selected ? "true": "false"}>
                 <CardActionArea>
                     <div style={{contain: "layout style paint size", width: image_width ,height: image_height, display: "block", position: "relative", overflow: "hidden"}}>
-                        <CardMedia
-                            className={classes.cardMedia}
-                            component="img"
-                            alt={post.title}
-                            image={post.image}
-                            title={post.title}
-                        />
+                        <div className={"pixelated"}>
+                            <CardMedia
+                                className={classes.cardMedia}
+                                component="img"
+                                alt={post.title}
+                                image={post.image}
+                                title={post.title}
+                            />
+                        </div>
                         <div className={classes.cardMediaOverlay} onClick={(event) => {this.props.on_card_media_click(post, event)}}>
                             <div className={classes.nsTags}>
                                 {Object.entries(post.responsabilities).map((entry) => {

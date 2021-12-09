@@ -62,7 +62,7 @@ const loop = (render, do_not_cancel_animation, force_update) => {
 
     try {
 
-        let skip_frame_rate = 30;
+        let skip_frame_rate = 40;
 
         let now = Date.now();
         let running_smoothly = true;
@@ -141,7 +141,7 @@ const loop = (render, do_not_cancel_animation, force_update) => {
             setTimeout(() => {loop(render, do_not_cancel_animation, force_update)}, 1000 / (skip_frame_rate * 8));
         }else {
 
-            caf(caf_id);
+            //caf(caf_id);
         }
     }catch(e){
         console.log(e)
@@ -354,13 +354,15 @@ class CanvasPixels extends React.Component {
             "}";
 
         const pixelated_css =
-            ".Canvas-Pixels, .Canvas-Wrapper-MoveXY, .Canvas-Wrapper, .Canvas-Pixels-Cover {" +
-                "image-rendering: pixelated;" +
-                "touch-action: none;" +
-                "pointer-events: none;" +
-                "backface-visibility: hidden;" +
-                "mix-blend-mode: normal;" +
-                "background-blend-mode: normal;" +
+            ".Canvas-Pixels, .Canvas-Wrapper-Overflow, .Canvas-Wrapper, .Canvas-Pixels-Cover {" +
+            "image-rendering: crisp-edges;" +
+            "image-rendering: pixelated;" +
+            "touch-action: none;" +
+            "pointer-events: none;" +
+            "backface-visibility: hidden;" +
+            "mix-blend-mode: normal;" +
+            "background-blend-mode: normal;" +
+            "transition: none;" +
             "}";
 
         const canvas_wrapper_css =
@@ -370,13 +372,12 @@ class CanvasPixels extends React.Component {
                 animation-duration: 1000ms;
                 animation-delay: 0ms;
                 animation-timing-function: linear;
-                transition: opacity 0ms 0ms linear;
-                pointer-events: all;
+                transition: transform 0ms 0ms linear;
             }
             .Canvas-Wrapper-Overflow {
                 opacity: 0 !important,
                 transform-origin: center center !important;
-                transition: opacity 1000ms 0ms linear;
+                transition: transform 1000ms 0ms linear;
             }
             @keyframes canvanimation { 
                   0% { transform: matrix3d(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: .0; }
@@ -657,7 +658,7 @@ class CanvasPixels extends React.Component {
         }
     };
 
-    shouldComponentUpdate(nextProps, nextState, nextContext) {
+    shouldComponentUpdate() {
 
         return false;
     }
@@ -1122,7 +1123,27 @@ class CanvasPixels extends React.Component {
                 _s_pxls[layer_index] || [],
                 _s_pxl_colors[layer_index] || [],
                 scale
-            ]).timeout(120000);
+            ]).catch((error) => {
+
+                let canvas = document.createElement("canvas");
+                canvas.width = pxl_width * scale;
+                canvas.height = pxl_height * scale;
+                let ctx = canvas.getContext('2d');
+                const pxls = _s_pxls[layer_index] || [];
+                const pxl_colors = _s_pxl_colors[layer_index] || [];
+
+                pxls.forEach((pxl, index) => {
+
+                    let pixel_color_hex = pxl_colors[pxl];
+                    let pos_x = index % pxl_width;
+                    let pos_y = (index - pos_x) / pxl_width;
+                    ctx.fillStyle = pixel_color_hex;
+                    ctx.fillRect(pos_x * scale, pos_y * scale, 1 * scale, 1 * scale);
+                });
+
+                return canvas.toDataURL();
+
+            }).timeout(120000);
 
             callback_function(result);
         })();
@@ -1174,7 +1195,25 @@ class CanvasPixels extends React.Component {
             pxls,
             pxl_colors,
             scale
-        ]).timeout(120000);
+        ]).catch((error) => {
+
+            let canvas = document.createElement("canvas");
+            canvas.width = pxl_width * scale;
+            canvas.height = pxl_height * scale;
+            let ctx = canvas.getContext('2d');
+
+            pxls.forEach((pxl, index) => {
+
+                let pixel_color_hex = pxl_colors[pxl];
+                let pos_x = index % pxl_width;
+                let pos_y = (index - pos_x) / pxl_width;
+                ctx.fillStyle = pixel_color_hex;
+                ctx.fillRect(pos_x * scale, pos_y * scale, 1 * scale, 1 * scale);
+            });
+
+            return canvas.toDataURL();
+
+        }).timeout(120000);
 
         return result;
     };
@@ -1463,7 +1502,52 @@ class CanvasPixels extends React.Component {
                 _s_pxl_colors,
                 _layers,
                 scale
-            ]).timeout(120000);
+            ]).catch((error) => {
+
+                let canvas = document.createElement("canvas");
+                canvas.width = pxl_width * scale;
+                canvas.height = pxl_height * scale;
+                let ctx = canvas.getContext('2d');
+
+                _s_pxls[0].forEach((pxl, index) => {
+
+                    let layer_pixel_colors = [];
+                    let start_i = -1;
+                    start_i++;
+
+                    for (let i = _s_pxl_colors.length - 1; i >= 0; i--) {
+
+                        let layer_pixel_color = _s_pxl_colors[i][_s_pxls[i][index]];
+                        layer_pixel_colors[i] = layer_pixel_color;
+                        let rgba = layer_pixel_color;
+
+                        if(rgba[3] === 255) {
+
+                            start_i = i;
+                            break;
+                        }
+
+                    }
+
+                    let pixel_color_hex = "#00000000";
+                    for (let i = start_i; i < _s_pxl_colors.length ; i++) {
+
+                        if(!_layers[i].hidden) {
+
+                            let layer_pixel_color = layer_pixel_colors[i];
+                            pixel_color_hex = this._blend_colors(pixel_color_hex, layer_pixel_color, _layers[i].opacity, false);
+                        }
+                    }
+
+                    let pos_x = index % pxl_width;
+                    let pos_y = (index - pos_x) / pxl_width;
+                    ctx.fillStyle = pixel_color_hex;
+                    ctx.fillRect(pos_x * scale, pos_y * scale, 1 * scale, 1 * scale);
+                });
+
+                return canvas.toDataURL();
+
+            }).timeout(120000);
 
             callback_function(result);
         })();
@@ -3481,10 +3565,10 @@ class CanvasPixels extends React.Component {
         }
     };
 
-    _handle_canvas_pointer_move = (event, canvas_event_target) => {
+    _handle_canvas_pointer_move = (event, canvas_event_target, _pointer_events) => {
 
         const { _latest_pointers_client_x_center, _latest_pointers_client_y_center } = this.state;
-        let { _pointer_events, _latest_pointers_distance } = this.state;
+        let { _latest_pointers_distance } = this.state;
 
         if (_pointer_events.length === 2) {
 
@@ -3555,14 +3639,14 @@ class CanvasPixels extends React.Component {
 
     _handle_canvas_wrapper_overflow_pointer_move = (event) => {
 
+        event.preventDefault();
+        event.stopPropagation();
+
         if(this.state._hidden) {
 
             this._handle_canvas_wrapper_overflow_pointer_up(event);
             return;
         }
-
-        event.preventDefault();
-        event.stopPropagation();
 
         const canvas_event_target = this._get_canvas_event_target(event);
 
@@ -3597,10 +3681,8 @@ class CanvasPixels extends React.Component {
                 _pointer_events.push(event);
             }
 
-            this.setState({_pointer_events: [..._pointer_events]}, () => {
-
-                this._handle_canvas_pointer_move(event, canvas_event_target);
-            });
+            this.setState({_pointer_events: [..._pointer_events]});
+            this._handle_canvas_pointer_move(event, canvas_event_target, [..._pointer_events]);
         }
     };
 
@@ -3626,10 +3708,7 @@ class CanvasPixels extends React.Component {
 
                 if(_mouse_down !== true) {
 
-                    this.setState({_previous_single_pointer_down_x_y: [event.pageX, event.pageY]}, () => {
-
-                        this._request_force_update();
-                    });
+                    this.setState({_previous_single_pointer_down_x_y: [event.pageX, event.pageY]});
                 }
                 if(canvas_event_target === "CANVAS"){
 
@@ -3668,10 +3747,7 @@ class CanvasPixels extends React.Component {
                 _pointer_events
             }, ()  => {
 
-                this.setState({_previous_single_pointer_down_x_y: [event.pageX, event.pageY]}, () => {
-
-                    this._request_force_update();
-                });
+                this.setState({_previous_single_pointer_down_x_y: [event.pageX, event.pageY]});
 
                 this._handle_canvas_pointer_down(event, canvas_event_target);
             });
@@ -7692,7 +7768,125 @@ class CanvasPixels extends React.Component {
             color_number_bonus,
             best_color_number,
             this_state_bucket_threshold,
-        ]).timeout(120000);
+        ]).catch((error) => {
+
+            let indexes_of_colors_proceed = new Set();
+            let original_pxls = Array.from(pxls);
+            let original_pxl_colors = Array.from(pxl_colors);
+            let is_bucket_threshold_auto = bucket_threshold === "auto";
+            let is_bucket_threshold_auto_goal_reached = !is_bucket_threshold_auto;
+            let bucket_threshold_auto_goal_target = 6;
+            let bucket_threshold_auto_goal_attempt = new Set();
+            best_color_number = best_color_number !== null ? best_color_number: Math.max(Math.sqrt(original_pxl_colors.length) + color_number_bonus, 24);
+
+            if(best_color_number < 2 || best_color_number > pxl_colors.length) {
+
+                is_bucket_threshold_auto_goal_reached = true;
+            }
+
+            let attempt = 1;
+
+            while (!is_bucket_threshold_auto_goal_reached || attempt === 1) {
+                attempt++;
+
+                bucket_threshold = is_bucket_threshold_auto ?
+                    1/(bucket_threshold_auto_goal_target - 2):
+                    bucket_threshold || this_state_bucket_threshold;
+                threshold_steps = threshold_steps || Math.round(bucket_threshold * 255);
+                const color_loss = (255 - (255 / (bucket_threshold * 255))) / 255;
+
+                original_pxls = Array.from(pxls);
+                original_pxl_colors = Array.from(pxl_colors);
+
+                let reduced_pxl_colors = Array.from(pxl_colors).map((color_hex) => {
+
+                    let c = this._get_rgba_from_hex(color_hex);
+
+                    let r = c[0],
+                        g = c[1],
+                        b = c[2],
+                        a = c[3];
+
+                    r = this._reduce_color(r, 1 - color_loss);
+                    g = this._reduce_color(g, 1 - color_loss);
+                    b = this._reduce_color(b, 1 - color_loss);
+                    a = this._reduce_color(a, 1 - color_loss);
+
+                    return "#" + this._get_hex_value_from_rgb_value(r) + this._get_hex_value_from_rgb_value(g) + this._get_hex_value_from_rgb_value(b) + this._get_hex_value_from_rgb_value(a);
+
+                });
+
+                let new_pxls = Array.from(original_pxls);
+                let new_pxl_colors = Array.from(reduced_pxl_colors);
+
+                for (let i = 1; i <= threshold_steps; i += 1) {
+
+                    let threshold = bucket_threshold * (i / threshold_steps);
+                    const weight_applied_to_color_usage_difference = i / threshold_steps;
+
+                    indexes_of_colors_proceed.clear();
+                    let pxl_colors_usage = new Array(new_pxl_colors.length).fill(0);
+
+                    Array.from(new_pxls).forEach((pxl) => {
+
+                        pxl_colors_usage[pxl]++;
+                    });
+
+                    Array.from(new_pxl_colors).forEach((color_a, index_of_color_a) => {
+
+                        if(!indexes_of_colors_proceed.has(index_of_color_a)) {
+
+                            const color_a_usage = pxl_colors_usage[index_of_color_a];
+
+                            Array.from(new_pxl_colors).forEach((color_b, index_of_color_b) => {
+
+                                if(!indexes_of_colors_proceed.has(index_of_color_b)) {
+
+                                    const color_b_usage = pxl_colors_usage[index_of_color_b];
+                                    const color_a_more_used = color_a_usage > color_b_usage;
+
+                                    const color_usage_difference = color_a_more_used ? color_a_usage / color_b_usage: color_b_usage / color_a_usage;
+                                    const weighted_threshold = (threshold + (threshold * (1 - 1 / color_usage_difference) * weight_applied_to_color_usage_difference)) / (1 + weight_applied_to_color_usage_difference);
+
+                                    if(this._match_color(color_a, color_b, weighted_threshold)) {
+
+                                        const color = color_a_more_used ?
+                                            this._blend_colors(original_pxl_colors[index_of_color_a], original_pxl_colors[index_of_color_b], 1 / (color_usage_difference), true):
+                                            this._blend_colors(original_pxl_colors[index_of_color_b], original_pxl_colors[index_of_color_a], 1 / (color_usage_difference), true);
+
+                                        original_pxl_colors[index_of_color_a] = color;
+                                        original_pxl_colors[index_of_color_b] = color;
+                                        indexes_of_colors_proceed.add(index_of_color_a);
+                                        indexes_of_colors_proceed.add(index_of_color_b);
+                                    }
+                                }
+                            });
+                        }
+                    });
+
+                    let r = this._remove_duplicate_pxl_colors(new_pxls, original_pxl_colors);
+                    new_pxls = r[0];
+                    new_pxl_colors = r[1];
+                    original_pxl_colors = Array.from(new_pxl_colors);
+                }
+
+                if((original_pxl_colors.length + 2 > best_color_number && original_pxl_colors.length - 2 < best_color_number) || !is_bucket_threshold_auto || bucket_threshold_auto_goal_attempt.has(bucket_threshold_auto_goal_target)) {
+
+                    return this._remove_duplicate_pxl_colors(new_pxls, original_pxl_colors);
+                }else if(original_pxl_colors.length > best_color_number){
+
+                    bucket_threshold_auto_goal_attempt.add(bucket_threshold_auto_goal_target);
+                    bucket_threshold_auto_goal_target --;
+                }else {
+
+                    bucket_threshold_auto_goal_attempt.add(bucket_threshold_auto_goal_target);
+                    bucket_threshold_auto_goal_target ++;
+                }
+            }
+
+            return this._remove_duplicate_pxl_colors(pxls, pxl_colors);
+
+        }).timeout(120000);
 
         return result;
     };
@@ -7936,7 +8130,7 @@ class CanvasPixels extends React.Component {
                 this.props.on_elevation_change(this.state._moves_speed_average_now);
             }
 
-            this._request_force_update(false, true);
+            this._request_force_update(true, true);
         });
     };
 
@@ -7978,7 +8172,7 @@ class CanvasPixels extends React.Component {
 
                 if(new_moves_speed_average_now !== _moves_speed_average_now && this.state._scale_move_speed_timestamp === now) {
 
-                    this._request_force_update();
+                    this._request_force_update(true, true);
                 }
             });
         }
@@ -8024,6 +8218,11 @@ class CanvasPixels extends React.Component {
             });
         });
     };
+
+    areEqual() {
+
+        return false;
+    }
 
     render() {
 
@@ -8111,14 +8310,13 @@ class CanvasPixels extends React.Component {
 
         const padding = Math.floor(canvas_wrapper_padding / window.devicePixelRatio * scale);
         return (
-            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{ willChange: "contents", contentVisibility: "auto", boxSizing: "border-box", position: "relative", overflow: "hidden", touchAction: "none", pointerEvents: "none"}} className={className}>
+            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{contentVisibility: "auto", contain: "style size layout paint", boxSizing: "border-box", position: "relative", overflow: "hidden", touchAction: "none", pointerEvents: "none"}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
                      className={"Canvas-Wrapper-Overflow" + (has_shown_canvas_once ? " Shown ": " Not-Shown ")}
                      draggable={"false"}
                      style={{
-                         willChange: "transform",
-                         transition: `transform ${animation ? animation_duration / 2: 0}ms cubic-bezier(0, 0, 0.2, 1) 200ms`,
-                         transform: `opacity(${_hidden || !has_shown_canvas_once ? "0": "1"}`,
+                         transition: `opacity ${animation ? animation_duration / 2: 0}ms linear 400ms`,
+                         opacity: _hidden || !has_shown_canvas_once ? 0: 1,
                          height: "100%",
                          width: "100%",
                          overflow: "visible",
@@ -8127,126 +8325,116 @@ class CanvasPixels extends React.Component {
                          touchAction: "none",
                          pointerEvents: "auto",
                          cursor: cursor,
-                         contain: "style size layout",
+                         contain: "style size layout paint",
+                         willChange: "contents",
+                         perspective: `${Math.round(Math.max(canvas_wrapper_width, canvas_wrapper_height))}px`,
                      }}>
-                    <div className={"Canvas-Wrapper-MoveXY"}
+                    <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
                          draggable={"false"}
                          style={{
-                             willChange: "transform, perspective",
-                             pointerEvents: "none",
-                             touchAction: "none",
-                             boxSizing: "content-box",
+                             willChange: p ? "contents, left, top": "left, top",
+                             mixBlendMode: "hard-light",
+                             borderWidth: canvas_wrapper_border_width,
+                             borderStyle: "solid",
+                             borderColor: "#fff",
+                             /*backgroundColor: canvas_wrapper_background_color,*/
+                             backgroundImage: `linear-gradient(to top, ${canvas_wrapper_background_color} ${padding/2.5}px, ${this._blend_colors(canvas_wrapper_background_color, "#00000000", .6)} ${padding/2.5}px, #ffffff00 150%)`, //, repeating-linear-gradient(-45deg, rgba(255, 255, 255, .75) 0px, rgba(255, 255, 255, .75) ${padding}px, rgba(255, 255, 255, 0.5) ${padding}px, rgba(255, 255, 255, 0.5) ${padding*2}px)`,*/
+                             borderRadius: canvas_wrapper_border_radius,
+                             padding: padding,
                              position: "absolute",
-                             transform: `translate(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px)`,
-                             transformOrigin: "center center",
-                             perspective: `${Math.max(canvas_wrapper_width, canvas_wrapper_height)}px`,
-                             contain: "style size layout"
-                         }}>
-                        <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
-                             draggable={"false"}
-                             style={{
-                                 willChange: p ? "transform": "",
-                                 mixBlendMode: "hard-light",
-                                 borderWidth: canvas_wrapper_border_width,
-                                 borderStyle: "solid",
-                                 borderColor: "#fff",
-                                 /*backgroundColor: canvas_wrapper_background_color,*/
-                                 backgroundImage: `linear-gradient(to top, ${canvas_wrapper_background_color} ${padding/2.5}px, ${this._blend_colors(canvas_wrapper_background_color, "#00000000", .6)} ${padding/2.5}px, #ffffff00 150%)`, //, repeating-linear-gradient(-45deg, rgba(255, 255, 255, .75) 0px, rgba(255, 255, 255, .75) ${padding}px, rgba(255, 255, 255, 0.5) ${padding}px, rgba(255, 255, 255, 0.5) ${padding*2}px)`,*/
-                                 borderRadius: canvas_wrapper_border_radius,
-                                 padding: padding,
-                                 position: "absolute",
-                                 clipPath: `polygon(calc(100% - 10%) 0%, 100% 0%, 100% 200%, ${padding}px 100%, 0% calc(100% - ${padding}px), 0% -100%, calc(100% - 25%) 0%, calc(100% - 25%) ${padding / 1.5}px, calc(100% - 15%) ${padding / 1.5}px)`,
-                                 width: canvas_wrapper_width,
-                                 height: canvas_wrapper_height,
-                                 transform: `rotateX(${(perspective_coordinate[1] * p / scale).toFixed(3)}deg) rotateY(${(perspective_coordinate[0] * p / scale).toFixed(3)}deg)`,
-                                 transformOrigin: "center middle",
-                                 boxSizing: "content-box",
-                                 overflow: "visible",
-                                 touchAction: "none",
-                                 pointerEvents: "none",
-                                 contain: "style size layout",
-                             }}
-                             ref={this._set_canvas_wrapper_ref}>
-                            <canvas
-                                draggable={"false"}
-                                style={{
-                                    position: "absolute",
-                                    touchAction: "none",
-                                    pointerEvents: "none",
-                                    width: Math.floor(pxl_width),
-                                    height: Math.floor(pxl_height),
-                                    transform: `scale(${(_screen_zoom_ratio * scale).toFixed(3)})`,
-                                    transformOrigin: "left top",
-                                    boxSizing: "content-box",
-                                    contain: "style size layout paint",
-                                    ...background_image_style_props,
-                                }}
-                                className={"Canvas-Pixels"}
-                                ref={this._set_canvas_ref}
-                                width={pxl_width}
-                                height={pxl_height}/>
-                            {
-                                Boolean(p) &&
-                                <div className={"Canvas-Pixels-Cover"}
-                                    datatexttop={`D[${pxl_width}, ${pxl_height}]px // S[${_kb.toFixed(2)}]Kb`}
-                                    datatextbottom={`ΔZ[${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}]x // ΔR[${(perspective_coordinate[1] * p / scale).toFixed(2)}, ${(perspective_coordinate[0] * p / scale).toFixed(2)}]°`}
-                                     draggable={"false"}
-                                     style={{
-                                         backgroundImage: p ? `linear-gradient(to left, rgba(
-                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
-                                    ${(Math.abs(perspective_coordinate[0]) / p / 6 * 0.3 * (p*l/100)).toFixed(2)}
-                                    ), rgba(
-                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
-                                    ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
-                                    ${(Math.abs(perspective_coordinate[0]) / p / 6 * 3 * (p*l/100)).toFixed(2)}
-                                    )), linear-gradient(to top, rgba(
-                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
-                                    ${(Math.abs(perspective_coordinate[1]) / p / 6 * 2 * (p*l/100)).toFixed(2)}
-                                    ), rgba(
-                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
-                                    ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
-                                    ${(Math.abs(perspective_coordinate[1]) / p / 6 * 1 * (p*l/100)).toFixed(2)}
-                                    ))`: "none",
-                                         borderRadius: canvas_wrapper_border_radius,
-                                         padding: 0,
-                                         left: 0,
-                                         top: 0,
-                                         position: "absolute",
-                                         width: Math.ceil(canvas_wrapper_width + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale)),
-                                         height: Math.ceil(canvas_wrapper_height + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale)),
-                                         boxSizing: "content-box",
-                                         touchAction: "none",
-                                         pointerEvents: "none",
-                                         contain: "style size layout paint",
-                                         willChange: "filter, background-image",
-                                         filter: Boolean(p) && `brightness(${filter_force}) contrast(${filter_force})` // drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})
-                                 }}/>
-                            }
-                        </div>
+                             clipPath: `polygon(calc(100% - 10%) 0%, 100% 0%, 100% 200%, ${padding}px 100%, 0% calc(100% - ${padding}px), 0% -100%, calc(100% - 25%) 0%, calc(100% - 25%) ${padding / 1.5}px, calc(100% - 15%) ${padding / 1.5}px)`,
+                             width: canvas_wrapper_width,
+                             height: canvas_wrapper_height,
+                             transition: "none",
+                             float: "initial",
+                             left: Math.round(scale_move_x),
+                             top: Math.round(scale_move_y),
+                             transform: `rotateX(${(perspective_coordinate[1] * p / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[0] * p / scale).toFixed(2)}deg)`,
+                             transformOrigin: "center middle",
+                             boxSizing: "content-box",
+                             overflow: "visible",
+                             touchAction: "none",
+                             pointerEvents: "none",
+                             contain: "style size layout",
+                         }}
+                         ref={this._set_canvas_wrapper_ref}>
+                        <canvas
+                            draggable={"false"}
+                            style={{
+                                position: "absolute",
+                                touchAction: "none",
+                                pointerEvents: "none",
+                                width: Math.floor(pxl_width),
+                                height: Math.floor(pxl_height),
+                                transform: `scale(${(_screen_zoom_ratio * scale).toFixed(2)})`,
+                                transformOrigin: "left top",
+                                boxSizing: "content-box",
+                                contain: "style size layout paint",
+                                ...background_image_style_props,
+                            }}
+                            className={"Canvas-Pixels"}
+                            ref={this._set_canvas_ref}
+                            width={Math.floor(pxl_width)}
+                            height={Math.floor(pxl_height)}/>
+                        {
+                            Boolean(p) &&
+                            <div className={"Canvas-Pixels-Cover"}
+                                datatexttop={`D[${pxl_width}, ${pxl_height}]px // S[${_kb.toFixed(2)}]Kb`}
+                                datatextbottom={`ΔZ[${_screen_zoom_ratio.toFixed(2)}, ${scale.toFixed(2)}]x // ΔR[${(perspective_coordinate[1] * p / scale).toFixed(2)}, ${(perspective_coordinate[0] * p / scale).toFixed(2)}]°`}
+                                 draggable={"false"}
+                                 style={{
+                                     backgroundImage: p ? `linear-gradient(to left, rgba(
+                                ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 0.3 * (p*l/100)).toFixed(2)}
+                                ), rgba(
+                                ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)},
+                                ${255 - Math.floor((perspective_coordinate[0]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[0]) / p / 6 * 3 * (p*l/100)).toFixed(2)}
+                                )), linear-gradient(to top, rgba(
+                                ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[1]) / p / 6 * 2 * (p*l/100)).toFixed(2)}
+                                ), rgba(
+                                ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)},
+                                ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
+                                ${(Math.abs(perspective_coordinate[1]) / p / 6 * 1 * (p*l/100)).toFixed(2)}
+                                ))`: "none",
+                                     borderRadius: canvas_wrapper_border_radius,
+                                     padding: 0,
+                                     left: 0,
+                                     top: 0,
+                                     position: "absolute",
+                                     width: Math.ceil(canvas_wrapper_width + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale)),
+                                     height: Math.ceil(canvas_wrapper_height + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale)),
+                                     boxSizing: "content-box",
+                                     touchAction: "none",
+                                     pointerEvents: "none",
+                                     contain: "style size layout",
+                                     filter: Boolean(p) && `brightness(${filter_force}) contrast(${filter_force})` // drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})
+                             }}/>
+                        }
                     </div>
+                    <div style={{
+                        color: canvas_wrapper_background_color,
+                        textAlign: "center",
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100px",
+                        backgroundImage: `url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MzE5IDE4MCIgd2lkdGg9IjU3NTguNjY3IiBoZWlnaHQ9IjI0MCIgeG1sbnM6dj0iaHR0cHM6Ly92ZWN0YS5pby9uYW5vIj48ZGVmcz48Y2xpcFBhdGggaWQ9IkEiPjxwYXRoIGQ9Ik0wIDBoNDMxOXYxODBIMHoiLz48L2NsaXBQYXRoPjwvZGVmcz48ZyBjbGlwLXBhdGg9InVybCgjQSkiPjxwYXRoIGQ9Ik0wIDFoNnYxNzlIMFYxaDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZ2MTc5aC02VjFoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1OCAxMzRoNnY0NWgtNnYtNDVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZ2NDVoLTZ2LTQ1aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1NSAwaDZ2NDUuNWgtNlYxMzVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1NiAwaDZ2NDUuNWgtNlYxMzVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1LjVoLTZWMTM1aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNTgtLjVoNlYxODBoLTZ2LTQ1LjVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZWMTgwaC02di00NS41aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6TTg2NCAxaDZ2MTc5aC02VjFoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnYxNzloLTZWMWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1OCAxMzRoNnY0NWgtNnYtNDVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1aC02di00NWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTU1IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNTYgMGg2djQ1LjVoLTZWMTM1aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZ2NDUuNWgtNlYxMzVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNTgtLjVoNlYxODBoLTZ2LTQ1LjVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2VjE4MGgtNnYtNDUuNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHpNMTcyNyAwaDZ2MTc5aC02VjBoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZ2MTc5aC02VjBoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTU4IDEzNGg2djQ1aC02di00NWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1aC02di00NWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1NSAwaDZ2NDUuNWgtNlYxMzRoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1LjVoLTZWMTM0aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNTYgMGg2djQ1LjVoLTZWMTM0aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1LjVoLTZWMTM0aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1OC0uNWg2VjE3OWgtNnYtNDUuNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2VjE3OWgtNnYtNDUuNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6TTI1OTAgMWg2djE3OWgtNlYxaDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnYxNzloLTZWMWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTU4IDEzNGg2djQ1aC02di00NWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnY0NWgtNnYtNDVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTU1IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1LjVoLTZWMTM1aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTU2IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZ2NDUuNWgtNlYxMzVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1OC0uNWg2VjE4MGgtNnYtNDUuNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNlYxODBoLTZ2LTQ1LjVoMCAwIDAgMCAwIDAgMCAwIDAgMHpNMzQ1NCAxaDZ2MTc5aC02VjFoMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnYxNzloLTZWMWgwIDAgMCAwIDAgMCAwIDB6bTE1OCAxMzRoNnY0NWgtNnYtNDVoMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1aC02di00NWgwIDAgMCAwIDAgMHptMTU1IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDB6bTE2IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwem0xNTYgMGg2djQ1LjVoLTZWMTM1aDAgMCAwem0xNiAwaDZ2NDUuNWgtNlYxMzVoMCAwem0xNTgtLjVoNlYxODBoLTZ2LTQ1LjVoMHptMTYgMGg2VjE4MGgtNnYtNDUuNXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbD0iI2ZmZiIvPjwvZz48L3N2Zz4=")`,
+                        backgroundPosition: "bottom",
+                        backgroundRepeat: "repeat-x",
+                        backgroundSize: `${Math.round(scale * _screen_zoom_ratio * 5 * 5)}px`,
+                        pointerEvents: "none",
+                        touchAction: "none",
+                    }}><span>[{parseFloat(scale * _screen_zoom_ratio).toFixed(2)}x]</span></div>
                 </div>
-                <div style={{
-                    color: canvas_wrapper_background_color,
-                    textAlign: "center",
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100px",
-                    backgroundImage: `url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MzE5IDE4MCIgd2lkdGg9IjU3NTguNjY3IiBoZWlnaHQ9IjI0MCIgeG1sbnM6dj0iaHR0cHM6Ly92ZWN0YS5pby9uYW5vIj48ZGVmcz48Y2xpcFBhdGggaWQ9IkEiPjxwYXRoIGQ9Ik0wIDBoNDMxOXYxODBIMHoiLz48L2NsaXBQYXRoPjwvZGVmcz48ZyBjbGlwLXBhdGg9InVybCgjQSkiPjxwYXRoIGQ9Ik0wIDFoNnYxNzlIMFYxaDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZ2MTc5aC02VjFoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1OCAxMzRoNnY0NWgtNnYtNDVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZ2NDVoLTZ2LTQ1aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1NSAwaDZ2NDUuNWgtNlYxMzVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1NiAwaDZ2NDUuNWgtNlYxMzVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1LjVoLTZWMTM1aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNTgtLjVoNlYxODBoLTZ2LTQ1LjVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZWMTgwaC02di00NS41aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6TTg2NCAxaDZ2MTc5aC02VjFoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnYxNzloLTZWMWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1OCAxMzRoNnY0NWgtNnYtNDVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1aC02di00NWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTU1IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNTYgMGg2djQ1LjVoLTZWMTM1aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZ2NDUuNWgtNlYxMzVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNTgtLjVoNlYxODBoLTZ2LTQ1LjVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2VjE4MGgtNnYtNDUuNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHpNMTcyNyAwaDZ2MTc5aC02VjBoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZ2MTc5aC02VjBoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTU4IDEzNGg2djQ1aC02di00NWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1aC02di00NWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1NSAwaDZ2NDUuNWgtNlYxMzRoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1LjVoLTZWMTM0aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNTYgMGg2djQ1LjVoLTZWMTM0aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1LjVoLTZWMTM0aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1OC0uNWg2VjE3OWgtNnYtNDUuNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2VjE3OWgtNnYtNDUuNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6TTI1OTAgMWg2djE3OWgtNlYxaDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnYxNzloLTZWMWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTU4IDEzNGg2djQ1aC02di00NWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnY0NWgtNnYtNDVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTU1IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1LjVoLTZWMTM1aDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMHptMTU2IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwem0xNiAwaDZ2NDUuNWgtNlYxMzVoMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE1OC0uNWg2VjE4MGgtNnYtNDUuNWgwIDAgMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNlYxODBoLTZ2LTQ1LjVoMCAwIDAgMCAwIDAgMCAwIDAgMHpNMzQ1NCAxaDZ2MTc5aC02VjFoMCAwIDAgMCAwIDAgMCAwIDB6bTE2IDBoNnYxNzloLTZWMWgwIDAgMCAwIDAgMCAwIDB6bTE1OCAxMzRoNnY0NWgtNnYtNDVoMCAwIDAgMCAwIDAgMHptMTYgMGg2djQ1aC02di00NWgwIDAgMCAwIDAgMHptMTU1IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwIDB6bTE2IDBoNnY0NS41aC02VjEzNWgwIDAgMCAwem0xNTYgMGg2djQ1LjVoLTZWMTM1aDAgMCAwem0xNiAwaDZ2NDUuNWgtNlYxMzVoMCAwem0xNTgtLjVoNlYxODBoLTZ2LTQ1LjVoMHptMTYgMGg2VjE4MGgtNnYtNDUuNXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZmlsbD0iI2ZmZiIvPjwvZz48L3N2Zz4=")`,
-                    backgroundPosition: "bottom",
-                    backgroundRepeatY: "no-repeat",
-                    backgroundSize: `${Math.round(scale * _screen_zoom_ratio * 5 * 5)}px`,
-                    pointerEvents: "none",
-                    touchAction: "none",
-                    contain: "style size layout",
-                }}><span>[{parseFloat(scale * _screen_zoom_ratio).toFixed(2)}x]</span></div>
             </div>
         );
     }
