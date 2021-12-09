@@ -222,10 +222,6 @@ function _preprocess_text(content) {
         return` [${match.replaceAll(" ", "")}](${origin}/gallery/newest/search/@${username})`;
     });
 
-    /* DELETE LAST EMPTY SPACE */
-    const last_empty_space_text_regex = /\n$/gm;
-    content = content.replace(last_empty_space_text_regex, "");
-
     return content;
 }
 

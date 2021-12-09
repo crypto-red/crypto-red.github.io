@@ -2267,10 +2267,16 @@ class CanvasPixels extends React.Component {
                 this._notify_size_change();
                 this._notify_layers_change();
                 this._update_screen_zoom_ratio(true);
-                this._to_less_color(is_mobile_or_tablet ? 1/24: 1/32, () => {
+
+                if(full_new_pxl_colors.length >= 512){
+                    this._to_less_color(1/32, () => {
+
+                        this._notify_image_load_complete();
+                    });
+                }else {
 
                     this._notify_image_load_complete();
-                });
+                }
             });
 
         }, 50);

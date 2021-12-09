@@ -1296,8 +1296,7 @@ class PixelDialogPost extends React.Component {
             `linear-gradient(45deg, ${_color_palette.average_color_zones[2]}, ${_color_palette.average_color_zones[1]}), 
             linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, ${_color_palette.average_color_zones[3]}), 
             linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`,
-            backgroundBlendMode: "multiply",
-        }: {backgroundBlendMode: "multiply", backgroundImage: `linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`,};
+        }: {backgroundImage: `linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`,};
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
@@ -1319,6 +1318,7 @@ class PixelDialogPost extends React.Component {
                             !edit && post && _perspective_depth && enable_3d &&
                             <PixelDialogPostBelowContent
                                 post={post}
+                                color_box_shadows={color_box_shadows}
                                 balance_fiat={balance_fiat}
                                 selected_locales_code={selected_locales_code}
                                 hbd_market={hbd_market}
@@ -1665,7 +1665,7 @@ class PixelDialogPost extends React.Component {
                                             <CloseIcon fontSize="large" />
                                         </IconButton>
                                     </div>
-                                    <div className={classes.contentCanvasLight} style={{...color_box_shadows}}>
+                                    <div className={classes.contentCanvasLight}>
                                         <CanvasPixels
                                             canvas_wrapper_border_radius={0}
                                             canvas_wrapper_border_width={0}

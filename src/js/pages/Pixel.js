@@ -715,33 +715,47 @@ class Pixel extends React.Component {
         };
     };
 
+    get_base64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    };
+
     _handle_file_upload = (event) => {
 
         const { _canvas } = this.state;
         let img = new Image;
-        img.src = URL.createObjectURL(event.target.files[0] || event.path[0].files[0]);
+        let file = event.target.files[0] || event.path[0].files[0];
 
-        img.onload = () => {
+        this.get_base64(file).then((data) => {
 
-            _canvas.set_canvas_from_image(img);
-            this._handle_menu_close();
-        };
+            img.src = data;
+            img.onload = () => {
 
+                _canvas.set_canvas_from_image(img);
+                this._handle_menu_close();
+            };
+        });
     };
 
     _handle_file_import = (event) => {
 
         const { _canvas } = this.state;
         let img = new Image;
-        const base64 = URL.createObjectURL(event.target.files[0] || event.path[0].files[0]);
-        img.src = base64
+        let file = event.target.files[0] || event.path[0].files[0];
 
-        img.onload = () => {
+        this.get_base64(file).then((data) => {
 
-            _canvas.import_image_on_canvas(img, base64);
-            this._handle_menu_close();
-        };
+            img.src = data;
+            img.onload = () => {
 
+                _canvas.import_image_on_canvas(img, data);
+                this._handle_menu_close();
+            };
+        });
     };
 
     _import_image = () => {
