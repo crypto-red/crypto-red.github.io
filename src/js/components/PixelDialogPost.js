@@ -58,7 +58,7 @@ import actions from "../actions/utils";
 import {postJSON} from "../utils/load-json";
 import {clean_json_text} from "../utils/json";
 import ReactDOM from "react-dom";
-import get_svg_in_b64 from "../utils/svgToBase64";
+import get_svg_in_b64 from "../utils/svgToBase64Worker";
 import Scifisc from "../icons/Scifisc";
 import Scifiss from "../icons/Scifiss";
 import Scifist from "../icons/Scifist";
@@ -654,36 +654,57 @@ class PixelDialogPost extends React.Component {
 
         this.setState({_loading: false, _layers: [], _image_details});
 
-        setTimeout(() => {
-
             if(typeof this.state._canvas.get_color_palette !== "undefined") {
 
                 this.state._canvas.get_color_palette( 1/4, (data) => {
 
-                    const _sc_svg = get_svg_in_b64(<Scifisc username={this.state.post.author} color={data.inverse_brightest_color_with_half_saturation}/>);
-                    const _ss_svg = get_svg_in_b64(<Scifiss color={data.inverse_brightest_color_with_half_saturation}/>);
-                    const _st_svg = get_svg_in_b64(<Scifist color={data.inverse_brightest_color_with_half_saturation}/>);
-                    const _sg_svg = get_svg_in_b64(<Scifisg color={data.inverse_brightest_color_with_half_saturation}/>);
-                    const _g_svg = get_svg_in_b64(<SciFiGrid secondary={data.darkest_color} color={data.inverse_brightest_color_with_half_saturation}/>);
-                    const _h_svg = get_svg_in_b64(<HexGrid color={"#fff"}/>);
-                    this.setState({_color_palette: {...data}, _sc_svg, _ss_svg, _st_svg, _sg_svg, _g_svg, _h_svg}, () => {
+                    let svgs = {
+                        _sc_svg: null,
+                        _ss_svg: null,
+                        _st_svg: null,
+                        _sg_svg: null,
+                        _g_svg: null,
+                        _h_svg: null,
+                    };
 
-                        this.forceUpdate();
+                    const add_svg = (svg, key) => {
 
-                        if(this.props.on_image_load_complete) {
+                        svgs[key] = svg;
 
-                            this.props.on_image_load_complete();
+                        let all_set = true;
+                        Object.entries(svgs).forEach((entry) => {
+
+                            const [ k, v ] = entry;
+                            if(v === null) {
+
+                                all_set = false;
+                            }
+                        });
+
+                        if(all_set) {
+
+                            this.setState({_color_palette: {...data}, _sc_svg: svgs._sc_svg, _ss_svg: svgs._ss_svg, _st_svg: svgs._st_svg, _sg_svg: svgs._sg_svg, _g_svg: svgs._g_svg, _h_svg: svgs._h_svg}, () => {
+
+                                this.forceUpdate();
+                            });
+
                         }
+                    }
 
-                    });
+                    get_svg_in_b64(<Scifisc username={this.state.post.author} color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_sc_svg")});
+                    get_svg_in_b64(<Scifiss color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_ss_svg")});
+                    get_svg_in_b64(<Scifist color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_st_svg")});
+                    get_svg_in_b64(<Scifisg color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_sg_svg")});
+                    get_svg_in_b64(<SciFiGrid secondary={data.darkest_color} color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_g_svg")});
+                    get_svg_in_b64(<HexGrid color={"#fff"}/>, (svg) => {add_svg(svg, "_h_svg")});
                 });
 
             }else {
 
-                this._handle_image_load_complete(_image_details);
+                setTimeout(() => {
+                    this._handle_image_load_complete(_image_details);
+                }, 10);
             }
-
-        }, 100);
     };
 
     _handle_size_change = (_width, _height) => {
@@ -1684,6 +1705,7 @@ class PixelDialogPost extends React.Component {
                                             dont_show_canvas={_dont_show_canvas}
                                             but_show_canvas_once={true}
                                             dont_change_img_size_onload={true}
+                                            dont_compute_base64_original_image={true}
                                             move_using_full_container={true}
                                             className={classes.contentCanvas}
                                             tool={"MOVE"}

@@ -155,6 +155,7 @@ const anim_loop = ( render, do_not_cancel_animation = false, force_update = fals
 
 import React from "react";
 const workerpool = require('workerpool');
+const pool = workerpool.pool();
 
 class CanvasPixels extends React.Component {
 
@@ -171,6 +172,7 @@ class CanvasPixels extends React.Component {
             animation_duration: props.animation_duration || 225,
             move_using_full_container: props.move_using_full_container,
             no_actions: props.no_actions || false,
+            dont_compute_base64_original_image: props.dont_compute_base64_original_image || false,
             dont_change_img_size_onload: props.dont_change_img_size_onload || false,
             dont_show_canvas_until_img_set: props.dont_show_canvas_until_img_set || false,
             show_image_only_before_canvas_set: props.show_image_only_before_canvas_set || false,
@@ -1116,7 +1118,6 @@ class CanvasPixels extends React.Component {
 
         (async () => {
 
-            const pool = workerpool.pool();
             let result = await pool.exec(process_function, [
                 pxl_width,
                 pxl_height,
@@ -1188,7 +1189,6 @@ class CanvasPixels extends React.Component {
         let process_function = new Function(process_function_string)();
         const { pxl_width, pxl_height } = this.state;
 
-        const pool = workerpool.pool();
         let result = await pool.exec(process_function, [
             pxl_width,
             pxl_height,
@@ -1490,8 +1490,6 @@ class CanvasPixels extends React.Component {
         let process_function = new Function(process_function_string)();
 
         const { pxl_width, pxl_height, _s_pxls, _s_pxl_colors, _layers, _layer_index } = this.state;
-
-        const pool = workerpool.pool();
 
         (async () => {
 
@@ -1984,7 +1982,7 @@ class CanvasPixels extends React.Component {
 
         setTimeout( async() => {
 
-            const { default_size, max_size, ideal_size, _base64_original_images, dont_change_img_size_onload } = this.state;
+            const { default_size, max_size, ideal_size, _base64_original_images, dont_change_img_size_onload, dont_compute_base64_original_image } = this.state;
 
             // Draw the original image in an invisible canvas
             let width = image_obj.width;
@@ -1993,7 +1991,7 @@ class CanvasPixels extends React.Component {
             let [canvas_ctx, canvas] = this._get_new_ctx_from_canvas(width, height, false);
             canvas_ctx.drawImage(image_obj, 0, 0, width, height);
             const image_data = canvas_ctx.getImageData(0, 0, width, height);
-            const base64_original_image = canvas.toDataURL("image/jpeg");
+            const base64_original_image = dont_compute_base64_original_image ? "": canvas.toDataURL("image/jpeg");
 
             const merge_color_threshold = 4/16;
             let is_crop_necessary = false;
@@ -7765,7 +7763,6 @@ class CanvasPixels extends React.Component {
 
         let process_function = new Function(process_function_string)();
 
-        const pool = workerpool.pool();
         let result = await pool.exec(process_function, [
             pxls,
             pxl_colors,
@@ -8331,14 +8328,14 @@ class CanvasPixels extends React.Component {
                          touchAction: "none",
                          pointerEvents: "auto",
                          cursor: cursor,
+                         float: "initial",
                          contain: "style size layout paint",
-                         willChange: "contents",
                          perspective: `${Math.round(Math.max(canvas_wrapper_width, canvas_wrapper_height))}px`,
                      }}>
                     <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
                          draggable={"false"}
                          style={{
-                             willChange: p ? "contents, left, top": "left, top",
+                             willChange: "transform",
                              mixBlendMode: "hard-light",
                              borderWidth: canvas_wrapper_border_width,
                              borderStyle: "solid",
@@ -8349,13 +8346,10 @@ class CanvasPixels extends React.Component {
                              padding: padding,
                              position: "absolute",
                              clipPath: `polygon(calc(100% - 10%) 0%, 100% 0%, 100% 200%, ${padding}px 100%, 0% calc(100% - ${padding}px), 0% -100%, calc(100% - 25%) 0%, calc(100% - 25%) ${padding / 1.5}px, calc(100% - 15%) ${padding / 1.5}px)`,
-                             width: canvas_wrapper_width,
-                             height: canvas_wrapper_height,
-                             transition: "none",
-                             float: "initial",
-                             left: Math.round(scale_move_x),
-                             top: Math.round(scale_move_y),
-                             transform: `rotateX(${(perspective_coordinate[1] * p / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[0] * p / scale).toFixed(2)}deg)`,
+                             width: Math.round(canvas_wrapper_width),
+                             height: Math.round(canvas_wrapper_height),
+                             transition: "transform 0ms linear 0ms",
+                             transform: `translate3d(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px, 0px) rotateX(${(perspective_coordinate[1] * p / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[0] * p / scale).toFixed(2)}deg)`,
                              transformOrigin: "center middle",
                              boxSizing: "content-box",
                              overflow: "visible",
@@ -8414,6 +8408,7 @@ class CanvasPixels extends React.Component {
                                      padding: 0,
                                      left: 0,
                                      top: 0,
+                                     borderWidth: 0,
                                      position: "absolute",
                                      width: Math.ceil(canvas_wrapper_width + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale)),
                                      height: Math.ceil(canvas_wrapper_height + 2 * (canvas_wrapper_padding / window.devicePixelRatio * scale)),
@@ -8421,6 +8416,7 @@ class CanvasPixels extends React.Component {
                                      touchAction: "none",
                                      pointerEvents: "none",
                                      contain: "style size layout",
+                                     willChange: "filter, background-image",
                                      filter: Boolean(p) && `brightness(${filter_force}) contrast(${filter_force})` // drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})
                              }}/>
                         }

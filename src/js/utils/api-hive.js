@@ -674,6 +674,7 @@ function get_hive_public_key(hive_username, hive_password) {
 function cached_get_hive_post(parameters, callback_function) {
 
     const force_query = parameters.force_query || false;
+    const force_then = parameters.force_then || false;
     const cached_query = parameters.cached_query || false;
 
     let { author, permlink } = parameters;
@@ -687,6 +688,18 @@ function cached_get_hive_post(parameters, callback_function) {
         { author, permlink },
         callback_function
     );
+
+    if(force_then) {
+
+        _cache_data(
+            hive_posts_db,
+            0,
+            "author-@"+author+"_permlink-"+permlink,
+            get_hive_post,
+            { author, permlink },
+            callback_function
+        );
+    }
 }
 
 function get_hive_post(parameters, callback_function) {
@@ -709,9 +722,11 @@ function get_hive_post(parameters, callback_function) {
 function cached_get_hive_posts(parameters, callback_function) {
 
 
+    const force_query = parameters.force_query || false;
+    const force_then = parameters.force_then || false;
     const cached_query = parameters.cached_query || false;
 
-    function pre_callback_function(err, data) {
+    function pre_callback_function(err, data, is_force_then = false) {
 
         if(data) {
 
@@ -720,7 +735,7 @@ function cached_get_hive_posts(parameters, callback_function) {
 
             data.posts.forEach((p) => {
 
-                cached_get_hive_post({cached_query, author: p.author, permlink: p.permlink}, function(err2, data2) {
+                cached_get_hive_post({force_query: force_query || is_force_then, cached_query: cached_query && !is_force_then, author: p.author, permlink: p.permlink}, function(err2, data2) {
 
                     if(!err2 && data2) {
 
@@ -733,6 +748,11 @@ function cached_get_hive_posts(parameters, callback_function) {
 
                         data.posts = posts;
                         callback_function(null, data);
+
+                        if(is_force_then && force_then && !force_query) {
+
+                            pre_callback_function(err, data, true)
+                        }
                     }
                 });
             });
@@ -1082,13 +1102,16 @@ module.exports = {
     estimate_hive_transaction_fee: estimate_hive_transaction_fee,
     get_hive_private_key: get_hive_private_key,
     get_hive_public_key: get_hive_public_key,
-    get_hive_posts: cached_get_hive_posts,
-    get_hive_post: cached_get_hive_post,
+    get_hive_posts: get_hive_posts,
+    cached_get_hive_posts: cached_get_hive_posts,
+    get_hive_post: get_hive_post,
+    cached_get_hive_post: cached_get_hive_post,
     post_hive_post: post_hive_post,
     post_hive_pixel_art: post_hive_pixel_art,
     unlogged_post_hive_pixel_art: unlogged_post_hive_pixel_art,
     vote_on_hive_post: vote_on_hive_post,
     unlogged_vote_on_hive_post: unlogged_vote_on_hive_post,
-    search_on_hive: cached_search_on_hive,
+    search_on_hive: search_on_hive,
+    cached_search_on_hive: cached_search_on_hive,
     postprocess_text: postprocess_text,
 };

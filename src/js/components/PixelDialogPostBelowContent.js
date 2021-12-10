@@ -250,8 +250,8 @@ class PixelDialogPostBelowContent extends React.Component {
                 touchAction: "none",
                 contain: "size style",
                 visibility: h_svg ? "inherit": "hidden",
-                willChange: "background-position, contents",
-                transition: "background-position .25s linear 0s",
+                willChange: "background-position",
+                transition: "background-position .25s ease-in 0s",
                 backgroundImage: `url("${h_svg}")`,
                 backgroundRepeat: "repeat",
                 backgroundSize: `${Math.ceil(.5*200)}px ${Math.ceil(.5*229.3)}px`,
@@ -259,8 +259,8 @@ class PixelDialogPostBelowContent extends React.Component {
                 color: "black",
                 backgroundOrigin: "center"}}>
                 <div style={{position: "relative", height: "100%"}}>
-                    <div style={{willChange: "contents", position: "relative", height: "100%", mixBlendMode: "multiply", backgroundBlendMode: "color-burn", ...color_box_shadows}}>
-                        <div style={{textShadow: `rgb(0 70 255 / 60%) 1.08243px 0px 1px, rgb(255 50 0 / 60%) -1.08243px 0px 1px, 0px 0px 4px`, position: "absolute", color: color, zIndex: 14, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
+                    <div style={{position: "relative", height: "100%", mixBlendMode: "multiply", backgroundBlendMode: "color-burn", ...color_box_shadows}}>
+                        <div style={{zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", color: color, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
                             <p>$_AUTHOR: @{post.author}</p>
                             <p>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</p>
                             <p>$_VOTES: {vote_number}</p>
@@ -272,11 +272,13 @@ class PixelDialogPostBelowContent extends React.Component {
                             <p>$_WIN_WIDTH: {window_width}px</p>
                             <p>$_AI_COMPUTING: {is_prediction_loading ? "TRUE": "FALSE"}</p>
                         </div>
-                        <img src={sc_svg} style={{filter: "opacity(0.5)",  zIndex: is_mobile_or_tablet ? 1: 14, transition: "transform .25s linear 0s", position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
-                        <img src={ss_svg} style={{zIndex: is_mobile_or_tablet ? 1: 14, transition: "transform .25s linear 0s", position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*5-25)*pz}px, ${(py*5-20)*pz}px)`}}/>
-                        <img src={sg_svg} style={{transition: "transform .25s linear 0s", position: "absolute", top: 372, right: 372, width: 372, height: 372, transformOrigin: "top right", transform: `translate(${(px*10-50)*pz}px, ${(py*10-50)*pz}px)`}}/>
-                        <img src={st_svg} style={{transition: "transform .25s linear 0s", position: "absolute", bottom: 256, right: 256, width: 336, height: 336, transformOrigin: "middle center", transform: `translate(${(px*15-75)*pz}px, ${(py*15-75)*pz}px)`}}/>
-                        <span style={{position: "absolute", bottom: "50%", right: 32, width: "66%", color: "#ffffff99", fontFamily: `"Special Elite"`}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
+                        <div style={{willChange: "contents"}}>
+                            <img src={sc_svg} style={{transition: "transform .25s ease-in 0s", filter: "opacity(0.5)",  zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
+                            <img src={ss_svg} style={{transition: "transform .25s ease-in 0s", zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*5-25)*pz}px, ${(py*5-20)*pz}px)`}}/>
+                            <img src={sg_svg} style={{transition: "transform .25s ease-in 0s", position: "absolute", top: 372, right: 372, width: 372, height: 372, transformOrigin: "top right", transform: `translate(${(px*10-50)*pz}px, ${(py*10-50)*pz}px)`}}/>
+                            <img src={st_svg} style={{transition: "transform .25s ease-in 0s", position: "absolute", bottom: 256, right: 256, width: 336, height: 336, transformOrigin: "middle center", transform: `translate(${(px*15-75)*pz}px, ${(py*15-75)*pz}px)`}}/>
+                        </div>
+                        <span style={{filter: "opacity(0.3)", textShadow: `rgb(0 70 255 / 100%) 1.08243px 0px 1px, rgb(255 50 0 / 100%) -1.08243px 0px 1px, 0px 0px 4px`, position: "absolute", bottom: "30%", right: 32, width: "66%", color: "#ffffff", fontFamily: `"Special Elite"`}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
                     </div>
                     <div style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%", display: "inline-grid"}}>
                         <span>$_ARTISTIC_SITUATION_TYPE: PIXEL ART</span>
@@ -290,7 +292,7 @@ class PixelDialogPostBelowContent extends React.Component {
                             </span>
                         }
                         <span>$NFT_TESTS: For chimpanzee and punks they show current attention.<br/>[SUGG.]: prepare moving to humanoid trials to speed up artistic process. <br />Please remain CALM... Outer dark project [NAMEC.] Black.Ops. (Decentralize Everything)</span>
-                        <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>"Para-Monetary Ops" SYSTEM 49.5% SHUTDOWN - POWER "NOW" IN YOUR VEINS</span>
+                        <span style={{position: "absolute", top: "15%", right: "15%", transform: "translate(50%, 50%) scale(1.75)", textDecoration: "underline"}}>"Para-Military Ops" SYSTEM 49.5% SHUTDOWN - POWER "NOW" IN YOUR VEINS</span>
                     </div>
                 </div>
             </div>

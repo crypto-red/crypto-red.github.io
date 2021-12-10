@@ -21,8 +21,7 @@ import AccountDialogProfileHive from "../components/AccountDialogProfileHive";
 import MenuReactionPixelPost from "../components/MenuReactionPixelPost";
 import MenuVotesPixelPost from "../components/MenuVotesPixelPost";
 
-import { search_on_hive, get_hive_posts, get_hive_post, vote_on_hive_post } from "../utils/api"
-import { unlogged_vote_on_hive_post } from "../utils/api-hive"
+import { unlogged_vote_on_hive_post, cached_search_on_hive, cached_get_hive_posts, cached_get_hive_post, vote_on_hive_post } from "../utils/api-hive"
 import actions from "../actions/utils";
 import api from "../utils/api";
 import {HISTORY} from "../utils/constants";
@@ -300,7 +299,7 @@ class Gallery extends React.Component {
         const search_sorting_changed = this.state._search_sorting_tab_index !== state._search_sorting_tab_index;
         const search_mode_query_changed = this.state._search_mode_query !== state._search_mode_query;
 
-        let get_post = Boolean(state._post_author && state._post_permlink && (state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink) && ((this.state._post || {}).author !== state._post_author));
+        let get_post = Boolean(state._post_author && state._post_permlink && (state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink));
         let closed_search = Boolean(
             (!state._is_search_mode && this.state._is_search_mode && this.state._search_mode_query !== "") ||
             (state._search_mode_query === "" && this.state._search_mode_query !== "")
@@ -440,7 +439,7 @@ class Gallery extends React.Component {
 
             actions.trigger_loading_update(0);
 
-            get_hive_post({author: _post_author, permlink: _post_permlink}, (err, data) => {
+            cached_get_hive_post({author: _post_author, permlink: _post_permlink, cached_query: true, force_then: true}, (err, data) => {
 
                 if(data) {
 
@@ -484,13 +483,14 @@ class Gallery extends React.Component {
 
                 this.forceUpdate(() => {
 
-                    get_hive_posts({
+                    cached_get_hive_posts({
                         limit: load_from_cache ? 20: 10,
                         tag: "pixel-art",
                         sorting: _sorting_modes[_sorting_tab_index] || _sorting_modes[0],
                         start_author: _start_author,
                         start_permlink: _start_permlink,
-                        cached_query: load_from_cache,
+                        cached_query: true,
+                        force_then: true,
                     }, (err, data) => {
 
                         if (((data || {}).posts || []).length >= 1) {
@@ -553,7 +553,7 @@ class Gallery extends React.Component {
 
                 this.forceUpdate(() => {
 
-                    search_on_hive(_search_mode_query, [], ["pixel-art"], (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]), _search_mode_query_page.toString(), (err, data) => {
+                    cached_search_on_hive(_search_mode_query, [], ["pixel-art"], (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]), _search_mode_query_page.toString(), (err, data) => {
 
                         if((data || {}).posts){
 
@@ -918,7 +918,7 @@ class Gallery extends React.Component {
 
             setTimeout(() => {
 
-                get_hive_post({author: _reaction_selected_post.author, permlink: _reaction_selected_post.permlink, force_query: true}, (err, data) => {
+                cached_get_hive_post({author: _reaction_selected_post.author, permlink: _reaction_selected_post.permlink, force_query: true}, (err, data) => {
 
                     if(data) {
 
@@ -1350,7 +1350,6 @@ class Gallery extends React.Component {
                     hbd_market={_hbd_market}
                     on_next={this._next_current_post}
                     on_previous={this._previous_current_post}
-                    on_image_load_complete={() => {setTimeout(() => {this._scroll_to_index()}, 5)}}
                     keepMounted={true}
                     post={_post}
                     open={_post !== null && _post_author !== null && _post_permlink !== null}

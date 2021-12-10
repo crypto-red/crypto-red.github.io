@@ -114,7 +114,7 @@ class ShufflingSpanText extends React.Component {
         const { _text_proceed, pre, app } = this.state;
 
         return (
-            <span style={style}>{pre}{_text_proceed}{app}</span>
+            <span style={{willChange: "contents", ...style}}>{pre}{_text_proceed}{app}</span>
         );
     }
 }
