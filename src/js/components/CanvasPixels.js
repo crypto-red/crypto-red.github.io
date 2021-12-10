@@ -154,8 +154,7 @@ const anim_loop = ( render, do_not_cancel_animation = false, force_update = fals
 };
 
 import React from "react";
-const workerpool = require('workerpool');
-const pool = workerpool.pool();
+import pool from "../utils/worker-pool";
 
 class CanvasPixels extends React.Component {
 

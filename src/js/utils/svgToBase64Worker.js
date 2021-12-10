@@ -1,8 +1,7 @@
 import ReactDOMServer from 'react-dom/server'
 import React from "react";
 import svg64 from "svg64";
-const workerpool = require('workerpool');
-const pool = workerpool.pool();
+import pool from "../utils/worker-pool";
 
 function get_svg_in_b64_async(Component, callback_function) {
 

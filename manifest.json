@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "version": "36",
+  "version": "37",
   "name": "WALLET.CRYPTO.RED",
   "start_url": "/",
   "scope": "/",

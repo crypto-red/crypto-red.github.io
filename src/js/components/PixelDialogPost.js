@@ -542,19 +542,34 @@ class PixelDialogPost extends React.Component {
             get_author_again = new_props.post.author && this.state.post.author !== new_props.post.author;
         }
 
-        this.setState(new_props, () => {
+        const update = Boolean(
+            set_canvas_again ||
+            get_author_again ||
+            this.state.keepMounted !== new_props.keepMounted ||
+            this.state.open !== new_props.open ||
+            this.state.edit !== new_props.edit ||
+            this.state.selected_locales_code !== new_props.selected_locales_code ||
+            this.state.hbd_market !== new_props.hbd_market ||
+            this.state.selected_currency !== new_props.selected_currency ||
+            this.state.enable_3d !== new_props.enable_3d
+        );
 
-            this.forceUpdate();
-            if(set_canvas_again) {
+        if((new_props.open && update) || (new_props.open === false && this.state.open === true)) {
+            this.setState(new_props, () => {
 
-                this._set_canvas_image();
-            }
+                this.forceUpdate();
 
-            if(get_author_again) {
+                if(set_canvas_again) {
 
-                this._get_author_account();
-            }
-        });
+                    this._set_canvas_image();
+                }
+
+                if(get_author_again) {
+
+                    this._get_author_account();
+                }
+            });
+        }
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContext) {
@@ -651,7 +666,7 @@ class PixelDialogPost extends React.Component {
     }
 
     _handle_image_load_complete = (_image_details) => {
-
+        console.log("img load complete")
         this.setState({_loading: false, _layers: [], _image_details});
 
             if(typeof this.state._canvas.get_color_palette !== "undefined") {

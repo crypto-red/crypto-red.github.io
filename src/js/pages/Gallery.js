@@ -1352,7 +1352,7 @@ class Gallery extends React.Component {
                     on_previous={this._previous_current_post}
                     keepMounted={true}
                     post={_post}
-                    open={_post !== null && _post_author !== null && _post_permlink !== null}
+                    open={Boolean(_post !== null && _post_author !== null && _post_permlink !== null)}
                     onClose={this._handle_pixel_dialog_post_close}
                     onExited={this._handle_pixel_dialog_post_exited}
                     on_settings_changed={this._update_settings}
