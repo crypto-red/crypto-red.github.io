@@ -269,7 +269,6 @@ class Gallery extends React.Component {
             _reaction_selected_post: {},
             _reaction_voted_result: null,
             _reaction_selected_post_loading: null,
-            _dialog_post_closed_count: 0,
             _votes_anchor: null,
             _votes: [],
             _dialog_hive_key_open: false,
@@ -994,7 +993,7 @@ class Gallery extends React.Component {
         const { _posts } = this.state;
 
         const selected_post_index = _posts.map(p => p.id).indexOf(post.id);
-        this._update_selected_post_index(selected_post_index);
+        this._update_selected_post_index(selected_post_index, true);
     };
 
 
@@ -1026,7 +1025,7 @@ class Gallery extends React.Component {
             this._handle_art_open(_posts[_selected_post_index]);
         }else {
 
-            this._update_selected_post_index(_selected_post_index);
+            this._update_selected_post_index(_selected_post_index, true);
         }
     };
 
@@ -1042,13 +1041,13 @@ class Gallery extends React.Component {
             this._handle_art_open(_posts[_selected_post_index]);
         }else {
 
-            this._update_selected_post_index(_selected_post_index);
+            this._update_selected_post_index(_selected_post_index, true);
         }
     };
 
     _handle_keydown = (event) => {
 
-        let { _selected_post_index, _post_closed_at, _posts, _post, _column_count, _x_y_of_el_by_index } = this.state;
+        let { _masonry, _selected_post_index, _post_closed_at, _posts, _post, _column_count, _x_y_of_el_by_index } = this.state;
 
         if(!_post && _post_closed_at + 300 < Date.now()) {
 
@@ -1096,12 +1095,12 @@ class Gallery extends React.Component {
                 this._handle_art_open(_posts[_selected_post_index]);
             }else {
 
-                this._update_selected_post_index(_selected_post_index);
+                this._update_selected_post_index(_selected_post_index, true);
             }
 
             this.setState({_selected_post_index}, () => {
 
-                this.forceUpdate(() => {
+                _masonry.forceUpdate(() => {
 
                     if(event.keyCode === 13) {
 
@@ -1116,15 +1115,12 @@ class Gallery extends React.Component {
 
         const { _post, _posts, _masonry } = this.state;
 
-        const _selected_post_index = typeof index !== "undefined" ? index : _posts.map(p => p.id).indexOf(_post.id);
+        const _selected_post_index = typeof index !== "undefined" ? index : _post ? _posts.map(p => (p || {}).id).indexOf(_post.id): this.state._selected_post_index;
         this.setState({_selected_post_index}, () => {
 
             if(!do_not_scroll) {
 
-                this.forceUpdate(() => {
-
-                    this._scroll_to_index();
-                });
+                this._scroll_to_index();
             }else {
 
                 _masonry.forceUpdate();
@@ -1220,17 +1216,12 @@ class Gallery extends React.Component {
 
     _handle_pixel_dialog_post_exited = () => {
 
-        let { _dialog_post_closed_count } = this.state;
-        _dialog_post_closed_count++;
-        this.setState({_dialog_post_closed_count}, () => {
-
-            this.forceUpdate();
-        });
+        this._update_selected_post_index();
     };
 
     render() {
 
-        const { classes, _enable_3d, _dialog_hive_key_open, _selected_currency, _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _dialog_post_closed_count, _started_on_post_dialog } = this.state;
+        const { classes, _enable_3d, _dialog_hive_key_open, _selected_currency, _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _started_on_post_dialog } = this.state;
         const { _cell_positioner, _hbd_market, _cell_measurer_cache, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
 
         const width = _window_width;
@@ -1289,7 +1280,6 @@ class Gallery extends React.Component {
                                         scrollingResetTimeInterval={100}
                                         onScroll={this._handle_masonry_scroll}
                                         height={post_list_height}
-                                        key={Boolean(_dialog_post_closed_count > 0 && _started_on_post_dialog)}
                                         cellCount={itemsWithSizes.length}
                                         itemsWithSizes={itemsWithSizes}
                                         cellMeasurerCache={_cell_measurer_cache}

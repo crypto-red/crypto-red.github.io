@@ -378,7 +378,6 @@ class CanvasPixels extends React.Component {
             .Canvas-Wrapper-Overflow {
                 opacity: 0 !important,
                 transform-origin: center center !important;
-                transition: transform 1000ms 0ms linear;
             }
             @keyframes canvanimation { 
                   0% { transform: matrix3d(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: .0; }
@@ -629,7 +628,7 @@ class CanvasPixels extends React.Component {
 
             this.setState({perspective_coordinate: [x, y]}, () => {
 
-                this._request_force_update(true, true, () => {
+                this._request_force_update(true, false, () => {
 
                     this._notify_perspective_coordinate_changes([x, y, this.state.scale]);
                 });
@@ -643,7 +642,7 @@ class CanvasPixels extends React.Component {
 
             this.setState({perspective_coordinate: array}, () => {
 
-                this._request_force_update(true, true, () => {
+                this._request_force_update(true, false, () => {
 
                     this._notify_perspective_coordinate_changes(array.concat([this.state.scale]));
                 });
@@ -995,7 +994,7 @@ class CanvasPixels extends React.Component {
         const { _json_state_history } = this.state;
         const { previous_history_position, history_position, state_history } = JSON.parse(_json_state_history);
 
-        let { _layers } = this.state;
+        let { _layers, _s_pxls, _s_pxl_colors } = this.state;
         let all_layers = [];
         let all_layers_length = 0;
 
@@ -1017,16 +1016,16 @@ class CanvasPixels extends React.Component {
 
                     layer = {...(state_history[history_position]._layers[index] || {})};
 
-                    if(previous_history_position !== history_position) {
+                    if(history_position) {
 
                         if(typeof state_history[previous_history_position]._layers[index] !== "undefined" && typeof state_history[history_position]._layers[index] !== "undefined") {
 
                             if(
-                                state_history[previous_history_position]._s_pxls[index] !== state_history[history_position]._s_pxls[index] ||
-                                state_history[previous_history_position]._s_pxl_colors[index] !== state_history[history_position]._s_pxl_colors[index] ||
-                                state_history[previous_history_position]._layers[index].opacity !== state_history[history_position]._layers[index].opacity ||
-                                state_history[previous_history_position]._layers[index].hidden !== state_history[history_position]._layers[index].hidden ||
-                                state_history[previous_history_position]._layers[index].id !== state_history[history_position]._layers[index].id
+                                _s_pxls[index] !== state_history[history_position]._s_pxls[index] ||
+                                _s_pxl_colors[index] !== state_history[history_position]._s_pxl_colors[index] ||
+                                _layers[index].opacity !== state_history[history_position]._layers[index].opacity ||
+                                _layers[index].hidden !== state_history[history_position]._layers[index].hidden ||
+                                _layers[index].id !== state_history[history_position]._layers[index].id
                             ) {
 
 
@@ -8314,11 +8313,9 @@ class CanvasPixels extends React.Component {
         return (
             <div ref={this._set_canvas_container_ref} draggable={"false"} style={{contentVisibility: "auto", contain: "style size layout paint", boxSizing: "border-box", position: "relative", overflow: "hidden", touchAction: "none", pointerEvents: "none"}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
-                     className={"Canvas-Wrapper-Overflow" + (has_shown_canvas_once ? " Shown ": " Not-Shown ")}
+                     className={"Canvas-Wrapper-Overflow" + (has_shown_canvas_once && !_hidden ? " Shown ": " Not-Shown ")}
                      draggable={"false"}
                      style={{
-                         transition: `opacity ${animation ? animation_duration / 2: 0}ms linear 400ms`,
-                         opacity: _hidden || !has_shown_canvas_once ? 0: 1,
                          height: "100%",
                          width: "100%",
                          overflow: "visible",
@@ -8347,7 +8344,8 @@ class CanvasPixels extends React.Component {
                              clipPath: `polygon(calc(100% - 10%) 0%, 100% 0%, 100% 200%, ${padding}px 100%, 0% calc(100% - ${padding}px), 0% -100%, calc(100% - 25%) 0%, calc(100% - 25%) ${padding / 1.5}px, calc(100% - 15%) ${padding / 1.5}px)`,
                              width: Math.round(canvas_wrapper_width),
                              height: Math.round(canvas_wrapper_height),
-                             transition: "transform 0ms linear 0ms",
+                             transition: `transform 0ms linear 0ms, opacity ${animation ? animation_duration / 2: 0}ms linear 0ms`,
+                             visibility: has_shown_canvas_once && !_hidden ? "visible": "hidden",
                              transform: `translate3d(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px, 0px) rotateX(${(perspective_coordinate[1] * p / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[0] * p / scale).toFixed(2)}deg)`,
                              transformOrigin: "center middle",
                              boxSizing: "content-box",

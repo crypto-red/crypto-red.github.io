@@ -259,7 +259,7 @@ class PixelDialogPostBelowContent extends React.Component {
                 color: "black",
                 backgroundOrigin: "center"}}>
                 <div style={{position: "relative", height: "100%"}}>
-                    <div style={{position: "relative", height: "100%", mixBlendMode: "multiply", backgroundBlendMode: "color-burn", ...color_box_shadows}}>
+                    <div style={{transition: "background-image .25s linear 0s", position: "relative", height: "100%", mixBlendMode: "multiply", backgroundBlendMode: "color-burn", ...color_box_shadows}}>
                         <div style={{zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", color: color, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
                             <p>$_AUTHOR: @{post.author}</p>
                             <p>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</p>
