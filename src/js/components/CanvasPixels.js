@@ -370,11 +370,11 @@ class CanvasPixels extends React.Component {
         const canvas_wrapper_css =
             `.Canvas-Wrapper-Overflow.Shown {
                 animation-name: canvanimation;
-                animation-fill-mode: inherit;
-                animation-duration: 1000ms;
+                animation-fill-mode: both;
+                animation-duration: 400ms;
                 animation-delay: 0ms;
                 animation-timing-function: linear;
-                transition: transform 0ms 0ms linear;
+                transition: transform 40ms 0ms linear;
             }
             .Canvas-Wrapper-Overflow {
                 opacity: 0 !important,
@@ -8196,16 +8196,16 @@ class CanvasPixels extends React.Component {
 
     _update_canvas_container_size = () => {
 
-        const { _canvas_container } = this.state;
-        if(!_canvas_container){
+        this._request_force_update(false, false,() => {
 
-            setTimeout(() => {
+            const { _canvas_container } = this.state;
+            if(!_canvas_container){
 
-                this._update_canvas_container_size();
-            }, 50);
-        }else {
+                setTimeout(() => {
 
-            this._request_force_update(false, false,() => {
+                    this._update_canvas_container_size();
+                }, 50);
+            }else {
 
                 const rect = _canvas_container.getBoundingClientRect();
 
@@ -8218,9 +8218,8 @@ class CanvasPixels extends React.Component {
 
                     this._update_screen_zoom_ratio(true);
                 });
-            });
-
-        }
+            }
+        });
     };
 
     _update_screen_zoom_ratio = (align_center_middle) => {

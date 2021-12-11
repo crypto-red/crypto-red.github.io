@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v39";
+var CACHE = "network-or-cache-v40";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {

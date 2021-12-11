@@ -92,6 +92,7 @@ const styles = theme => ({
         display: "flex",
         flexGrow: 1,
         position: "relative",
+        float: "right",
     },
     contentImage: {
         width: "calc(100vw - 480px)",
@@ -1342,18 +1343,17 @@ class PixelDialogPost extends React.Component {
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
 
         return (
-            <div style={{contentVisibility: "visible", contain: "layout paint size style"}}>
+            <div>
                 <Dialog
                     keepMounted={keepMounted}
                     open={open}
-                    closeAfterTransition={true}
                     PaperComponent={"div"}
                     TransitionProps={{enter: true, exit: true}}
                     fullScreen
                     onClose={(event) => {this.props.onClose(event)}}
                     onExited={(event) => {this.props.onExited && this.props.onExited(event)}}
                 >
-                    <div className={classes.root}>
+                    <div className={classes.root} style={{contentVisibility: "visible", contain: "layout paint size style"}}>
                         {
                             !edit && post && _perspective_depth && enable_3d &&
                             <PixelDialogPostBelowContent
@@ -1390,7 +1390,7 @@ class PixelDialogPost extends React.Component {
                                     onClose={this._handle_drawer_icon_close}
                                     onOpen={this._handle_drawer_open}
                                     className={classes.drawer}
-                                    variant={(_window_width > 1280)  ? "permanent": "temporary"}
+                                    variant={(_window_width > 1280)  ? "temporary": "temporary"}
                                     open={(open && _window_width > 1280) || (open && _drawer_open)}
                                     classes={{
                                         paper: classes.drawerPaper,
@@ -1694,7 +1694,7 @@ class PixelDialogPost extends React.Component {
                                         </CardContent>
                                     </div>
                                 </SwipeableDrawer>
-                                <div className={classes.contentImage} dataid={post.id}>
+                                <div style={{contentVisibility: "visible", contain: "layout paint size style"}} className={classes.contentImage} dataid={post.id}>
                                     <div className={classes.topRightFabButtons}>
                                         <IconButton onClick={this._toggle_perspective} className={classes.perspectiveButtonIcon}>
                                             {enable_3d ? <TdOffIcon fontSize="large" />: <TdOnIcon fontSize="large" />}
