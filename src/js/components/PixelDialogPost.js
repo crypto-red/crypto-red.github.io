@@ -102,8 +102,6 @@ const styles = theme => ({
         zIndex: 1,
         [theme.breakpoints.down("md")]: {
             width: "100vw",
-            position: "fixed",
-            overflow: "hidden",
         },
         "&::before": {
             textShadow: "0 0px 24px #000000ff",
