@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v38";
+var CACHE = "network-or-cache-v39";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -91,6 +91,11 @@ self.addEventListener("fetch", function(event) {
         }),
     );
 
+
+  }else if(event.request.url.includes("client.min.js") && event.request.mode === "same-origin") {
+
+    // Return the same index.html page for all navigation query
+    event.respondWith( caches.match("/client.min.js") || fetch(event.request));
 
   }else if(event.request.mode === "navigate") {
 

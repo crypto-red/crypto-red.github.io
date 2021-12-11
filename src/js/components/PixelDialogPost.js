@@ -492,9 +492,7 @@ class PixelDialogPost extends React.Component {
             },
             _x: 0,
             _y: 0,
-            _px: 0,
-            _py: 0,
-            _pz: 1,
+            _pixel_dialog_post_below_content: null,
             _perspective_depth: 5,
         };
     };
@@ -1263,10 +1261,19 @@ class PixelDialogPost extends React.Component {
 
     _handle_perspective = (array) => {
 
-        this.setState({_px: array[0], _py: array[1], _pz: array[2]}, () => {
+        const { _pixel_dialog_post_below_content } = this.state;
 
-            this.forceUpdate();
-        });
+        if(_pixel_dialog_post_below_content) {
+
+            _pixel_dialog_post_below_content.set_perspective(array);
+        }
+    };
+
+    _set_pixel_dialog_post_below_content_ref = (element) => {
+
+        if(element === null) {return}
+
+        this.setState({_pixel_dialog_post_below_content: element});
     };
 
     render() {
@@ -1300,9 +1307,6 @@ class PixelDialogPost extends React.Component {
             _responsabilities,
             selected_currency,
             hbd_market,
-            _px,
-            _py,
-            _pz,
             _sc_svg,
             _ss_svg,
             _st_svg,
@@ -1338,13 +1342,13 @@ class PixelDialogPost extends React.Component {
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
 
         return (
-            <div style={{contentVisibility: "auto", contain: "layout paint size style"}}>
+            <div style={{contentVisibility: "visible", contain: "layout paint size style"}}>
                 <Dialog
                     keepMounted={keepMounted}
                     open={open}
                     closeAfterTransition={true}
                     PaperComponent={"div"}
-                    TransitionProps={{enter: false, exit: false}}
+                    TransitionProps={{enter: true, exit: true}}
                     fullScreen
                     onClose={(event) => {this.props.onClose(event)}}
                     onExited={(event) => {this.props.onExited && this.props.onExited(event)}}
@@ -1353,6 +1357,7 @@ class PixelDialogPost extends React.Component {
                         {
                             !edit && post && _perspective_depth && enable_3d &&
                             <PixelDialogPostBelowContent
+                                ref={this._set_pixel_dialog_post_below_content_ref}
                                 post={post}
                                 color_box_shadows={color_box_shadows}
                                 balance_fiat={balance_fiat}
@@ -1372,16 +1377,13 @@ class PixelDialogPost extends React.Component {
                                 translated_description={_translated_description}
                                 translated_title={_translated_title}
                                 has_translation_started={_has_translation_started}
-                                px={_px}
-                                py={_py}
-                                pz={_pz}
                                 color={_color_palette.inverse_brightest_color_with_half_saturation}
                                 classname={classes.belowContent} />
                         }
                         <div className={classes.content}>
                             <div className={classes.contentInner}>
                                 <SwipeableDrawer
-                                    style={{containIntrinsicSize: "480px 100vh", contentVisibility: "auto", contain: "layout paint size style"}}
+                                    style={{contentVisibility: "visible", contain: "layout paint size style"}}
                                     swipeAreaWidth={50}
                                     keepMounted={keepMounted}
                                     ModalProps={{BackdropProps:{classes: {root: classes.drawerModalBackdropRoot}}}}

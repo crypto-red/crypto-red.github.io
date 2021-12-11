@@ -161,6 +161,7 @@ class CanvasPixels extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            _id: Date.now(),
             className: props.className || null,
             perspective: props.perspective || 0,
             shadow_size: props.shadow_size || 4,
@@ -550,6 +551,7 @@ class CanvasPixels extends React.Component {
 
             this.setState({
                 ...new_props,
+                _id: Date.now(),
                 _pxl_indexes_of_selection: new Set(),
                 _layers: [{id: Date.now(), name: "Layer 0", hidden: false, opacity: 1, data: {}}],
                 _layer_index: 0,
@@ -2242,6 +2244,7 @@ class CanvasPixels extends React.Component {
             ns_pxls[_layer_index] = full_new_pxls;
 
             this.setState({
+                _id: Date.now(),
                 pxl_width: width,
                 pxl_height: height,
                 _pxl_indexes_of_selection: new Set(),
@@ -5042,11 +5045,12 @@ class CanvasPixels extends React.Component {
 
     _maybe_save_state = (save_pending_data) => {
 
-        const { pxl_width, pxl_height, _s_pxls, _original_image_index, _s_pxl_colors, _layers, _layer_index, _pxl_indexes_of_selection, _last_action_timestamp, _json_state_history, _state_history_length, _undo_buffer_time_ms, _pencil_mirror_index } = this.state;
+        const { _id, pxl_width, pxl_height, _s_pxls, _original_image_index, _s_pxl_colors, _layers, _layer_index, _pxl_indexes_of_selection, _last_action_timestamp, _json_state_history, _state_history_length, _undo_buffer_time_ms, _pencil_mirror_index } = this.state;
 
         let {state_history, history_position, previous_history_position} = JSON.parse(_json_state_history);
 
         const current_state = {
+            _id,
             pxl_width,
             pxl_height,
             _original_image_index,
@@ -5212,9 +5216,10 @@ class CanvasPixels extends React.Component {
 
         const { _base64_original_images, _json_state_history } = JSON.parse(json);
         const {state_history, history_position} = JSON.parse(_json_state_history);
-        const { _original_image_index, pxl_width, pxl_height, _pxl_indexes_of_selection, _s_pxl_colors, _s_pxls, _layers, _layer_index, _pencil_mirror_index } = state_history[history_position];
+        const { _original_image_index, pxl_width, pxl_height, _pxl_indexes_of_selection, _s_pxl_colors, _s_pxls, _layers, _layer_index, _pencil_mirror_index, _id } = state_history[history_position];
 
         this.setState({
+            _id,
             _original_image_index: - 1,
             _pencil_mirror_index,
             pxl_width,
@@ -5237,21 +5242,23 @@ class CanvasPixels extends React.Component {
             this._notify_can_undo_redo_change();
             this._notify_is_something_selected();
             this._notify_size_change();
-            this._request_force_update();
+            this._update_screen_zoom_ratio();
         });
 
     };
 
     export_JSON_state = (callback_function) => {
 
-        const {_base64_original_images, _json_state_history} = this.state;
+        const {_base64_original_images, _json_state_history, _id} = this.state;
 
         this.get_base64_png_data_url(1, (base64) => {
 
             const bytes = 3 * Math.ceil((base64.length/4));
             callback_function(JSON.stringify({
+                id: _id,
                 kb: bytes / 1000,
                 preview: base64,
+                timestamp: Date.now(),
                 _base64_original_images,
                 _json_state_history,
             }));
@@ -5279,11 +5286,12 @@ class CanvasPixels extends React.Component {
 
             previous_history_position = history_position;
             history_position--;
-            const { _original_image_index, pxl_width, pxl_height, _pxl_indexes_of_selection, _s_pxl_colors, _s_pxls, _layers, _layer_index, _pencil_mirror_index } = state_history[history_position];
+            const { _original_image_index, pxl_width, pxl_height, _pxl_indexes_of_selection, _s_pxl_colors, _s_pxls, _layers, _layer_index, _pencil_mirror_index, _id } = state_history[history_position];
             const new_json_state_history = JSON.stringify({state_history, history_position, previous_history_position});
             const has_new_dimension = Boolean(pxl_width !== this.state.pxl_width || pxl_height !== this.state.pxl_height);
 
             this.setState({
+                _id,
                 _original_image_index: - 1,
                 _pencil_mirror_index,
                 pxl_width,
@@ -5307,8 +5315,11 @@ class CanvasPixels extends React.Component {
                 if(has_new_dimension) {
 
                     this._notify_size_change();
+                    this._update_screen_zoom_ratio();
+                }else {
+
+                    this._request_force_update();
                 }
-                this._request_force_update();
             });
         }
     };
@@ -5332,12 +5343,13 @@ class CanvasPixels extends React.Component {
 
             previous_history_position = history_position;
             history_position++;
-            const { _original_image_index, pxl_width, pxl_height, _pxl_indexes_of_selection, _s_pxl_colors, _s_pxls, _layers, _layer_index, _pencil_mirror_index } = state_history[history_position];
+            const { _original_image_index, pxl_width, pxl_height, _pxl_indexes_of_selection, _s_pxl_colors, _s_pxls, _layers, _layer_index, _pencil_mirror_index, _id } = state_history[history_position];
 
             const new_json_state_history = JSON.stringify({state_history, history_position, previous_history_position});
             const has_new_dimension = Boolean(pxl_width !== this.state.pxl_width || pxl_height !== this.state.pxl_height);
 
             this.setState({
+                _id,
                 _original_image_index: - 1,
                 _pencil_mirror_index,
                 pxl_width,
@@ -5361,8 +5373,11 @@ class CanvasPixels extends React.Component {
                 if(has_new_dimension) {
 
                     this._notify_size_change();
+                    this._update_screen_zoom_ratio();
+                }else {
+
+                    this._request_force_update();
                 }
-                this._request_force_update();
             });
 
         }
@@ -5465,12 +5480,12 @@ class CanvasPixels extends React.Component {
         return this._get_average_color_of_selection();
     };
 
-    _get_average_color_of_selection = (_pxl_indexes_of_selection ) => {
+    _get_average_color_of_selection = (_pxl_indexes_of_selection, pxls, pxl_colors ) => {
 
         const { _s_pxls, _s_pxl_colors, _layer_index } = this.state;
 
-        let pxls = [..._s_pxls[_layer_index]];
-        let pxl_colors = [..._s_pxl_colors[_layer_index]];
+        pxls = pxls || [..._s_pxls[_layer_index]];
+        pxl_colors = pxl_colors || [..._s_pxl_colors[_layer_index]];
 
         const colors_index = [...new Set(pxls)];
         let colors_in_selection_with_occurrence = [];
@@ -7348,10 +7363,10 @@ class CanvasPixels extends React.Component {
 
             const pxls = [...this.state._s_pxls[0]];
             let selection_l = [];
-            selection_l[0] = this._get_pixels_palette_and_list_from_rectangle(pxls, 0, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)))[2];
-            selection_l[1] = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)), pxl_width)[2];
-            selection_l[2] = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)), (pxl_width * pxl_height - pxl_width))[2];
-            selection_l[3] = this._get_pixels_palette_and_list_from_rectangle(pxls, (pxl_width * Math.floor(pxl_height / 2) + Math.floor(pxl_width / 2)), (pxl_width * pxl_height))[2];
+            selection_l[0] = this._get_pixels_palette_and_list_from_rectangle(new_pxls, 0, (width * Math.floor(height / 2) + Math.floor(width / 2)))[2];
+            selection_l[1] = this._get_pixels_palette_and_list_from_rectangle(new_pxls, (width * Math.floor(height / 2) + Math.floor(width / 2)), width)[2];
+            selection_l[2] = this._get_pixels_palette_and_list_from_rectangle(new_pxls, (width * Math.floor(height / 2) + Math.floor(width / 2)), (width * height - width))[2];
+            selection_l[3] = this._get_pixels_palette_and_list_from_rectangle(new_pxls, (width * Math.floor(height / 2) + Math.floor(width / 2)), (width * height))[2];
 
             const normalize_color = (color) => {
 
@@ -7365,10 +7380,10 @@ class CanvasPixels extends React.Component {
             };
 
             let average_color_zones = [];
-            average_color_zones[0] = this._get_average_color_of_selection(selection_l[0]);
-            average_color_zones[1] = this._get_average_color_of_selection(selection_l[1]);
-            average_color_zones[2] = this._get_average_color_of_selection(selection_l[2]);
-            average_color_zones[3] = this._get_average_color_of_selection(selection_l[3]);
+            average_color_zones[0] = this._get_average_color_of_selection(selection_l[0], new_pxls, new_pxl_colors);
+            average_color_zones[1] = this._get_average_color_of_selection(selection_l[1], new_pxls, new_pxl_colors);
+            average_color_zones[2] = this._get_average_color_of_selection(selection_l[2], new_pxls, new_pxl_colors);
+            average_color_zones[3] = this._get_average_color_of_selection(selection_l[3], new_pxls, new_pxl_colors);
 
             average_color_zones = [...average_color_zones].map((acz) => {return normalize_color(acz)});
 
@@ -8182,22 +8197,30 @@ class CanvasPixels extends React.Component {
     _update_canvas_container_size = () => {
 
         const { _canvas_container } = this.state;
-        if(!_canvas_container){return;}
+        if(!_canvas_container){
 
-        this._request_force_update(false, false,() => {
+            setTimeout(() => {
 
-            const rect = _canvas_container.getBoundingClientRect();
+                this._update_canvas_container_size();
+            }, 50);
+        }else {
 
-            const _canvas_container_width = _canvas_container === null ? 0: rect.width || 0;
-            const _canvas_container_height = _canvas_container === null ? 0: rect.height || 0;
-            const _canvas_container_left = _canvas_container === null ? 0: rect.left || 0;
-            const _canvas_container_top = _canvas_container === null ? 0: rect.top || 0;
+            this._request_force_update(false, false,() => {
 
-            this.setState({_canvas_container_width, _canvas_container_height, _canvas_container_left, _canvas_container_top}, () => {
+                const rect = _canvas_container.getBoundingClientRect();
 
-                this._update_screen_zoom_ratio(true);
+                const _canvas_container_width = _canvas_container === null ? 0: rect.width || 0;
+                const _canvas_container_height = _canvas_container === null ? 0: rect.height || 0;
+                const _canvas_container_left = _canvas_container === null ? 0: rect.left || 0;
+                const _canvas_container_top = _canvas_container === null ? 0: rect.top || 0;
+
+                this.setState({_canvas_container_width, _canvas_container_height, _canvas_container_left, _canvas_container_top}, () => {
+
+                    this._update_screen_zoom_ratio(true);
+                });
             });
-        });
+
+        }
     };
 
     _update_screen_zoom_ratio = (align_center_middle) => {
@@ -8311,7 +8334,7 @@ class CanvasPixels extends React.Component {
 
         const padding = Math.floor(canvas_wrapper_padding / window.devicePixelRatio * scale);
         return (
-            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{contentVisibility: "auto", contain: "style size layout paint", boxSizing: "border-box", position: "relative", overflow: "hidden", touchAction: "none", pointerEvents: "none"}} className={className}>
+            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{contain: "style size layout paint", boxSizing: "border-box", position: "relative", overflow: "hidden", touchAction: "none", pointerEvents: "none"}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
                      className={"Canvas-Wrapper-Overflow" + (has_shown_canvas_once && !_hidden ? " Shown ": " Not-Shown ")}
                      draggable={"false"}
@@ -8326,6 +8349,7 @@ class CanvasPixels extends React.Component {
                          cursor: cursor,
                          float: "initial",
                          contain: "style size layout paint",
+                         contentVisibility: "auto",
                          perspective: `${Math.round(Math.max(canvas_wrapper_width, canvas_wrapper_height))}px`,
                      }}>
                     <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}

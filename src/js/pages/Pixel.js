@@ -65,6 +65,7 @@ import ImageFileDialog from "../components/ImageFileDialog";
 
 import DATA_IMG from "../utils/ressource-pixel";
 import AccountDialogHiveKey from "../components/AccountDialogHiveKey";
+import PixelDialogCreate from "../components/PixelDialogCreate";
 
 const styles = theme => ({
     green: {
@@ -332,6 +333,8 @@ class Pixel extends React.Component {
             _logged_account: {},
             _less_than_1280w: false,
             _dialog_hive_key_open: false,
+            _pixel_dialog_create_open: true,
+            _pixel_arts: [],
         };
     };
 
@@ -349,7 +352,77 @@ class Pixel extends React.Component {
 
             actions.trigger_loading_update(100);
         }, 350);
+
+        setInterval(() => {
+
+            this._maybe_save_unsaved_pixel_art();
+        }, 10 * 1000);
     }
+
+    _maybe_save_unsaved_pixel_art = () => {
+
+        if(this.state._canvas) {
+
+            this.state._canvas.export_JSON_state((state) => {
+
+                let states = this.state._pixel_arts;
+                states[JSON.parse(state).id] = state;
+                let new_states = {};
+                let new_states_id_and_ts = [];
+
+                Object.entries(states).forEach((e, i) => {
+
+                    const [k, s] = e;
+                    if(s){
+
+                        const {timestamp, id, _json_state_history} = JSON.parse(s);
+                        const {state_history} = JSON.parse(_json_state_history);
+
+                        if(state_history.length > 1) {
+
+                            new_states[k] = s;
+                            new_states_id_and_ts.push({
+                                id,
+                                timestamp,
+                            });
+                        }
+                    }
+                });
+                new_states_id_and_ts.sort((a, b) => a.timestamp < b.timestamp);
+                let new_states_filtered = {};
+                new_states_id_and_ts.forEach((s, i) => {
+
+                    if(i < 10) {
+
+                        new_states_filtered[s.id] = new_states[s.id];
+                    }
+                });
+
+                api.set_settings({pixel_arts: {...new_states_filtered}}, () => {
+
+                    this.setState({_pixel_arts: {...new_states_filtered}}, () => {
+
+                        this.forceUpdate();
+                    });
+                });
+            });
+        }
+
+    };
+
+    _delete_unsaved_pixel_art = (id) => {
+
+        let { _pixel_arts } = this.state;
+        delete _pixel_arts[id];
+
+        api.set_settings({pixel_arts: {..._pixel_arts}}, () => {
+
+            this.setState({_pixel_arts: {..._pixel_arts}}, () => {
+
+                this.forceUpdate();
+            });
+        });
+    };
 
     _updated_dimensions = () => {
 
@@ -410,9 +483,11 @@ class Pixel extends React.Component {
 
         // Set new settings from query result
         const _sfx_enabled = typeof settings.sfx_enabled !== "undefined" ? settings.sfx_enabled: false;
+        const _pixel_arts = typeof settings.pixel_arts !== "undefined" ? settings.pixel_arts: [];
 
-        this.setState({ _sfx_enabled }, () => {
+        this.setState({ _sfx_enabled, _pixel_arts }, () => {
 
+            this.forceUpdate();
             this._is_logged();
         });
     };
@@ -741,6 +816,13 @@ class Pixel extends React.Component {
         });
     };
 
+    _handle_import_json_state = (data) => {
+
+        const { _canvas } = this.state;
+        _canvas.import_JSON_state(data);
+
+    };
+
     _handle_file_import = (event) => {
 
         const { _canvas } = this.state;
@@ -802,6 +884,8 @@ class Pixel extends React.Component {
             actions.trigger_sfx("PrometheusVertical2");
             actions.jamy_update("happy");
             this._handle_edit_drawer_close();
+
+            this._maybe_save_unsaved_pixel_art();
         }
     };
 
@@ -896,9 +980,9 @@ class Pixel extends React.Component {
         this.setState({_height: value});
     };
 
-    _set_import_size = (event) => {
+    _set_import_size = (event, value) => {
 
-        this.setState({_import_size: event.target.value});
+        this.setState({_import_size: value || event.target.value});
     };
 
     _set_tool = (name, remember = true) => {
@@ -1138,6 +1222,11 @@ class Pixel extends React.Component {
         actions.jamy_update("happy");
     };
 
+    _set_pixel_dialog_create_closed = () => {
+
+        this.setState({_pixel_dialog_create_open: false});
+    }
+
     render() {
 
         const {
@@ -1184,6 +1273,8 @@ class Pixel extends React.Component {
             _library_type,
             _less_than_1280w,
             _dialog_hive_key_open,
+            _pixel_dialog_create_open,
+            _pixel_arts,
         } = this.state;
 
         let { _logged_account } = this.state;
@@ -1615,17 +1706,11 @@ class Pixel extends React.Component {
                         <ListItemText primary="Smooth a bit" />
                     </ListItem>
                     <ListSubheader className={classes.contextMenuSubheader}>Load</ListSubheader>
-                    <ListItem button divider onClick={(event) => this._upload_image()}>
+                    <ListItem button divider onClick={this._upload_image}>
                         <ListItemIcon>
                             <FileImportIcon />
                         </ListItemIcon>
                         <ListItemText primary="Open image" />
-                    </ListItem>
-                    <ListItem button divider onClick={(event) => this._import_image()}>
-                        <ListItemIcon>
-                            <FileImportIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Import image" />
                     </ListItem>
                 </Menu>
                 <Grow in>
@@ -1669,6 +1754,15 @@ class Pixel extends React.Component {
                                       onClose={this._handle_dialog_hive_key_close}
                                       onError={this._handle_try_post_from_unlogged_error}
                                       onComplete={this._handle_try_post_from_unlogged_complete}/>
+
+              <PixelDialogCreate open={_pixel_dialog_create_open}
+                                 pixel_arts={_pixel_arts}
+                                 size={_import_size}
+                                 on_import_size_change={this._set_import_size}
+                                 on_pixel_art_delete={(id) => {this._delete_unsaved_pixel_art(id)}}
+                                 import_JSON_state={(s) => {this._handle_import_json_state(s)}}
+                                 on_upload={() => {this._upload_image()}}
+                                 onClose={this._set_pixel_dialog_create_closed}/>
             </div>
         );
     }

@@ -71,7 +71,14 @@ function _merge_object(obj1, obj2){
 
         if(typeof obj2[attrname] !== "undefined") {
 
-            merged_object[attrname] = obj2[attrname];
+            if(typeof obj2[attrname] === "object") {
+
+                merged_object[attrname] = {...obj2[attrname]};
+            }else {
+
+                merged_object[attrname] = obj2[attrname];
+            }
+
         }
     }
 
@@ -84,6 +91,7 @@ function _get_default_settings() {
 
     return {
         locales,
+        pixel_arts: [],
         currency: _get_currency_by_locales(locales),
         sfx_enabled: false,
         jamy_enabled: false,

@@ -165,9 +165,9 @@ class PixelDialogPostBelowContent extends React.Component {
             translated_title: props.translated_title,
             has_translation_started: props.has_translation_started,
             color_box_shadows: props.color_box_shadows,
-            px: props.px,
-            py: props.py,
-            pz: props.pz,
+            px: 0,
+            py: 0,
+            pz: 0,
             color: props.color,
         };
     };
@@ -175,20 +175,12 @@ class PixelDialogPostBelowContent extends React.Component {
     componentWillReceiveProps(new_props) {
 
         let image_changed = this.state.layers !== new_props.layers;
-        let perspective_changed =
-            this.state.px !== new_props.px ||
-            this.state.py !== new_props.py ||
-            this.state.pz !== new_props.pz;
-
 
         this.setState(new_props, () => {
 
             if(image_changed) {
 
                 this._request_force_update();
-            }else if(perspective_changed) {
-
-                this._request_force_update(true, true);
             }
         });
     }
@@ -196,6 +188,14 @@ class PixelDialogPostBelowContent extends React.Component {
     shouldComponentUpdate() {
         return false;
     }
+
+    set_perspective = (array) => {
+
+        this.setState({px: array[0], py: array[1], pz: array[2]}, () => {
+
+            this._request_force_update(true, true);
+        });
+    };
 
     _request_force_update = (can_be_cancelable = false, especially_dont_force = false) => {
 
