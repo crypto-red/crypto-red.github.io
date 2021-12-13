@@ -597,11 +597,11 @@ class CanvasPixels extends React.Component {
         let screen = window.screen;
         let orientation = (screen.orientation || {}).type || screen.mozOrientation || screen.msOrientation;
 
-        let x = event.accelerationIncludingGravity.x;
+        let x = event.accelerationIncludingGravity.x - event.acceleration.x;
         x = Math.max(-10, Math.min(10, x));
         let previous_x = x;
 
-        let y = event.accelerationIncludingGravity.y;
+        let y = event.accelerationIncludingGravity.y - event.acceleration.y;
         y = Math.max(-10, Math.min(10, y));
 
         switch(orientation) {
@@ -4398,12 +4398,12 @@ class CanvasPixels extends React.Component {
 
     _handle_canvas_mouse_up = (event) => {
 
-        const { scale_move_x, scale_move_y, _mouse_down } = this.state;
+        const { scale_move_x, scale_move_y, _mouse_down, _pointer_events } = this.state;
 
         this.setState({
             _event_button: -1,
             _mouse_down: false,
-            _previous_single_pointer_down_x_y: [-1, -1],
+            _previous_single_pointer_down_x_y: _pointer_events.length >= 1 ? [_pointer_events[0].clientX, _pointer_events[0].clientY]: [-1, -1],
         }, () => {
 
             if(_mouse_down !== false) {
@@ -8290,8 +8290,8 @@ class CanvasPixels extends React.Component {
 
         let { perspective_coordinate } = this.state;
 
-        perspective_coordinate[0] = is_mobile_or_tablet ? Math.floor(perspective_coordinate[0] / 2) * 2: perspective_coordinate[0];
-        perspective_coordinate[1] = is_mobile_or_tablet ? Math.floor(perspective_coordinate[1] / 2) * 2: perspective_coordinate[1];
+        //perspective_coordinate[0] = is_mobile_or_tablet ? Math.floor(perspective_coordinate[0] / 2) * 2: perspective_coordinate[0];
+        //perspective_coordinate[1] = is_mobile_or_tablet ? Math.floor(perspective_coordinate[1] / 2) * 2: perspective_coordinate[1];
 
         const p = is_mobile_or_tablet ? perspective * 1.5 / 4: perspective / 4;
 
