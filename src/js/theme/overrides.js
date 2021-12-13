@@ -4,6 +4,7 @@ const overrides = {
             html: {
                 overflow: "overlay",
                 overscrollBehavior: "none",
+                textRendering: "optimizespeed",
                 touchAction: "none",
                 fontFamily: `"Noto Sans"`
             },
@@ -77,7 +78,10 @@ const overrides = {
             },
             "*::-webkit-scrollbar-thumb": {
                 backgroundColor: "rgba(124,124,124,.3)",
-                    borderRadius: 8
+                borderRadius: 8
+            },
+            ".MuiAvatar-root": {
+                contain: "strict",
             },
             ".MuiTableSortLabel-root.MuiTableSortLabel-root.MuiTableSortLabel-active": {
                 color: "inherit"

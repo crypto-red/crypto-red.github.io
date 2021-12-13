@@ -6,6 +6,7 @@ import EraserIcon from "../icons/Eraser";
 
 const styles = theme => ({
     colorPalette: {
+        contain: "contents",
         padding: 24,
         display: "flex",
         flexDirection: "row",

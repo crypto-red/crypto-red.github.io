@@ -147,6 +147,8 @@ class PixelDialogPostBelowContent extends React.Component {
             classes: props.classes,
             classname: props.classname,
             post: props.post,
+            enable_3d: props.enable_3d,
+            will_change: props.will_change,
             balance_fiat: props.balance_fiat,
             selected_locales_code: props.selected_locales_code || "en-US",
             hbd_market: props.hbd_market || {},
@@ -175,10 +177,11 @@ class PixelDialogPostBelowContent extends React.Component {
     componentWillReceiveProps(new_props) {
 
         let image_changed = this.state.layers !== new_props.layers;
+        let enable_3d_changed = this.state.enable_3d !== new_props.enable_3d;
 
         this.setState(new_props, () => {
 
-            if(image_changed) {
+            if(image_changed || enable_3d_changed) {
 
                 this._request_force_update();
             }
@@ -210,6 +213,7 @@ class PixelDialogPostBelowContent extends React.Component {
 
         const {
             classname,
+            enable_3d,
             tags_input,
             is_prediction_loading,
             translated_description,
@@ -231,6 +235,7 @@ class PixelDialogPostBelowContent extends React.Component {
             g_svg,
             h_svg,
             color_box_shadows,
+            will_change,
         } = this.state;
 
         const post = this.state.post || {};
@@ -249,18 +254,18 @@ class PixelDialogPostBelowContent extends React.Component {
                 imageRendering: "optimizespeed",
                 touchAction: "none",
                 contain: "size style",
-                visibility: h_svg ? "inherit": "hidden",
-                willChange: "background-position",
-                transition: "background-position .25s ease-in 0s",
+                transform: "translateZ(0)",
+                willChange: enable_3d ? "background-position": "",
+                transition: "background-position .25s linear 0s",
                 backgroundImage: `url("${h_svg}")`,
                 backgroundRepeat: "repeat",
                 backgroundSize: `${Math.ceil(.5*200)}px ${Math.ceil(.5*229.3)}px`,
                 backgroundPosition: `${Math.round((px*5-200)*pz)}px ${Math.round((py*5-229.3)*pz)}px`,
                 color: "black",
                 backgroundOrigin: "center"}}>
-                <div style={{position: "relative", height: "100%"}}>
+                <div style={{contentVisibility: will_change ? "auto": h_svg ? "visible": "hidden", position: "relative", height: "100%"}}>
                     <div style={{transition: "background-image .25s linear 0s", position: "relative", height: "100%", mixBlendMode: "multiply", backgroundBlendMode: "color-burn", ...color_box_shadows}}>
-                        <div style={{zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", color: color, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
+                        <div style={{zIndex: 14, position: "absolute", color: color, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
                             <p>$_AUTHOR: @{post.author}</p>
                             <p>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</p>
                             <p>$_VOTES: {vote_number}</p>
@@ -272,11 +277,11 @@ class PixelDialogPostBelowContent extends React.Component {
                             <p>$_WIN_WIDTH: {window_width}px</p>
                             <p>$_AI_COMPUTING: {is_prediction_loading ? "TRUE": "FALSE"}</p>
                         </div>
-                        <div style={{willChange: "contents"}}>
-                            <img src={sc_svg} style={{transition: "transform .25s ease-in 0s", filter: "opacity(0.5)",  zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
-                            <img src={ss_svg} style={{transition: "transform .25s ease-in 0s", zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*5-25)*pz}px, ${(py*5-20)*pz}px)`}}/>
-                            <img src={sg_svg} style={{transition: "transform .25s ease-in 0s", position: "absolute", top: 372, right: 372, width: 372, height: 372, transformOrigin: "top right", transform: `translate(${(px*10-50)*pz}px, ${(py*10-50)*pz}px)`}}/>
-                            <img src={st_svg} style={{transition: "transform .25s ease-in 0s", position: "absolute", bottom: 256, right: 256, width: 336, height: 336, transformOrigin: "middle center", transform: `translate(${(px*15-75)*pz}px, ${(py*15-75)*pz}px)`}}/>
+                        <div style={{contain: "paint", position: "absolute", width: "100%", height: "100%", top: 0, left: 0, willChange: will_change ? "contents": ""}}>
+                            <img src={sc_svg} style={{transition: "transform .25s ease-in 0s", filter: "opacity(0.5)",  zIndex: 14, position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
+                            <img src={ss_svg} style={{transition: "transform .25s ease-in 0s", zIndex: 14, position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*5-25)*pz}px, ${(py*5-20)*pz}px)`}}/>
+                            <img src={sg_svg} style={{transition: "transform .25s ease-in 0s", zIndex: 14, position: "absolute", top: 372, right: 372, width: 372, height: 372, transformOrigin: "top right", transform: `translate(${(px*10-50)*pz}px, ${(py*10-50)*pz}px)`}}/>
+                            <img src={st_svg} style={{transition: "transform .25s ease-in 0s", zIndex: 14, position: "absolute", bottom: 256, right: 256, width: 336, height: 336, transformOrigin: "middle center", transform: `translate(${(px*15-75)*pz}px, ${(py*15-75)*pz}px)`}}/>
                         </div>
                         <span style={{filter: "opacity(0.3)", textShadow: `rgb(0 70 255 / 100%) 1.08243px 0px 1px, rgb(255 50 0 / 100%) -1.08243px 0px 1px, 0px 0px 4px`, position: "absolute", bottom: "30%", right: 32, width: "66%", color: "#ffffff", fontFamily: `"Special Elite"`}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
                     </div>

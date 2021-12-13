@@ -8332,8 +8332,12 @@ class CanvasPixels extends React.Component {
                                     ) / (3*p) * (p/100));
 
         const padding = Math.floor(canvas_wrapper_padding / window.devicePixelRatio * scale);
+
+        const rotate_x = Math.round((perspective_coordinate[1] * p / scale) * 1000) / 1000;
+        const rotate_y = Math.round((perspective_coordinate[0] * p / scale) * 1000) / 1000;
+
         return (
-            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{contain: "style size layout paint", boxSizing: "border-box", position: "relative", overflow: "hidden", touchAction: "none", pointerEvents: "none"}} className={className}>
+            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{zIndex: 1, contain: "contents", boxSizing: "border-box", position: "relative", overflow: "hidden", touchAction: "none", userSelect: "none"}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
                      className={"Canvas-Wrapper-Overflow" + (has_shown_canvas_once && !_hidden ? " Shown ": " Not-Shown ")}
                      draggable={"false"}
@@ -8341,20 +8345,21 @@ class CanvasPixels extends React.Component {
                          height: "100%",
                          width: "100%",
                          overflow: "visible",
-                         position: "absolute",
+                         position: "relative",
                          boxSizing: "border-box",
                          touchAction: "none",
                          pointerEvents: "auto",
+                         userSelect: "none",
                          cursor: cursor,
-                         float: "initial",
-                         contain: "style size layout paint",
-                         contentVisibility: "auto",
+                         contain: "contents",
+                         willChange: "perspective",
                          perspective: `${Math.round(Math.max(canvas_wrapper_width, canvas_wrapper_height))}px`,
+                         zIndex: 1,
                      }}>
                     <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
                          draggable={"false"}
                          style={{
-                             willChange: "transform",
+                             willChange: (_moves_speed_average_now > 0 || (perspective && (rotate_x || rotate_y))) ? "transform": "",
                              mixBlendMode: "hard-light",
                              borderWidth: canvas_wrapper_border_width,
                              borderStyle: "solid",
@@ -8365,31 +8370,34 @@ class CanvasPixels extends React.Component {
                              padding: padding,
                              position: "absolute",
                              clipPath: `polygon(calc(100% - 10%) 0%, 100% 0%, 100% 200%, ${padding}px 100%, 0% calc(100% - ${padding}px), 0% -100%, calc(100% - 25%) 0%, calc(100% - 25%) ${padding / 1.5}px, calc(100% - 15%) ${padding / 1.5}px)`,
-                             width: Math.round(canvas_wrapper_width),
-                             height: Math.round(canvas_wrapper_height),
-                             transition: `transform 0ms linear 0ms, opacity ${animation ? animation_duration / 2: 0}ms linear 0ms`,
-                             visibility: has_shown_canvas_once && !_hidden ? "visible": "hidden",
-                             transform: `translate3d(${Math.round(scale_move_x)}px, ${Math.round(scale_move_y)}px, 0px) rotateX(${(perspective_coordinate[1] * p / scale).toFixed(2)}deg) rotateY(${(perspective_coordinate[0] * p / scale).toFixed(2)}deg)`,
+                             width: Math.round(canvas_wrapper_width * 1000) / 1000,
+                             height: Math.round(canvas_wrapper_height  * 1000) / 1000,
+                             transition: `filter 200ms linear 0ms`,
+                             filter: has_shown_canvas_once && !_hidden ? "opacity(1)": "opacity(0)",
+                             transform: `translate(${Math.round(scale_move_x * 1000) / 1000}px, ${Math.round(scale_move_y * 1000) / 1000}px) rotateX(${rotate_x}deg) rotateY(${rotate_y}deg) rotateZ(0deg)`,
                              transformOrigin: "center middle",
                              boxSizing: "content-box",
                              overflow: "visible",
                              touchAction: "none",
                              pointerEvents: "none",
-                             contain: "style size layout",
+                             userSelect: "none",
+                             contain: "contents",
+                             zIndex: 2,
                          }}
                          ref={this._set_canvas_wrapper_ref}>
                         <canvas
                             draggable={"false"}
                             style={{
+                                zIndex: 2,
                                 position: "absolute",
                                 touchAction: "none",
                                 pointerEvents: "none",
+                                userSelect: "none",
                                 width: Math.floor(pxl_width),
                                 height: Math.floor(pxl_height),
                                 transform: `scale(${(_screen_zoom_ratio * scale).toFixed(2)})`,
                                 transformOrigin: "left top",
                                 boxSizing: "content-box",
-                                contain: "style size layout paint",
                                 ...background_image_style_props,
                             }}
                             className={"Canvas-Pixels"}
@@ -8424,6 +8432,7 @@ class CanvasPixels extends React.Component {
                                 ${Math.floor((perspective_coordinate[1]+p) / (p*2) * 255)}, 
                                 ${(Math.abs(perspective_coordinate[1]) / p / 6 * 1 * (p*l/100)).toFixed(2)}
                                 ))`: "none",
+                                     zIndex: 3,
                                      borderRadius: canvas_wrapper_border_radius,
                                      padding: 0,
                                      left: 0,
@@ -8435,13 +8444,14 @@ class CanvasPixels extends React.Component {
                                      boxSizing: "content-box",
                                      touchAction: "none",
                                      pointerEvents: "none",
-                                     contain: "style size layout",
-                                     willChange: "filter, background-image",
+                                     userSelect: "none",
+                                     willChange: (perspective && (rotate_x || rotate_y)) ? "filter, background-image": "",
                                      filter: Boolean(p) && `brightness(${filter_force}) contrast(${filter_force})` // drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})`: `drop-shadow(0 0 ${shadow_depth*shadow_size}px ${shadow_color})
-                             }}/>
+                                 }}/>
                         }
                     </div>
                     <div style={{
+                        zIndex: 1,
                         color: canvas_wrapper_background_color,
                         textAlign: "center",
                         position: "absolute",

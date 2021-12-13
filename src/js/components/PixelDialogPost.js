@@ -92,16 +92,17 @@ const styles = theme => ({
         display: "flex",
         flexGrow: 1,
         position: "relative",
-        float: "right",
     },
     contentImage: {
         width: "calc(100vw - 480px)",
+        left: 480,
         height: "calc(100vh)",
         position: "relative",
         overflow: "hidden",
         zIndex: 1,
         [theme.breakpoints.down("md")]: {
             width: "100vw",
+            left: 0,
         },
         "&::before": {
             textShadow: "0 0px 24px #000000ff",
@@ -172,12 +173,13 @@ const styles = theme => ({
         flexShrink: 0,
     },
     drawerPaper: {
-        boxShadow: "0px 2px 4px -1px rgb(0 0 0 / 20%), 0px 4px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%)",
+        zIndex: 4,
+        touchAction: "none",
+        contain: "contents",
         border: "none",
         width: 480,
         [theme.breakpoints.down("md")]: {
             width: "100vw",
-            touchAction: "none",
             overscrollBehavior: "none",
             overflow: "overlay",
             overflowY: "auto",
@@ -663,60 +665,59 @@ class PixelDialogPost extends React.Component {
     }
 
     _handle_image_load_complete = (_image_details) => {
-        console.log("img load complete")
-        this.setState({_loading: false, _layers: [], _image_details});
 
-            if(typeof this.state._canvas.get_color_palette !== "undefined") {
+        this.setState({_svg_loading: true, _loading: false, _layers: [], _image_details}, () => {
 
-                this.state._canvas.get_color_palette( 1/4, (data) => {
+            this.forceUpdate(() => {
 
-                    let svgs = {
-                        _sc_svg: null,
-                        _ss_svg: null,
-                        _st_svg: null,
-                        _sg_svg: null,
-                        _g_svg: null,
-                        _h_svg: null,
-                    };
+                if(typeof this.state._canvas.get_color_palette !== "undefined") {
 
-                    const add_svg = (svg, key) => {
+                    this.state._canvas.get_color_palette( 1/4, (data) => {
 
-                        svgs[key] = svg;
+                        let svgs = {
+                            _sc_svg: null,
+                            _ss_svg: null,
+                            _st_svg: null,
+                            _sg_svg: null,
+                            _g_svg: null,
+                            _h_svg: null,
+                        };
 
-                        let all_set = true;
-                        Object.entries(svgs).forEach((entry) => {
+                        const add_svg = (svg, key) => {
 
-                            const [ k, v ] = entry;
-                            if(v === null) {
+                            svgs[key] = svg;
 
-                                all_set = false;
-                            }
-                        });
+                            let all_set = true;
+                            Object.entries(svgs).forEach((entry) => {
 
-                        if(all_set) {
+                                const [ k, v ] = entry;
+                                if(v === null) {
 
-                            this.setState({_color_palette: {...data}, _sc_svg: svgs._sc_svg, _ss_svg: svgs._ss_svg, _st_svg: svgs._st_svg, _sg_svg: svgs._sg_svg, _g_svg: svgs._g_svg, _h_svg: svgs._h_svg}, () => {
-
-                                this.forceUpdate();
+                                    all_set = false;
+                                }
                             });
 
+                            if(all_set) {
+
+                                this.setState({_color_palette: {...data}, _svg_loading: false, _sc_svg: svgs._sc_svg, _ss_svg: svgs._ss_svg, _st_svg: svgs._st_svg, _sg_svg: svgs._sg_svg, _g_svg: svgs._g_svg, _h_svg: svgs._h_svg}, () => {
+
+                                    this.forceUpdate();
+                                });
+
+                            }
                         }
-                    }
 
-                    get_svg_in_b64(<Scifisc username={this.state.post.author} color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_sc_svg")});
-                    get_svg_in_b64(<Scifiss color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_ss_svg")});
-                    get_svg_in_b64(<Scifist color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_st_svg")});
-                    get_svg_in_b64(<Scifisg color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_sg_svg")});
-                    get_svg_in_b64(<SciFiGrid secondary={data.darkest_color} color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_g_svg")});
-                    get_svg_in_b64(<HexGrid color={"#fff"}/>, (svg) => {add_svg(svg, "_h_svg")});
-                });
+                        get_svg_in_b64(<Scifisc username={this.state.post.author} color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_sc_svg")});
+                        get_svg_in_b64(<Scifiss color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_ss_svg")});
+                        get_svg_in_b64(<Scifist color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_st_svg")});
+                        get_svg_in_b64(<Scifisg color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_sg_svg")});
+                        get_svg_in_b64(<SciFiGrid secondary={data.darkest_color} color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_g_svg")});
+                        get_svg_in_b64(<HexGrid color={"#fff"}/>, (svg) => {add_svg(svg, "_h_svg")});
+                    });
 
-            }else {
-
-                setTimeout(() => {
-                    this._handle_image_load_complete(_image_details);
-                }, 10);
-            }
+                }
+            });
+        });
     };
 
     _handle_size_change = (_width, _height) => {
@@ -1260,9 +1261,9 @@ class PixelDialogPost extends React.Component {
 
     _handle_perspective = (array) => {
 
-        const { _pixel_dialog_post_below_content } = this.state;
+        const { _pixel_dialog_post_below_content, edit, post, _perspective_depth, enable_3d } = this.state;
 
-        if(_pixel_dialog_post_below_content) {
+        if(_pixel_dialog_post_below_content && !edit && post && _perspective_depth && enable_3d) {
 
             _pixel_dialog_post_below_content.set_perspective(array);
         }
@@ -1314,6 +1315,7 @@ class PixelDialogPost extends React.Component {
             _h_svg,
             _perspective_depth,
             enable_3d,
+            _svg_loading,
         } = this.state;
 
         const post = this.state.post || {};
@@ -1351,12 +1353,13 @@ class PixelDialogPost extends React.Component {
                     onClose={(event) => {this.props.onClose(event)}}
                     onExited={(event) => {this.props.onExited && this.props.onExited(event)}}
                 >
-                    <div className={classes.root} style={{contentVisibility: "visible", contain: "layout paint size style"}}>
+                    <div className={classes.root} style={{contain: "layout paint size style"}}>
                         {
-                            !edit && post && _perspective_depth && enable_3d &&
                             <PixelDialogPostBelowContent
                                 ref={this._set_pixel_dialog_post_below_content_ref}
                                 post={post}
+                                enable_3d={enable_3d}
+                                will_change={_svg_loading}
                                 color_box_shadows={color_box_shadows}
                                 balance_fiat={balance_fiat}
                                 selected_locales_code={selected_locales_code}
@@ -1381,10 +1384,9 @@ class PixelDialogPost extends React.Component {
                         <div className={classes.content}>
                             <div className={classes.contentInner}>
                                 <SwipeableDrawer
-                                    style={{contentVisibility: "visible", contain: "layout paint size style"}}
-                                    swipeAreaWidth={50}
+                                    swipeAreaWidth={(_window_width > 1280) ? 0: 50}
                                     keepMounted={keepMounted}
-                                    ModalProps={{BackdropProps:{classes: {root: classes.drawerModalBackdropRoot}}}}
+                                    ModalProps={{disablePortal: false, hideBackdrop: _window_width > 1280, BackdropProps:{classes: {root: classes.drawerModalBackdropRoot}}}}
                                     onClose={this._handle_drawer_icon_close}
                                     onOpen={this._handle_drawer_open}
                                     className={classes.drawer}
@@ -1693,14 +1695,6 @@ class PixelDialogPost extends React.Component {
                                     </div>
                                 </SwipeableDrawer>
                                 <div style={{contentVisibility: "visible", contain: "layout paint size style"}} className={classes.contentImage} dataid={post.id}>
-                                    <div className={classes.topRightFabButtons}>
-                                        <IconButton onClick={this._toggle_perspective} className={classes.perspectiveButtonIcon}>
-                                            {enable_3d ? <TdOffIcon fontSize="large" />: <TdOnIcon fontSize="large" />}
-                                        </IconButton>
-                                        <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
-                                            <CloseIcon fontSize="large" />
-                                        </IconButton>
-                                    </div>
                                     <div className={classes.contentCanvasLight}>
                                         <CanvasPixels
                                             canvas_wrapper_border_radius={0}
@@ -1734,6 +1728,14 @@ class PixelDialogPost extends React.Component {
                                             onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
                                             ref={this._set_canvas_ref}
                                         />
+                                    </div>
+                                    <div className={classes.topRightFabButtons}>
+                                        <IconButton onClick={this._toggle_perspective} className={classes.perspectiveButtonIcon}>
+                                            {enable_3d ? <TdOffIcon fontSize="large" />: <TdOnIcon fontSize="large" />}
+                                        </IconButton>
+                                        <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
+                                            <CloseIcon fontSize="large" />
+                                        </IconButton>
                                     </div>
                                 </div>
                             </div>

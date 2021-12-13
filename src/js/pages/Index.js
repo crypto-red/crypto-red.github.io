@@ -42,7 +42,11 @@ import { PAGE_ROUTES, HISTORY } from "../utils/constants";
 
 const styles = theme => ({
     root: {
-        display: "flex"
+        overflow: "overlay",
+        height: "100vh",
+        width: "100vw",
+        display: "flex",
+        contain: "layout paint size style",
     },
     carouselImage: {
         padding: 32,
