@@ -630,10 +630,13 @@ class CanvasPixels extends React.Component {
 
             this.setState({perspective_coordinate: [x, y]}, () => {
 
-                this._request_force_update(true, false, () => {
+                if(this.state._moves_speed_average_now < -1) {
 
-                    this._notify_perspective_coordinate_changes([x, y, this.state.scale]);
-                });
+                    this._request_force_update(true, false, () => {
+
+                        this._notify_perspective_coordinate_changes([x, y, this.state.scale]);
+                    });
+                }
             });
         }
     };
