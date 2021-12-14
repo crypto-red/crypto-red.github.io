@@ -51,10 +51,10 @@ import {
     search_on_hive,
 } from "./api-hive";
 
-const query_db = new PouchDB("query_db", {revs_limit: 0, auto_compaction: false});
-const settings_db = new PouchDB("settings_db", {revs_limit: 0, auto_compaction: false});
-const accounts_db = new PouchDB("accounts_db", {revs_limit: 0, auto_compaction: false});
-const logged_accounts_db = new PouchDB("logged_accounts_db", {revs_limit: 0, auto_compaction: false});
+const query_db = new PouchDB("query_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
+const settings_db = new PouchDB("settings_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
+const accounts_db = new PouchDB("accounts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
+const logged_accounts_db = new PouchDB("logged_accounts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
 
 let settings = null;
 let logged_account = null;

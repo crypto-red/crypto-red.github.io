@@ -319,20 +319,24 @@ class Gallery extends React.Component {
 
                 if(closed_search || (sorting_changed && !state._is_search_mode)) {
 
+                    this._scroll_to(0);
                     this.setState({_posts: [], _start_author: "", _start_permlink: ""}, () => {
-                        this._scroll_to(0);
                         this.forceUpdate(() => {
+                            this._recompute_cell_measurements(() => {
 
-                            this._load_more_posts();
+                                this._load_more_posts();
+                            });
                         });
                     });
                 }else if(search_sorting_changed && state._is_search_mode) {
 
+                    this._scroll_to(0);
                     this.setState({_posts: [], _start_author: "", _start_permlink: "", _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
-                        this._scroll_to(0);
                         this.forceUpdate(() => {
+                            this._recompute_cell_measurements(() => {
 
-                            this._search_more_posts();
+                                this._search_more_posts();
+                            });
                         });
                     });
                 }else if(search_mode_query_changed && state._is_search_mode) {
@@ -365,20 +369,12 @@ class Gallery extends React.Component {
             if(this.state._is_search_mode) {
 
                 this.setState({_posts: [], _start_author: "", _start_permlink: "", _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
-                    this._scroll_to(0);
-                    this.forceUpdate(() => {
-
-                        this._search_more_posts();
-                    });
+                    this._search_more_posts();
                 });
             }else {
 
                 this.setState({_posts: [], _start_author: "", _start_permlink: ""}, () => {
-                    this._scroll_to(0);
-                    this.forceUpdate(() => {
-
-                        this._load_more_posts();
-                    });
+                    this._load_more_posts();
                 });
             }
 
@@ -473,8 +469,6 @@ class Gallery extends React.Component {
 
         const load_from_cache = _history.length < 5;
 
-        console.log(_history.length, _previous_pathname);
-
         if (!_loading_posts) {
 
             actions.trigger_loading_update(0);
@@ -483,7 +477,7 @@ class Gallery extends React.Component {
                 this.forceUpdate(() => {
 
                     cached_get_hive_posts({
-                        limit: load_from_cache ? 20: 10,
+                        limit: 20,
                         tag: "pixel-art",
                         sorting: _sorting_modes[_sorting_tab_index] || _sorting_modes[0],
                         start_author: _start_author,
@@ -500,13 +494,11 @@ class Gallery extends React.Component {
                             } : {_start_author: "", _start_permlink: ""};
 
 
-                            const posts = [...new Set(_posts.concat(data.posts))];
+                            const _posts_ids = _posts.map(p => p.id);
+                            const posts = _posts.concat(data.posts.filter(p => Boolean(!_posts_ids.includes(p.id))));
                             this.setState({...end_data, _loading_posts: false, _posts: posts}, () => {
 
-                                this.forceUpdate(() => {
-
-                                });
-
+                                this.forceUpdate();
                                 actions.trigger_loading_update(100);
                             });
                         }else {
@@ -556,7 +548,8 @@ class Gallery extends React.Component {
 
                         if((data || {}).posts){
 
-                            const posts = [...new Set(_posts.concat(data.posts))];
+                            const _posts_ids = _posts.map(p => p.id);
+                            const posts = _posts.concat(data.posts.filter(p => Boolean(!_posts_ids.includes(p.id))));
 
                             this.setState({_loading_posts: false, _posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
 
@@ -648,17 +641,17 @@ class Gallery extends React.Component {
     _cell_renderer = (data) => {
 
         const {index, key, parent, style} = data;
-        const { _masonry, _hbd_market, _selected_currency, _selected_locales_code, _selected_post_index, _reaction_selected_post_loading, _column_width, _cell_measurer_cache, _column_count, _posts } = this.state;
+        const { _masonry, _hbd_market, _selected_currency, _selected_locales_code, _post, _reaction_selected_post_loading, _column_width, _cell_measurer_cache, _column_count, _posts } = this.state;
 
         const post = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).item || {}: {};
         const size = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).size || {}: {};
-        if(!post.id || !size.height){return null}
+        if(!Boolean(post.id) || !size.height){return null}
 
         const image_height = Math.ceil(_column_width * (size.height / size.width)) || 0;
 
         const columnIndex = index % _column_count;
         const rowIndex = (index - columnIndex) / _column_count;
-        const selected = _selected_post_index === index;
+        const selected = post.id === (_post || {}).id;
         const is_loading = Boolean((_reaction_selected_post_loading || {}).id === post.id);
 
         style.width = _column_width;
@@ -671,7 +664,7 @@ class Gallery extends React.Component {
         this.setState({_top_scroll_of_el_by_index, _height_of_el_by_index});
 
         return (
-            <CellMeasurer cache={_cell_measurer_cache} index={index} key={`${key}`} parent={parent} style={{contain: "paint size"}}>
+            <CellMeasurer cache={_cell_measurer_cache} index={1.0 * index} key={key} parent={parent} style={{contain: "paint size"}}>
                 <PixelArtCard
                     id={post.id}
                     rowIndex={rowIndex}
@@ -860,7 +853,6 @@ class Gallery extends React.Component {
             actions.trigger_sfx("navigation_transition-left");
         }
 
-        this._handle_art_focus(post);
         const new_pathname = !_is_search_mode ?
             "/gallery/" + (_sorting_modes[_sorting_tab_index] || _sorting_modes[0]) + "/@" + post.author + "/" + post.permlink:
             "/gallery/" + (_search_sorting_modes[_search_sorting_tab_index] || _search_sorting_modes[0]) + "/search/" + encodeURIComponent(_search_mode_query) + "/@" + post.author + "/" + post.permlink;
@@ -999,7 +991,7 @@ class Gallery extends React.Component {
 
     _handle_pixel_dialog_post_closed = () => {
 
-        this.setState({_post: null, _post_closed_at: Date.now()});
+        this.setState({_post_closed_at: Date.now()});
         actions.trigger_sfx("HardVertical1", 0.6);
     };
 
@@ -1047,9 +1039,9 @@ class Gallery extends React.Component {
 
     _handle_keydown = (event) => {
 
-        let { _masonry, _selected_post_index, _post_closed_at, _posts, _post, _column_count, _x_y_of_el_by_index } = this.state;
+        let { _masonry, _selected_post_index, _post_closed_at, _posts, _post_author, _post_permlink, _column_count, _x_y_of_el_by_index } = this.state;
 
-        if(!_post && _post_closed_at + 300 < Date.now()) {
+        if(!_post_author && !_post_permlink && _post_closed_at + 300 < Date.now()) {
 
             event.preventDefault();
 
@@ -1090,24 +1082,13 @@ class Gallery extends React.Component {
 
             _selected_post_index = Math.max(0, Math.min(_posts.length-1, _selected_post_index));
 
-            if(this.state._post_author && this.state._post_permlink){
+            if(event.keyCode === 13){
 
                 this._handle_art_open(_posts[_selected_post_index]);
-            }else {
+            }else if(this.state._selected_post_index !== _selected_post_index){
 
-                this._update_selected_post_index(_selected_post_index, true);
+                this._update_selected_post_index(_selected_post_index);
             }
-
-            this.setState({_selected_post_index}, () => {
-
-                _masonry.forceUpdate(() => {
-
-                    if(event.keyCode === 13) {
-
-                        this._open_selected_post_index();
-                    }
-                });
-            });
         }
     };
 
@@ -1115,8 +1096,8 @@ class Gallery extends React.Component {
 
         const { _post, _posts, _masonry } = this.state;
 
-        const _selected_post_index = typeof index !== "undefined" ? index : _post ? _posts.map(p => (p || {}).id).indexOf(_post.id): this.state._selected_post_index;
-        this.setState({_selected_post_index}, () => {
+        const _selected_post_index = typeof index !== "undefined" ? index : (_post) ? _posts.map(p => (p || {}).id).indexOf(_post.id): this.state._selected_post_index;
+        this.setState({_selected_post_index, _post: _posts[_selected_post_index]}, () => {
 
             if(!do_not_scroll) {
 
@@ -1240,6 +1221,7 @@ class Gallery extends React.Component {
                         _is_search_mode ?
                             <AppBar position="static" className={classes.AppBar}>
                                 <Tabs className={classes.tabs}
+                                      disableFocusRipple={true}
                                       variant="fullWidth"
                                       onChange={this._handle_search_sorting_change}
                                       value={_search_sorting_tab_index}>
@@ -1268,7 +1250,7 @@ class Gallery extends React.Component {
                         image={item => item.image}
                         defaultHeight={post_list_height}
                         defaultWidth={page_width}
-                        keyMapper={(item, index) => `${item.id || index}`}
+                        keyMapper={(item, index) => `${1.0 * item.id}`}
                 >
                         {({itemsWithSizes}) => {
 

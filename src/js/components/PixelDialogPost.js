@@ -1345,10 +1345,10 @@ class PixelDialogPost extends React.Component {
         return (
             <div>
                 <Dialog
+                    style={{transform: "translateZ(0)"}}
                     keepMounted={keepMounted}
                     open={open}
                     PaperComponent={"div"}
-                    TransitionProps={{enter: true, exit: true}}
                     fullScreen
                     onClose={(event) => {this.props.onClose(event)}}
                     onExited={(event) => {this.props.onExited && this.props.onExited(event)}}
@@ -1383,317 +1383,6 @@ class PixelDialogPost extends React.Component {
                         }
                         <div className={classes.content}>
                             <div className={classes.contentInner}>
-                                <SwipeableDrawer
-                                    swipeAreaWidth={(_window_width > 1280) ? 0: 50}
-                                    keepMounted={keepMounted}
-                                    ModalProps={{disablePortal: false, hideBackdrop: _window_width > 1280, BackdropProps:{classes: {root: classes.drawerModalBackdropRoot}}}}
-                                    onClose={this._handle_drawer_icon_close}
-                                    onOpen={this._handle_drawer_open}
-                                    className={classes.drawer}
-                                    variant={(_window_width > 1280)  ? "temporary": "temporary"}
-                                    open={(open && _window_width > 1280) || (open && _drawer_open)}
-                                    classes={{
-                                        paper: classes.drawerPaper,
-                                        modal: classes.drawerModal,
-                                    }}
-                                    anchor={_window_width < 1280 ? "bottom": "left"}
-                                >
-                                    <div className={classes.drawerHeader}>
-                                        <CardHeader
-                                            avatar={
-                                                <Avatar aria-label="Author" className={classes.avatar} src={(author_account.profile_image || "").replace("/0x0/", "/40x40/")}>
-                                                    {!author_account.name || post.author}
-                                                </Avatar>
-                                            }
-                                            title={
-                                                <span className={classes.headerTitle}>
-                                                    <span className={classes.headerAuthor} onClick={this._open_profile}>{`@${post.author}`}</span>
-                                                    <span> in </span>
-                                                    <span className={classes.headerCategory} onClick={() => {this._open_tag((tags[1] || tags[0]))}}>{`#${(tags[1] || tags[0])}`}</span>
-                                                </span>
-                                            }
-                                            subheader={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null}
-                                            action={
-                                                !edit && TRANSLATION_AVAILABLE.includes(lang) &&
-                                                <Button variant={"contained"} color={"secondary"} disabled={is_translating} onClick={this._toggle_translate_everything} startIcon={has_translated ? <TranslateOffIcon />: <TranslateIcon />}>
-                                                    {has_translated ? "Original ": `${document.documentElement.lang.toUpperCase()} `}
-                                                    {is_translating && <CircularProgress size={24} className={classes.buttonProgress} />}
-                                                </Button>
-                                            }
-                                        />
-                                        <CardContent>
-                                            <ButtonGroup size={"small"} color="primary" aria-label="large outlined primary button group">
-                                                <Tooltip title="WhatsApp" aria-label="WhatsApp">
-                                                    <Button className={classes.shareIconButtonWhatsApp} onClick={(event) => {this._open_url(event, `https://api.whatsapp.com/send/?phone&text=${url}&app_absent=0`)}}>
-                                                        <WhatsAppIcon fontSize="small" />
-                                                    </Button>
-                                                </Tooltip>
-                                                <Tooltip title="Facebook" aria-label="Facebook">
-                                                    <Button className={classes.shareIconButtonFacebook} onClick={(event) => {this._open_url(event, `https://www.facebook.com/sharer/sharer.php?u=${url}`)}}>
-                                                        <FacebookIcon fontSize="small" />
-                                                    </Button>
-                                                </Tooltip>
-                                                <Tooltip title="Pinterest" aria-label="Pinterest">
-                                                    <Button className={classes.shareIconButtonPinterest} onClick={(event) => {this._open_url(event, `https://www.pinterest.com/pin/create/button/?url=${url}`)}}>
-                                                        <PinterestIcon fontSize="small" />
-                                                    </Button>
-                                                </Tooltip>
-                                                <Tooltip title="Reddit" aria-label="Reddit">
-                                                    <Button className={classes.shareIconButtonReddit} onClick={(event) => {this._open_url(event, `https://www.reddit.com/submit?url=${url}`)}}>
-                                                        <RedditIcon fontSize="small" />
-                                                    </Button>
-                                                </Tooltip>
-                                                <Tooltip title="Twitter" aria-label="Twitter">
-                                                    <Button className={classes.shareIconButtonTwitter} onClick={(event) => {this._open_url(event, `https://twitter.com/intent/tweet?url=${url}`)}}>
-                                                        <TwitterIcon fontSize="small" />
-                                                    </Button>
-                                                </Tooltip>
-                                                <Tooltip title="LinkedIn" aria-label="LinkedIn" onClick={(event) => {this._open_url(event, `https://www.linkedin.com/sharing/share-offsite/?url=${url}`)}}>
-                                                    <Button className={classes.shareIconButtonLinkedIn}>
-                                                        <LinkedInIcon fontSize="small" />
-                                                    </Button>
-                                                </Tooltip>
-                                            </ButtonGroup>
-                                            {
-                                                !edit && post &&
-                                                <div className={classes.nsTags}>
-                                                    {Object.entries(post.responsabilities || {}).map((entry) => {
-
-                                                        const [ key, value ] = entry;
-
-                                                        const r_text = {
-                                                            unsourced: "He/She did not paint or take this photo himself or the source image doesn't belong to him/her.",
-                                                            opinion: "This post is NOT a press-release or a checked-fact. It is only his/her experience and / or a personal perception-description.",
-                                                            hurt: "This post contains nudity, hate, madness, or anything that may disturb someone else's freedom of expression. (NSFW)"
-                                                        };
-
-                                                        if(["unsourced", "opinion", "hurt"].includes(key)) {
-
-                                                            return (
-                                                                <Tooltip title={r_text[key] + (value ? " [TRUE]": " [FALSE]")}>
-                                                                    <span style={value ? {}: {textDecoration: "line-through"}}>{key}</span>
-                                                                </Tooltip>
-                                                            );
-                                                        }
-                                                    })}
-                                                </div>
-                                            }
-                                        </CardContent>
-                                        <Tabs
-                                            value={_drawer_tab_index}
-                                            indicatorColor="primary"
-                                            textColor="primary"
-                                            onChange={this._handle_drawer_tab_index_change}
-                                        >
-                                            <Tab label="Details" />
-                                            <Tab disabled={true} label="Comments" />
-                                            <Tab disabled={true} label="Buy" />
-                                        </Tabs>
-                                    </div>
-                                    <div className={classes.contentDrawer}>
-                                        <CardContent>
-                                            {
-                                                edit &&
-                                                    <form noValidate autoComplete="off">
-                                                        <ChipInput
-                                                            value={_tags_input}
-                                                            onChange={(chips) => {this._handle_tags_input_change(chips)}}
-                                                            onDelete={(value) => {this._handle_tags_input_delete(value)}}
-                                                            onAdd={(value) => {this._handle_tags_input_add(value)}}
-                                                            error={ Boolean(_tags_input_error) }
-                                                            helperText={_tags_input_error}
-                                                            allowDuplicates={false}
-                                                            fullWidth
-                                                            label="Enter up to six tags"
-                                                        />
-                                                    </form>
-                                            }
-                                            {
-                                                edit ?
-                                                    <TextField
-                                                        id="title_textfield"
-                                                        fullWidth
-                                                        label="Title"
-                                                        value={_title_input}
-                                                        onChange={this._handle_title_input_change}
-                                                        style={{marginBottom: 12}}
-                                                    />:
-                                                    <Typography gutterBottom variant="h4" component="h3">
-                                                        {_translated_title.length ? _translated_title: post.title}
-                                                    </Typography>
-                                            }
-                                            {
-                                                _title_prediction &&
-                                                    <div>
-                                                        {
-                                                            Object.entries(_title_prediction).map((entry) => {
-
-                                                                const [ prediction_tag, prediction_value ] = entry;
-                                                                const percent_true_value = Math.round(prediction_value * 100);
-
-                                                                return (
-                                                                    <Chip size={"small"}
-                                                                          className={classes.chip}
-                                                                          style={{backgroundColor: `hsl(${100 - percent_true_value}deg 60% 60%)`}}
-                                                                          label={`${prediction_tag.replace("_", " ")} ${Math.round(prediction_value * 100)}%`}/>
-                                                                );
-                                                            })
-                                                        }
-                                                    </div>
-                                            }
-                                            {
-                                                edit ?
-                                                    <TextField
-                                                        id="description_textfield"
-                                                        label="Description"
-                                                        multiline
-                                                        fullWidth
-                                                        value={_description_input}
-                                                        onChange={this._handle_description_input_change}
-                                                        size="small"
-                                                        style={{marginBottom: 12}}
-                                                    />:
-                                                    <Collapse
-                                                        onClick={_is_description_collapsed ? this._handle_toggle_description: () => {}}
-                                                        in={!_is_description_collapsed || (post.description || "").length <= 1000}
-                                                        timeout="auto"
-                                                        collapsedHeight={"128px"}
-                                                        className={_is_description_collapsed && (post.description || "").length > 1000 ? classes.descriptionCollapsed: classes.description}>
-                                                        <div>
-                                                            <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>
-                                                                {_translated_description.length ? postprocess_text(_translated_description): postprocess_text(post.description)}
-                                                            </ReactMarkdown>
-                                                            {!_is_description_collapsed && (post.description || "").length > 1000 && <a onClick={this._handle_toggle_description}>See less...</a>}
-                                                        </div>
-                                                    </Collapse>
-                                            }
-                                            {
-                                                _description_prediction &&
-                                                    <div>
-                                                        {
-                                                            Object.entries(_description_prediction).map((entry) => {
-
-                                                                const [ prediction_tag, prediction_value ] = entry;
-                                                                const percent_true_value = Math.round(prediction_value * 100);
-
-                                                                return (
-                                                                    <Chip size={"small"}
-                                                                          className={classes.chip}
-                                                                          style={{backgroundColor: `hsl(${100 - percent_true_value}deg 60% 60%)`}}
-                                                                          label={`${prediction_tag.replace("_", " ")} ${percent_true_value}%`}/>
-                                                                );
-                                                            })
-                                                        }
-                                                    </div>
-                                            }
-                                            {
-                                                edit &&
-                                                <FormControl component="fieldset" className={classes.formControl}>
-                                                    <FormLabel component="legend">Assign responsibilities</FormLabel>
-                                                    <FormGroup>
-                                                        <FormControlLabel
-                                                            control={<Checkbox checked={_responsabilities.unsourced} onChange={this.handle_disclaimer_change} name="unsourced" />}
-                                                            label="I did not paint or take this photo myself or the source image doesn't belong to me."
-                                                        />
-                                                        <FormControlLabel
-                                                            control={<Checkbox checked={_responsabilities.opinion} onChange={this.handle_disclaimer_change} name="opinion" />}
-                                                            label="This post is NOT a press-release or a checked-fact. It is only my experience and / or my own perception-description."
-                                                        />
-                                                        <FormControlLabel
-                                                            control={<Checkbox checked={_responsabilities.hurt} onChange={this.handle_disclaimer_change} name="hurt" />}
-                                                            label="This post contains nudity, hate, madness, or anything that may disturb someone else's freedom of expression. (NSFW)"
-                                                        />
-                                                    </FormGroup>
-                                                    <FormHelperText>Be careful!</FormHelperText>
-                                                </FormControl>
-                                            }
-                                            {
-                                                edit &&
-                                                    <div className={classes.tensorflowContainer}>
-                                                        <p>Discover with TensorFlow's machine learning, what's the intention of your writing, get ready for it.</p>
-                                                        <div className={classes.tensorflowWrapper}>
-                                                            <Button
-                                                                variant="text"
-                                                                color="primary"
-                                                                disabled={_is_prediction_loading}
-                                                                onClick={this._evaluate_content_with_tensorflow}
-                                                            >
-                                                                What's kind
-                                                            </Button>
-                                                            {_is_prediction_loading && <CircularProgress size={24} className={classes.tensorflowButtonProgress} />}
-                                                        </div>
-                                                    </div>
-                                            }
-                                        </CardContent>
-                                        <CardContent>
-                                            <Typography gutterBottom variant="h5" component="h4">Palette</Typography>
-                                            <PixelColorPalette
-                                                padding="12px 0px"
-                                                gap="8px"
-                                                align="left"
-                                                colors={_color_palette.colors}
-                                                onColorClick={(event, color) => {this._set_selection_by_colors(color)}}
-                                                selected_colors={[]}
-                                                transparent={false}
-                                            />
-                                        </CardContent>
-                                        <CardContent>
-                                            <Typography gutterBottom variant="h5" component="h4">Details</Typography>
-                                            <Table style={{margin: "12px 0px"}} aria-label="simple table">
-                                                <TableBody>
-                                                    <TableRow>
-                                                        <TableCell align="left">Size:</TableCell>
-                                                        <TableCell align="right">{_image_details.width} x {_image_details.height}</TableCell>
-                                                    </TableRow>
-                                                    <TableRow>
-                                                        <TableCell align="left">Colors:</TableCell>
-                                                        <TableCell align="right">{_image_details.number_of_colors}</TableCell>
-                                                    </TableRow>
-                                                </TableBody>
-                                            </Table>
-                                        </CardContent>
-                                        {tags.length > 1 && !edit &&
-                                            <CardContent style={{padding: "16 16 0 16"}}>
-                                                <Typography gutterBottom variant="h5" component="h4">Tags</Typography>
-                                            </CardContent>
-                                        }
-                                        { tags.length > 1 && !edit &&
-                                            <CardContent className={classes.postTags}>
-                                            {
-                                                tags.map((tag, index) => {
-                                                    return index ? <Chip clickable className={classes.postTag} key={tag} variant={"default"} size={"small"} label={`#${tag}`} onClick={() => {this._open_tag(tag)}}/> : null;
-                                                })
-                                            }
-                                            </CardContent>
-                                        }
-                                        <CardContent style={{padding: "16 16 0 16"}}>
-                                            <Typography gutterBottom variant="h5" component="h4">Download</Typography>
-                                        </CardContent>
-                                        <CardContent className={classes.scrollOverflowMaxWidthMobile} style={{margin: "0 16 24 16", padding: "0"}}>
-                                            <ButtonGroup style={{margin: "12px 16px"}}>
-                                                <Button onClick={() => {this._download_image(1)}}>1px</Button>
-                                                <Button onClick={() => {this._download_image(16)}}>16px</Button>
-                                                <Button onClick={() => {this._download_image(32)}}>32px</Button>
-                                                <Button onClick={() => {this._download_image(64)}}>64px</Button>
-                                                <Button onClick={() => {this._download_image(128)}}>128px</Button>
-                                            </ButtonGroup>
-                                        </CardContent>
-                                        <CardContent>
-                                            {
-                                                (open && edit && _drawer_open && _window_width < 1280) &&
-                                                <Button
-                                                    fullWidth
-                                                    variant="contained"
-                                                    color="primary"
-                                                    onClick={this._handle_send_click}
-                                                >
-                                                    Publish the artistic situation
-                                                </Button>
-
-                                            }
-                                        </CardContent>
-                                    </div>
-                                </SwipeableDrawer>
                                 <div style={{contentVisibility: "visible", contain: "layout paint size style"}} className={classes.contentImage} dataid={post.id}>
                                     <div className={classes.contentCanvasLight}>
                                         <CanvasPixels
@@ -1778,6 +1467,317 @@ class PixelDialogPost extends React.Component {
                         </div>
                     </div>
                 </Dialog>
+                <SwipeableDrawer
+                    swipeAreaWidth={(_window_width > 1280) ? 0: 50}
+                    keepMounted={keepMounted}
+                    ModalProps={{disablePortal: false, hideBackdrop: _window_width > 1280, BackdropProps:{classes: {root: classes.drawerModalBackdropRoot}}}}
+                    onClose={this._handle_drawer_icon_close}
+                    onOpen={this._handle_drawer_open}
+                    className={classes.drawer}
+                    variant={(_window_width > 1280)  ? "temporary": "temporary"}
+                    open={(open && _window_width > 1280) || (open && _drawer_open)}
+                    classes={{
+                        paper: classes.drawerPaper,
+                        modal: classes.drawerModal,
+                    }}
+                    anchor={_window_width < 1280 ? "bottom": "left"}
+                >
+                    <div className={classes.drawerHeader}>
+                        <CardHeader
+                            avatar={
+                                <Avatar aria-label="Author" className={classes.avatar} src={(author_account.profile_image || "").replace("/0x0/", "/40x40/")}>
+                                    {!author_account.name || post.author}
+                                </Avatar>
+                            }
+                            title={
+                                <span className={classes.headerTitle}>
+                                                    <span className={classes.headerAuthor} onClick={this._open_profile}>{`@${post.author}`}</span>
+                                                    <span> in </span>
+                                                    <span className={classes.headerCategory} onClick={() => {this._open_tag((tags[1] || tags[0]))}}>{`#${(tags[1] || tags[0])}`}</span>
+                                                </span>
+                            }
+                            subheader={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null}
+                            action={
+                                !edit && TRANSLATION_AVAILABLE.includes(lang) &&
+                                <Button variant={"contained"} color={"secondary"} disabled={is_translating} onClick={this._toggle_translate_everything} startIcon={has_translated ? <TranslateOffIcon />: <TranslateIcon />}>
+                                    {has_translated ? "Original ": `${document.documentElement.lang.toUpperCase()} `}
+                                    {is_translating && <CircularProgress size={24} className={classes.buttonProgress} />}
+                                </Button>
+                            }
+                        />
+                        <CardContent>
+                            <ButtonGroup size={"small"} color="primary" aria-label="large outlined primary button group">
+                                <Tooltip title="WhatsApp" aria-label="WhatsApp">
+                                    <Button className={classes.shareIconButtonWhatsApp} onClick={(event) => {this._open_url(event, `https://api.whatsapp.com/send/?phone&text=${url}&app_absent=0`)}}>
+                                        <WhatsAppIcon fontSize="small" />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title="Facebook" aria-label="Facebook">
+                                    <Button className={classes.shareIconButtonFacebook} onClick={(event) => {this._open_url(event, `https://www.facebook.com/sharer/sharer.php?u=${url}`)}}>
+                                        <FacebookIcon fontSize="small" />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title="Pinterest" aria-label="Pinterest">
+                                    <Button className={classes.shareIconButtonPinterest} onClick={(event) => {this._open_url(event, `https://www.pinterest.com/pin/create/button/?url=${url}`)}}>
+                                        <PinterestIcon fontSize="small" />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title="Reddit" aria-label="Reddit">
+                                    <Button className={classes.shareIconButtonReddit} onClick={(event) => {this._open_url(event, `https://www.reddit.com/submit?url=${url}`)}}>
+                                        <RedditIcon fontSize="small" />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title="Twitter" aria-label="Twitter">
+                                    <Button className={classes.shareIconButtonTwitter} onClick={(event) => {this._open_url(event, `https://twitter.com/intent/tweet?url=${url}`)}}>
+                                        <TwitterIcon fontSize="small" />
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title="LinkedIn" aria-label="LinkedIn" onClick={(event) => {this._open_url(event, `https://www.linkedin.com/sharing/share-offsite/?url=${url}`)}}>
+                                    <Button className={classes.shareIconButtonLinkedIn}>
+                                        <LinkedInIcon fontSize="small" />
+                                    </Button>
+                                </Tooltip>
+                            </ButtonGroup>
+                            {
+                                !edit && post &&
+                                <div className={classes.nsTags}>
+                                    {Object.entries(post.responsabilities || {}).map((entry) => {
+
+                                        const [ key, value ] = entry;
+
+                                        const r_text = {
+                                            unsourced: "He/She did not paint or take this photo himself or the source image doesn't belong to him/her.",
+                                            opinion: "This post is NOT a press-release or a checked-fact. It is only his/her experience and / or a personal perception-description.",
+                                            hurt: "This post contains nudity, hate, madness, or anything that may disturb someone else's freedom of expression. (NSFW)"
+                                        };
+
+                                        if(["unsourced", "opinion", "hurt"].includes(key)) {
+
+                                            return (
+                                                <Tooltip title={r_text[key] + (value ? " [TRUE]": " [FALSE]")}>
+                                                    <span style={value ? {}: {textDecoration: "line-through"}}>{key}</span>
+                                                </Tooltip>
+                                            );
+                                        }
+                                    })}
+                                </div>
+                            }
+                        </CardContent>
+                        <Tabs
+                            value={_drawer_tab_index}
+                            indicatorColor="primary"
+                            textColor="primary"
+                            onChange={this._handle_drawer_tab_index_change}
+                        >
+                            <Tab label="Details" />
+                            <Tab disabled={true} label="Comments" />
+                            <Tab disabled={true} label="Buy" />
+                        </Tabs>
+                    </div>
+                    <div className={classes.contentDrawer}>
+                        <CardContent>
+                            {
+                                edit &&
+                                <form noValidate autoComplete="off">
+                                    <ChipInput
+                                        value={_tags_input}
+                                        onChange={(chips) => {this._handle_tags_input_change(chips)}}
+                                        onDelete={(value) => {this._handle_tags_input_delete(value)}}
+                                        onAdd={(value) => {this._handle_tags_input_add(value)}}
+                                        error={ Boolean(_tags_input_error) }
+                                        helperText={_tags_input_error}
+                                        allowDuplicates={false}
+                                        fullWidth
+                                        label="Enter up to six tags"
+                                    />
+                                </form>
+                            }
+                            {
+                                edit ?
+                                    <TextField
+                                        id="title_textfield"
+                                        fullWidth
+                                        label="Title"
+                                        value={_title_input}
+                                        onChange={this._handle_title_input_change}
+                                        style={{marginBottom: 12}}
+                                    />:
+                                    <Typography gutterBottom variant="h4" component="h3">
+                                        {_translated_title.length ? _translated_title: post.title}
+                                    </Typography>
+                            }
+                            {
+                                _title_prediction &&
+                                <div>
+                                    {
+                                        Object.entries(_title_prediction).map((entry) => {
+
+                                            const [ prediction_tag, prediction_value ] = entry;
+                                            const percent_true_value = Math.round(prediction_value * 100);
+
+                                            return (
+                                                <Chip size={"small"}
+                                                      className={classes.chip}
+                                                      style={{backgroundColor: `hsl(${100 - percent_true_value}deg 60% 60%)`}}
+                                                      label={`${prediction_tag.replace("_", " ")} ${Math.round(prediction_value * 100)}%`}/>
+                                            );
+                                        })
+                                    }
+                                </div>
+                            }
+                            {
+                                edit ?
+                                    <TextField
+                                        id="description_textfield"
+                                        label="Description"
+                                        multiline
+                                        fullWidth
+                                        value={_description_input}
+                                        onChange={this._handle_description_input_change}
+                                        size="small"
+                                        style={{marginBottom: 12}}
+                                    />:
+                                    <Collapse
+                                        onClick={_is_description_collapsed ? this._handle_toggle_description: () => {}}
+                                        in={!_is_description_collapsed || (post.description || "").length <= 1000}
+                                        timeout="auto"
+                                        collapsedHeight={"128px"}
+                                        className={_is_description_collapsed && (post.description || "").length > 1000 ? classes.descriptionCollapsed: classes.description}>
+                                        <div>
+                                            <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>
+                                                {_translated_description.length ? postprocess_text(_translated_description): postprocess_text(post.description)}
+                                            </ReactMarkdown>
+                                            {!_is_description_collapsed && (post.description || "").length > 1000 && <a onClick={this._handle_toggle_description}>See less...</a>}
+                                        </div>
+                                    </Collapse>
+                            }
+                            {
+                                _description_prediction &&
+                                <div>
+                                    {
+                                        Object.entries(_description_prediction).map((entry) => {
+
+                                            const [ prediction_tag, prediction_value ] = entry;
+                                            const percent_true_value = Math.round(prediction_value * 100);
+
+                                            return (
+                                                <Chip size={"small"}
+                                                      className={classes.chip}
+                                                      style={{backgroundColor: `hsl(${100 - percent_true_value}deg 60% 60%)`}}
+                                                      label={`${prediction_tag.replace("_", " ")} ${percent_true_value}%`}/>
+                                            );
+                                        })
+                                    }
+                                </div>
+                            }
+                            {
+                                edit &&
+                                <FormControl component="fieldset" className={classes.formControl}>
+                                    <FormLabel component="legend">Assign responsibilities</FormLabel>
+                                    <FormGroup>
+                                        <FormControlLabel
+                                            control={<Checkbox checked={_responsabilities.unsourced} onChange={this.handle_disclaimer_change} name="unsourced" />}
+                                            label="I did not paint or take this photo myself or the source image doesn't belong to me."
+                                        />
+                                        <FormControlLabel
+                                            control={<Checkbox checked={_responsabilities.opinion} onChange={this.handle_disclaimer_change} name="opinion" />}
+                                            label="This post is NOT a press-release or a checked-fact. It is only my experience and / or my own perception-description."
+                                        />
+                                        <FormControlLabel
+                                            control={<Checkbox checked={_responsabilities.hurt} onChange={this.handle_disclaimer_change} name="hurt" />}
+                                            label="This post contains nudity, hate, madness, or anything that may disturb someone else's freedom of expression. (NSFW)"
+                                        />
+                                    </FormGroup>
+                                    <FormHelperText>Be careful!</FormHelperText>
+                                </FormControl>
+                            }
+                            {
+                                edit &&
+                                <div className={classes.tensorflowContainer}>
+                                    <p>Discover with TensorFlow's machine learning, what's the intention of your writing, get ready for it.</p>
+                                    <div className={classes.tensorflowWrapper}>
+                                        <Button
+                                            variant="text"
+                                            color="primary"
+                                            disabled={_is_prediction_loading}
+                                            onClick={this._evaluate_content_with_tensorflow}
+                                        >
+                                            What's kind
+                                        </Button>
+                                        {_is_prediction_loading && <CircularProgress size={24} className={classes.tensorflowButtonProgress} />}
+                                    </div>
+                                </div>
+                            }
+                        </CardContent>
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" component="h4">Palette</Typography>
+                            <PixelColorPalette
+                                padding="12px 0px"
+                                gap="8px"
+                                align="left"
+                                colors={_color_palette.colors}
+                                onColorClick={(event, color) => {this._set_selection_by_colors(color)}}
+                                selected_colors={[]}
+                                transparent={false}
+                            />
+                        </CardContent>
+                        <CardContent>
+                            <Typography gutterBottom variant="h5" component="h4">Details</Typography>
+                            <Table style={{margin: "12px 0px"}} aria-label="simple table">
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell align="left">Size:</TableCell>
+                                        <TableCell align="right">{_image_details.width} x {_image_details.height}</TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell align="left">Colors:</TableCell>
+                                        <TableCell align="right">{_image_details.number_of_colors}</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                        {tags.length > 1 && !edit &&
+                        <CardContent style={{padding: "16 16 0 16"}}>
+                            <Typography gutterBottom variant="h5" component="h4">Tags</Typography>
+                        </CardContent>
+                        }
+                        { tags.length > 1 && !edit &&
+                        <CardContent className={classes.postTags}>
+                            {
+                                tags.map((tag, index) => {
+                                    return index ? <Chip clickable className={classes.postTag} key={tag} variant={"default"} size={"small"} label={`#${tag}`} onClick={() => {this._open_tag(tag)}}/> : null;
+                                })
+                            }
+                        </CardContent>
+                        }
+                        <CardContent style={{padding: "16 16 0 16"}}>
+                            <Typography gutterBottom variant="h5" component="h4">Download</Typography>
+                        </CardContent>
+                        <CardContent className={classes.scrollOverflowMaxWidthMobile} style={{margin: "0 16 24 16", padding: "0"}}>
+                            <ButtonGroup style={{margin: "12px 16px"}}>
+                                <Button onClick={() => {this._download_image(1)}}>1px</Button>
+                                <Button onClick={() => {this._download_image(16)}}>16px</Button>
+                                <Button onClick={() => {this._download_image(32)}}>32px</Button>
+                                <Button onClick={() => {this._download_image(64)}}>64px</Button>
+                                <Button onClick={() => {this._download_image(128)}}>128px</Button>
+                            </ButtonGroup>
+                        </CardContent>
+                        <CardContent>
+                            {
+                                (open && edit && _drawer_open && _window_width < 1280) &&
+                                <Button
+                                    fullWidth
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={this._handle_send_click}
+                                >
+                                    Publish the artistic situation
+                                </Button>
+
+                            }
+                        </CardContent>
+                    </div>
+                </SwipeableDrawer>
             </div>
         );
     }

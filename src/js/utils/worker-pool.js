@@ -1,4 +1,8 @@
 const workerpool = require('workerpool');
-const pool = workerpool.pool(null, {minWorkers: "max"});
 
-module.exports = pool;
+if(!Boolean(window.workerpool_pool)) {
+
+    window.workerpool_pool = workerpool.pool(null, {minWorkers: "max"});
+}
+
+module.exports = window.workerpool_pool;

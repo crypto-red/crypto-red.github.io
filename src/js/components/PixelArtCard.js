@@ -42,7 +42,7 @@ const styles = theme => ({
         position: "relative",
         boxSizing: "content-box",
         width: "100%",
-        height: "auto",
+        height: "100%",
         borderRadius: 4,
         backgroundColor: "transparent",
         willChange: "top, left, width, height",

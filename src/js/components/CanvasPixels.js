@@ -629,7 +629,7 @@ class CanvasPixels extends React.Component {
                 break;
         }
 
-        if(is_mobile_or_tablet && this.state.perspective) {
+        if(is_mobile_or_tablet && this.state.perspective && this.state.has_shown_canvas_once) {
 
             this.setState({perspective_coordinate: [x, y], perspective_coordinate_last_change: Date.now()}, () => {
 
@@ -637,7 +637,7 @@ class CanvasPixels extends React.Component {
 
                     this._request_force_update(true, false, () => {
 
-                        this._notify_perspective_coordinate_changes([x, y, this.state.scale]);
+                        //this._notify_perspective_coordinate_changes([x, y, this.state.scale]);
                     });
                 }
             });
@@ -646,7 +646,7 @@ class CanvasPixels extends React.Component {
 
     set_perspective_coordinate = (array) => {
 
-        if(!is_mobile_or_tablet && this.state.perspective) {
+        if(!is_mobile_or_tablet && this.state.perspective && this.state.has_shown_canvas_once) {
 
             this.setState({perspective_coordinate: array, perspective_coordinate_last_change: Date.now()}, () => {
 
@@ -8160,7 +8160,10 @@ class CanvasPixels extends React.Component {
                 this.props.on_elevation_change(this.state._moves_speed_average_now);
             }
 
-            this._request_force_update(true, true);
+            if(this.state.has_shown_canvas_once) {
+
+                this._request_force_update(true, true);
+            }
         });
     };
 
@@ -8202,7 +8205,7 @@ class CanvasPixels extends React.Component {
 
                 if(new_moves_speed_average_now !== _moves_speed_average_now && this.state._scale_move_speed_timestamp === now) {
 
-                    this._request_force_update(true, true);
+                    this._request_force_update(false, true);
                 }
             });
         }

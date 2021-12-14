@@ -9,9 +9,9 @@ import {clean_json_text} from "./json";
 
 import { IMAGE_PROXY_URL } from "../utils/constants";
 
-const hive_posts_db = new PouchDB("hive_posts_db", {revs_limit: 0, auto_compaction: false});
-const hive_accounts_db = new PouchDB("hive_accounts_db", {revs_limit: 0, auto_compaction: false});
-const hive_queries_db = new PouchDB("hive_queries_db", {revs_limit: 0, auto_compaction: false});
+const hive_posts_db = new PouchDB("hive_posts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
+const hive_accounts_db = new PouchDB("hive_accounts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
+const hive_queries_db = new PouchDB("hive_queries_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
 
 import React from "react";
 import AngryEmojiSvg from "../twemoji/react/1F624";
