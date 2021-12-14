@@ -4417,7 +4417,6 @@ class CanvasPixels extends React.Component {
         this.setState({
             _event_button: -1,
             _mouse_down: false,
-            _previous_single_pointer_down_x_y: [-1, -1],
         }, () => {
 
             if(_mouse_down !== false) {

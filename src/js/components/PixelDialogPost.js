@@ -105,7 +105,7 @@ const styles = theme => ({
             left: 0,
         },
         "&::before": {
-            textShadow: "0 0px 24px #000000ff",
+            textShadow: "0 0px 24px #060f23",
             position: "absolute",
             width: "80%",
             height: "30px",
@@ -122,13 +122,13 @@ const styles = theme => ({
         },
         "&::after": {
             zIndex: 1,
-            textShadow: "0 0px 12px #000000",
+            textShadow: "0 0px 12px #060f23",
             position: "absolute",
             width: "80%",
             height: "30px",
             left: "10%",
             top: "0px",
-            background: "#000000",
+            background: "#060f23",
             content: `""`,
             textAlign: "center",
             clipPath: "polygon(0 0, 100% 0, 80% 100%, 20% 100%)",
@@ -155,7 +155,6 @@ const styles = theme => ({
         height: "calc(100vh)",
         position: "absolute",
         overflow: "hidden",
-        mixBlendMode: "exclusion",
         [theme.breakpoints.down("md")]: {
             width: "100vw",
             overflow: "hidden",
@@ -1378,7 +1377,7 @@ class PixelDialogPost extends React.Component {
                                 translated_description={_translated_description}
                                 translated_title={_translated_title}
                                 has_translation_started={_has_translation_started}
-                                color={_color_palette.inverse_brightest_color_with_half_saturation}
+                                color={_color_palette.brightest_color}
                                 classname={classes.belowContent} />
                         }
                         <div className={classes.content}>

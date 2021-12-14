@@ -419,7 +419,7 @@ class DrawerContent extends React.Component {
                     <div>
                         <List>
                             <ListItem button onClick={this._open_gallery_page}>
-                                <ListItemText primary={"PIXELARTVERSE 2.5D"} />
+                                <ListItemText primary={"METAVERSE (2.5D NFTs)"} secondary={<span style={{color:"#bbb"}}>Featuring Artistic Situations</span>} />
                             </ListItem>
                             <ListItem button onClick={this._open_dashboard_page}>
                                 <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />

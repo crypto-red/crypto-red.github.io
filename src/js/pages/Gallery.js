@@ -357,7 +357,7 @@ class Gallery extends React.Component {
 
     componentDidMount() {
 
-        actions.trigger_snackbar(`Inside the new laboratory of W.C.R.'s Artistic Situations! Not less than just NFTs! We make the daily life a creative experience, continually original-delusional-ecstatic situations.`, 5000);
+        actions.trigger_snackbar(`Inside W.C.R's Artistic Situations "Museum"! Not less than just having fun!`, 5000);
         window.addEventListener("resize", this._update_dimensions_handler);
         ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 

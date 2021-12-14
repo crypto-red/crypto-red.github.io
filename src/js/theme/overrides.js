@@ -81,7 +81,8 @@ const overrides = {
                 borderRadius: 8
             },
             ".MuiAvatar-root": {
-                contain: "strict",
+                contain: "paint",
+                contentVisibility: "auto",
             },
             ".MuiTableSortLabel-root.MuiTableSortLabel-root.MuiTableSortLabel-active": {
                 color: "inherit"

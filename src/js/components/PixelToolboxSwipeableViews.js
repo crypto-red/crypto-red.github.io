@@ -1140,7 +1140,8 @@ class PixelToolboxSwipeableViews extends React.Component {
                                             <img style={{width: "100%"}}
                                                  src={pixel_laboratory}
                                             />
-                                            <p>Be careful, your artistic situations will now mostly outlives you in terms of life span, thoses pixels arts you publish are 100% stored on the blockchain, and for free, limited in function of your account's value.</p>
+                                            <p><b>From the real world, abduct any artistic situation presenting itself into the pixel art laboratory located in the metaverse ― and earn plenty of cryptocurrencies!</b></p>
+                                            <p>Be careful, your artistic situations will now mostly outlives you in terms of life span, those pixels arts you publish are 100% stored on the blockchain, and for free, limited in function of your account's value.</p>
                                             <p>This does mean we're finally in a real context where things now mostly live forever. Enjoy our laboratory!</p>
                                             <blockquote>
                                                 “Time moves in one direction, memory another. We are that strange species that constructs artifacts intended to counter the natural flow of forgetting.”<br />
