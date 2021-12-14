@@ -168,6 +168,9 @@ class CanvasPixels extends React.Component {
             shadow_color: props.shadow_color || "#9f9f9f",
             light: props.light || 1,
             perspective_coordinate: [0, 0],
+            perspective_coordinate_last_change: 0,
+            perspective_coordinate_notify_after_ms: 1000 / 20,
+            perspective_coordinate_last_notify: 0,
             animation: props.animation || true,
             animation_duration: props.animation_duration || 225,
             move_using_full_container: props.move_using_full_container,
@@ -209,7 +212,7 @@ class CanvasPixels extends React.Component {
             scale_move_y: 0,
             _scale_move_speed_timestamp: 0,
             _moves_speeds: [],
-            _moves_speed_average_now: -2,
+            _moves_speed_average_now: -24,
             mine_player_direction: props.mine_player_direction || "UP",
             _mine_index: null,
             _previous_mine_player_index: null,
@@ -628,15 +631,14 @@ class CanvasPixels extends React.Component {
 
         if(is_mobile_or_tablet && this.state.perspective) {
 
-            this.setState({perspective_coordinate: [x, y]}, () => {
+            this.setState({perspective_coordinate: [x, y], perspective_coordinate_last_change: Date.now()}, () => {
 
-                if(this.state._moves_speed_average_now < -1) {
+                if(this.state._moves_speed_average_now <= -24) {
 
-                    this._request_force_update(true, false, () => {
-
-                        this._notify_perspective_coordinate_changes([x, y, this.state.scale]);
-                    });
+                    this._request_force_update(true, false);
                 }
+
+                this._notify_perspective_coordinate_changes([x, y, this.state.scale]);
             });
         }
     };
@@ -645,7 +647,7 @@ class CanvasPixels extends React.Component {
 
         if(!is_mobile_or_tablet && this.state.perspective) {
 
-            this.setState({perspective_coordinate: array}, () => {
+            this.setState({perspective_coordinate: array, perspective_coordinate_last_change: Date.now()}, () => {
 
                 this._request_force_update(true, false, () => {
 
@@ -659,7 +661,14 @@ class CanvasPixels extends React.Component {
 
         if(this.props.onPerspectiveCoordinateChanges) {
 
-            this.props.onPerspectiveCoordinateChanges(array);
+            const {perspective_coordinate_last_notify, perspective_coordinate_notify_after_ms} = this.state;
+            const now = Date.now();
+
+            if(perspective_coordinate_last_notify + perspective_coordinate_notify_after_ms < now){
+
+                this.setState({perspective_coordinate_last_notify: now})
+                this.props.onPerspectiveCoordinateChanges(array);
+            }
         }
     };
 
@@ -3900,6 +3909,7 @@ class CanvasPixels extends React.Component {
         const { _previous_single_pointer_down_x_y, _previous_initial_scale_move } = this.state;
 
         const [from_x, from_y] = _previous_single_pointer_down_x_y;
+        if(from_x === -1 || from_y === -1) { return }
         const [init_x, init_y] = _previous_initial_scale_move;
 
         const pos = this._get_canvas_pos();
@@ -4401,12 +4411,12 @@ class CanvasPixels extends React.Component {
 
     _handle_canvas_mouse_up = (event) => {
 
-        const { scale_move_x, scale_move_y, _mouse_down, _pointer_events } = this.state;
+        const { scale_move_x, scale_move_y, _mouse_down } = this.state;
 
         this.setState({
             _event_button: -1,
             _mouse_down: false,
-            _previous_single_pointer_down_x_y: _pointer_events.length >= 1 ? [_pointer_events[0].clientX, _pointer_events[0].clientY]: [-1, -1],
+            _previous_single_pointer_down_x_y: [-1, -1],
         }, () => {
 
             if(_mouse_down !== false) {
@@ -8175,9 +8185,9 @@ class CanvasPixels extends React.Component {
         let { _moves_speed_average_now, _scale_move_speed_timestamp } = this.state
         const now = Date.now();
 
-        if(now - _scale_move_speed_timestamp >= 60 && _moves_speed_average_now !== -2)  {
+        if(now - _scale_move_speed_timestamp >= 60 && _moves_speed_average_now !== -24)  {
 
-            const new_moves_speed_average_now = Math.max(_moves_speed_average_now - 1, -2);
+            const new_moves_speed_average_now = Math.max(_moves_speed_average_now - 1, -24);
 
             this.setState({
                 _moves_speed_average_now: new_moves_speed_average_now,
@@ -8286,12 +8296,10 @@ class CanvasPixels extends React.Component {
             has_shown_canvas_once,
             perspective,
             light,
-            shadow_size,
-            shadow_color,
             _kb,
         } = this.state;
 
-        let { perspective_coordinate } = this.state;
+        let { perspective_coordinate, perspective_coordinate_last_change } = this.state;
 
         //perspective_coordinate[0] = is_mobile_or_tablet ? Math.floor(perspective_coordinate[0] / 2) * 2: perspective_coordinate[0];
         //perspective_coordinate[1] = is_mobile_or_tablet ? Math.floor(perspective_coordinate[1] / 2) * 2: perspective_coordinate[1];
@@ -8316,12 +8324,6 @@ class CanvasPixels extends React.Component {
             background_image_style_props: {};
 
         const cursor = this._get_cursor(_is_on_resize_element, _is_image_import_mode, _mouse_down, tool, select_mode);
-
-        let shadow_depth = Math.abs(_moves_speed_average_now);
-        shadow_depth = (_canvas_event_target === "CANVAS" && _mouse_down && _moves_speed_average_now < 2) ? 1 : shadow_depth;
-        shadow_depth = (shadow_depth === 0) ? 0.75 : shadow_depth;
-
-        let shadow = this._get_shadow(Math.round(shadow_depth / 2) * 6);
 
         const canvas_wrapper_width = Math.round(pxl_width * _screen_zoom_ratio * scale);
         const canvas_wrapper_height = Math.round(pxl_height * _screen_zoom_ratio * scale);
@@ -8362,7 +8364,7 @@ class CanvasPixels extends React.Component {
                     <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
                          draggable={"false"}
                          style={{
-                             willChange: (_moves_speed_average_now > 0 || (perspective && (rotate_x || rotate_y))) ? "transform": "",
+                             willChange: (_moves_speed_average_now !== -24|| (perspective && (perspective_coordinate_last_change + 500 > Date.now()))) ? "transform": "",
                              mixBlendMode: "hard-light",
                              borderWidth: canvas_wrapper_border_width,
                              borderStyle: "solid",
@@ -8377,7 +8379,7 @@ class CanvasPixels extends React.Component {
                              height: Math.round(canvas_wrapper_height  * 1000) / 1000,
                              transition: `filter 200ms linear 0ms`,
                              filter: has_shown_canvas_once && !_hidden ? "opacity(1)": "opacity(0)",
-                             transform: `translate(${Math.round(scale_move_x * 1000) / 1000}px, ${Math.round(scale_move_y * 1000) / 1000}px) rotateX(${rotate_x}deg) rotateY(${rotate_y}deg) rotateZ(0deg)`,
+                             transform: `translate3d(${Math.round(scale_move_x * 1000) / 1000}px, ${Math.round(scale_move_y * 1000) / 1000}px, 0px) rotateX(${rotate_x}deg) rotateY(${rotate_y}deg) rotateZ(0deg)`,
                              transformOrigin: "center middle",
                              boxSizing: "content-box",
                              overflow: "visible",

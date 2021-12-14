@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v44";
+var CACHE = "network-or-cache-v45";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -12,7 +12,7 @@ self.addEventListener("install", function(evt) {
       "/index.html",
       "/404.html",
       "/client.min.js",
-      "/client.min.js?v=44",
+      "/client.min.js?v=45",
       "/src/fonts/NotoSans-Regular.ttf",
       "/src/fonts/SpecialElite-Regular.ttf",
       "/src/fonts/NotoSansMono-Regular.ttf",
@@ -97,12 +97,20 @@ self.addEventListener("fetch", function(event) {
   }else if(event.request.url.includes("client.min.js") && event.request.mode === "same-origin") {
 
     // Return the same index.html page for all navigation query
-    event.respondWith( caches.match("/client.min.js") || fetch(event.request));
+    event.respondWith( caches.match("/client.min.js").then(function (response) {
+      return (
+          response || fetch(event.request).then(function (response){return response})
+      );
+    }));
 
   }else if(event.request.mode === "navigate") {
 
     // Return the same index.html page for all navigation query
-    event.respondWith( caches.match("/") || fetch(event.request));
+    event.respondWith( caches.match("/").then(function (response) {
+      return (
+          response || fetch(event.request).then(function (response) {return response})
+      );
+    }));
   }
 });
 
