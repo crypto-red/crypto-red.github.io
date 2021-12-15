@@ -486,7 +486,7 @@ class Gallery extends React.Component {
                         force_then: true,
                     }, (err, data) => {
 
-                        if (((data || {}).posts || []).length >= 1) {
+                        if (!err && ((data || {}).posts || []).length >= 1) {
 
                             const end_data = data.end_author && data.end_permlink ? {
                                 _start_author: data.end_author,
@@ -1221,6 +1221,7 @@ class Gallery extends React.Component {
                         _is_search_mode ?
                             <AppBar position="static" className={classes.AppBar}>
                                 <Tabs className={classes.tabs}
+                                      focusRipple={false}
                                       disableFocusRipple={true}
                                       variant="fullWidth"
                                       onChange={this._handle_search_sorting_change}
@@ -1297,7 +1298,7 @@ class Gallery extends React.Component {
                 }
 
                 <Grow in>
-                    <img onClick={this._open_editor} className={classes.fab} style={{maxWidth: "100%", height: 64, filter: "drop-shadow(0px 0px 8px black)"}}
+                    <img onClick={this._open_editor} className={classes.fab} style={{maxWidth: "100%", height: 64, filter: "drop-shadow(0px 0px 8px #1d1d88)"}}
                          src={pixel_laboratory}
                     />
                 </Grow>

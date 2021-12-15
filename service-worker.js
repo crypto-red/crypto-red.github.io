@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v48";
+var CACHE = "network-or-cache-v49";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -9,10 +9,9 @@ self.addEventListener("install", function(evt) {
   evt.waitUntil(caches.open(CACHE).then(function (cache) {
     cache.addAll([
       "/",
-      "/index.html",
       "/404.html",
       "/client.min.js",
-      "/client.min.js?v=48",
+      "/toxicityai.js",
       "/src/fonts/NotoSans-Regular.ttf",
       "/src/fonts/SpecialElite-Regular.ttf",
       "/src/fonts/NotoSansMono-Regular.ttf",
@@ -72,11 +71,13 @@ self.addEventListener("install", function(evt) {
 
 self.addEventListener("fetch", function(event) {
 
-  if (event.request.url.indexOf("upload") !== -1) {
+  const url = event.request.url;
+
+  if (url.includes("upload")) {
     return;
   }
 
-  if(event.request.url.includes(".png") && event.request.mode !== "same-origin") {
+  if((url.includes(".png") || url.includes(".jpg") || url.includes(".jpeg") || url.includes(".gif")) && event.request.mode !== "same-origin") {
 
     // Serve cached image if doesn't fail
     event.respondWith(
@@ -94,10 +95,19 @@ self.addEventListener("fetch", function(event) {
     );
 
 
-  }else if(event.request.url.includes("client.min.js") && event.request.mode === "same-origin") {
+  }else if(url.includes("client.min.js") && event.request.mode === "same-origin") {
 
     // Return the same index.html page for all navigation query
     event.respondWith( caches.match("/client.min.js").then(function (response) {
+      return (
+          response || fetch(event.request).then(function (response){return response})
+      );
+    }));
+
+  }else if(url.includes("toxicityai.js") && event.request.mode === "same-origin") {
+
+    // Return the same index.html page for all navigation query
+    event.respondWith( caches.match("/toxicityai.js").then(function (response) {
       return (
           response || fetch(event.request).then(function (response){return response})
       );

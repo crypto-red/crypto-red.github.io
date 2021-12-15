@@ -1,8 +1,3 @@
-const workerpool = require('workerpool');
+import workerpool from "workerpool";
 
-if(!Boolean(window.workerpool_pool)) {
-
-    window.workerpool_pool = workerpool.pool(null, {minWorkers: "max"});
-}
-
-module.exports = window.workerpool_pool;
+module.exports = workerpool.pool(null, {minWorkers: "max", maxWorkers: "6"});

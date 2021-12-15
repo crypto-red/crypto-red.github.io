@@ -8,10 +8,68 @@ import {postJSON} from "./load-json";
 import {clean_json_text} from "./json";
 
 import { IMAGE_PROXY_URL } from "../utils/constants";
+let clean_new_db_array = [];
 
-const hive_posts_db = new PouchDB("hive_posts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
-const hive_accounts_db = new PouchDB("hive_accounts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
-const hive_queries_db = new PouchDB("hive_queries_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
+function clean_new_DB(name, opts) {
+
+    if(typeof clean_new_db_array[name] !== "undefined"){
+
+        return clean_new_db_array[name];
+    }
+
+
+    let maindb = new PouchDB(name, opts)
+
+    const dbName = maindb.name;
+    const tmpDBName = "tmp_"+maindb.name;
+    const deleteFilter = (doc, req) => !doc._deleted;
+
+    //  CLEANUP
+    //  delete a database with tmpdb name
+    return new PouchDB(tmpDBName).destroy()
+        //  create a database with tmpdb name
+        .then(() => Promise.resolve(new PouchDB(tmpDBName)))
+        //  replicate original database to tmpdb with filter
+        .then((tmpDB) => new Promise((resolve, reject) => {
+            maindb.replicate.to(tmpDB, { filter: deleteFilter })
+                .on('complete', () => { resolve(tmpDB) })
+                .on('denied', reject)
+                .on('error', reject)
+        }))
+        //  destroy the original db
+        .then((tmpDB) => {
+
+            delete clean_new_db_array[name];
+            return maindb.destroy().then(() => Promise.resolve(tmpDB))
+        })
+        //  create the original db
+        .then((tmpDB) => new Promise((resolve, reject) => {
+
+            try {
+                resolve({ db: new PouchDB(dbName, opts), tmpDB: tmpDB })
+            } catch (e) {
+                reject(e)
+            }
+        }))
+        //  replicate the tmpdb to original db
+        .then(({db, tmpDB}) => {
+            return tmpDB.replicate.to(db).then(() => Promise.resolve({db: db, tmpDB: tmpDB}))
+        })
+        //  destroy the tmpdb
+        .then(({db, tmpDB}) => {
+            return tmpDB.destroy().then(() => {
+
+                clean_new_db_array[name] = db;
+                return clean_new_db_array[name];
+            });
+        })
+        .catch((err) => { console.log(err) });
+
+}
+
+const hive_posts_db = new PouchDB("hive_posts_db", {deterministic_revs: true, revs_limit: 0, auto_compaction: false});
+const hive_accounts_db = new PouchDB("hive_accounts_db", {deterministic_revs: true, revs_limit: 0, auto_compaction: false});
+const hive_queries_db = new PouchDB("hive_queries_db", {deterministic_revs: true, revs_limit: 0, auto_compaction: false});
 
 import React from "react";
 import AngryEmojiSvg from "../twemoji/react/1F624";
@@ -54,78 +112,7 @@ const kiss_emoji = get_svg_in_b64(<KissEmojiSvg />);
 const drunk_emoji = get_svg_in_b64(<DrunkEmojiSvg />);
 const perplex_emoji = get_svg_in_b64(<PerplexEmojiSvg />);
 
-function _cache_data(database, cache_time_ms, query_id, api_function, api_parameters, callback_function, response_to_data_formatter = (response) => {return response}) {
-
-    let data_in_db = null;
-
-    // Get data and store it
-    function gather_data(rev) {
-
-        function insert_response_in_db(error, response) {
-
-            if(!error && response) {
-
-                if(typeof response.error === "undefined") {
-
-                    const data = response_to_data_formatter(response);
-
-                    database.put({
-                        _id: query_id,
-                        _rev: rev,
-                        timestamp: Date.now(),
-                        data: JSON.stringify(data)
-                    }, {force: true});
-
-                    callback_function(null, data);
-                }else {
-
-                    if(data_in_db) {
-
-                        callback_function(null, data_in_db);
-                    }else {
-
-                        callback_function(response.error, null);
-                    }
-                }
-            }else {
-
-                if(data_in_db) {
-
-                    callback_function(null, data_in_db);
-                }else {
-
-                    callback_function(error, null);
-                }
-            }
-
-        }
-
-
-        api_function(api_parameters, insert_response_in_db);
-    }
-
-    // Look for data into the DB
-    database.get(query_id, function(err, doc) {
-        if (!err) {
-
-            // Test if recent or if cache time equals 0 (force refresh) or navigator offline
-            if((doc.timestamp + cache_time_ms >= Date.now() && cache_time_ms !== 0) || !navigator.onLine) {
-
-                data_in_db = JSON.parse(clean_json_text(doc.data));
-
-                callback_function(null, data_in_db);
-            }else { // if old update
-
-                gather_data(doc._rev);
-            }
-
-        }else {
-
-            // Get data from network
-            gather_data("1-A");
-        }
-    });
-}
+import _cache_data from "../utils/cache-data";
 
 function _get_pixel_art_data_from_content(content) {
 
@@ -732,6 +719,7 @@ function cached_get_hive_posts(parameters, callback_function) {
 
             let post_processed = 0;
             let posts = [];
+            let posts_errors = 0;
 
             data.posts.forEach((p) => {
 
@@ -740,6 +728,7 @@ function cached_get_hive_posts(parameters, callback_function) {
                     if(!err2 && data2) {
 
                         posts.push(data2);
+                        posts_errors++;
                     }
 
                     post_processed++;

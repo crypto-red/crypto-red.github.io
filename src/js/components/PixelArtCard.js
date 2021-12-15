@@ -308,7 +308,7 @@ class PixelArtCard extends React.Component {
 
             this.setState({_shown: true},() =>{
 
-                //this.forceUpdate();
+                this.forceUpdate();
             });
         }, this.state.fade_in)
     }
@@ -353,7 +353,7 @@ class PixelArtCard extends React.Component {
 
         return (
             <Card key={key} ref={this.props.ref} elevation={4} className={classes.card}
-                  style={{...herited_style}}
+                  style={{...herited_style, transition: "filter  opacity 240ms cubic-bezier(0.4, 0, 0.2, 1) 120ms", filter: `opacity(${_shown ? 1: 0})`}}
                   score={Math.round(post.voting_ratio / 10) * 10}
                   dataselected={selected ? "true": "false"}>
                 <CardActionArea>

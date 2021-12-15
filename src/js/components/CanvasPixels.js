@@ -1566,7 +1566,7 @@ class CanvasPixels extends React.Component {
 
     _format_color = (color) => {
 
-        color = typeof color === "undefined" ? "#00000000": color;
+        color = typeof color === "undefined" ? "#00000000": color.toString();
 
         // if color equals #fff -> #ffffff
         color = color.length === 4 ? "#" + color.charAt(1) + color.charAt(1) + color.charAt(2) + color.charAt(2) + color.charAt(3) + color.charAt(3): color;
@@ -4516,8 +4516,8 @@ class CanvasPixels extends React.Component {
 
         if(color_b === "hover") {
 
-            let [ r, g, b, a ] = this._get_rgba_from_hex(color_a);
-            let [ h, s, l ] = this._rgb_to_hsl(r, g, b);
+            const v1 = this._get_rgba_from_hex(color_a);
+            let [ h, s, l ] = this._rgb_to_hsl(...v1);
 
             /*if(a < 20 || (s + Math.abs(50 - l)) < 30) {
 
@@ -4529,11 +4529,12 @@ class CanvasPixels extends React.Component {
                 color_b = "#" + this._get_hex_value_from_rgb_value(255 - r) + this._get_hex_value_from_rgb_value(255 - g) + this._get_hex_value_from_rgb_value(255 - b) + this._get_hex_value_from_rgb_value(255);
             }*/
 
-            const [ir, ig, ib] = this._hsl_to_rgb((h + 0) % 360, (s + 0) % 100, (l + 50) % 100);
-            color_b = this._get_hex_color_from_rgba_values(ir, ig, ib, 255);
-        }
+            const v2 = this._hsl_to_rgb((h) % 360, (s) % 100, (l + 50) % 100);
+            color_b = this._get_hex_color_from_rgba_values(...v2, 255);
+        }else {
 
-        color_b = this._format_color(color_b);
+            color_b = this._format_color(color_b);
+        }
         // If the second color is transparent, return transparent
         if(color_b === "#00000000" && amount === 1 && should_return_transparent) { return "#00000000"; }
 
@@ -4561,9 +4562,9 @@ class CanvasPixels extends React.Component {
         }
 
         mix[3] = !alpha_addition ? mix[3]: mix[3] / 2;
-        mix[3] *= 255;
+        mix[3] = Math.round(mix[3] * 255);
 
-        return '#' + this._get_hex_value_from_rgb_value(mix[0]) + this._get_hex_value_from_rgb_value(mix[1]) + this._get_hex_value_from_rgb_value(mix[2]) + this._get_hex_value_from_rgb_value(mix[3]);
+        return this._get_hex_color_from_rgba_values(...mix);
     }
 
     _notify_estimate_size = () => {
@@ -6123,7 +6124,7 @@ class CanvasPixels extends React.Component {
             b = hue_to_rgb(p, q, h - 1 / 3);
         }
 
-        return [r * 255, g * 255, b * 255];
+        return [r * 255, g * 255,b * 255];
     };
 
     get_rgba_from_hex = (color) => {
@@ -6150,18 +6151,14 @@ class CanvasPixels extends React.Component {
 
     _hsl_to_hex = (h, s, l) => {
 
-        const [r, g, b] = this._hsl_to_rgb(h, s, l);
-        const hex = this._get_hex_color_from_rgba_values(r, g, b, 255);
-
-        return hex;
+        const v = this._hsl_to_rgb(h, s, l);
+        return this._get_hex_color_from_rgba_values(...v, 255);
     };
 
     _hsla_to_hex = (h, s, l, a) => {
 
-        const [r, g, b] = this._hsl_to_rgb(h, s, l);
-        const hex = this._get_hex_color_from_rgba_values(r, g, b, 255 * (a / 100));
-
-        return hex;
+        const v = this._hsl_to_rgb(h, s, l);
+        return this._get_hex_color_from_rgba_values(...v, 255 * (a / 100));
     };
 
     _get_hex_values_from_rgba_values = (r, g, b, a) => {
@@ -6176,8 +6173,8 @@ class CanvasPixels extends React.Component {
 
     _get_hex_color_from_rgba_values = (r, g, b, a) => {
 
-        const [r_hex, g_hex, b_hex, a_hex] = this._get_hex_values_from_rgba_values(r, g, b, a);
-        return "#" + r_hex + g_hex + b_hex + a_hex;
+        const v = this._get_hex_values_from_rgba_values(r, g, b, a);
+        return "#" + v.map((ce) => ce.toString(16)).join("");
     };
 
     _invert_hex_color = (color) => {
@@ -6194,7 +6191,7 @@ class CanvasPixels extends React.Component {
             sum += parseInt(value, 16);
         });
 
-        return sum.toString(16);
+        return sum.toString(16).padStart(2, "0");;
     };
 
     _invert_pixel = (direction) => {
