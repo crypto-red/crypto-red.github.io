@@ -56,9 +56,9 @@ function _cache_data(database, cache_time_ms, query_id, api_function, api_parame
 
             const rev_ids = doc._revs_info.filter((ri) => {
 
-                if(ri.status === "available") {return Boolean(!ri.rev === doc._rev);}
-                return true;
-            });
+                if(ri.status !== "missing") {return Boolean(ri.rev === doc._rev);}
+                return false;
+            }).map((ri) => ri.rev);
 
             if(rev_ids.length > 0) {
 

@@ -32,12 +32,9 @@ const styles = theme => ({
     root: {
         flexGrow: 1,
         padding: theme.spacing(1),
+        width: "100%",
         [theme.breakpoints.between("xs", "sm")]: {
             padding: theme.spacing(1, 0),
-            width: "100vw !important"
-        },
-        [theme.breakpoints.between("sm", "md")]: {
-            width: "calc(100vw - 256px)"
         },
     },
     backgroundImage: {

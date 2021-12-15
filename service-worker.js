@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v49";
+var CACHE = "network-or-cache-v50";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -11,40 +11,39 @@ self.addEventListener("install", function(evt) {
       "/",
       "/404.html",
       "/client.min.js",
-      "/toxicityai.js",
       "/src/fonts/NotoSans-Regular.ttf",
       "/src/fonts/SpecialElite-Regular.ttf",
       "/src/fonts/NotoSansMono-Regular.ttf",
       "/src/fonts/ShareTechMono-Regular.ttf",
       "/src/fonts/Saira-Regular.ttf",
-      "/src/sounds/sfx/md/alert_error-01.wav",
-      "/src/sounds/sfx/md/navigation_transition-left.wav",
-      "/src/sounds/sfx/md/alert_high-intensity.wav",
-      "/src/sounds/sfx/md/FullHorizonThrow.wav",
-      "/src/sounds/sfx/md/navigation_transition-right.wav",
-      "/src/sounds/sfx/md/PrometheusVertical2.wav",
-      "/src/sounds/sfx/md/hero_decorative-celebration-01.wav",
-      "/src/sounds/sfx/md/state-change_confirm-down.wav",
-      "/src/sounds/sfx/md/hero_decorative-celebration-02.wav",
-      "/src/sounds/sfx/md/state-change_confirm-up.wav",
-      "/src/sounds/sfx/md/hero_decorative-celebration-03.wav",
-      "/src/sounds/sfx/md/MazeImpact5.wav",
-      "/src/sounds/sfx/md/ui_camera-shutter.wav",
-      "/src/sounds/sfx/md/navigation_backward-selection-minimal.wav",
-      "/src/sounds/sfx/md/ui_loading.wav",
-      "/src/sounds/sfx/md/navigation_backward-selection.wav",
-      "/src/sounds/sfx/md/ui_lock.wav",
-      "/src/sounds/sfx/md/navigation_forward-selection.wav",
-      "/src/sounds/sfx/md/ui_tap-variant-01.wav",
-      "/src/sounds/sfx/md/navigation_selection-complete-celebration.wav",
-      "/src/sounds/sfx/md/ui_unlock.wav",
+      "/src/sounds/sfx/md/alert_error-01.mp3",
+      "/src/sounds/sfx/md/navigation_transition-left.mp3",
+      "/src/sounds/sfx/md/alert_high-intensity.mp3",
+      "/src/sounds/sfx/md/FullHorizonThrow.mp3",
+      "/src/sounds/sfx/md/navigation_transition-right.mp3",
+      "/src/sounds/sfx/md/PrometheusVertical2.mp3",
+      "/src/sounds/sfx/md/hero_decorative-celebration-01.mp3",
+      "/src/sounds/sfx/md/state-change_confirm-down.mp3",
+      "/src/sounds/sfx/md/hero_decorative-celebration-02.mp3",
+      "/src/sounds/sfx/md/state-change_confirm-up.mp3",
+      "/src/sounds/sfx/md/hero_decorative-celebration-03.mp3",
+      "/src/sounds/sfx/md/MazeImpact5.mp3",
+      "/src/sounds/sfx/md/ui_camera-shutter.mp3",
+      "/src/sounds/sfx/md/navigation_backward-selection-minimal.mp3",
+      "/src/sounds/sfx/md/ui_loading.mp3",
+      "/src/sounds/sfx/md/navigation_backward-selection.mp3",
+      "/src/sounds/sfx/md/ui_lock.mp3",
+      "/src/sounds/sfx/md/navigation_forward-selection.mp3",
+      "/src/sounds/sfx/md/ui_tap-variant-01.mp3",
+      "/src/sounds/sfx/md/navigation_selection-complete-celebration.mp3",
+      "/src/sounds/sfx/md/ui_unlock.mp3",
       "/src/images/404-dark-2.svg",
       "/src/images/analytics.svg",
       "/src/images/account.svg",
       "/src/images/account-add.svg",
       "/src/images/hacker.svg",
       "/src/images/wallet-green.svg",
-      "/src/images/world_blue.png",
+      "/src/images/world_blue.jpg",
       "/src/images/404-dark.svg",
       "/src/images/segment.svg",
       "/src/images/security.svg",
@@ -99,15 +98,6 @@ self.addEventListener("fetch", function(event) {
 
     // Return the same index.html page for all navigation query
     event.respondWith( caches.match("/client.min.js").then(function (response) {
-      return (
-          response || fetch(event.request).then(function (response){return response})
-      );
-    }));
-
-  }else if(url.includes("toxicityai.js") && event.request.mode === "same-origin") {
-
-    // Return the same index.html page for all navigation query
-    event.respondWith( caches.match("/toxicityai.js").then(function (response) {
       return (
           response || fetch(event.request).then(function (response){return response})
       );

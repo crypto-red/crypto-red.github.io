@@ -52,7 +52,7 @@ class AppDrawer extends React.Component {
         
         return (
             <Box elevation={4}>
-                <Drawer className={classes.drawer} variant="permanent" classes={{paper: classes.drawerPaper}}>
+                <Drawer keepMounted={true} className={classes.drawer} variant="permanent" classes={{paper: classes.drawerPaper}}>
                     <Toolbar />
                     <div className={classes.drawerContainer}>
                         <DrawerContent logged_account={logged_account} pathname={pathname} onClose={() => {}}/>

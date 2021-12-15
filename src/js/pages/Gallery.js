@@ -13,7 +13,7 @@ import EyeIcon from "../icons/Eye";
 import TrendingUpIcon from "@material-ui/icons/TrendingUp";
 
 import { Masonry, CellMeasurer, CellMeasurerCache, createMasonryCellPositioner } from "react-virtualized";
-import ImageMeasurer from "react-virtualized-image-measurer";
+import ImageMeasurer from "../components/ImageMeasurer";
 
 import PixelDialogPost from "../components/PixelDialogPost";
 import PixelArtCard from "../components/PixelArtCard";
@@ -66,7 +66,6 @@ const styles = theme => ({
         height: "calc(100vh - 56px)",
         [theme.breakpoints.up("md")]: {
             height: "calc(100vh - 64px)",
-            width: "calc(100% - 256px)",
         },
         display: "flex",
         position: "fixed",
@@ -87,7 +86,7 @@ const styles = theme => ({
         [theme.breakpoints.up("md")]: {
             margin: theme.spacing(2),
             right: theme.spacing(0),
-            width: "calc(100% - 288px)"
+            width: "calc(100% - 32px)"
 
         },
     },
@@ -129,8 +128,6 @@ const styles = theme => ({
         },
     },
     masonry: {
-        opacity: 1,
-        transition: "opacity 0ms cubic-bezier(0.4, 0, 0.2, 1) 25ms",
         overflow: "overlay",
         "& > .ReactVirtualized__Masonry": {
             position: "absolute",
@@ -145,6 +142,7 @@ const styles = theme => ({
                 contentVisibility: "auto",
                 overscrollBehavior: "none",
                 pointerEvents: "none",
+                touchAction: "none",
                 overflow: "visible !important",
                 contain: "size layout paint style",
             }
@@ -236,6 +234,7 @@ class Gallery extends React.Component {
             _search_mode_query_page: 0,
             _search_mode_query_pages: 1,
             _post: null,
+            _post_img: null,
             _loading_posts: false,
             _post_closed_at: 0,
             _selected_post_index: 0,
@@ -438,7 +437,7 @@ class Gallery extends React.Component {
 
                 if(data) {
 
-                    this.setState({_post: data}, () => {
+                    this.setState({_post: data, _post_img: []}, () => {
 
                         actions.trigger_loading_update(100);
                     });
@@ -645,14 +644,13 @@ class Gallery extends React.Component {
 
         const post = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).item || {}: {};
         const size = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).size || {}: {};
+
         if(!Boolean(post.id) || !size.height){return null}
-
-        const image_height = Math.ceil(_column_width * (size.height / size.width)) || 0;
-
         const columnIndex = index % _column_count;
         const rowIndex = (index - columnIndex) / _column_count;
         const selected = post.id === (_post || {}).id;
         const is_loading = Boolean((_reaction_selected_post_loading || {}).id === post.id);
+        const image_height = Math.ceil(_column_width * (size.height / size.width)) || 0;
 
         style.width = _column_width;
         let {_top_scroll_of_el_by_index, _height_of_el_by_index, _x_y_of_el_by_index} = this.state;
@@ -664,7 +662,7 @@ class Gallery extends React.Component {
         this.setState({_top_scroll_of_el_by_index, _height_of_el_by_index});
 
         return (
-            <CellMeasurer cache={_cell_measurer_cache} index={1.0 * index} key={key} parent={parent} style={{contain: "paint size"}}>
+            <CellMeasurer cache={_cell_measurer_cache} index={1.0 * index} key={key} parent={parent}>
                 <PixelArtCard
                     id={post.id}
                     rowIndex={rowIndex}
@@ -673,6 +671,8 @@ class Gallery extends React.Component {
                     fade_in={250}
                     selected={selected}
                     post={post}
+                    iws={size}
+                    column_width={_column_width}
                     image_height={image_height}
                     image_width={_column_width}
                     is_loading={is_loading}
@@ -1095,9 +1095,10 @@ class Gallery extends React.Component {
     _update_selected_post_index = (index, do_not_scroll = false) => {
 
         const { _post, _posts, _masonry } = this.state;
+        const sizes = _masonry.props.itemsWithSizes.map((iws) => iws.size);
 
         const _selected_post_index = typeof index !== "undefined" ? index : (_post) ? _posts.map(p => (p || {}).id).indexOf(_post.id): this.state._selected_post_index;
-        this.setState({_selected_post_index, _post: _posts[_selected_post_index]}, () => {
+        this.setState({_selected_post_index, _post: _posts[_selected_post_index], _post_img: sizes[_selected_post_index]}, () => {
 
             if(!do_not_scroll) {
 
@@ -1203,7 +1204,7 @@ class Gallery extends React.Component {
     render() {
 
         const { classes, _enable_3d, _dialog_hive_key_open, _selected_currency, _sorting_tab_index, _window_width, _window_height, _posts, _post, _post_author, _post_permlink, _loading_posts, _selected_locales_code, _started_on_post_dialog } = this.state;
-        const { _cell_positioner, _hbd_market, _cell_measurer_cache, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
+        const { _post_img, _cell_positioner, _hbd_market, _cell_measurer_cache, _overscan_by_pixels, _scroll_top, _reaction_click_event, _reaction_voted_result, _is_search_mode, _search_sorting_tab_index, _votes, _votes_anchor } = this.state;
 
         const width = _window_width;
         const height = _window_height;
@@ -1246,6 +1247,7 @@ class Gallery extends React.Component {
                 </div>
 
                 <ImageMeasurer
+                        isBase64={true}
                         className={classes.masonry}
                         items={_posts}
                         image={item => item.image}
@@ -1325,6 +1327,7 @@ class Gallery extends React.Component {
                     on_previous={this._previous_current_post}
                     keepMounted={true}
                     post={_post}
+                    post_img={_post_img}
                     open={Boolean(_post !== null && _post_author !== null && _post_permlink !== null)}
                     onClose={this._handle_pixel_dialog_post_close}
                     onExited={this._handle_pixel_dialog_post_exited}
@@ -1332,7 +1335,7 @@ class Gallery extends React.Component {
                 />
 
                 <AccountDialogProfileHive
-                    keepMounted={false}
+                    keepMounted={true}
                     account_name={_post_author}
                     open={_post_author !== null && _post_permlink === null}
                     onClose={this._handle_reset_selected_account}/>

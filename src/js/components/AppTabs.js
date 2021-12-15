@@ -30,7 +30,7 @@ const styles = theme => ({
         zIndex: "1300",
         [theme.breakpoints.up("md")]: {
             margin: theme.spacing(2),
-            width: "calc(100% - 288px)"
+            width: "calc(100% - 32px)"
 
         }
     },

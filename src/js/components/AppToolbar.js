@@ -325,6 +325,7 @@ class AppToolbar extends React.Component {
             <div>
 
                 <SwipeableDrawer
+                    keepMounted={true}
                     anchor="left"
                     className={classes.swipeableDrawer}
                     classes={{paper: classes.drawerPaper}}

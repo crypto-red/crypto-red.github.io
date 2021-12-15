@@ -51,6 +51,9 @@ import {
     post_hive_pixel_art,
     vote_on_hive_post,
     search_on_hive,
+    hive_posts_db,
+    hive_accounts_db,
+    hive_queries_db,
 } from "./api-hive";
 
 const query_db = new PouchDB("query_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
@@ -133,7 +136,10 @@ function reset_all_databases(callback_function) {
         query_db.destroy(),
         settings_db.destroy(),
         accounts_db.destroy(),
-        logged_accounts_db.destroy()
+        logged_accounts_db.destroy(),
+        hive_posts_db.destroy(),
+        hive_accounts_db.destroy(),
+        hive_queries_db.destroy(),
     ]).then(function (){
 
         callback_function();

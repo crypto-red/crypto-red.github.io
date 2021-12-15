@@ -51,7 +51,7 @@ window.mobileAndTabletCheck = function() {
 let is_mobile_or_tablet = window.mobileAndTabletCheck();
 
 
-setInterval(function(){
+const fps_interval = setInterval(function(){
 
     previous_cpaf_fps = cpaf_frames * 4;
     cpaf_frames = 0;
@@ -241,7 +241,7 @@ class CanvasPixels extends React.Component {
             _canvas_wrapper: null,
             _canvas_wrapper_overflow: null,
             _mouse_down: false,
-            _state_history_length: 42,
+            _state_history_length: !(props.no_actions || false) ? 42: 0,
             _last_action_timestamp: Date.now(),
             _last_paint_timestamp: Date.now(),
             _lazy_lazy_compute_time_ms: 10 * 1000,
@@ -352,6 +352,8 @@ class CanvasPixels extends React.Component {
 
             this.set_move_speed_average_now();
         }, 61);
+
+        _intervals[5] = fps_interval;
 
         const body_css =
             "body {" +
@@ -1231,12 +1233,12 @@ class CanvasPixels extends React.Component {
         return result;
     };
 
-    get_base64_png_data_url(scale = 1, callback_function = () => {}) {
+    get_base64_png_data_url(scale = 1, callback_function = () => {}, with_palette = false) {
 
-        this._get_base64_png_data_url(scale, callback_function)
+        this._get_base64_png_data_url(scale, callback_function, with_palette = false)
     }
 
-    _get_base64_png_data_url = (scale = 1, callback_function = () => {}) => {
+    _get_base64_png_data_url = (scale = 1, callback_function = () => {}, with_palette = false) => {
 
         const process_function_string = `return async function(
             pxl_width, 
@@ -1604,28 +1606,27 @@ class CanvasPixels extends React.Component {
         const color_gain = 1 - color_loss;
 
 
-        const _get_color_hex_from_image_data_r_index = (image_data, index, color_gain = 1, color_loss_bw = true) => {
+        const _get_color_hex_from_image_data_r_index = (image_data_data, index, color_gain = 1, color_loss_bw = true) => {
 
-            if(!color_loss_bw && image_data.data[index] === image_data.data[index + 1] && image_data.data[index + 1] === image_data.data[index + 2]) {
+            if(!color_loss_bw) {
 
-                color_gain = 1;
+                if(image_data_data[index] === image_data_data[index + 1] && image_data_data[index + 1] === image_data_data[index + 2]) {
+
+                    color_gain = 1;
+                }
             }
 
-            let r = this._reduce_color(image_data.data[index], color_gain).toString(16);
-            let g = this._reduce_color(image_data.data[index+1], color_gain).toString(16);
-            let b = this._reduce_color(image_data.data[index+2], color_gain).toString(16);
-            let a = this._reduce_color(image_data.data[index+3], color_gain).toString(16);
+            if(color_gain === 1) {
 
-            r = r.length === 1 ? "0" + r: r;
-            g = g.length === 1 ? "0" + g: g;
-            b = b.length === 1 ? "0" + b: b;
-            a = a.length === 1 ? "0" + a: a;
+                return this._get_hex_color_from_rgba_values(image_data_data[index], image_data_data[index + 1], image_data_data[index + 2], image_data_data[index + 3])
+            }
 
-            let color_hex = "#" + r + g + b + a;
+            let r = this._reduce_color(image_data_data[index], color_gain);
+            let g = this._reduce_color(image_data_data[index+1], color_gain);
+            let b = this._reduce_color(image_data_data[index+2], color_gain);
+            let a = this._reduce_color(image_data_data[index+3], color_gain);
 
-            color_hex = color_hex.toLowerCase();
-
-            return color_hex;
+            return this._get_hex_color_from_rgba_values(r, g, b, a)
         };
 
         let new_pxl_colors = [];
@@ -1638,7 +1639,7 @@ class CanvasPixels extends React.Component {
 
             for (let i = 0; i < image_data.data.length; i += 4) {
 
-                const color_hex = _get_color_hex_from_image_data_r_index(image_data, i, color_gain, color_loss_bw);
+                const color_hex = _get_color_hex_from_image_data_r_index(image_data.data, i, color_gain, color_loss_bw);
 
                 const deja_vu_color_hex = new_pxl_colors_set.has(color_hex);
                 let color_hex_index = deja_vu_color_hex ? new_pxl_colors.indexOf(color_hex): -1;
@@ -1666,7 +1667,7 @@ class CanvasPixels extends React.Component {
 
                 for (let i = 0; i < image_data.width * 4; i += 4) {
 
-                    const color_hex = _get_color_hex_from_image_data_r_index(image_data,  i + first_pixel_in_this_row, color_gain);
+                    const color_hex = _get_color_hex_from_image_data_r_index(image_data.data,  i + first_pixel_in_this_row, color_gain);
 
                     // Push color hex in palette if necessary
                     if(!new_pxl_colors.includes(color_hex)) {
@@ -1967,15 +1968,56 @@ class CanvasPixels extends React.Component {
 
     };
 
-    set_canvas_from_image = (image_obj, loading_base64_img = "") => {
+    set_canvas_from_image = (image_obj, loading_base64_img = "", img_d = null) => {
 
         if(this.props.onLoad) {this.props.onLoad("image_load");}
 
-        this.setState({has_shown_canvas_once: false, _hidden: true, _loading_base64_img_changed: true}, () => {
+        if(img_d.id) {
 
-            setTimeout(() => {
+            const { new_pxl_colors, new_pxls } = this._get_pixels_palette_and_list_from_image_data(img_d.image_data, true, 0);
 
-                this.setState({_loading_base64_img: loading_base64_img}, () => {
+            const _layer_index = 0;
+            let ns_pxl_colors = [];
+            ns_pxl_colors[_layer_index] = new_pxl_colors;
+            let ns_pxls = [];
+            ns_pxls[_layer_index] = new_pxls;
+
+            this.setState({
+                _id: Date.now(),
+                pxl_width: img_d.width,
+                pxl_height: img_d.height,
+                _pxl_indexes_of_selection: new Set(),
+                _base64_original_images: [],
+                _layers: [{id: Date.now(), name: "Layer 0", hidden: false, opacity: 1, data: {}}],
+                _s_pxl_colors: ns_pxl_colors,
+                _s_pxls: ns_pxls,
+                _layer_index,
+                _old_pxls_hovered: -1,
+                _pxls_hovered: -1,
+                _old_pxl_colors: [],
+                _old_pxls: new Array(new_pxls.length).fill(-1),
+                _is_there_new_dimension: true,
+                has_shown_canvas_once: false,
+                _original_image_index: -1,
+                _last_action_timestamp: Date.now(),
+            }, () => {
+
+                this._notify_size_change();
+                this._notify_layers_change();
+                this._update_screen_zoom_ratio(true);
+                this._notify_image_load_complete();
+            });
+
+            return;
+        }
+
+        if(loading_base64_img.length) {
+
+            this.setState({_hidden: true, _loading_base64_img_changed: true}, () => {
+
+                setTimeout(() => {
+
+                    this.setState({_loading_base64_img: loading_base64_img}, () => {
 
                         this._request_force_update(false, () => {
 
@@ -1989,9 +2031,17 @@ class CanvasPixels extends React.Component {
                             }, this.state.animation_duration / 2);
 
                         });
-                });
-            }, this.state.animation_duration / 2);
-        });
+                    });
+                }, this.state.animation_duration / 2);
+            });
+        }else {
+
+            this.setState({_hidden: true}, () => {
+
+                this._request_force_update(false);
+
+            });
+        }
 
         setTimeout( async() => {
 
@@ -2005,6 +2055,7 @@ class CanvasPixels extends React.Component {
             canvas_ctx.drawImage(image_obj, 0, 0, width, height);
             const image_data = canvas_ctx.getImageData(0, 0, width, height);
             const base64_original_image = dont_compute_base64_original_image ? "": canvas.toDataURL("image/jpeg");
+            canvas = null;
 
             const merge_color_threshold = 4/16;
             let is_crop_necessary = false;
@@ -2261,7 +2312,7 @@ class CanvasPixels extends React.Component {
                 pxl_width: width,
                 pxl_height: height,
                 _pxl_indexes_of_selection: new Set(),
-                _base64_original_images: new_base64_original_images,
+                _base64_original_images: dont_compute_base64_original_image ? []: new_base64_original_images,
                 _layers: [{id: Date.now(), name: "Layer 0", hidden: false, opacity: 1, data: {}}],
                 _s_pxl_colors: ns_pxl_colors,
                 _s_pxls: ns_pxls,
@@ -2358,7 +2409,8 @@ class CanvasPixels extends React.Component {
                         scale_move_x: for_middle_x,
                         scale_move_y: for_middle_y,
                         _moves_speed_average_now: 8,
-                        _hidden: false
+                        _hidden: false,
+                        has_shown_canvas_once: false
                     }, () => {
 
                         if(this.props.on_elevation_change) {
@@ -4578,7 +4630,7 @@ class CanvasPixels extends React.Component {
 
                 this.props.on_kb_change(bytes / 1000);
             }
-        });
+        }, true);
     };
 
     _update_canvas = (force_update = false, do_not_cancel_animation = false) => {
@@ -6174,7 +6226,7 @@ class CanvasPixels extends React.Component {
     _get_hex_color_from_rgba_values = (r, g, b, a) => {
 
         const v = this._get_hex_values_from_rgba_values(r, g, b, a);
-        return "#" + v.map((ce) => ce.toString(16)).join("");
+        return "#" + v.map((ce) => ce.toString(16)).join("").toLowerCase();
     };
 
     _invert_hex_color = (color) => {

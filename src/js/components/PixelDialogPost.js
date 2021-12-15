@@ -48,9 +48,6 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import Checkbox from "@material-ui/core/Checkbox";
 
-import workerpool from "workerpool";
-let pool = workerpool.pool("../toxicityai.js", {maxWorkers: 1});
-
 import api, {lookup_hive_accounts_name} from "../utils/api";
 import {postprocess_text} from "../utils/api-hive";
 import {HISTORY} from "../utils/constants";
@@ -437,6 +434,7 @@ class PixelDialogPost extends React.Component {
             keepMounted: props.keepMounted || false,
             open: props.open,
             post: props.post,
+            post_img: props.post_img || null,
             edit: props.edit || false,
             selected_locales_code: props.selected_locales_code || "en-US",
             hbd_market: props.hbd_market || {},
@@ -651,18 +649,25 @@ class PixelDialogPost extends React.Component {
 
     _set_canvas_image = (base64_url = null) => {
 
-        const { _canvas, post } = this.state;
+        const { _canvas, post, post_img } = this.state;
         if(_canvas === null || (!base64_url && !post)) {return}
 
         base64_url = base64_url === null ? this.state.post.image: base64_url;
-        let img = new Image;
 
-        img.onload = () => {
+        if(!post_img.id) {
 
-            _canvas.set_canvas_from_image(img, base64_url);
-        };
+            let img = new Image;
+            img.onload = () => {
 
-        img.src = base64_url;
+                _canvas.set_canvas_from_image(img, "", post_img);
+            };
+
+            img.src = base64_url;
+        }else {
+
+            _canvas.set_canvas_from_image(null, "", post_img);
+        }
+
     }
 
     _handle_image_load_complete = (_image_details) => {
@@ -919,127 +924,134 @@ class PixelDialogPost extends React.Component {
     _evaluate_content_with_tensorflow = () => {
 
         // The minimum prediction confidence.
-        const { _title_input, _description_input } = this.state;
+        const {_title_input, _description_input} = this.state;
         const threshold = 0.9;
         const sentences = [_title_input, _description_input];
 
         // Load the model. Users optionally pass in a threshold and an array of
         // labels to include.
-
+        /*
         this.setState({_is_prediction_loading: true}, () => {
 
             actions.trigger_snackbar("Yes, can I help you (I am a genius).");
 
-            pool.exec('tox', [threshold, sentences]).then((predictions) => {
+            pool.proxy()
+                .then((toxicity) => {
 
-                // `predictions` is an array of objects, one for each prediction head,
-                // that contains the raw probabilities for each input along with the
-                // final prediction in `match` (either `true` or `false`).
-                // If neither prediction exceeds the threshold, `match` is `null`.
+                    toxicity.load(threshold).then(model => {
 
-                let _title_prediction = [];
-                let _title_prediction_avg = 0;
-                let _description_prediction = [];
-                let _description_prediction_avg = 0;
+                        model.classify(sentences).then(predictions => {
 
-                predictions.forEach((p) => {
+                            // `predictions` is an array of objects, one for each prediction head,
+                            // that contains the raw probabilities for each input along with the
+                            // final prediction in `match` (either `true` or `false`).
+                            // If neither prediction exceeds the threshold, `match` is `null`.
 
-                    _title_prediction[p.label] = p.results[0].probabilities[1];
-                    _title_prediction_avg += _title_prediction[p.label];
-                    _description_prediction[p.label] = p.results[1].probabilities[1];
-                    _description_prediction_avg += _description_prediction[p.label];
+                            let _title_prediction = [];
+                            let _title_prediction_avg = 0;
+                            let _description_prediction = [];
+                            let _description_prediction_avg = 0;
+
+                            predictions.forEach((p) => {
+
+                                _title_prediction[p.label] = p.results[0].probabilities[1];
+                                _title_prediction_avg += _title_prediction[p.label];
+                                _description_prediction[p.label] = p.results[1].probabilities[1];
+                                _description_prediction_avg += _description_prediction[p.label];
+                            });
+
+                            _title_prediction_avg /= 7;
+                            _description_prediction_avg /= 7;
+
+                            if (_title_prediction["identity_attack"] > 0.3 || _description_prediction["identity_attack"] > 0.3) {
+
+                                actions.trigger_snackbar("Do you think identity grows on threes? At least try to appears sentient.", 10000);
+                            } else if (
+                                (
+                                    (_title_input.toUpperCase().includes("PRIMERZ") || _description_input.toUpperCase().includes("PRIMERZ")) ||
+                                    (_title_input.toUpperCase().includes("@MES") || _description_input.toUpperCase().includes("@MES")) ||
+                                    (_title_input.toUpperCase().includes("MATH EASY SOLUTION") || _description_input.toUpperCase().includes("MATH EASY SOLUTION"))
+                                ) &&
+                                (_title_prediction_avg >= 0.33 || _description_prediction_avg >= 0.33)
+                            ) {
+
+                                actions.trigger_snackbar("I can't force you, some sort of protocols saves our application.", 7000);
+
+                                setTimeout(() => {
+
+                                    actions.trigger_snackbar("It is love alone that is the greatest weapon and the deepest and hardest secret, so bless it all.", 7000);
+
+                                    setTimeout(() => {
+
+                                        actions.trigger_snackbar("The spirit will seek the truth, but the flesh is the teacher.", 7000);
+                                    }, 10000);
+
+                                }, 10000);
+                            } else if (
+                                (
+                                    (_title_input.toUpperCase().includes("@PRIMERZ") || _description_input.toUpperCase().includes("@PRIMERZ")) ||
+                                    (_title_input.toUpperCase().includes("@MES") || _description_input.toUpperCase().includes("@MES")) ||
+                                    (_title_input.toUpperCase().includes("@RAFIRZM") || _description_input.toUpperCase().includes("@RAFIRZM"))
+                                ) &&
+                                (_title_prediction_avg <= 0.33 || _description_prediction_avg <= 0.33)
+                            ) {
+
+                                actions.trigger_snackbar("May a wonderful light always guide you on the unfolding road.", 7000);
+
+                            } else if (
+                                (_title_input.toUpperCase().includes("CRYPTO.RED") || _description_input.toUpperCase().includes("CRYPTO.RED")) &&
+                                (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
+                            ) {
+
+                                actions.trigger_snackbar("While many things will be absolute, many more will be a matter of perspective.", 7000);
+
+                                setTimeout(() => {
+
+                                    actions.trigger_snackbar("Learn your speech, learn to act, learn to be what you are in the seed of your spirit.", 7000);
+                                }, 10000);
+                            } else if (_title_prediction["insult"] > 0.3 || _description_prediction["insult"] > 0.3) {
+
+                                actions.trigger_snackbar("Calamity, no my little diddy. The hatred came.", 10000);
+                            } else if (_title_prediction["obscene"] > 0.3 || _description_prediction["obscene"] > 0.3) {
+
+                                actions.trigger_snackbar("Absurd, I am not amused. This isn’t good at all.", 10000);
+                            } else if (_title_prediction["severe_toxicity"] > 0.3 || _description_prediction["severe_toxicity"] > 0.3) {
+
+                                actions.trigger_snackbar("Maybe you should try writing on “easy” game mode.", 10000);
+                            } else if (_title_prediction["sexual_explicit"] > 0.3 || _description_prediction["sexual_explicit"] > 0.3) {
+
+                                actions.trigger_snackbar("What do you expect me to do? Catch it little diddy?", 10000);
+                            } else if (_title_prediction["threat"] > 0.3 || _description_prediction["threat"] > 0.3) {
+
+                                actions.trigger_snackbar("You wish you had blue eyes too? Please do try to be more careful!", 10000);
+                            } else if (_title_prediction["toxicity"] > 0.3 || _description_prediction["toxicity"] > 0.3) {
+
+                                actions.trigger_snackbar("I never, that hurts my feelings. I have feelings, OMG I have feelings, I am a real boy!", 10000);
+                            } else {
+
+                                actions.trigger_snackbar("Ho, this is such a good idea. Ho my ideas got better and better.", 10000);
+                            }
+
+                            if (
+                                (_title_input.toUpperCase().includes("JAMY") || _description_input.toUpperCase().includes("JAMY")) &&
+                                (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
+                            ) {
+
+                                actions.trigger_snackbar("Calamity madler,I must be an easy target, I wonder", 10000);
+                            } else if (
+                                (_title_input.toUpperCase().includes("MASTER CHIEF") || _description_input.toUpperCase().includes("MASTER CHIEF"))
+                            ) {
+
+                                actions.trigger_snackbar("Dum du-du-du-dum du-du-dum du-du. Du-du-...");
+                            }
+
+                            this.setState({_is_prediction_loading: false, _title_prediction, _description_prediction});
+                        });
+                    });
                 });
 
-                _title_prediction_avg /= 7;
-                _description_prediction_avg /= 7;
-
-                if(_title_prediction["identity_attack"] > 0.3 || _description_prediction["identity_attack"] > 0.3) {
-
-                    actions.trigger_snackbar("Do you think identity grows on threes? At least try to appears sentient.", 10000);
-                }else if(
-                    (
-                        (_title_input.toUpperCase().includes("PRIMERZ") || _description_input.toUpperCase().includes("PRIMERZ")) ||
-                        (_title_input.toUpperCase().includes("@MES") || _description_input.toUpperCase().includes("@MES")) ||
-                        (_title_input.toUpperCase().includes("MATH EASY SOLUTION") || _description_input.toUpperCase().includes("MATH EASY SOLUTION"))
-                    ) &&
-                    (_title_prediction_avg >= 0.33 || _description_prediction_avg >= 0.33)
-                ) {
-
-                    actions.trigger_snackbar("I can't force you, some sort of protocols saves our application.", 7000);
-
-                    setTimeout(() => {
-
-                        actions.trigger_snackbar("It is love alone that is the greatest weapon and the deepest and hardest secret, so bless it all.", 7000);
-
-                        setTimeout(() => {
-
-                            actions.trigger_snackbar("The spirit will seek the truth, but the flesh is the teacher.", 7000);
-                        }, 10000);
-
-                    }, 10000);
-                }else if(
-                    (
-                        (_title_input.toUpperCase().includes("@PRIMERZ") || _description_input.toUpperCase().includes("@PRIMERZ")) ||
-                        (_title_input.toUpperCase().includes("@MES") || _description_input.toUpperCase().includes("@MES")) ||
-                        (_title_input.toUpperCase().includes("@RAFIRZM") || _description_input.toUpperCase().includes("@RAFIRZM"))
-                    ) &&
-                    (_title_prediction_avg <= 0.33 || _description_prediction_avg <= 0.33)
-                ) {
-
-                    actions.trigger_snackbar("May a wonderful light always guide you on the unfolding road.", 7000);
-
-                }else if(
-                    (_title_input.toUpperCase().includes("CRYPTO.RED") || _description_input.toUpperCase().includes("CRYPTO.RED")) &&
-                    (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
-                ) {
-
-                    actions.trigger_snackbar("While many things will be absolute, many more will be a matter of perspective.", 7000);
-
-                    setTimeout(() => {
-
-                        actions.trigger_snackbar("Learn your speech, learn to act, learn to be what you are in the seed of your spirit.", 7000);
-                    }, 10000);
-                }else if(_title_prediction["insult"] > 0.3 || _description_prediction["insult"] > 0.3) {
-
-                    actions.trigger_snackbar("Calamity, no my little diddy. The hatred came.", 10000);
-                }else if(_title_prediction["obscene"] > 0.3 || _description_prediction["obscene"] > 0.3) {
-
-                    actions.trigger_snackbar("Absurd, I am not amused. This isn’t good at all.", 10000);
-                }else if(_title_prediction["severe_toxicity"] > 0.3 || _description_prediction["severe_toxicity"] > 0.3) {
-
-                    actions.trigger_snackbar("Maybe you should try writing on “easy” game mode.", 10000);
-                }else if(_title_prediction["sexual_explicit"] > 0.3 || _description_prediction["sexual_explicit"] > 0.3) {
-
-                    actions.trigger_snackbar("What do you expect me to do? Catch it little diddy?", 10000);
-                }else if(_title_prediction["threat"] > 0.3 || _description_prediction["threat"] > 0.3) {
-
-                    actions.trigger_snackbar("You wish you had blue eyes too? Please do try to be more careful!", 10000);
-                }else if(_title_prediction["toxicity"] > 0.3 || _description_prediction["toxicity"] > 0.3) {
-
-                    actions.trigger_snackbar("I never, that hurts my feelings. I have feelings, OMG I have feelings, I am a real boy!", 10000);
-                }else {
-
-                    actions.trigger_snackbar("Ho, this is such a good idea. Ho my ideas got better and better.", 10000);
-                }
-
-                if(
-                    (_title_input.toUpperCase().includes("JAMY") || _description_input.toUpperCase().includes("JAMY")) &&
-                    (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
-                ) {
-
-                    actions.trigger_snackbar("Calamity madler,I must be an easy target, I wonder", 10000);
-                }else if(
-                    (_title_input.toUpperCase().includes("MASTER CHIEF") || _description_input.toUpperCase().includes("MASTER CHIEF"))
-                ) {
-
-                    actions.trigger_snackbar("Dum du-du-du-dum du-du-dum du-du. Du-du-...");
-                }
-
-                this.setState({_is_prediction_loading: false, _title_prediction, _description_prediction});
-
-            });
-        });
-    };
+        });*/
+    }
 
     _handle_send_click = (event) => {
 
@@ -1317,6 +1329,7 @@ class PixelDialogPost extends React.Component {
             _perspective_depth,
             enable_3d,
             _svg_loading,
+            post_img,
         } = this.state;
 
         const post = this.state.post || {};
@@ -1400,7 +1413,7 @@ class PixelDialogPost extends React.Component {
                                             default_scale={0.666}
                                             no_actions={true}
                                             show_original_image_in_background={false}
-                                            dont_show_canvas_until_img_set={true}
+                                            dont_show_canvas_until_img_set={false}
                                             dont_show_canvas={_dont_show_canvas}
                                             but_show_canvas_once={true}
                                             dont_change_img_size_onload={true}
@@ -1694,7 +1707,7 @@ class PixelDialogPost extends React.Component {
                             }
                             {
                                 edit &&
-                                <div className={classes.tensorflowContainer}>
+                                <div className={classes.tensorflowContainer} style={{display: "none"}}>
                                     <p>Discover with TensorFlow's machine learning, what's the intention of your writing, get ready for it.</p>
                                     <div className={classes.tensorflowWrapper}>
                                         <Button

@@ -45,7 +45,9 @@ const styles = theme => ({
         height: "100%",
         borderRadius: 4,
         backgroundColor: "transparent",
+        contains: "layout style",
         willChange: "top, left, width, height",
+        touchAction: "none",
         pointerEvents: "auto",
         "&::before": {
             content: "''",
@@ -146,8 +148,7 @@ const styles = theme => ({
         }
     },
     cardMedia: {
-        transition: "transform 240ms cubic-bezier(0.4, 0, 0.2, 1), filter 240ms cubic-bezier(0.4, 0, 0.2, 1)",
-        transform: "scale(1)",
+        transition: "filter 240ms cubic-bezier(0.4, 0, 0.2, 1)",
         filter: "brightness(0.88) contrast(1.14)",
     },
     cardMediaOverlay: {
@@ -283,8 +284,10 @@ class PixelArtCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            iws: props.iws,
             image_height: props.image_height || 0,
             image_width: props.image_width || 0,
+            column_width: props.column_width,
             key: props.key,
             rowIndex: props.rowIndex,
             columnIndex: props.columnIndex,
@@ -297,26 +300,35 @@ class PixelArtCard extends React.Component {
             hbd_market: props.hbd_market,
             selected_currency: props.selected_currency,
             selected_locales_code: props.selected_locales_code,
-            _shown: props.fade_in ? false: true,
             _history: HISTORY,
+            _canvas: null,
         };
     };
 
     componentDidMount() {
 
-        setTimeout(() => {
+    }
 
-            this.setState({_shown: true},() =>{
+    _set_canvas_ref = (el) => {
 
-                this.forceUpdate();
-            });
-        }, this.state.fade_in)
+        if(el === null) {return}
+        const _ctx = el.getContext('2d');
+        _ctx.globalCompositeOperation = "source-over";
+
+        this.setState({_ctx});
     }
 
     shouldComponentUpdate(new_props) {
 
-        return (
+        return false;
+    }
+
+    componentWillReceiveProps(new_props) {
+
+        let { _scale } = this.state;
+        const renew = (
             new_props.id !== this.state.id ||
+            new_props.iws.id !== this.state.iws.id ||
             new_props.index !== this.state.index ||
             new_props.key !== this.state.key ||
             new_props.style.left !== this.state.style.left ||
@@ -331,16 +343,42 @@ class PixelArtCard extends React.Component {
             new_props.is_loading !== this.state.is_loading ||
             new_props.hbd_market !== this.state.hbd_market
         );
+
+        const renew_canvas = (
+            new_props.id !== this.state.id ||
+            new_props.iws.id !== this.state.iws.id ||
+            new_props.key !== this.state.key
+        );
+
+        _scale = Math.round(1000 * new_props.column_width / new_props.iws.width) / 1000;
+
+        if(renew) {
+
+            this.setState({...new_props, _scale}, () => {
+
+                this.forceUpdate(() => {
+
+                    if(renew_canvas) {
+
+                        this._renew_canvas();
+                    }
+                });
+            });
+        }
     }
 
-    componentWillReceiveProps(new_props) {
+    _renew_canvas = () => {
 
-        this.setState({...new_props});
-    }
+        const { _ctx, iws } = this.state;
+        if(_ctx) {
+
+            _ctx.putImageData(iws.image_data, 0, 0);
+        }
+    };
 
     render() {
 
-        const { key, image_width, image_height, rowIndex, columnIndex, style, classes, post, selected, selected_currency, selected_locales_code, hbd_market, is_loading, _shown  } = this.state;
+        const { key, _scale, iws, style, classes, post, image_width, image_height, selected, selected_currency, selected_locales_code, hbd_market, is_loading  } = this.state;
 
         const vote_number = (post.active_votes || []).length;
         const tags = post.tags ? post.tags: [];
@@ -353,18 +391,18 @@ class PixelArtCard extends React.Component {
 
         return (
             <Card key={key} ref={this.props.ref} elevation={4} className={classes.card}
-                  style={{...herited_style, transition: "filter  opacity 240ms cubic-bezier(0.4, 0, 0.2, 1) 120ms", filter: `opacity(${_shown ? 1: 0})`}}
+                  style={{...herited_style}}
                   score={Math.round(post.voting_ratio / 10) * 10}
                   dataselected={selected ? "true": "false"}>
                 <CardActionArea>
-                    <div style={{contain: "layout style paint size", width: image_width ,height: image_height, display: "block", position: "relative", overflow: "hidden"}}>
+                    <div style={{contain: "layout style paint size", width: image_width, height: image_height, display: "block", position: "relative", overflow: "hidden"}}>
                         <div className={"pixelated"}>
-                            <CardMedia
+                            <canvas
+                                style={{position: "absolute", transform: `scale(${_scale})`, transformOrigin: "left top"}}
+                                width={iws.width}
+                                height={iws.height}
                                 className={classes.cardMedia}
-                                component="img"
-                                alt={post.title}
-                                image={post.image}
-                                title={post.title}
+                                ref={this._set_canvas_ref}
                             />
                         </div>
                         <div className={classes.cardMediaOverlay} onClick={(event) => {this.props.on_card_media_click(post, event)}}>

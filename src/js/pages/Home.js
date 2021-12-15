@@ -33,7 +33,7 @@ const styles = theme => ({
         width: "100%",
         overflow: "hidden",
         minHeight: "calc(100vh - 160px)",
-        backgroundImage: "radial-gradient(ellipse farthest-corner, #2e51ff85, #ffffff00 66%), url(/src/images/world_blue.png)",
+        backgroundImage: "radial-gradient(ellipse farthest-corner, #2e51ff85, #ffffff00 66%), url(/src/images/world_blue.jpg)",
         position: "absolute",
         backgroundSize: "125%",
         backgroundPosition: "-100% 0%",

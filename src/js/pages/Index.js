@@ -42,18 +42,26 @@ import { PAGE_ROUTES, HISTORY } from "../utils/constants";
 
 const styles = theme => ({
     root: {
+        transform: "translateZ(0)",
+        contain: "strict",
         overflow: "overlay",
         height: "100vh",
         width: "100vw",
-        display: "flex",
-        contain: "layout paint size style",
     },
     carouselImage: {
         padding: 32,
         maxWidth: "100%",
     },
     content: {
-        flexGrow: 1,
+        overflow: "overlay",
+        width: "calc(100vw - 256px)",
+        height: "100vh",
+        contain: "strict",
+        marginLeft: 256,
+        [theme.breakpoints.down("sm")]: {
+            width: "100vw",
+            marginLeft: 0,
+        }
     },
     snackbar: {
         "& .MuiSnackbarContent-root	": {
@@ -94,6 +102,7 @@ class Index extends React.Component {
         super(props);
         this.state = {
             pathname: props.location.pathname,
+            _intervals: [],
             _jamy_state_of_mind: "shocked",
             _history: HISTORY,
             _unlisten: null,
@@ -169,7 +178,9 @@ class Index extends React.Component {
         }, 1000);*/
 
         // Make Jamy blink every 32 sec in average.
-        setInterval(() => {
+        let intervals = [];
+
+        const interval = setInterval(() => {
 
             if(!Math.floor(Math.random() * 32)) {
 
@@ -192,6 +203,9 @@ class Index extends React.Component {
 
         }, 1000);
 
+        intervals.push(interval);
+        this.setState({_intervals: intervals});
+
         get_hive_posts({
             limit: 20,
             tag: "pixel-art",
@@ -204,6 +218,10 @@ class Index extends React.Component {
 
     componentWillUnmount() {
 
+        this.state._intervals.forEach((itrvl) => {
+
+            clearInterval(itrvl);
+        });
         this.state._unlisten();
         window.removeEventListener("resize", this._update_dimensions);
     }
@@ -503,14 +521,16 @@ class Index extends React.Component {
                         panic_mode={_panic_mode}
                         jamy_enabled={_jamy_enabled}
                         jamy_state_of_mind={_jamy_state_of_mind}/>
-                    <AppDrawer
-                        pathname={pathname}
-                        logged_account={_logged_account}/>
-                    <main className={classes.content}>
-                        <Toolbar />
-                        {page_tabs_component}
-                        {page_component}
-                    </main>
+                        <div style={{display: "inline"}}>
+                            <AppDrawer
+                                pathname={pathname}
+                                logged_account={_logged_account}/>
+                            <main className={classes.content}>
+                                <Toolbar />
+                                {page_tabs_component}
+                                {page_component}
+                            </main>
+                        </div>
                 </div>
             </div>
         );

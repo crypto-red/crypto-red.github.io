@@ -253,8 +253,8 @@ class PixelDialogPostBelowContent extends React.Component {
                 textRendering: "optimizespeed",
                 imageRendering: "optimizespeed",
                 touchAction: "none",
-                willChange: enable_3d ? "background-position": "",
-                transition: "background-position .1s linear 0s",
+                willChange: (!is_mobile_or_tablet && enable_3d) ? "background-position": "",
+                transition: is_mobile_or_tablet ? "none": "background-position .3s linear 0s",
                 backgroundImage: `url("${h_svg}")`,
                 backgroundRepeat: "repeat",
                 backgroundSize: `${Math.ceil(.5*200)}px ${Math.ceil(.5*229.3)}px`,
@@ -262,7 +262,7 @@ class PixelDialogPostBelowContent extends React.Component {
                 color: "black",
                 backgroundOrigin: "center"}}>
                 <div style={{contentVisibility: will_change ? "auto": h_svg ? "visible": "hidden", position: "relative", height: "100%"}}>
-                    <div style={{transition: "background-image .1s linear 0s", position: "relative", height: "100%", backgroundBlendMode: "color-burn", ...color_box_shadows}}>
+                    <div style={{transition: "background-image .3s linear 0s", position: "relative", height: "100%", backgroundBlendMode: "color-burn", ...color_box_shadows}}>
                         <div style={{zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", color: color, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
                             <p>$_AUTHOR: @{post.author}</p>
                             <p>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</p>
@@ -276,12 +276,12 @@ class PixelDialogPostBelowContent extends React.Component {
                             <p>$_AI_COMPUTING: {is_prediction_loading ? "TRUE": "FALSE"}</p>
                         </div>
                         <div style={{contain: "layout size paint", position: "absolute", width: "100%", height: "100%", top: 0, left: 0, willChange: "contents"}}>
-                            <img src={ss_svg} style={{transition: "transform .1s linear 0s", position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*5-25)*pz}px, ${(py*5-20)*pz}px)`}}/>
-                            <img src={st_svg} style={{transition: "transform .1s linear 0s", position: "absolute", bottom: 256, right: 256, width: 336, height: 336, transformOrigin: "middle center", transform: `translate(${(px*15-75)*pz}px, ${(py*15-75)*pz}px)`}}/>
-                            <img src={sg_svg} style={{transition: "transform .1s linear 0s", position: "absolute", top: 372, right: 372, width: 372, height: 372, transformOrigin: "top right", transform: `translate(${(px*10-50)*pz}px, ${(py*10-50)*pz}px)`}}/>
+                            <img src={ss_svg} style={{transition: is_mobile_or_tablet ? "none": "transform .3s linear 0s", position: "absolute", bottom: 64, left: 64, width: 32, height: 168, transform: `translate(${(px*5-25)*pz}px, ${(py*5-20)*pz}px)`}}/>
+                            <img src={st_svg} style={{transition: is_mobile_or_tablet ? "none": "transform .3s linear 0s", position: "absolute", bottom: 256, right: 256, width: 336, height: 336, transformOrigin: "middle center", transform: `translate(${(px*15-75)*pz}px, ${(py*15-75)*pz}px)`}}/>
+                            <img src={sg_svg} style={{transition: is_mobile_or_tablet ? "none": "transform .3s linear 0s", position: "absolute", top: 372, right: 372, width: 372, height: 372, transformOrigin: "top right", transform: `translate(${(px*10-50)*pz}px, ${(py*10-50)*pz}px)`}}/>
                         </div>
                         <div style={{zIndex: is_mobile_or_tablet ? 1: 14, contain: "size paint", position: "absolute", width: "100%", height: "100%", top: 0, left: 0, willChange: "contents"}}>
-                            <img src={sc_svg} style={{transition: "transform .1s linear 0s", filter: "opacity(0.5)",  zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
+                            <img src={sc_svg} style={{transition: is_mobile_or_tablet ? "none": "transform .1s linear 0s", filter: "opacity(0.5)",  zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
                         </div>
                         <span style={{filter: "opacity(0.3)", textShadow: `rgb(0 70 255 / 100%) 1.08243px 0px 1px, rgb(255 50 0 / 100%) -1.08243px 0px 1px, 0px 0px 4px`, position: "absolute", bottom: "30%", right: 32, width: "66%", color, fontFamily: `"Special Elite"`}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
                     </div>

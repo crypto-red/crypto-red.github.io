@@ -14,13 +14,18 @@ import ru from "../locales/ru";
 import hi from "../locales/hi";
 import es from "../locales/es";
 
-const T = { svg, en, fr, id, pt, it, de, ja, zh, ko, ru, hi, es };
+const PARAM_PROPS_NAME = ["faw", "fluc", "flc", "fllc", "tuc", "tlc", "aed", "ated"];
+const T = Object.freeze({ svg, en, fr, id, pt, it, de, ja, zh, ko, ru, hi, es });
+let LANG = "en"
+let LANG_DIR = T[LANG];
 
 function t(path = "", variables = {}, parameters = {}) {
 
-    const PARAM_PROPS_NAME = ["faw", "fluc", "flc", "fllc", "tuc", "tlc", "aed", "ated"];
-    const LANG = document.documentElement.lang;
-    const LANG_DIR = T[LANG] || T["en"];
+    if(LANG !== document.documentElement.lang) {
+
+        LANG = document.documentElement.lang;
+        LANG_DIR = T[LANG] || T["en"];
+    }
 
     // Detect if variables has been used as parameters for shorter syntax
     let variables_is_in_fact_parameters = false;

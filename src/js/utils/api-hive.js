@@ -1103,4 +1103,7 @@ module.exports = {
     search_on_hive: search_on_hive,
     cached_search_on_hive: cached_search_on_hive,
     postprocess_text: postprocess_text,
+    hive_posts_db: hive_posts_db,
+    hive_accounts_db: hive_accounts_db,
+    hive_queries_db: hive_queries_db,
 };

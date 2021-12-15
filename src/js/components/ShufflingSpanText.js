@@ -6,37 +6,6 @@ const SHUFFLING_VALUES = [
     '#', '-', ':', ';', '~',
 ];
 
-let waf_id = null;
-
-function loop_frame(render, initiated) {
-
-    if(waf_id === null) {
-
-        waf_id = window.requestAnimationFrame(render);
-    }else if(initiated + 1000 / 20 > Date.now()) { // Before more a 15/s frame is further in time than now -> it took long cancel AF.
-
-        waf_id = null;
-        window.cancelAnimationFrame(waf_id);
-
-        if(initiated + 1000 / 15 < Date.now()) { //  Before more a 9/s frame is NOT further in time than now -> it took very long but don't throw it.
-
-            waf_id = window.requestAnimationFrame(render);
-        }
-    }else if(initiated + 1000 / 10 > Date.now()) { // The request was recent, feedback the request to itself.
-
-        setTimeout(() => {
-
-            loop_frame(render, initiated);
-        }, 10);
-    }
-
-}
-
-const request_frame = (render) => {
-
-    loop_frame(render, Date.now());
-}
-
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
@@ -91,9 +60,9 @@ class ShufflingSpanText extends React.Component {
 
                 this.setState({_text_proceed}, () => {
 
-                    request_frame(() => {this.forceUpdate()});
+                    this.forceUpdate();
                 });
-            }, 1000 / 60);
+            }, 1000 / 100);
 
             const animation_timeout = setTimeout(() => {
 
