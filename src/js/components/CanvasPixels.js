@@ -1968,7 +1968,7 @@ class CanvasPixels extends React.Component {
 
     };
 
-    set_canvas_from_image = (image_obj, loading_base64_img = "", img_d = null) => {
+    set_canvas_from_image = (image_obj, loading_base64_img = "", img_d = {}) => {
 
         if(this.props.onLoad) {this.props.onLoad("image_load");}
 

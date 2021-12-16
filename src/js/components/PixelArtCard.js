@@ -41,14 +41,12 @@ const styles = theme => ({
         overflow: "visible",
         position: "relative",
         boxSizing: "content-box",
-        width: "100%",
-        height: "100%",
         borderRadius: 4,
         backgroundColor: "transparent",
-        contains: "layout style",
+        contain: "layout style",
         willChange: "top, left, width, height",
-        touchAction: "none",
-        pointerEvents: "auto",
+        touchAction: "all",
+        pointerEvents: "all",
         "&::before": {
             content: "''",
             background: "#100d4e",
@@ -108,10 +106,6 @@ const styles = theme => ({
         "&[score='80']::after": {backgroundImage: `url('${love_emoji_svg}')`},
         "&[score='90']::after": {backgroundImage: `url('${angel_emoji_svg}')`},
         "&[score='100']::after": {backgroundImage: `url('${fire_earth_emoji_svg}')`},
-        "& > .MuiCardActionArea-root > div:hover > img, &[dataselected='true'] > .MuiCardActionArea-root > div > img": {
-            transform: "scale(1.30) translateY(-12px)",
-            filter: "brightness(1) contrast(1)",
-        },
         "& > .MuiCardActionArea-root": {
             overflow: "hidden",
         },

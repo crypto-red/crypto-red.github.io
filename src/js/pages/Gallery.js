@@ -69,7 +69,7 @@ const styles = theme => ({
         },
         display: "flex",
         position: "fixed",
-        overflow: "hidden",
+        overflow: "overlay",
         backgroundColor: theme.palette.primary.darker,
     },
     AppBar: {
@@ -141,8 +141,6 @@ const styles = theme => ({
             "& > .ReactVirtualized__Masonry__innerScrollContainer": {
                 contentVisibility: "auto",
                 overscrollBehavior: "none",
-                pointerEvents: "none",
-                touchAction: "none",
                 overflow: "visible !important",
                 contain: "size layout paint style",
             }
@@ -1215,8 +1213,10 @@ class Gallery extends React.Component {
             56;
         const post_list_height = height - post_list_window_margin_top;
 
+        const pixel_post_dialog_opened = Boolean(_post !== null && _post_author !== null && _post_permlink !== null);
+
         return (
-            <div className={classes.root} ref={this._set_root_ref}>
+            <div className={classes.root} ref={this._set_root_ref} style={pixel_post_dialog_opened ? {touchAction: "none", pointerEvents: "none"}: {}}>
                 <div className={classes.appBarContainer}>
                     {
                         _is_search_mode ?
@@ -1328,7 +1328,7 @@ class Gallery extends React.Component {
                     keepMounted={true}
                     post={_post}
                     post_img={_post_img}
-                    open={Boolean(_post !== null && _post_author !== null && _post_permlink !== null)}
+                    open={pixel_post_dialog_opened}
                     onClose={this._handle_pixel_dialog_post_close}
                     onExited={this._handle_pixel_dialog_post_exited}
                     on_settings_changed={this._update_settings}
