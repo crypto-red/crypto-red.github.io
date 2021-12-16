@@ -654,12 +654,12 @@ class PixelDialogPost extends React.Component {
 
         base64_url = base64_url === null ? this.state.post.image: base64_url;
 
-        if(!post_img.id) {
+        if(!(post_img || {}).id) {
 
             let img = new Image;
             img.onload = () => {
 
-                _canvas.set_canvas_from_image(img, "", post_img);
+                _canvas.set_canvas_from_image(img, "");
             };
 
             img.src = base64_url;

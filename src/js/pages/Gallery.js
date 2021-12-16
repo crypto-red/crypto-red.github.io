@@ -139,11 +139,12 @@ const styles = theme => ({
             willChange: "scroll-position !important",
             overflow: "overlay",
             padding: "88px 12px 32px 16px",
+            contain: "layout size paint",
             "& > .ReactVirtualized__Masonry__innerScrollContainer": {
                 top: "auto !important",
                 left: "auto !important",
                 contentVisibility: "visible",
-                //overflow: "visible !important",
+                overflow: "visible !important",
                 contain: "layout size style paint",
             }
         }
@@ -255,7 +256,7 @@ class Gallery extends React.Component {
             _column_count: 4,
             _column_width: 356,
             _load_more_threshold: 2000,
-            _overscan_by_pixels: 3000,
+            _overscan_by_pixels: 6000,
             _cell_positioner: null,
             _cell_positioner_config: null,
             _masonry: null,
@@ -1156,7 +1157,7 @@ class Gallery extends React.Component {
                 this._load_more();
             }
 
-            this.setState({_scroll_top: scrollTop});
+            //this.setState({_scroll_top: scrollTop});
         }
     };
 
@@ -1261,7 +1262,7 @@ class Gallery extends React.Component {
                                 return (
                                     <MasonryExtended
                                         scrollTop={_scroll_top}
-                                        scrollingResetTimeInterval={750}
+                                        scrollingResetTimeInterval={500}
                                         onScroll={this._handle_masonry_scroll}
                                         height={post_list_height}
                                         cellCount={itemsWithSizes.length}

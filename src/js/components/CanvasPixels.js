@@ -4813,8 +4813,6 @@ class CanvasPixels extends React.Component {
         const has_new_pixel_hovered = _old_pxls_hovered !== _pxls_hovered;
         const has_new_mine_player_index = _previous_mine_player_index !== _mine_player_index;
 
-        do_not_cancel_animation = do_not_cancel_animation || is_there_new_dimension || (_was_canvas_content_hidden && !hide_canvas_content);
-
         // Only operate on canvas context if existing
         let _ctx = _canvas ? _canvas.context2d : null;
         if (_ctx) {
@@ -4878,7 +4876,7 @@ class CanvasPixels extends React.Component {
                 }
             }
 
-
+            const has_canvas_been_hidden = _was_canvas_content_hidden && !hide_canvas_content;
             const has_new_layer = (_layers.length !== _old_layers.length);
             let has_layers_visibility_or_opacity_changed = has_new_layer;
 
@@ -4893,7 +4891,7 @@ class CanvasPixels extends React.Component {
 
             }
 
-            let image_data = (hide_canvas_content || is_there_new_dimension || !has_shown_canvas_once) || (!hide_canvas_content && _was_canvas_content_hidden) ?
+            let image_data = (hide_canvas_content || is_there_new_dimension || !has_shown_canvas_once) || has_canvas_been_hidden ?
                 new ImageData(pxl_width, pxl_height):
                 _ctx.getImageData(0, 0, pxl_width, pxl_height);
 
@@ -4936,6 +4934,7 @@ class CanvasPixels extends React.Component {
                 const pixel_hover_exception = tool === "ELLIPSE" && pxl_indexes_of_current_shape.size > 0;
 
                 if (
+                    has_canvas_been_hidden ||
                     is_there_new_dimension ||
                     !has_shown_canvas_once ||
                     is_in_pencil_mirror_axes_hover_indexes ||
@@ -4996,7 +4995,7 @@ class CanvasPixels extends React.Component {
                     }
 
                     let color =
-                        (is_there_new_dimension || !has_shown_canvas_once) || (!hide_canvas_content && _was_canvas_content_hidden) ||
+                        (is_there_new_dimension || !has_shown_canvas_once) || has_canvas_been_hidden ||
                         is_in_pencil_mirror_axes_hover_indexes ||
                         is_in_pencil_mirror_axes_indexes ||
                         (is_pixel_hovered || is_mine_player_index) ||
@@ -5070,7 +5069,7 @@ class CanvasPixels extends React.Component {
                         _old_pxl_height: pxl_height,
                         _previous_mine_player_index: _mine_player_index,
                         _old_pxls_hovered: _pxls_hovered,
-                        _was_canvas_content_hidden: hide_canvas_content && !_was_canvas_content_hidden,
+                        _was_canvas_content_hidden: hide_canvas_content,
                         _last_paint_timestamp: Date.now(),
                         has_shown_canvas_once: true,
                     });

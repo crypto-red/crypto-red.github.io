@@ -38,11 +38,11 @@ const fire_earth_emoji_svg = get_svg_in_b64(<FireHearthEmojiSvg />);
 
 const styles = theme => ({
     card: {
-        overflow: "visible",
         boxSizing: "content-box",
         borderRadius: 0,
         backgroundColor: "transparent",
         contain: "layout style paint",
+        transform: "translateZ(0)",
         willChange: "top, left, width, height",
         touchAction: "pan-y",
         pointerEvents: "auto",
@@ -75,7 +75,7 @@ const styles = theme => ({
             height: 24,
             position: "absolute",
             right: 16,
-            bottom: -6,
+            bottom: 6,
             opacity: ".0",
             transform: "scale(0)",
             transition: "opacity 225ms cubic-bezier(0.4, 0, 0.2, 1), transform 175ms cubic-bezier(0.4, 0, 0.2, 1)"
