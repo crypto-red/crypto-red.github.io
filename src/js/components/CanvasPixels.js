@@ -3848,7 +3848,7 @@ class CanvasPixels extends React.Component {
 
         const canvas_event_target = this._get_canvas_event_target(event);
 
-        let { _pointer_events, _latest_pointers_distance, _latest_pointers_client_x_center, _latest_pointers_client_y_center, scale_move_x, scale_move_y } = this.state;
+        let { _previous_initial_scale_move, _pointer_events, _latest_pointers_distance, _latest_pointers_client_x_center, _latest_pointers_client_y_center } = this.state;
 
         for (let i = 0; i < _pointer_events.length; i++) {
             if (_pointer_events[i].pointerId === event.pointerId) {
@@ -3864,14 +3864,20 @@ class CanvasPixels extends React.Component {
             _latest_pointers_distance = 0;
             _latest_pointers_client_x_center = 0;
             _latest_pointers_client_y_center = 0;
+
+            if(_pointer_events.length === 1) {
+
+                _previous_initial_scale_move = [_pointer_events[0].clientX, _pointer_events[0].clientY];
+            }
         }
 
         this.setState({
-            _mouse_down: false,
+            _mouse_down: _pointer_events.length > 0,
             _pointer_events: [..._pointer_events],
             _latest_pointers_distance,
             _latest_pointers_client_x_center,
             _latest_pointers_client_y_center,
+            _previous_initial_scale_move,
         }, () => {
 
             if(event.pointerType === "mouse") {

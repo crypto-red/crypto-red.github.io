@@ -281,6 +281,7 @@ class PixelArtCard extends React.Component {
             image_height: props.image_height || 0,
             image_width: props.image_width || 0,
             column_width: props.column_width,
+            soon_or_visible: props.soon_or_visible,
             key: props.key,
             rowIndex: props.rowIndex,
             columnIndex: props.columnIndex,
@@ -320,7 +321,7 @@ class PixelArtCard extends React.Component {
 
         let { _scale } = this.state;
         const renew = (
-            new_props.id !== this.state.id ||
+            new_props.soon_or_visible !== this.state.soon_or_visible ||
             new_props.iws.id !== this.state.iws.id ||
             new_props.index !== this.state.index ||
             new_props.key !== this.state.key ||
@@ -331,14 +332,15 @@ class PixelArtCard extends React.Component {
             new_props.image_width !== this.state.image_width ||
             new_props.rowIndex !== this.state.rowIndex ||
             new_props.columnIndex !== this.state.columnIndex ||
-            new_props.post !== this.state.post ||
             new_props.selected !== this.state.selected ||
             new_props.is_loading !== this.state.is_loading ||
-            new_props.hbd_market !== this.state.hbd_market
+            new_props.hbd_market !== this.state.hbd_market ||
+            new_props.post.id !== this.state.post.id
         );
 
         const renew_canvas = (
-            new_props.id !== this.state.id ||
+            new_props.soon_or_visible ||
+            new_props.post.id !== this.state.post.id ||
             new_props.iws.id !== this.state.iws.id ||
             new_props.key !== this.state.key
         );
@@ -371,7 +373,7 @@ class PixelArtCard extends React.Component {
 
     render() {
 
-        const { key, _scale, iws, style, classes, post, image_width, image_height, selected, selected_currency, selected_locales_code, hbd_market, is_loading  } = this.state;
+        const { key, soon_or_visible, _scale, iws, style, classes, post, image_width, image_height, selected, selected_currency, selected_locales_code, hbd_market, is_loading  } = this.state;
 
         const vote_number = (post.active_votes || []).length;
         const tags = post.tags ? post.tags: [];
@@ -383,12 +385,12 @@ class PixelArtCard extends React.Component {
         const herited_style = {...style, ...selected_style};
 
         return (
-            <Card key={key} ref={this.props.ref} elevation={4} className={classes.card}
+            <Card key={key} ref={this.props.ref} elevation={0} className={classes.card}
                   style={{...herited_style}}
                   score={Math.round(post.voting_ratio / 10) * 10}
                   dataselected={selected ? "true": "false"}>
-                <CardActionArea>
-                    <div style={{contain: "layout style paint size", width: image_width, height: image_height, display: "block", position: "relative", overflow: "hidden"}}>
+                <CardActionArea disableRipple={!soon_or_visible}>
+                    <div style={{contain: "layout style paint size", width: image_width, height: image_height, display: "block", position: "relative"}}>
                         <div className={"pixelated"}>
                             <canvas
                                 style={{position: "absolute", transform: `scale(${_scale})`, transformOrigin: "left top"}}
@@ -400,7 +402,7 @@ class PixelArtCard extends React.Component {
                         </div>
                         <div className={classes.cardMediaOverlay} onClick={(event) => {this.props.on_card_media_click(post, event)}}>
                             <div className={classes.nsTags}>
-                                {Object.entries(post.responsabilities).map((entry) => {
+                                {Object.entries(post.responsabilities || {}).map((entry) => {
 
                                     const [ key, value ] = entry;
 

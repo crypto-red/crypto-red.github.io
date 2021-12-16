@@ -46,21 +46,22 @@ class ImageMeasurer extends React.Component {
 
     _on_size_computed = (size, index, item) => {
 
-        let itemsWithSizes = this.state.itemsWithSizes;
+        let {itemsWithSizes} = this.state;
 
+        size = {...size};
         item = {...item};
-        delete item.image;
+        delete item["image"];
 
         itemsWithSizes[index] = {
-            size,
-            item
+            size: Object.freeze(size),
+            item: Object.freeze(item)
         };
 
         this.setState({itemsWithSizes, sizes: itemsWithSizes.map((iws) => {
                 return {
                     width: iws.size.width,
                     height: iws.size.height
-                }
+                };
             })}, () => {
 
             this.maybe_render();

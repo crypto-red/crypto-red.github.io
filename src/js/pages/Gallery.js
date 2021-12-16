@@ -640,44 +640,51 @@ class Gallery extends React.Component {
 
     _cell_renderer = (data) => {
 
-        const {index, key, parent, style} = data;
-        const { _masonry, _hbd_market, _selected_currency, _selected_locales_code, _post, _reaction_selected_post_loading, _column_width, _cell_measurer_cache, _column_count, _posts } = this.state;
+        const {index, key, parent, style, itemsWithSizes} = data;
+        const { _root_height, _masonry, _hbd_market, _selected_currency, _selected_locales_code, _post, _reaction_selected_post_loading, _column_width, _cell_measurer_cache, _column_count } = this.state;
 
-        const post = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).item || {}: {};
-        const size = typeof _masonry.props.itemsWithSizes !== "undefined" ? (_masonry.props.itemsWithSizes[index] || {}).size || {}: {};
+        if(typeof _masonry.props.itemsWithSizes[index] === "undefined") {return}
+        const {item, size} =  _masonry.props.itemsWithSizes[index];
+        const scroll_top = _masonry._scrollingContainer.scrollTop;
 
-        if(!Boolean(post.id) || !size.height){return null}
+        if(!Boolean(item.id) || !size.height){return}
         const columnIndex = index % _column_count;
         const rowIndex = (index - columnIndex) / _column_count;
-        const selected = post.id === (_post || {}).id;
-        const is_loading = Boolean((_reaction_selected_post_loading || {}).id === post.id);
+        const selected = item.id === (_post || {}).id;
+        const is_loading = Boolean((_reaction_selected_post_loading || {}).id === item.id);
         const image_height = Math.ceil(_column_width * (size.height / size.width)) || 0;
 
         style.width = _column_width;
         let {_top_scroll_of_el_by_index, _height_of_el_by_index, _x_y_of_el_by_index} = this.state;
-        _top_scroll_of_el_by_index[index] = style.top;
-        _height_of_el_by_index[index] = style.height;
+
+        const top = style.top;
+        const height = style.height;
+        const bottom = top + height;
+
+        _top_scroll_of_el_by_index[index] = top;
+        _height_of_el_by_index[index] = height;
         _x_y_of_el_by_index[index] = [rowIndex, columnIndex];
 
+        const soon_visible_threshold = _root_height * 3/4;
+        const soon_or_visible = soon_visible_threshold + bottom > scroll_top && top < scroll_top + _root_height + soon_visible_threshold;
 
         this.setState({_top_scroll_of_el_by_index, _height_of_el_by_index});
 
         return (
-            <CellMeasurer cache={_cell_measurer_cache} index={1.0 * index} key={key} parent={parent}>
+            <CellMeasurer cache={_cell_measurer_cache} index={index} key={key} parent={parent}>
                 <PixelArtCard
-                    id={post.id}
                     rowIndex={rowIndex}
                     columnIndex={columnIndex}
                     style={style}
-                    fade_in={250}
                     selected={selected}
-                    post={post}
+                    post={item}
                     iws={size}
                     column_width={_column_width}
                     image_height={image_height}
                     image_width={_column_width}
                     is_loading={is_loading}
                     hbd_market={_hbd_market}
+                    soon_or_visible={soon_or_visible}
                     selected_currency={_selected_currency}
                     selected_locales_code={_selected_locales_code}
                     on_author_click={this._handle_set_selected_account}
@@ -720,7 +727,7 @@ class Gallery extends React.Component {
                 const {_column_count, _column_width, _gutter_size} = this.state;
 
                 let _cell_measurer_cache = new CellMeasurerCache({
-                    defaultHeight: 1,
+                    defaultHeight: 600,
                     defaultWidth: _column_width,
                     fixedWidth: true,
                 });
@@ -1253,7 +1260,7 @@ class Gallery extends React.Component {
                         className={classes.masonry}
                         items={_posts}
                         image={item => item.image}
-                        keyMapper={(item, index) => `${1.0 * item.id}`}
+                        keyMapper={item => item.id}
                 >
                         {({itemsWithSizes}) => {
 
@@ -1262,11 +1269,12 @@ class Gallery extends React.Component {
                                 return (
                                     <MasonryExtended
                                         scrollTop={_scroll_top}
-                                        scrollingResetTimeInterval={500}
+                                        scrollingResetTimeInterval={100}
                                         onScroll={this._handle_masonry_scroll}
                                         height={post_list_height}
                                         cellCount={itemsWithSizes.length}
                                         itemsWithSizes={itemsWithSizes}
+                                        keyMapper={index => (itemsWithSizes[index] || {size:{id: -itemsWithSizes.length}}).size.id}
                                         cellMeasurerCache={_cell_measurer_cache}
                                         cellPositioner={_cell_positioner}
                                         cellRenderer={this._cell_renderer}
