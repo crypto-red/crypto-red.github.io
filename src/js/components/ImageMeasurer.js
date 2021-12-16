@@ -1,139 +1,97 @@
-import React, {PureComponent} from "react";
-import PropTypes from "prop-types";
-import {has, get_new_img_obj} from "../utils/png-db";
+import React from "react";
+import stuff from "../utils/png-db";
 
-export default class ImageMeasurer extends PureComponent {
+const stuffy = stuff();
 
-    static displayName = "ImageMeasurer";
+class ImageMeasurer extends React.Component {
 
-    static propTypes = {
-        onError: PropTypes.func,
-        timeout: PropTypes.number,
-        keyMapper: PropTypes.func,
-        image: PropTypes.func.isRequired,
-        children: PropTypes.func.isRequired,
-        defaultWidth: PropTypes.number.isRequired,
-        defaultHeight: PropTypes.number.isRequired
-    };
+    constructor(props) {
+        super(props);
 
-    static defaultProps = {
-        onError: () => null,
-        timeout: 5000,
-        keyMapper: () => null
-    };
-
-    makeItemsWithSizes = (items, sizes) => items.reduce((res, item) => {
-
-        if (res.stop) return res;
-
-        const src = this.props.image(item);
-        const size = sizes[src];
-
-        // this will stop execution for first non-loaded image
-        if (src && !size) {
-            return {...res, stop: true};
+        this.state = {
+            className: props.className,
+            items: props.items,
+            keyMapper: props.keyMapper,
+            image: props.image,
+            children: props.children,
+            itemsWithSizes: [],
         }
+    }
 
-        res.itemsWithSizes.push({
-            item,
-            size
-        });
+    componentWillReceiveProps(nextProps) {
 
-        return res;
+        const {items, image} = nextProps;
 
-    }, {itemsWithSizes: [], stop: false}).itemsWithSizes;
+        const itemChanged = items.length !== this.state.items.length || items.map(i => i.id) !== this.state.items.map(i => i.id);
+        const itemsWithSizes = itemChanged ? []: this.state.itemsWithSizes;
 
-    timeouts = {};
+        this.setState({...nextProps, itemsWithSizes}, () => {
 
-    state = {
-        sizes: {}
-    };
+            if(itemChanged) {
 
-    onLoad = (src, ref) => {
+                this.maybe_render();
+                items.forEach((item, index) => {
 
-        this.clearTimeout(src);
+                    if(!this.state.itemsWithSizes[index]) {
 
-        if (this.state.sizes[src]) return;
+                        const base64 = image(item);
 
-        get_new_img_obj(src, (i_o) => {
+                        stuffy.get_new_img_obj(base64, (size) => {this._on_size_computed(size, index, item)});
 
-            const size = i_o;
-
-            const sizes = {
-                ...this.state.sizes,
-                [src]: size
-            };
-
-            this.setState({sizes});
-        });
-
-
-
-    };
-
-    onLoadError = (event, item, src) => {
-        this.onLoad(src, this.props.onError(event, item, src) || this.getDefaultSize());
-    };
-
-    clearTimeout = (src) => {
-        const timeout = this.timeouts[src];
-        if (timeout) clearTimeout(timeout);
-    };
-
-    setTimeout = (src) => {
-        this.clearTimeout(src);
-        setTimeout(() => {
-            this.setDefaultSize(src);
-        }, this.props.timeout);
-    };
-
-    getDefaultSize = () => ({
-        width: this.props.defaultWidth,
-        height: this.props.defaultHeight
-    });
-
-    setDefaultSize = (src) => {
-        this.onLoad(src, this.getDefaultSize());
-    };
-
-    componentDidUpdate() {
-
-        const {items, image} = this.props;
-
-        items.forEach(item => {
-
-            const src = image(item);
-
-            if (!!this.timeouts[src] || !has(src)){
-
-                this.onLoad(src);
-                return;
+                    }
+                });
             }
+        });
+    }
 
-            if (!src) {
+    _on_size_computed = (size, index, item) => {
 
-                return;
-            }
+        let itemsWithSizes = this.state.itemsWithSizes;
 
-            this.setTimeout(src);
-        })
+        item = {...item};
+        delete item.image;
+
+        itemsWithSizes[index] = {
+            size,
+            item
+        };
+
+        this.setState({itemsWithSizes, sizes: itemsWithSizes.map((iws) => {
+                return {
+                    width: iws.size.width,
+                    height: iws.size.height
+                }
+            })}, () => {
+
+            this.maybe_render();
+        });
+    }
+
+    shouldComponentUpdate() {
+        return false;
+    }
+
+    maybe_render = () => {
+
+        const {itemsWithSizes, items} = this.state;
+        if(items.length === itemsWithSizes.length) {
+
+            this.forceUpdate();
+        }
 
     }
 
     render() {
 
-        const {items, image, keyMapper, children, defaultWidth, defaultHeight, onError, timeout, ...props} = this.props;
-        const {sizes} = this.state;
-
-        const itemsWithSizes = this.makeItemsWithSizes(items, sizes);
+        const {itemsWithSizes, sizes, children, className} = this.state;
 
         return (
-            <div {...props}>
-
+            <div className={className}>
                 {children({itemsWithSizes, sizes})}
-
             </div>
         );
 
     }
 }
+
+export default ImageMeasurer;

@@ -74,6 +74,7 @@ const styles = theme => ({
     },
     AppBar: {
         position: "relative",
+        marginTop: -1,
         zIndex: 1202,
         [theme.breakpoints.up("md")]: {
             borderRadius: 4
@@ -131,18 +132,19 @@ const styles = theme => ({
         overflow: "overlay",
         "& > .ReactVirtualized__Masonry": {
             position: "absolute",
-            padding: "88px 16px 32px 16px",
             margin: 0,
             scrollBehavior: "smooth",
             overscrollBehavior: "none",
             touchAction: "pan-y",
             willChange: "scroll-position !important",
             overflow: "overlay",
+            padding: "88px 12px 32px 16px",
             "& > .ReactVirtualized__Masonry__innerScrollContainer": {
-                contentVisibility: "auto",
-                overscrollBehavior: "none",
-                overflow: "visible !important",
-                contain: "size layout paint style",
+                top: "auto !important",
+                left: "auto !important",
+                contentVisibility: "visible",
+                //overflow: "visible !important",
+                contain: "layout size style paint",
             }
         }
     },
@@ -1216,7 +1218,7 @@ class Gallery extends React.Component {
         const pixel_post_dialog_opened = Boolean(_post !== null && _post_author !== null && _post_permlink !== null);
 
         return (
-            <div className={classes.root} ref={this._set_root_ref} style={pixel_post_dialog_opened ? {touchAction: "none", pointerEvents: "none"}: {}}>
+            <div className={classes.root} ref={this._set_root_ref} style={pixel_post_dialog_opened ? {contentVisibility: "hidden"}: {}}>
                 <div className={classes.appBarContainer}>
                     {
                         _is_search_mode ?
@@ -1247,12 +1249,9 @@ class Gallery extends React.Component {
                 </div>
 
                 <ImageMeasurer
-                        isBase64={true}
                         className={classes.masonry}
                         items={_posts}
                         image={item => item.image}
-                        defaultHeight={post_list_height}
-                        defaultWidth={page_width}
                         keyMapper={(item, index) => `${1.0 * item.id}`}
                 >
                         {({itemsWithSizes}) => {
@@ -1262,7 +1261,7 @@ class Gallery extends React.Component {
                                 return (
                                     <MasonryExtended
                                         scrollTop={_scroll_top}
-                                        scrollingResetTimeInterval={100}
+                                        scrollingResetTimeInterval={750}
                                         onScroll={this._handle_masonry_scroll}
                                         height={post_list_height}
                                         cellCount={itemsWithSizes.length}

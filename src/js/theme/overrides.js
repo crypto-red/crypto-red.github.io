@@ -21,6 +21,9 @@ const overrides = {
             "h1 > p, h2 > p, h3 > p, h4 > p, h5 > p, h6 > p": {
                 margin: 0,
             },
+            "canvas":{
+                imageRendering: "optimizespeed",
+            },
             ".pixelated": {
                 imageRendering: "pixelated",
                 "& *": {
