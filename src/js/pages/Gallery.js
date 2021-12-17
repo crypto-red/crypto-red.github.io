@@ -144,6 +144,7 @@ const styles = theme => ({
                 top: "auto !important",
                 left: "auto !important",
                 contentVisibility: "visible",
+                filter: "opacity(1)",
                 overflow: "visible !important",
                 contain: "layout size style paint",
             }
@@ -496,7 +497,7 @@ class Gallery extends React.Component {
 
                             const _posts_ids = _posts.map(p => p.id);
                             const posts = _posts.concat(data.posts.filter(p => Boolean(!_posts_ids.includes(p.id))));
-                            this.setState({...end_data, _loading_posts: false, _posts: posts}, () => {
+                            this.setState({...end_data, _loading_posts: false, _posts: posts.map((p) => {p.fetched = p.fetched || Date.now(); return p;}).sort((a, b) => a.fetched < b.fetched)}, () => {
 
                                 this.forceUpdate();
                                 actions.trigger_loading_update(100);
@@ -551,7 +552,7 @@ class Gallery extends React.Component {
                             const _posts_ids = _posts.map(p => p.id);
                             const posts = _posts.concat(data.posts.filter(p => Boolean(!_posts_ids.includes(p.id))));
 
-                            this.setState({_loading_posts: false, _posts: posts, _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
+                            this.setState({_loading_posts: false, _posts: posts.map((p) => {p.fetched = p.fetched || Date.now(); return p;}).sort((a, b) => a.fetched < b.fetched), _search_mode_query_pages: data.pages, _search_mode_query_page: data.page}, () => {
 
                                 this.forceUpdate();
                                 actions.trigger_loading_update(100);
@@ -1269,12 +1270,12 @@ class Gallery extends React.Component {
                                 return (
                                     <MasonryExtended
                                         scrollTop={_scroll_top}
-                                        scrollingResetTimeInterval={100}
+                                        scrollingResetTimeInterval={1000}
                                         onScroll={this._handle_masonry_scroll}
                                         height={post_list_height}
                                         cellCount={itemsWithSizes.length}
                                         itemsWithSizes={itemsWithSizes}
-                                        keyMapper={index => (itemsWithSizes[index] || {size:{id: -itemsWithSizes.length}}).size.id}
+                                        keyMapper={index => (itemsWithSizes[index] || {size:{id: Math.random()}}).size.id}
                                         cellMeasurerCache={_cell_measurer_cache}
                                         cellPositioner={_cell_positioner}
                                         cellRenderer={this._cell_renderer}

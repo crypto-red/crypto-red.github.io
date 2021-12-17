@@ -317,6 +317,7 @@ class PixelArtCard extends React.Component {
         let { _scale } = this.state;
         const renew = (
             new_props.id !== this.state.id ||
+            new_props.post.fetched !== this.state.post.fetched ||
             new_props.iws.id !== this.state.iws.id ||
             new_props.index !== this.state.index ||
             new_props.key !== this.state.key ||
