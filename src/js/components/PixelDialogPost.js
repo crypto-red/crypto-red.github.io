@@ -53,7 +53,6 @@ import ChipInput from "material-ui-chip-input";
 import actions from "../actions/utils";
 import {postJSON} from "../utils/load-json";
 import {clean_json_text} from "../utils/json";
-import ReactDOM from "react-dom";
 import get_svg_in_b64 from "../utils/svgToBase64Worker";
 import Scifisc from "../icons/Scifisc";
 import Scifiss from "../icons/Scifiss";
@@ -499,7 +498,6 @@ class PixelDialogPost extends React.Component {
 
         window.addEventListener("resize", this._updated_dimensions);
         document.addEventListener("keydown", this._handle_keydown);
-        ReactDOM.findDOMNode(this).focus();
 
         this._updated_dimensions();
 
@@ -1197,7 +1195,7 @@ class PixelDialogPost extends React.Component {
 
                             if(data) {
 
-                                postJSON("https://translate.argosopentech.com/translate", {q: this.state.post.description, source: data.language, target: lang, format: "text"}, (err2, res2) => {
+                                postJSON("https://translate.argosopentech.com/translate", {q: this.state.post.description, source: data.language, target: lang, format: "html"}, (err2, res2) => {
 
                                     if(!err2 && res2) {
 
@@ -1354,130 +1352,128 @@ class PixelDialogPost extends React.Component {
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
 
         return (
-            <div>
-                <Dialog
-                    style={{transform: "translateZ(0)"}}
-                    keepMounted={keepMounted}
-                    open={open}
-                    PaperComponent={"div"}
-                    fullScreen
-                    onClose={(event) => {this.props.onClose(event)}}
-                    onExited={(event) => {this.props.onExited && this.props.onExited(event)}}
-                >
-                    <div className={classes.root} style={{contain: "layout paint size style"}}>
-                        {
-                            <PixelDialogPostBelowContent
-                                ref={this._set_pixel_dialog_post_below_content_ref}
-                                post={post}
-                                enable_3d={enable_3d}
-                                will_change={_svg_loading}
-                                color_box_shadows={color_box_shadows}
-                                balance_fiat={balance_fiat}
-                                selected_locales_code={selected_locales_code}
-                                hbd_market={hbd_market}
-                                selected_currency={selected_currency}
-                                layers={layers}
-                                sc_svg={_sc_svg}
-                                ss_svg={_ss_svg}
-                                st_svg={_st_svg}
-                                sg_svg={_sg_svg}
-                                g_svg={_g_svg}
-                                h_svg={_h_svg}
-                                window_width={_window_width}
-                                is_prediction_loading={_is_prediction_loading}
-                                tags_input={_tags_input}
-                                translated_description={_translated_description}
-                                translated_title={_translated_title}
-                                has_translation_started={_has_translation_started}
-                                color={_color_palette.brightest_color}
-                                classname={classes.belowContent} />
-                        }
-                        <div className={classes.content}>
-                            <div className={classes.contentInner}>
-                                <div style={{contentVisibility: "visible", contain: "layout paint size style"}} className={classes.contentImage} dataid={post.id}>
-                                    <div className={classes.contentCanvasLight}>
-                                        <CanvasPixels
-                                            canvas_wrapper_border_radius={0}
-                                            canvas_wrapper_border_width={0}
-                                            shadow_size={9}
-                                            shadow_color={_color_palette.background_color}
-                                            canvas_wrapper_padding={24}
-                                            canvas_wrapper_background_color={_color_palette.brightest_color}
-                                            pxl_width={_width}
-                                            pxl_height={_height}
-                                            key={"canvas-post-edit"}
-                                            default_size={1000}
-                                            default_scale={0.666}
-                                            no_actions={true}
-                                            show_original_image_in_background={false}
-                                            dont_show_canvas_until_img_set={false}
-                                            dont_show_canvas={_dont_show_canvas}
-                                            but_show_canvas_once={true}
-                                            dont_change_img_size_onload={true}
-                                            dont_compute_base64_original_image={true}
-                                            move_using_full_container={true}
-                                            className={classes.contentCanvas}
-                                            tool={"MOVE"}
-                                            show_transparent_image_in_background={false}
-                                            onContextMenu={(e) => {e.preventDefault()}}
-                                            onSizeChange={this._handle_size_change}
-                                            onLayersChange={this._handle_layers_change}
-                                            onPerspectiveCoordinateChanges={this._handle_perspective}
-                                            perspective={enable_3d ? _perspective_depth: 0}
-                                            light={7}
-                                            onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
-                                            ref={this._set_canvas_ref}
-                                        />
-                                    </div>
-                                    <div className={classes.topRightFabButtons}>
-                                        <IconButton onClick={this._toggle_perspective} className={classes.perspectiveButtonIcon}>
-                                            {enable_3d ? <TdOffIcon fontSize="large" />: <TdOnIcon fontSize="large" />}
-                                        </IconButton>
-                                        <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
-                                            <CloseIcon fontSize="large" />
-                                        </IconButton>
-                                    </div>
+            <Dialog
+                keepMounted={keepMounted}
+                style={{transform: "translateZ(0)"}}
+                open={open}
+                PaperComponent={"div"}
+                fullScreen
+                onClose={(event) => {this.props.onClose(event)}}
+                onExited={(event) => {this.props.onExited && this.props.onExited(event)}}
+            >
+                <div className={classes.root} style={{contain: "layout paint size style"}}>
+                    {
+                        <PixelDialogPostBelowContent
+                            ref={this._set_pixel_dialog_post_below_content_ref}
+                            post={post}
+                            enable_3d={enable_3d}
+                            will_change={_svg_loading}
+                            color_box_shadows={color_box_shadows}
+                            balance_fiat={balance_fiat}
+                            selected_locales_code={selected_locales_code}
+                            hbd_market={hbd_market}
+                            selected_currency={selected_currency}
+                            layers={layers}
+                            sc_svg={_sc_svg}
+                            ss_svg={_ss_svg}
+                            st_svg={_st_svg}
+                            sg_svg={_sg_svg}
+                            g_svg={_g_svg}
+                            h_svg={_h_svg}
+                            window_width={_window_width}
+                            is_prediction_loading={_is_prediction_loading}
+                            tags_input={_tags_input}
+                            translated_description={_translated_description}
+                            translated_title={_translated_title}
+                            has_translation_started={_has_translation_started}
+                            color={_color_palette.brightest_color}
+                            classname={classes.belowContent} />
+                    }
+                    <div className={classes.content}>
+                        <div className={classes.contentInner}>
+                            <div style={{contentVisibility: "visible", contain: "layout paint size style"}} className={classes.contentImage} dataid={post.id}>
+                                <div className={classes.contentCanvasLight}>
+                                    <CanvasPixels
+                                        canvas_wrapper_border_radius={0}
+                                        canvas_wrapper_border_width={0}
+                                        shadow_size={9}
+                                        shadow_color={_color_palette.background_color}
+                                        canvas_wrapper_padding={24}
+                                        canvas_wrapper_background_color={_color_palette.brightest_color}
+                                        pxl_width={_width}
+                                        pxl_height={_height}
+                                        key={"canvas-post-edit"}
+                                        default_size={1000}
+                                        default_scale={0.666}
+                                        no_actions={true}
+                                        show_original_image_in_background={false}
+                                        dont_show_canvas_until_img_set={false}
+                                        dont_show_canvas={_dont_show_canvas}
+                                        but_show_canvas_once={true}
+                                        dont_change_img_size_onload={true}
+                                        dont_compute_base64_original_image={true}
+                                        move_using_full_container={true}
+                                        className={classes.contentCanvas}
+                                        tool={"MOVE"}
+                                        show_transparent_image_in_background={false}
+                                        onContextMenu={(e) => {e.preventDefault()}}
+                                        onSizeChange={this._handle_size_change}
+                                        onLayersChange={this._handle_layers_change}
+                                        onPerspectiveCoordinateChanges={this._handle_perspective}
+                                        perspective={enable_3d ? _perspective_depth: 0}
+                                        light={7}
+                                        onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
+                                        ref={this._set_canvas_ref}
+                                    />
+                                </div>
+                                <div className={classes.topRightFabButtons}>
+                                    <IconButton onClick={this._toggle_perspective} className={classes.perspectiveButtonIcon}>
+                                        {enable_3d ? <TdOffIcon fontSize="large" />: <TdOnIcon fontSize="large" />}
+                                    </IconButton>
+                                    <IconButton onClick={this._handle_close} className={classes.closeButtonIcon}>
+                                        <CloseIcon fontSize="large" />
+                                    </IconButton>
                                 </div>
                             </div>
-                            <div className={classes.bottomMobileFabs}>
-                                {
-                                    edit && !_drawer_open && _window_width < 1280 &&
-                                        <Grow in>
-                                            <Fab className={classes.editFab} variant="extended" onClick={this._handle_fab_click}>
-                                                <EditIcon /> Edit
+                        </div>
+                        <div className={classes.bottomMobileFabs}>
+                            {
+                                edit && !_drawer_open && _window_width < 1280 &&
+                                    <Grow in>
+                                        <Fab className={classes.editFab} variant="extended" onClick={this._handle_fab_click}>
+                                            <EditIcon /> Edit
+                                        </Fab>
+                                    </Grow>
+                            }
+                            {
+                                !edit && !_drawer_open && _window_width < 1280 &&
+                                    <Grow in>
+                                        <div  className={classes.bottomMobileViewFabs}>
+                                            <Fab variant="extended" onClick={() => {if(this.props.on_previous) { this.props.on_previous()}}}>
+                                                <ArrowBackIcon/> Back
                                             </Fab>
-                                        </Grow>
-                                }
-                                {
-                                    !edit && !_drawer_open && _window_width < 1280 &&
-                                        <Grow in>
-                                            <div  className={classes.bottomMobileViewFabs}>
-                                                <Fab variant="extended" onClick={() => {if(this.props.on_previous) { this.props.on_previous()}}}>
-                                                    <ArrowBackIcon/> Back
-                                                </Fab>
-                                                <Fab variant="extended" onClick={this._handle_drawer_open}>
-                                                    <EyeIcon /> View
-                                                </Fab>
-                                                <Fab variant="extended" onClick={() => {if(this.props.on_next) { this.props.on_next()}}}>
-                                                    Next <ArrowForwardIcon/>
-                                                </Fab>
-                                            </div>
-                                        </Grow>
-                                }
-                            </div>
-                            <div className={classes.bottomDesktopFabs}>
-                                {
-                                    (open && edit && _window_width > 1280) || (open && edit && _drawer_open && _window_width < 1280) ?
-                                        <Grow in>
-                                            <Fab className={classes.sendFab} variant="extended" onClick={this._handle_send_click}>
-                                                <SendIcon /> Post
+                                            <Fab variant="extended" onClick={this._handle_drawer_open}>
+                                                <EyeIcon /> View
                                             </Fab>
-                                        </Grow>: null
-                                }
-                            </div>
+                                            <Fab variant="extended" onClick={() => {if(this.props.on_next) { this.props.on_next()}}}>
+                                                Next <ArrowForwardIcon/>
+                                            </Fab>
+                                        </div>
+                                    </Grow>
+                            }
+                        </div>
+                        <div className={classes.bottomDesktopFabs}>
+                            {
+                                (open && edit && _window_width > 1280) || (open && edit && _drawer_open && _window_width < 1280) ?
+                                    <Grow in>
+                                        <Fab className={classes.sendFab} variant="extended" onClick={this._handle_send_click}>
+                                            <SendIcon /> Post
+                                        </Fab>
+                                    </Grow>: null
+                            }
                         </div>
                     </div>
-                </Dialog>
+                </div>
                 <SwipeableDrawer
                     swipeAreaWidth={(_window_width > 1280) ? 0: 50}
                     keepMounted={keepMounted}
@@ -1502,10 +1498,10 @@ class PixelDialogPost extends React.Component {
                             }
                             title={
                                 <span className={classes.headerTitle}>
-                                                    <span className={classes.headerAuthor} onClick={this._open_profile}>{`@${post.author}`}</span>
-                                                    <span> in </span>
-                                                    <span className={classes.headerCategory} onClick={() => {this._open_tag((tags[1] || tags[0]))}}>{`#${(tags[1] || tags[0])}`}</span>
-                                                </span>
+                                                <span className={classes.headerAuthor} onClick={this._open_profile}>{`@${post.author}`}</span>
+                                                <span> in </span>
+                                                <span className={classes.headerCategory} onClick={() => {this._open_tag((tags[1] || tags[0]))}}>{`#${(tags[1] || tags[0])}`}</span>
+                                            </span>
                             }
                             subheader={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null}
                             action={
@@ -1787,7 +1783,7 @@ class PixelDialogPost extends React.Component {
                         </CardContent>
                     </div>
                 </SwipeableDrawer>
-            </div>
+            </Dialog>
         );
     }
 }

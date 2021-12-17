@@ -754,9 +754,9 @@ class Pixel extends React.Component {
         input.setAttribute("style", "pointer-events: none; touch-actions: none; position: absolute; opacity: 0;");
         document.body.appendChild(input);
         input.addEventListener("change", (event) => {this._handle_file_upload(event)});
-        document.body.removeChild(input);
         input.setAttribute("type", "file");
         input.click();
+        document.body.removeChild(input);
     };
 
     _upload_image_library = () => {
@@ -807,12 +807,12 @@ class Pixel extends React.Component {
 
         this.get_base64(file).then((data) => {
 
-            img.src = data;
             img.onload = () => {
 
                 _canvas.set_canvas_from_image(img);
                 this._handle_menu_close();
             };
+            img.src = data;
         });
     };
 
@@ -1715,7 +1715,7 @@ class Pixel extends React.Component {
                 </Menu>
                 <Grow in>
                     <div className={classes.fabs}>
-                        <Fab className={classes.fab} variant="extended" onClick={this._handle_edit_drawer_open}>
+                        <Fab className={classes.fab} variant="extended" onClick={() => {this._handle_edit_drawer_open(null, 1)}}>
                             <ImageEditIcon /> Modify
                         </Fab>
                     </div>

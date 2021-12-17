@@ -172,7 +172,7 @@ class CanvasPixels extends React.Component {
             perspective_coordinate_notify_after_ms: 1000 / 20,
             perspective_coordinate_last_notify: 0,
             animation: props.animation || true,
-            animation_duration: props.animation_duration || 225,
+            animation_duration: props.animation_duration || 60,
             move_using_full_container: props.move_using_full_container,
             no_actions: props.no_actions || false,
             dont_compute_base64_original_image: props.dont_compute_base64_original_image || false,
@@ -376,10 +376,9 @@ class CanvasPixels extends React.Component {
             `.Canvas-Wrapper-Overflow.Shown {
                 animation-name: canvanimation;
                 animation-fill-mode: both;
-                animation-duration: 400ms;
+                animation-duration: 60ms;
                 animation-delay: 0ms;
                 animation-timing-function: linear;
-                transition: transform 40ms 0ms linear;
             }
             .Canvas-Wrapper-Overflow {
                 opacity: 0 !important,
@@ -397,9 +396,6 @@ class CanvasPixels extends React.Component {
                   83.98% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1; }
                   100% { transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1); opacity: 1; } 
             }` +
-            ".Canvas-Wrapper {" +
-                "transition: box-shadow 0ms 0ms linear, transform 240ms 0ms linear;" +
-            "}" +
             ".Canvas-Pixels-Cover::after {" +
                 `top: 0;
                 left: 0;

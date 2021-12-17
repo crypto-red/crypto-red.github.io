@@ -31,6 +31,7 @@ import ShufflingSpanText from "../components/ShufflingSpanText";
 import get_svg_in_b64 from "../utils/svgToBase64";
 import CyberExhibition from "../icons/CyberExhibition";
 import AccountDialogHiveKey from "../components/AccountDialogHiveKey";
+import index from "@virtualeconomy/js-v-sdk/dist/index.esm";
 const cyber_exhibition_svg = get_svg_in_b64(<CyberExhibition />);
 
 window.mobileAndTabletCheck = function() {
@@ -137,15 +138,13 @@ const styles = theme => ({
             overscrollBehavior: "none",
             touchAction: "pan-y",
             willChange: "scroll-position !important",
+            transform: "translateZ(0px)",
             overflow: "overlay",
             padding: "88px 12px 32px 16px",
-            contain: "layout size paint",
+            contain: "style layout size paint",
             "& > .ReactVirtualized__Masonry__innerScrollContainer": {
                 top: "auto !important",
                 left: "auto !important",
-                contentVisibility: "visible",
-                filter: "opacity(1)",
-                overflow: "visible !important",
                 contain: "layout size style paint",
             }
         }
@@ -429,22 +428,34 @@ class Gallery extends React.Component {
 
     _get_post = () => {
 
-        const { _post_author, _post_permlink } = this.state;
+        const { _post_author, _post_permlink, _masonry } = this.state;
 
         if(_post_author && _post_permlink) {
 
-            actions.trigger_loading_update(0);
+            const sizes = _masonry.props.itemsWithSizes.map((iws) => iws.size);
+            const posts = _masonry.props.itemsWithSizes.map((iws) => iws.item);
 
-            cached_get_hive_post({author: _post_author, permlink: _post_permlink, cached_query: true, force_then: true}, (err, data) => {
+            let index_we_have = posts.map((p) => {return {a: p.author, p: p.permlink}}).indexOf({a: _post_author, p: _post_permlink});
 
-                if(data) {
+            if(index_we_have >= 0) {
 
-                    this.setState({_post: data, _post_img: []}, () => {
+                this.setState({_post: posts[index_we_have], _post_img: sizes[index_we_have]});
+            }else {
 
-                        actions.trigger_loading_update(100);
-                    });
-                }
-            });
+                actions.trigger_loading_update(0);
+
+                cached_get_hive_post({author: _post_author, permlink: _post_permlink, cached_query: true, force_then: true}, (err, data) => {
+
+                    if(data) {
+
+                        data.fetched = Date.now();
+                        this.setState({_post: data, _post_img: []}, () => {
+
+                            actions.trigger_loading_update(100);
+                        });
+                    }
+                });
+            }
         }
     };
 
@@ -624,6 +635,8 @@ class Gallery extends React.Component {
 
     _set_masonry_ref = (element) => {
 
+        if(element === null) { return}
+
         this.setState({_masonry: element}, () => {
 
             this._init_cell_measurements();
@@ -641,7 +654,7 @@ class Gallery extends React.Component {
 
     _cell_renderer = (data) => {
 
-        const {index, key, parent, style, itemsWithSizes} = data;
+        const {index, key, parent, style} = data;
         const { _root_height, _masonry, _hbd_market, _selected_currency, _selected_locales_code, _post, _reaction_selected_post_loading, _column_width, _cell_measurer_cache, _column_count } = this.state;
 
         if(typeof _masonry.props.itemsWithSizes[index] === "undefined") {return}
@@ -1026,7 +1039,7 @@ class Gallery extends React.Component {
             this._handle_art_open(_posts[_selected_post_index]);
         }else {
 
-            this._update_selected_post_index(_selected_post_index, true);
+            this._update_selected_post_index(_selected_post_index, false);
         }
     };
 
@@ -1042,7 +1055,7 @@ class Gallery extends React.Component {
             this._handle_art_open(_posts[_selected_post_index]);
         }else {
 
-            this._update_selected_post_index(_selected_post_index, true);
+            this._update_selected_post_index(_selected_post_index, false);
         }
     };
 
@@ -1261,7 +1274,7 @@ class Gallery extends React.Component {
                         className={classes.masonry}
                         items={_posts}
                         image={item => item.image}
-                        keyMapper={item => item.id}
+                        keyMapper={item => item.fetched}
                 >
                         {({itemsWithSizes}) => {
 

@@ -37,9 +37,6 @@ const styles = theme => ({
         boxSizing: "content-box",
         borderRadius: 0,
         backgroundColor: "transparent",
-        contain: "layout style paint",
-        transform: "translateZ(0)",
-        willChange: "top, left, width, height",
         touchAction: "pan-y",
         pointerEvents: "auto",
         "&::before": {
@@ -380,11 +377,11 @@ class PixelArtCard extends React.Component {
         const herited_style = {...style, ...selected_style};
 
         return (
-            <Card key={key} ref={this.props.ref} elevation={4} className={classes.card}
-                  style={{...herited_style}}
+            <Card key={key} ref={this.props.ref} elevation={0} className={classes.card}
+                  style={{...herited_style, contain: herited_style.height ? "layout style paint size": "layout style paint"}}
                   score={Math.round(post.voting_ratio / 10) * 10}
                   dataselected={selected ? "true": "false"}>
-                <CardActionArea>
+                <CardActionArea disableRipple={true} disableTouchRipple={true}>
                     <div style={{contain: "layout style paint size", width: image_width, height: image_height, display: "block", position: "relative", overflow: "hidden"}}>
                         <div className={"pixelated"}>
                             <canvas
@@ -410,7 +407,7 @@ class PixelArtCard extends React.Component {
                                     if(["unsourced", "opinion","hurt"].includes(key)) {
 
                                         return (
-                                            <Tooltip title={r_text[key] + (value ? " [TRUE]": " [FALSE]")}>
+                                            <Tooltip key={key} title={r_text[key] + (value ? " [TRUE]": " [FALSE]")}>
                                                 <span style={value ? {}: {textDecoration: "line-through"}}>{key}</span>
                                             </Tooltip>
                                         );
