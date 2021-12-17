@@ -31,7 +31,6 @@ import ShufflingSpanText from "../components/ShufflingSpanText";
 import get_svg_in_b64 from "../utils/svgToBase64";
 import CyberExhibition from "../icons/CyberExhibition";
 import AccountDialogHiveKey from "../components/AccountDialogHiveKey";
-import index from "@virtualeconomy/js-v-sdk/dist/index.esm";
 const cyber_exhibition_svg = get_svg_in_b64(<CyberExhibition />);
 
 window.mobileAndTabletCheck = function() {

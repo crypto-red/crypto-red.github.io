@@ -27,6 +27,32 @@ import Coin from "./Coin";
 import Gallery from "./Gallery";
 import Unknown from "./Unknown";
 
+const PAGE_COMPONENTS = (name, pathname) => {
+
+    switch (name) {
+        case "home":
+            return <Home />;
+        case "pixel":
+            return <Pixel />;
+        case "unknown":
+            return <Unknown />;
+        case "about":
+            return <About pathname={pathname} />;
+        case "dashboard":
+            return <Dashboard />;
+        case "settings":
+            return <Settings />;
+        case "accounts":
+            return <Accounts />;
+        case "coin":
+            return <Coin pathname={pathname} />;
+        case "coins":
+            return <Coins />;
+        case "gallery":
+            return <Gallery pathname={pathname} />;
+    }
+};
+
 import JamyAngry from "../icons/JamyAngry";
 import JamyAnnoyed from "../icons/JamyAnnoyed";
 import JamyFlirty from "../icons/JamyFlirty";
@@ -426,18 +452,6 @@ class Index extends React.Component {
         let page_name = "";
         let page_tabs = "";
         let page_tabs_component = null;
-        const page_compoments = {
-            home: <Home></Home>,
-            pixel: <Pixel></Pixel>,
-            unknown: <Unknown></Unknown>,
-            about: <About pathname={pathname}></About>,
-            dashboard: <Dashboard></Dashboard>,
-            settings: <Settings></Settings>,
-            accounts: <Accounts></Accounts>,
-            coin: <Coin pathname={pathname}></Coin>,
-            coins: <Coins></Coins>,
-            gallery: <Gallery pathname={pathname}></Gallery>,
-        };
 
         for(let i = 0; i < PAGE_ROUTES.length; i++) {
 
@@ -450,7 +464,7 @@ class Index extends React.Component {
                 page_tabs_component = page_tabs !== "" ?
                     <AppTabs pathname={pathname} tabs={page_tabs}/>:
                     null;
-                page_component = page_compoments[page_name];
+                page_component = PAGE_COMPONENTS(page_name, pathname);
             }
         }
 
