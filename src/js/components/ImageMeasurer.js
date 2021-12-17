@@ -52,10 +52,10 @@ class ImageMeasurer extends React.Component {
         item = {...item};
         delete item["image"];
 
-        itemsWithSizes[index] = {
+        itemsWithSizes[index] = Object.freeze({
             size: Object.freeze(size),
             item: Object.freeze(item)
-        };
+        });
 
         this.setState({itemsWithSizes, sizes: itemsWithSizes.map((iws) => {
                 return {

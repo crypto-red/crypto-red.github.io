@@ -14,8 +14,13 @@ import Container from "@material-ui/core/Container";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 
-import ReactMarkdown from "react-markdown";
-import gfm from "remark-gfm";
+import { marked } from "marked";
+
+marked.setOptions({
+    xhtml: true
+});
+
+import sanitize from "sanitize-html";
 
 const styles = theme => ({
     root: {
@@ -153,9 +158,15 @@ class AboutInfo extends React.Component {
                             <Card>
                                 <CardHeader title={view.title}/>
                                 <CardContent>
-                                    <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>
-                                        {view.content_markdown}
-                                    </ReactMarkdown>
+                                    <p dangerouslySetInnerHTML={{__html: sanitize(marked.parse(view.content_markdown), {
+                                            allowedTags: [ 'img', 'b', 'br', 'i', 'em', 'strong', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ],
+                                            allowedAttributes: {
+                                                'a': [ 'href' ],
+                                                'img': [ 'src' ]
+                                            },
+                                            selfClosing: [ 'img', 'br', 'hr' ],
+                                            allowedSchemesByTag: { img: [ 'data' ], a: ["https"]}
+                                        })}}></p>
                                 </CardContent>
                             </Card>
                         </div>

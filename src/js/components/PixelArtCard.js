@@ -21,13 +21,9 @@ import FireHearthEmojiSvg from "../twemoji/react/2764Fe0F200D1F525";
 
 import get_svg_in_b64 from "../utils/svgToBase64";
 import price_formatter from "../utils/price-formatter";
-import ReactDOM from "react-dom";
 import TimeAgo from "javascript-time-ago";
 import Chip from "@material-ui/core/Chip";
 import {HISTORY} from "../utils/constants";
-import {postprocess_text} from "../utils/api-hive";
-import gfm from "remark-gfm";
-import ReactMarkdown from "react-markdown";
 
 const red_angry_emoji_svg = get_svg_in_b64(<RedAngryEmojiSvg />);
 const angry_emoji_svg = get_svg_in_b64(<AngryEmojiSvg />);
@@ -281,7 +277,6 @@ class PixelArtCard extends React.Component {
             image_height: props.image_height || 0,
             image_width: props.image_width || 0,
             column_width: props.column_width,
-            soon_or_visible: props.soon_or_visible,
             key: props.key,
             rowIndex: props.rowIndex,
             columnIndex: props.columnIndex,
@@ -321,7 +316,7 @@ class PixelArtCard extends React.Component {
 
         let { _scale } = this.state;
         const renew = (
-            new_props.soon_or_visible !== this.state.soon_or_visible ||
+            new_props.id !== this.state.id ||
             new_props.iws.id !== this.state.iws.id ||
             new_props.index !== this.state.index ||
             new_props.key !== this.state.key ||
@@ -339,8 +334,7 @@ class PixelArtCard extends React.Component {
         );
 
         const renew_canvas = (
-            new_props.soon_or_visible ||
-            new_props.post.id !== this.state.post.id ||
+            new_props.id !== this.state.id ||
             new_props.iws.id !== this.state.iws.id ||
             new_props.key !== this.state.key
         );
@@ -373,7 +367,7 @@ class PixelArtCard extends React.Component {
 
     render() {
 
-        const { key, soon_or_visible, _scale, iws, style, classes, post, image_width, image_height, selected, selected_currency, selected_locales_code, hbd_market, is_loading  } = this.state;
+        const { key, _scale, iws, style, classes, post, image_width, image_height, selected, selected_currency, selected_locales_code, hbd_market, is_loading  } = this.state;
 
         const vote_number = (post.active_votes || []).length;
         const tags = post.tags ? post.tags: [];
@@ -385,12 +379,12 @@ class PixelArtCard extends React.Component {
         const herited_style = {...style, ...selected_style};
 
         return (
-            <Card key={key} ref={this.props.ref} elevation={0} className={classes.card}
+            <Card key={key} ref={this.props.ref} elevation={4} className={classes.card}
                   style={{...herited_style}}
                   score={Math.round(post.voting_ratio / 10) * 10}
                   dataselected={selected ? "true": "false"}>
-                <CardActionArea disableRipple={!soon_or_visible}>
-                    <div style={{contain: "layout style paint size", width: image_width, height: image_height, display: "block", position: "relative"}}>
+                <CardActionArea>
+                    <div style={{contain: "layout style paint size", width: image_width, height: image_height, display: "block", position: "relative", overflow: "hidden"}}>
                         <div className={"pixelated"}>
                             <canvas
                                 style={{position: "absolute", transform: `scale(${_scale})`, transformOrigin: "left top"}}
@@ -435,7 +429,7 @@ class PixelArtCard extends React.Component {
                     </div>
                     <CardContent style={{backgroundPosition: `${post.timestamp / 1000 % 100}% 100%`}} datatags={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
                         <Typography gutterBottom variant={"h5"} component="h2">
-                            <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>{postprocess_text(post.title)}</ReactMarkdown>
+                            <div>{post.title}</div>
                         </Typography>
                         <Typography variant="body2" color="textSecondary" component="p" style={{position: "relative"}}>
                             {post.summary}

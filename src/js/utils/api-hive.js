@@ -1,7 +1,8 @@
 import hiveJS from "@hiveio/hive-js";
 import { ChainTypes, makeBitMaskFilter } from "@hiveio/hive-js/lib/auth/serializer";
 import sumBasic  from "node-sumbasic/src";
-
+import { marked } from "marked";
+import sanitize from "sanitize-html";
 
 import PouchDB from "pouchdb";
 import {postJSON} from "./load-json";
@@ -241,6 +242,30 @@ function postprocess_text(content = "") {
     return content;
 }
 
+function _from_markdown(text) {
+
+    let html = marked.parse(text);
+        html = sanitize(html, {
+            allowedTags: [ 'img', 'b', 'br', 'i', 'em', 'strong', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ],
+            allowedAttributes: {
+                'a': [ 'href' ],
+                'img': [ 'src' ]
+            },
+            selfClosing: [ 'img', 'br', 'hr' ],
+            allowedSchemesByTag: { img: [ 'data', 'https' ], a: ["https"]}
+        });
+
+    return html;
+}
+
+function _to_text(text) {
+
+    return sanitize(text, {
+        allowedTags: [''],
+        allowedAttributes: {}
+    });
+}
+
 function _format_post(post) {
 
     const post_body_data = _get_pixel_art_data_from_content(post.body);
@@ -256,12 +281,14 @@ function _format_post(post) {
     const app = metadata.app || "unknown";
     const responsabilities = metadata.responsabilities || [];
     const description = _preprocess_text(content);
+    const description_text = _to_text(description);
+    const description_html = _from_markdown(description);
 
     let summary = "";
 
-    try { summary = sumBasic(description.split("\n"), 20); } catch(e) {
+    try { summary = sumBasic(description_text.split("\n"), 20); } catch(e) {
 
-        summary = description.substring(0, 256);
+        summary = description_text.substring(0, 256);
     }
 
     const title = ` ${post.title} `;
@@ -296,10 +323,9 @@ function _format_post(post) {
         timestamp: new Date(post.created) - new Date().getTimezoneOffset() * 60 * 1000,
         key,
         title,
-        content,
         image,
         root_title: post.root_title,
-        description,
+        description: description_html,
         summary,
         active_reposts: post.reblogged_by,
         comments: post.children,

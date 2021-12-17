@@ -654,11 +654,11 @@ class Gallery extends React.Component {
         const is_loading = Boolean((_reaction_selected_post_loading || {}).id === item.id);
         const image_height = Math.ceil(_column_width * (size.height / size.width)) || 0;
 
-        style.width = _column_width;
+        style.width = 0 + _column_width;
         let {_top_scroll_of_el_by_index, _height_of_el_by_index, _x_y_of_el_by_index} = this.state;
 
-        const top = style.top;
-        const height = style.height;
+        const top = 0 + style.top;
+        const height = 0 + style.height;
         const bottom = top + height;
 
         _top_scroll_of_el_by_index[index] = top;
@@ -673,6 +673,7 @@ class Gallery extends React.Component {
         return (
             <CellMeasurer cache={_cell_measurer_cache} index={index} key={key} parent={parent}>
                 <PixelArtCard
+                    id={item.id}
                     rowIndex={rowIndex}
                     columnIndex={columnIndex}
                     style={style}
@@ -684,7 +685,6 @@ class Gallery extends React.Component {
                     image_width={_column_width}
                     is_loading={is_loading}
                     hbd_market={_hbd_market}
-                    soon_or_visible={soon_or_visible}
                     selected_currency={_selected_currency}
                     selected_locales_code={_selected_locales_code}
                     on_author_click={this._handle_set_selected_account}

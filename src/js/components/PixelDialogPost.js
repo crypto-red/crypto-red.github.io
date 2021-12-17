@@ -31,8 +31,6 @@ import RedditIcon from "../icons/Reddit";
 import CloseIcon from "@material-ui/icons/Close";
 import SendIcon from "@material-ui/icons/Send";
 import TextField from "@material-ui/core/TextField";
-import gfm from "remark-gfm";
-import ReactMarkdown from "react-markdown";
 import Fab from "@material-ui/core/Fab";
 import EditIcon from "@material-ui/icons/Edit";
 import EyeIcon from "../icons/Eye";
@@ -49,7 +47,6 @@ import FormHelperText from "@material-ui/core/FormHelperText";
 import Checkbox from "@material-ui/core/Checkbox";
 
 import api, {lookup_hive_accounts_name} from "../utils/api";
-import {postprocess_text} from "../utils/api-hive";
 import {HISTORY} from "../utils/constants";
 import TimeAgo from "javascript-time-ago";
 import ChipInput from "material-ui-chip-input";
@@ -1658,9 +1655,7 @@ class PixelDialogPost extends React.Component {
                                         collapsedHeight={"128px"}
                                         className={_is_description_collapsed && (post.description || "").length > 1000 ? classes.descriptionCollapsed: classes.description}>
                                         <div>
-                                            <ReactMarkdown remarkPlugins={[[gfm, {singleTilde: false}]]}>
-                                                {_translated_description.length ? postprocess_text(_translated_description): postprocess_text(post.description)}
-                                            </ReactMarkdown>
+                                            <p dangerouslySetInnerHTML={{__html: _translated_description.length ? _translated_description: post.description}}></p>
                                             {!_is_description_collapsed && (post.description || "").length > 1000 && <a onClick={this._handle_toggle_description}>See less...</a>}
                                         </div>
                                     </Collapse>

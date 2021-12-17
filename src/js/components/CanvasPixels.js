@@ -3867,7 +3867,10 @@ class CanvasPixels extends React.Component {
 
             if(_pointer_events.length === 1) {
 
-                _previous_initial_scale_move = [_pointer_events[0].clientX, _pointer_events[0].clientY];
+
+                _latest_pointers_client_x_center = _pointer_events[0].clientX;
+                _latest_pointers_client_y_center = _pointer_events[0].clientY;
+                _previous_initial_scale_move = [_latest_pointers_client_x_center, _latest_pointers_client_y_center];
             }
         }
 
