@@ -61,7 +61,6 @@ const settings_db = new PouchDB("settings_db", {deterministic_revs: false, revs_
 const accounts_db = new PouchDB("accounts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
 const logged_accounts_db = new PouchDB("logged_accounts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
 
-let settings = null;
 let logged_account = null;
 
 /*
@@ -148,16 +147,22 @@ function reset_all_databases(callback_function) {
 
 function get_settings(callback_function) {
 
-    if(settings !== null) {
+    let settings = null;
+
+    if(settings) {
 
         callback_function(null, settings);
     }
 
-    function cache_callback_function(error, response) {
+    settings_db.allDocs({
+        include_docs: true
+    }, function(error, response) {
 
         let settings_docs_undefined = false;
 
         if(!error) {
+
+            console.log(response);
 
             // Get settings docs
             const settings_docs = response.rows.map(function (row) {
@@ -171,12 +176,16 @@ function get_settings(callback_function) {
                 if(settings_docs[0].data !== "undefined") {
 
                     settings = JSON.parse(settings_docs[0].data);
+
                     callback_function(null, settings);
                 }
 
-                // Delete all others
-                settings_docs.splice(0, 1);
-                settings_db.bulkDocs(settings_docs.filter((sd) => sd._deleted).map((sd) => {return {_id: sd._id, _rev: sd._rev, _deleted: true, timestamp: 0, data: null}}), {force: true});
+                if(settings_docs.length > 1) {
+
+                    // Delete all others
+                    settings_docs.splice(0, 1);
+                    settings_db.bulkDocs(settings_docs.map((sd) => {delete sd.data; return {_id: sd._id, _rev: sd._rev, _deleted: true, timestamp: 0, data: null}}), {force: true});
+                }
 
             }else {
                 settings_docs_undefined = true;
@@ -193,11 +202,7 @@ function get_settings(callback_function) {
 
             callback_function(null, settings);
         }
-    }
-
-    settings_db.allDocs({
-        include_docs: true
-    }, cache_callback_function);
+    });
 }
 
 function set_settings(settings, callback_function) {

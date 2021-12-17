@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v58";
+var CACHE = "network-or-cache-v59";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -6,11 +6,13 @@ self.addEventListener("install", function(evt) {
   // Open a cache and use `addAll()` with an array of assets to add all of them
   // to the cache. Ask the service worker to keep installing until the
   // returning promise resolves.
-  evt.waitUntil(caches.open(CACHE).then(function (cache) {
+  return evt.waitUntil(caches.open(CACHE).then(function (cache) {
     cache.addAll([
       "/",
+      "/index.html",
       "/404.html",
       "/client.min.js",
+      "/client.min.js?v=59",
       "/src/fonts/NotoSans-Regular.ttf",
       "/src/fonts/SpecialElite-Regular.ttf",
       "/src/fonts/NotoSansMono-Regular.ttf",
@@ -97,7 +99,7 @@ self.addEventListener("fetch", function(event) {
   }else if(url.includes("client.min.js") && event.request.mode === "same-origin") {
 
     // Return the same index.html page for all navigation query
-    event.respondWith( caches.match("/client.min.js").then(function (response) {
+    event.respondWith( caches.match("/client.min.js?v=59").then(function (response) {
       return (
           response || fetch(event.request).then(function (response){return response})
       );
@@ -106,7 +108,7 @@ self.addEventListener("fetch", function(event) {
   }else if(event.request.mode === "navigate") {
 
     // Return the same index.html page for all navigation query
-    event.respondWith( caches.match("/").then(function (response) {
+    event.respondWith( caches.match("/index.html").then(function (response) {
       return (
           response || fetch(event.request).then(function (response) {return response})
       );

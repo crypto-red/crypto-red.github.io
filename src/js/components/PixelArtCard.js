@@ -98,10 +98,10 @@ const styles = theme => ({
         "&[score='80']::after": {backgroundImage: `url('${love_emoji_svg}')`},
         "&[score='90']::after": {backgroundImage: `url('${angel_emoji_svg}')`},
         "&[score='100']::after": {backgroundImage: `url('${fire_earth_emoji_svg}')`},
-        "& > .MuiCardActionArea-root": {
+        "& > .MuiCardContent-root": {
             overflow: "hidden",
         },
-        "& > .MuiCardActionArea-root > div:hover, &[dataselected='true'] > .MuiCardActionArea-root > div": {
+        "& > .MuiCardContent-root > div:hover, &[dataselected='true'] > .MuiCardContent-root > div": {
             "& > div:first-child": {
                 background: `linear-gradient(to bottom, rgba(0, 0, 0, 0) calc(0% - 24px), rgba(0, 0, 0, 0.034) calc(22.1% - 24px), rgba(0, 0, 0, 0.123) calc(39.4% - 24px), rgba(0, 0, 0, 0.249) calc(53.1% - 24px), rgba(0, 0, 0, 0.394) calc(64.3% - 24px), rgba(0, 0, 0, 0.54) calc(74.1% - 24px), rgba(0, 0, 0, 0.668) calc(83.6% - 24px), rgba(0, 0, 0, 0.762) calc(94.1% - 24px), rgba(0, 0, 0, 0.79) calc(100% - 24px))`,
             },
@@ -126,7 +126,7 @@ const styles = theme => ({
                 }
             }
         },
-        "&[dataselected='true'] > .MuiCardActionArea-root > div:first-child": {
+        "&[dataselected='true'] > .MuiCardContent-root > div:first-child": {
             "& div:last-child": {
                 transform: "translate(0px, 0px)",
                 opacity: 1,
@@ -270,6 +270,7 @@ class PixelArtCard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            wont_move: props.wont_move,
             iws: props.iws,
             image_height: props.image_height || 0,
             image_width: props.image_width || 0,
@@ -365,7 +366,7 @@ class PixelArtCard extends React.Component {
 
     render() {
 
-        const { key, _scale, iws, style, classes, post, image_width, image_height, selected, selected_currency, selected_locales_code, hbd_market, is_loading  } = this.state;
+        const { key, wont_move, _scale, iws, style, classes, post, image_width, image_height, selected, selected_currency, selected_locales_code, hbd_market, is_loading  } = this.state;
 
         const vote_number = (post.active_votes || []).length;
         const tags = post.tags ? post.tags: [];
@@ -381,7 +382,7 @@ class PixelArtCard extends React.Component {
                   style={{...herited_style, contain: herited_style.height ? "layout style paint size": "layout style paint"}}
                   score={Math.round(post.voting_ratio / 10) * 10}
                   dataselected={selected ? "true": "false"}>
-                <CardActionArea disableRipple={true} disableTouchRipple={true}>
+                <CardActionArea style={!wont_move ? {pointerEvents: "none", touchActions: "none"}: {}} >
                     <div style={{contain: "layout style paint size", width: image_width, height: image_height, display: "block", position: "relative", overflow: "hidden"}}>
                         <div className={"pixelated"}>
                             <canvas
@@ -392,7 +393,7 @@ class PixelArtCard extends React.Component {
                                 ref={this._set_canvas_ref}
                             />
                         </div>
-                        <div className={classes.cardMediaOverlay} onClick={(event) => {this.props.on_card_media_click(post, event)}}>
+                        <div className={classes.cardMediaOverlay} style={{pointerEvents: "all"}} onClick={(event) => {this.props.on_card_media_click(post, event)}}>
                             <div className={classes.nsTags}>
                                 {Object.entries(post.responsabilities || {}).map((entry) => {
 
@@ -420,12 +421,12 @@ class PixelArtCard extends React.Component {
                         <div className={classes.postTags}>
                             {
                                 tags.map((tag, index) => {
-                                    return index ? <Chip clickable className={classes.postTag} key={tag} variant={"default"} size={"small"} label={`#${tag}`} onClick={() => {this.props.on_card_tag_click(tag)}}/> : null;
+                                    return index ? <Chip clickable className={classes.postTag} style={{pointerEvents: "all"}} key={tag} variant={"default"} size={"small"} label={`#${tag}`} onClick={() => {this.props.on_card_tag_click(tag)}}/> : null;
                                 })
                             }
                         </div>
                     </div>
-                    <CardContent style={{backgroundPosition: `${post.timestamp / 1000 % 100}% 100%`}} datatags={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
+                    <CardContent style={{pointerEvents: "all", backgroundPosition: `${post.timestamp / 1000 % 100}% 100%`}} datatags={post.timestamp ? new TimeAgo(document.documentElement.lang).format(post.timestamp): null} dataselected={selected ? "true": "false"} className={classes.cardContent}  onClick={(event) => {this.props.on_card_content_click(post, event)}}>
                         <Typography gutterBottom variant={"h5"} component="h2">
                             <div>{post.title}</div>
                         </Typography>

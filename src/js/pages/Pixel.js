@@ -495,7 +495,7 @@ class Pixel extends React.Component {
     _update_settings() {
 
         // Call the api to get results of current settings and send it to a callback function
-        api.get_settings(this._process_settings_query_result);
+        api.get_settings(this._process_settings_query_result, true);
     }
 
     _handle_view_name_change = (view_name_index, previous_name_index = null) => {

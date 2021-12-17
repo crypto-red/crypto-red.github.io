@@ -653,7 +653,7 @@ class Gallery extends React.Component {
 
     _cell_renderer = (data) => {
 
-        const {index, key, parent, style} = data;
+        const {index, key, parent, style, isScrolling} = data;
         const { _root_height, _masonry, _hbd_market, _selected_currency, _selected_locales_code, _post, _reaction_selected_post_loading, _column_width, _cell_measurer_cache, _column_count } = this.state;
 
         if(typeof _masonry.props.itemsWithSizes[index] === "undefined") {return}
@@ -678,7 +678,7 @@ class Gallery extends React.Component {
         _height_of_el_by_index[index] = height;
         _x_y_of_el_by_index[index] = [rowIndex, columnIndex];
 
-        const soon_visible_threshold = _root_height * 3/4;
+        const soon_visible_threshold = _root_height / 2;
         const soon_or_visible = soon_visible_threshold + bottom > scroll_top && top < scroll_top + _root_height + soon_visible_threshold;
 
         this.setState({_top_scroll_of_el_by_index, _height_of_el_by_index});
@@ -691,6 +691,7 @@ class Gallery extends React.Component {
                     columnIndex={columnIndex}
                     style={style}
                     selected={selected}
+                    wont_move={!isScrolling && soon_or_visible}
                     post={item}
                     iws={size}
                     column_width={_column_width}
