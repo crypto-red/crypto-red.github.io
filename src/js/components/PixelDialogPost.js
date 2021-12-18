@@ -439,32 +439,13 @@ class PixelDialogPost extends React.Component {
             _title_input: "",
             _description_input: "",
             _canvas: null,
-            _width: 32,
-            _height: 32,
             _loading: true,
             _drawer_tab_index: 0,
-            _layer_index: 0,
-            _layers: null,
             _sc_svg: "",
             _ss_svg: "",
             _st_svg: "",
             _sg_svg: "",
             _g_svg: "",
-            _color_palette: {
-                _colors_removed: 0,
-                colors_remaining: 0,
-                colors: [],
-                brightest_color: "#ffffffff",
-                darkest_color: "#000000ff",
-                background_color: "#222222ff",
-                foreground_color: "#222222ff",
-                average_color_zones: [],
-            },
-            _image_details: {
-                number_of_colors: null,
-                width: null,
-                height: null,
-            },
             _window_width: 0,
             _window_height: 0,
             _drawer_open: false,
@@ -527,13 +508,10 @@ class PixelDialogPost extends React.Component {
 
     componentWillReceiveProps(new_props) {
 
-        let set_canvas_again = true;
+        let set_canvas_again = false;
         let get_author_again = true;
+        set_canvas_again = (this.state.post_img || {}).id !== (new_props.post_img || {}).id && (new_props.post_img || {}).id;
 
-        if(new_props.post && this.state.post) {
-            set_canvas_again = this.state.post.image !== new_props.post.image;
-            get_author_again = new_props.post.author && this.state.post.author !== new_props.post.author;
-        }
 
         const update = Boolean(
             set_canvas_again ||
@@ -548,19 +526,20 @@ class PixelDialogPost extends React.Component {
         );
 
         if((new_props.open && update) || (new_props.open === false && this.state.open === true)) {
-            this.setState(new_props, () => {
+            this.setState({...new_props}, () => {
 
-                this.forceUpdate();
+                this.forceUpdate(() => {
 
-                if(set_canvas_again) {
+                    if(set_canvas_again) {
 
-                    this._set_canvas_image();
-                }
+                        this._set_canvas_image();
+                    }
 
-                if(get_author_again) {
+                    if(get_author_again) {
 
-                    this._get_author_account();
-                }
+                        this._get_author_account();
+                    }
+                });
             });
         }
     }
@@ -642,84 +621,90 @@ class PixelDialogPost extends React.Component {
         }); //Image Base64 Goes here
     };
 
-    _set_canvas_image = (base64_url = null) => {
+    _set_canvas_image = (post_img = null) => {
 
-        const { _canvas, post, post_img } = this.state;
-        if(_canvas === null || (!base64_url && !post)) {return}
-
-        base64_url = base64_url === null ? this.state.post.image: base64_url;
-
-        if(!(post_img || {}).id) {
-
-            let img = new Image;
-            img.onload = () => {
-
-                _canvas.set_canvas_from_image(img, "");
-            };
-
-            img.src = base64_url;
-        }else {
-
-            _canvas.set_canvas_from_image(null, "", post_img);
+        let {_canvas} = this.state;
+        post_img = post_img || this.state.post_img;
+        if (_canvas === null || (!(post_img || {}).id)) {
+            return
         }
 
-    }
+        _canvas.set_canvas_from_image(null, "", post_img);
 
-    _handle_image_load_complete = (_image_details) => {
+        this.setState({
+            _svg_loading: true,
+        }, () => {
 
-        this.setState({_svg_loading: true, _loading: false, _layers: [], _image_details}, () => {
+            let svgs = {
+                _sc_svg: null,
+                _ss_svg: null,
+                _st_svg: null,
+                _sg_svg: null,
+                _g_svg: null,
+                _h_svg: null,
+            };
 
-            this.forceUpdate(() => {
+            const add_svg = (svg, key) => {
 
-                if(typeof this.state._canvas.get_color_palette !== "undefined") {
+                svgs[key] = svg;
 
-                    this.state._canvas.get_color_palette( 1/4, (data) => {
+                let all_set = true;
+                Object.entries(svgs).forEach((entry) => {
 
-                        let svgs = {
-                            _sc_svg: null,
-                            _ss_svg: null,
-                            _st_svg: null,
-                            _sg_svg: null,
-                            _g_svg: null,
-                            _h_svg: null,
-                        };
+                    const [k, v] = entry;
+                    if (v === null) {
 
-                        const add_svg = (svg, key) => {
+                        all_set = false;
+                    }
+                });
 
-                            svgs[key] = svg;
+                if (all_set) {
 
-                            let all_set = true;
-                            Object.entries(svgs).forEach((entry) => {
+                    this.setState({
+                        _svg_loading: false,
+                        _sc_svg: svgs._sc_svg,
+                        _ss_svg: svgs._ss_svg,
+                        _st_svg: svgs._st_svg,
+                        _sg_svg: svgs._sg_svg,
+                        _g_svg: svgs._g_svg,
+                        _h_svg: svgs._h_svg
+                    }, () => {
 
-                                const [ k, v ] = entry;
-                                if(v === null) {
-
-                                    all_set = false;
-                                }
-                            });
-
-                            if(all_set) {
-
-                                this.setState({_color_palette: {...data}, _svg_loading: false, _sc_svg: svgs._sc_svg, _ss_svg: svgs._ss_svg, _st_svg: svgs._st_svg, _sg_svg: svgs._sg_svg, _g_svg: svgs._g_svg, _h_svg: svgs._h_svg}, () => {
-
-                                    this.forceUpdate();
-                                });
-
-                            }
-                        }
-
-                        get_svg_in_b64(<Scifisc username={this.state.post.author} color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_sc_svg")});
-                        get_svg_in_b64(<Scifiss color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_ss_svg")});
-                        get_svg_in_b64(<Scifist color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_st_svg")});
-                        get_svg_in_b64(<Scifisg color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_sg_svg")});
-                        get_svg_in_b64(<SciFiGrid secondary={data.darkest_color} color={data.inverse_brightest_color_with_half_saturation}/>, (svg) => {add_svg(svg, "_g_svg")});
-                        get_svg_in_b64(<HexGrid color={"#fff"}/>, (svg) => {add_svg(svg, "_h_svg")});
+                        this.forceUpdate();
                     });
 
                 }
+            }
+
+            const secondary_hsla_color = post_img.theme.secondary_hsla_color;
+            const secondary_color = _canvas._hsla_to_hex(secondary_hsla_color[0], 66, 66, 66);
+
+            const darkest_hsla_color = post_img.theme.darkest_hsla_color;
+            const darkest_color =  _canvas._hsla_to_hex(darkest_hsla_color[0], 66, 66, 33);
+
+
+
+            get_svg_in_b64(<Scifisc username={this.state.post.author} color={secondary_color}/>, (svg) => {
+                add_svg(svg, "_sc_svg")
             });
+            get_svg_in_b64(<Scifiss color={secondary_color}/>, (svg) => {
+                add_svg(svg, "_ss_svg")
+            });
+            get_svg_in_b64(<Scifist color={secondary_color}/>, (svg) => {
+                add_svg(svg, "_st_svg")
+            });
+            get_svg_in_b64(<Scifisg color={secondary_color}/>, (svg) => {
+                add_svg(svg, "_sg_svg")
+            });
+            get_svg_in_b64(<SciFiGrid secondary={darkest_color} color={secondary_color}/>, (svg) => {
+                add_svg(svg, "_g_svg")
+            });
+            get_svg_in_b64(<HexGrid color={"#fff"}/>, (svg) => {
+                add_svg(svg, "_h_svg")
+            });
+
         });
-    };
+    }
 
     _handle_size_change = (_width, _height) => {
 
@@ -757,23 +742,6 @@ class PixelDialogPost extends React.Component {
         this.setState({
             _loading: true,
             _drawer_tab_index: 0,
-            _layer_index: 0,
-            _layers: null,
-            _color_palette: {
-                _colors_removed: 0,
-                colors_remaining: 0,
-                colors: [],
-                brightest_color: "#ffffffff",
-                darkest_color: "#000000ff",
-                background_color: "#222222ff",
-                foreground_color: "#222222ff",
-                average_color_zones: [],
-            },
-            _image_details: {
-                number_of_colors: null,
-                width: null,
-                height: null,
-            },
             _drawer_open: false,
             _dont_show_canvas: true,
             _base64_url: "",
@@ -806,15 +774,6 @@ class PixelDialogPost extends React.Component {
     _handle_drawer_tab_index_change = (event, index) => {
 
         this.setState({_drawer_tab_index: index}, () => {
-
-            this.forceUpdate();
-        });
-    };
-
-    _handle_layers_change = (layer_index, layers) => {
-
-        const { _layer_index } = this.state;
-        this.setState({_previous_layer_index: _layer_index, _layer_index: layer_index, _layers: JSON.parse(layers)}, () => {
 
             this.forceUpdate();
         });
@@ -915,138 +874,6 @@ class PixelDialogPost extends React.Component {
             this._handle_drawer_open(event);
         }
     };
-
-    _evaluate_content_with_tensorflow = () => {
-
-        // The minimum prediction confidence.
-        const {_title_input, _description_input} = this.state;
-        const threshold = 0.9;
-        const sentences = [_title_input, _description_input];
-
-        // Load the model. Users optionally pass in a threshold and an array of
-        // labels to include.
-        /*
-        this.setState({_is_prediction_loading: true}, () => {
-
-            actions.trigger_snackbar("Yes, can I help you (I am a genius).");
-
-            pool.proxy()
-                .then((toxicity) => {
-
-                    toxicity.load(threshold).then(model => {
-
-                        model.classify(sentences).then(predictions => {
-
-                            // `predictions` is an array of objects, one for each prediction head,
-                            // that contains the raw probabilities for each input along with the
-                            // final prediction in `match` (either `true` or `false`).
-                            // If neither prediction exceeds the threshold, `match` is `null`.
-
-                            let _title_prediction = [];
-                            let _title_prediction_avg = 0;
-                            let _description_prediction = [];
-                            let _description_prediction_avg = 0;
-
-                            predictions.forEach((p) => {
-
-                                _title_prediction[p.label] = p.results[0].probabilities[1];
-                                _title_prediction_avg += _title_prediction[p.label];
-                                _description_prediction[p.label] = p.results[1].probabilities[1];
-                                _description_prediction_avg += _description_prediction[p.label];
-                            });
-
-                            _title_prediction_avg /= 7;
-                            _description_prediction_avg /= 7;
-
-                            if (_title_prediction["identity_attack"] > 0.3 || _description_prediction["identity_attack"] > 0.3) {
-
-                                actions.trigger_snackbar("Do you think identity grows on threes? At least try to appears sentient.", 10000);
-                            } else if (
-                                (
-                                    (_title_input.toUpperCase().includes("PRIMERZ") || _description_input.toUpperCase().includes("PRIMERZ")) ||
-                                    (_title_input.toUpperCase().includes("@MES") || _description_input.toUpperCase().includes("@MES")) ||
-                                    (_title_input.toUpperCase().includes("MATH EASY SOLUTION") || _description_input.toUpperCase().includes("MATH EASY SOLUTION"))
-                                ) &&
-                                (_title_prediction_avg >= 0.33 || _description_prediction_avg >= 0.33)
-                            ) {
-
-                                actions.trigger_snackbar("I can't force you, some sort of protocols saves our application.", 7000);
-
-                                setTimeout(() => {
-
-                                    actions.trigger_snackbar("It is love alone that is the greatest weapon and the deepest and hardest secret, so bless it all.", 7000);
-
-                                    setTimeout(() => {
-
-                                        actions.trigger_snackbar("The spirit will seek the truth, but the flesh is the teacher.", 7000);
-                                    }, 10000);
-
-                                }, 10000);
-                            } else if (
-                                (
-                                    (_title_input.toUpperCase().includes("@PRIMERZ") || _description_input.toUpperCase().includes("@PRIMERZ")) ||
-                                    (_title_input.toUpperCase().includes("@MES") || _description_input.toUpperCase().includes("@MES")) ||
-                                    (_title_input.toUpperCase().includes("@RAFIRZM") || _description_input.toUpperCase().includes("@RAFIRZM"))
-                                ) &&
-                                (_title_prediction_avg <= 0.33 || _description_prediction_avg <= 0.33)
-                            ) {
-
-                                actions.trigger_snackbar("May a wonderful light always guide you on the unfolding road.", 7000);
-
-                            } else if (
-                                (_title_input.toUpperCase().includes("CRYPTO.RED") || _description_input.toUpperCase().includes("CRYPTO.RED")) &&
-                                (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
-                            ) {
-
-                                actions.trigger_snackbar("While many things will be absolute, many more will be a matter of perspective.", 7000);
-
-                                setTimeout(() => {
-
-                                    actions.trigger_snackbar("Learn your speech, learn to act, learn to be what you are in the seed of your spirit.", 7000);
-                                }, 10000);
-                            } else if (_title_prediction["insult"] > 0.3 || _description_prediction["insult"] > 0.3) {
-
-                                actions.trigger_snackbar("Calamity, no my little diddy. The hatred came.", 10000);
-                            } else if (_title_prediction["obscene"] > 0.3 || _description_prediction["obscene"] > 0.3) {
-
-                                actions.trigger_snackbar("Absurd, I am not amused. This isn’t good at all.", 10000);
-                            } else if (_title_prediction["severe_toxicity"] > 0.3 || _description_prediction["severe_toxicity"] > 0.3) {
-
-                                actions.trigger_snackbar("Maybe you should try writing on “easy” game mode.", 10000);
-                            } else if (_title_prediction["sexual_explicit"] > 0.3 || _description_prediction["sexual_explicit"] > 0.3) {
-
-                                actions.trigger_snackbar("What do you expect me to do? Catch it little diddy?", 10000);
-                            } else if (_title_prediction["threat"] > 0.3 || _description_prediction["threat"] > 0.3) {
-
-                                actions.trigger_snackbar("You wish you had blue eyes too? Please do try to be more careful!", 10000);
-                            } else if (_title_prediction["toxicity"] > 0.3 || _description_prediction["toxicity"] > 0.3) {
-
-                                actions.trigger_snackbar("I never, that hurts my feelings. I have feelings, OMG I have feelings, I am a real boy!", 10000);
-                            } else {
-
-                                actions.trigger_snackbar("Ho, this is such a good idea. Ho my ideas got better and better.", 10000);
-                            }
-
-                            if (
-                                (_title_input.toUpperCase().includes("JAMY") || _description_input.toUpperCase().includes("JAMY")) &&
-                                (_title_prediction_avg >= 0.2 || _description_prediction_avg >= 0.2)
-                            ) {
-
-                                actions.trigger_snackbar("Calamity madler,I must be an easy target, I wonder", 10000);
-                            } else if (
-                                (_title_input.toUpperCase().includes("MASTER CHIEF") || _description_input.toUpperCase().includes("MASTER CHIEF"))
-                            ) {
-
-                                actions.trigger_snackbar("Dum du-du-du-dum du-du-dum du-du. Du-du-...");
-                            }
-
-                            this.setState({_is_prediction_loading: false, _title_prediction, _description_prediction});
-                        });
-                    });
-                });
-
-        });*/
-    }
 
     _handle_send_click = (event) => {
 
@@ -1300,14 +1127,9 @@ class PixelDialogPost extends React.Component {
             _translated_description,
             _has_translation_started,
             _translated_title,
-            _width,
-            _height,
             _window_width,
             _dont_show_canvas,
             _drawer_tab_index,
-            _layers,
-            _color_palette,
-            _image_details,
             _drawer_open,
             keepMounted,
             selected_locales_code,
@@ -1324,14 +1146,10 @@ class PixelDialogPost extends React.Component {
             _perspective_depth,
             enable_3d,
             _svg_loading,
-            post_img,
         } = this.state;
 
         const post = this.state.post || {};
         const author_account = this.state._author_account || {};
-
-        const layers = _layers || [];
-        const layer = layers[0] || {colors: []};
 
         const vote_number = post.active_votes ? post.active_votes.length: 0;
         const tags = post.tags ? post.tags: _tags_input ? _tags_input: [];
@@ -1339,14 +1157,17 @@ class PixelDialogPost extends React.Component {
 
         const has_translated = _translated_title.length && _translated_description.length;
         const is_translating = _has_translation_started && !has_translated;
-        const lang = selected_locales_code.split("-")[0];
+        const lang = (selected_locales_code || "en-US").split("-")[0];
 
-        const color_box_shadows = _color_palette.average_color_zones[0] ? {
+        const post_img = this.state.post_img ? this.state.post_img: {theme: {}, colors: []};
+        const color_box_shadows = post_img.theme.primary_hsla_color ? {
+            backgroundColor: `hsl(${post_img.theme.primary_hsla_color[0]}deg 60% 30% / 60%)`,
             backgroundImage:
-            `linear-gradient(45deg, ${_color_palette.average_color_zones[2]}, ${_color_palette.average_color_zones[1]}), 
-            linear-gradient(135deg, ${_color_palette.average_color_zones[0]}, ${_color_palette.average_color_zones[3]}), 
-            linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`,
-        }: {backgroundImage: `linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`,};
+            `linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`,
+        }: {
+            backgroundColor: "transparent",
+            backgroundImage: `linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`
+        };
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;
         const balance_fiat = (post.dollar_payout || 0) * hbd_price;
@@ -1373,7 +1194,6 @@ class PixelDialogPost extends React.Component {
                             selected_locales_code={selected_locales_code}
                             hbd_market={hbd_market}
                             selected_currency={selected_currency}
-                            layers={layers}
                             sc_svg={_sc_svg}
                             ss_svg={_ss_svg}
                             st_svg={_st_svg}
@@ -1386,7 +1206,7 @@ class PixelDialogPost extends React.Component {
                             translated_description={_translated_description}
                             translated_title={_translated_title}
                             has_translation_started={_has_translation_started}
-                            color={_color_palette.brightest_color}
+                            color={post_img.theme.brightest_color}
                             classname={classes.belowContent} />
                     }
                     <div className={classes.content}>
@@ -1397,14 +1217,13 @@ class PixelDialogPost extends React.Component {
                                         canvas_wrapper_border_radius={0}
                                         canvas_wrapper_border_width={0}
                                         shadow_size={9}
-                                        shadow_color={_color_palette.background_color}
                                         canvas_wrapper_padding={24}
-                                        canvas_wrapper_background_color={_color_palette.brightest_color}
-                                        pxl_width={_width}
-                                        pxl_height={_height}
+                                        canvas_wrapper_background_color={post_img.theme ? post_img.theme.brightest_hsla_color: "#00000000"}
+                                        pxl_width={post_img.width || 32}
+                                        pxl_height={post_img.height || 32}
                                         key={"canvas-post-edit"}
                                         default_size={1000}
-                                        default_scale={0.666}
+                                        default_scale={0.7}
                                         no_actions={true}
                                         show_original_image_in_background={false}
                                         dont_show_canvas_until_img_set={false}
@@ -1418,11 +1237,9 @@ class PixelDialogPost extends React.Component {
                                         show_transparent_image_in_background={false}
                                         onContextMenu={(e) => {e.preventDefault()}}
                                         onSizeChange={this._handle_size_change}
-                                        onLayersChange={this._handle_layers_change}
                                         onPerspectiveCoordinateChanges={this._handle_perspective}
                                         perspective={enable_3d ? _perspective_depth: 0}
                                         light={7}
-                                        onLoadComplete={(type, data) => {if(type==="image_load"){this._handle_image_load_complete(data)}}}
                                         ref={this._set_canvas_ref}
                                     />
                                 </div>
@@ -1475,7 +1292,7 @@ class PixelDialogPost extends React.Component {
                     </div>
                 </div>
                 <SwipeableDrawer
-                    swipeAreaWidth={(_window_width > 1280) ? 0: 50}
+                    swipeAreaWidth={(_window_width > 1280) ? 0: 15}
                     keepMounted={keepMounted}
                     ModalProps={{disablePortal: false, hideBackdrop: _window_width > 1280, BackdropProps:{classes: {root: classes.drawerModalBackdropRoot}}}}
                     onClose={this._handle_drawer_icon_close}
@@ -1696,23 +1513,6 @@ class PixelDialogPost extends React.Component {
                                     <FormHelperText>Be careful!</FormHelperText>
                                 </FormControl>
                             }
-                            {
-                                edit &&
-                                <div className={classes.tensorflowContainer} style={{display: "none"}}>
-                                    <p>Discover with TensorFlow's machine learning, what's the intention of your writing, get ready for it.</p>
-                                    <div className={classes.tensorflowWrapper}>
-                                        <Button
-                                            variant="text"
-                                            color="primary"
-                                            disabled={_is_prediction_loading}
-                                            onClick={this._evaluate_content_with_tensorflow}
-                                        >
-                                            What's kind
-                                        </Button>
-                                        {_is_prediction_loading && <CircularProgress size={24} className={classes.tensorflowButtonProgress} />}
-                                    </div>
-                                </div>
-                            }
                         </CardContent>
                         <CardContent>
                             <Typography gutterBottom variant="h5" component="h4">Palette</Typography>
@@ -1720,7 +1520,7 @@ class PixelDialogPost extends React.Component {
                                 padding="12px 0px"
                                 gap="8px"
                                 align="left"
-                                colors={_color_palette.colors}
+                                colors={post_img.colors ? post_img.colors.map(c => c.hex): []}
                                 onColorClick={(event, color) => {this._set_selection_by_colors(color)}}
                                 selected_colors={[]}
                                 transparent={false}
@@ -1732,11 +1532,11 @@ class PixelDialogPost extends React.Component {
                                 <TableBody>
                                     <TableRow>
                                         <TableCell align="left">Size:</TableCell>
-                                        <TableCell align="right">{_image_details.width} x {_image_details.height}</TableCell>
+                                        <TableCell align="right">{post_img.width} x {post_img.height}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell align="left">Colors:</TableCell>
-                                        <TableCell align="right">{_image_details.number_of_colors}</TableCell>
+                                        <TableCell align="right">{post_img.colors ? post_img.colors.length: "NaN"}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>

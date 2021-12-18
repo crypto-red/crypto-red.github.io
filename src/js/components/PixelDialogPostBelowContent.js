@@ -153,7 +153,6 @@ class PixelDialogPostBelowContent extends React.Component {
             selected_locales_code: props.selected_locales_code || "en-US",
             hbd_market: props.hbd_market || {},
             selected_currency: props.selected_currency || "USD",
-            layers: props.layers,
             sc_svg: props.sc_svg,
             ss_svg: props.ss_svg,
             st_svg: props.st_svg,
@@ -220,7 +219,6 @@ class PixelDialogPostBelowContent extends React.Component {
             has_translation_started,
             translated_title,
             window_width,
-            layers,
             balance_fiat,
             selected_locales_code,
             selected_currency,
@@ -239,7 +237,6 @@ class PixelDialogPostBelowContent extends React.Component {
         } = this.state;
 
         const post = this.state.post || {};
-        const layer = layers[0] || {colors: []};
 
         const vote_number = post.active_votes ? post.active_votes.length: 0;
         const tags = post.tags ? post.tags: tags_input ? tags_input: [];
@@ -262,14 +259,14 @@ class PixelDialogPostBelowContent extends React.Component {
                 color: "black",
                 backgroundOrigin: "center"}}>
                 <div style={{contentVisibility: will_change ? "auto": h_svg ? "visible": "hidden", position: "relative", height: "100%"}}>
-                    <div style={{transition: "background-image .3s linear 0s", position: "relative", height: "100%", backgroundBlendMode: "color-burn", ...color_box_shadows}}>
+                    <div style={{transition: "background-color 360ms ease-in 0s", position: "relative", height: "100%", backgroundBlendMode: "color-burn", ...color_box_shadows}}>
                         <div style={{zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", color: color, width: "100%", height: "100%", top: 0, left: 0, fontSize: 12, backgroundPosition: "center", backgroundSize: 750, textAlign: "left", padding: 24, backgroundImage: `url("${g_svg}")`}}>
                             <p>$_AUTHOR: @{post.author}</p>
                             <p>$_VALUE: {price_formatter(balance_fiat, selected_currency, selected_locales_code)}</p>
                             <p>$_VOTES: {vote_number}</p>
-                            <p>$_COLORS: {layer.colors.length}</p>
+                            <p>$_COLORS: {4}</p>
                             <p>$_TAGS: #{tags.join(", #").toUpperCase()}</p>
-                            <p>$_V_PER_COL: {price_formatter(balance_fiat / layer.colors.length, selected_currency, selected_locales_code)}</p>
+                            <p>$_V_PER_COL: {price_formatter(balance_fiat / 4, selected_currency, selected_locales_code)}</p>
                             <p>$_HAS_TRANSLATED_[{document.documentElement.lang.toUpperCase()}]: {has_translated ? "TRUE": "FALSE"}</p>
                             <p>$_IS_TRANSLATING_[{document.documentElement.lang.toUpperCase()}]: {is_translating ? "TRUE": "FALSE"}</p>
                             <p>$_WIN_WIDTH: {window_width}px</p>
@@ -283,7 +280,7 @@ class PixelDialogPostBelowContent extends React.Component {
                         <div style={{zIndex: is_mobile_or_tablet ? 1: 14, contain: "size paint", position: "absolute", width: "100%", height: "100%", top: 0, left: 0, willChange: "contents"}}>
                             <img src={sc_svg} style={{transition: is_mobile_or_tablet ? "none": "transform .1s linear 0s", filter: "opacity(0.5)",  zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
                         </div>
-                        <span style={{filter: "opacity(0.3)", textShadow: `rgb(0 70 255 / 100%) 1.08243px 0px 1px, rgb(255 50 0 / 100%) -1.08243px 0px 1px, 0px 0px 4px`, position: "absolute", bottom: "30%", right: 32, width: "66%", color, fontFamily: `"Special Elite"`}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
+                        <span style={{filter: "opacity(0.3)", position: "absolute", bottom: "30%", right: 32, width: "66%", color, fontFamily: `"Special Elite"`}}>Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
                     </div>
                     <div style={{position: "absolute", left: 0, top: 0, width: "100%", height: "100%", display: "inline-grid"}}>
                         <span>$_ARTISTIC_SITUATION_TYPE: PIXEL ART</span>

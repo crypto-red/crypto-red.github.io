@@ -38,7 +38,7 @@ const styles = theme => ({
         borderRadius: 0,
         backgroundColor: "transparent",
         touchAction: "pan-y",
-        pointerEvents: "auto",
+        pointerEvents: "none",
         "&::before": {
             content: "''",
             background: "#100d4e",
@@ -98,9 +98,6 @@ const styles = theme => ({
         "&[score='80']::after": {backgroundImage: `url('${love_emoji_svg}')`},
         "&[score='90']::after": {backgroundImage: `url('${angel_emoji_svg}')`},
         "&[score='100']::after": {backgroundImage: `url('${fire_earth_emoji_svg}')`},
-        "& > .MuiCardContent-root": {
-            overflow: "hidden",
-        },
         "& > .MuiCardContent-root > div:hover, &[dataselected='true'] > .MuiCardContent-root > div": {
             "& > div:first-child": {
                 background: `linear-gradient(to bottom, rgba(0, 0, 0, 0) calc(0% - 24px), rgba(0, 0, 0, 0.034) calc(22.1% - 24px), rgba(0, 0, 0, 0.123) calc(39.4% - 24px), rgba(0, 0, 0, 0.249) calc(53.1% - 24px), rgba(0, 0, 0, 0.394) calc(64.3% - 24px), rgba(0, 0, 0, 0.54) calc(74.1% - 24px), rgba(0, 0, 0, 0.668) calc(83.6% - 24px), rgba(0, 0, 0, 0.762) calc(94.1% - 24px), rgba(0, 0, 0, 0.79) calc(100% - 24px))`,
@@ -383,7 +380,7 @@ class PixelArtCard extends React.Component {
                   score={Math.round(post.voting_ratio / 10) * 10}
                   dataselected={selected ? "true": "false"}>
                 <CardActionArea style={!wont_move ? {pointerEvents: "none", touchActions: "none"}: {}} >
-                    <div style={{contain: "layout style paint size", width: image_width, height: image_height, display: "block", position: "relative", overflow: "hidden"}}>
+                    <div style={{contain: "layout style paint size", width: image_width, height: image_height, display: "block", position: "relative"}}>
                         <div className={"pixelated"}>
                             <canvas
                                 style={{position: "absolute", transform: `scale(${_scale})`, transformOrigin: "left top"}}

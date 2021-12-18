@@ -128,7 +128,7 @@ function _get_currency_by_locales(locales) {
 
 function reset_all_databases(callback_function) {
 
-    settings = null;
+    window._settings = null;
     logged_account = null;
 
     Promise.all([
@@ -147,11 +147,9 @@ function reset_all_databases(callback_function) {
 
 function get_settings(callback_function) {
 
-    let settings = null;
+    if(window._settings) {
 
-    if(settings) {
-
-        callback_function(null, settings);
+        callback_function(null, window._settings);
     }
 
     settings_db.allDocs({
@@ -175,9 +173,9 @@ function get_settings(callback_function) {
 
                 if(settings_docs[0].data !== "undefined") {
 
-                    settings = JSON.parse(settings_docs[0].data);
+                    window._settings = JSON.parse(settings_docs[0].data);
 
-                    callback_function(null, settings);
+                    callback_function(null, window._settings);
                 }
 
                 if(settings_docs.length > 1) {
@@ -194,13 +192,13 @@ function get_settings(callback_function) {
 
         if(settings_docs_undefined || error){
 
-            settings = _get_default_settings();
+            window._settings = _get_default_settings();
 
             settings_db.post({
-                data: JSON.stringify(settings)
+                data: JSON.stringify(window._settings)
             });
 
-            callback_function(null, settings);
+            callback_function(null, window._settings);
         }
     });
 }
@@ -224,18 +222,18 @@ function set_settings(settings, callback_function) {
 
                 if(settings_docs[0].data !== "undefined") {
 
-                    settings = _merge_object(
+                    window._settings = _merge_object(
                         JSON.parse(clean_json_text(settings_docs[0].data)),
-                        settings);
+                        window._settings);
 
                     settings_db.put({
                         _id: settings_docs[0]._id,
                         _rev: settings_docs[0]._rev,
                         timestamp: Date.now(),
-                        data: JSON.stringify(settings)
+                        data: JSON.stringify(window._settings)
                     }, {force: true});
 
-                    callback_function(null, settings);
+                    callback_function(null, window._settings);
                 }
 
                 // Delete all others
@@ -253,14 +251,14 @@ function set_settings(settings, callback_function) {
 
             const default_all_settings = _get_default_settings();
 
-            settings = _merge_object(default_all_settings, settings);
+            window._settings = _merge_object(default_all_settings, window._settings);
 
             settings_db.post({
-                data: JSON.stringify(settings)
+                data: JSON.stringify(window._settings)
             });
 
 
-            callback_function(null, settings);
+            callback_function(null, window._settings);
         }
     }
 

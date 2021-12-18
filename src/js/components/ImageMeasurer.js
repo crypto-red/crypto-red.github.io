@@ -1,7 +1,6 @@
 import React from "react";
-import stuff from "../utils/png-db";
-
-const stuffy = stuff();
+import pngdb from "../utils/png-db";
+const pngdby = pngdb();
 
 class ImageMeasurer extends React.Component {
 
@@ -15,29 +14,29 @@ class ImageMeasurer extends React.Component {
             image: props.image,
             children: props.children,
             itemsWithSizes: [],
+            itemsWithSizesComputed: [],
         }
     }
 
     componentWillReceiveProps(nextProps) {
 
-        const {items, image} = nextProps;
+        let {items, image} = nextProps;
 
-        const itemChanged = items.length !== this.state.items.length || items.map(i => i.id) !== this.state.items.map(i => i.id);
-        const itemsWithSizes = itemChanged ? []: this.state.itemsWithSizes;
+        const itemChanged = true;
+        const itemsWithSizes = itemChanged ? new Array(items.length): this.state.itemsWithSizes;
 
-        this.setState({...nextProps, itemsWithSizes}, () => {
+        this.setState({...nextProps, itemsWithSizes, itemsWithSizesComputed: itemChanged ? []: this.state.itemsWithSizesComputed}, () => {
 
             if(itemChanged) {
 
                 this.maybe_render();
+
                 items.forEach((item, index) => {
 
-                    if(!this.state.itemsWithSizes[index]) {
+                    if(!this.state.itemsWithSizesComputed[index]) {
 
                         const base64 = image(item);
-
-                        stuffy.get_new_img_obj(base64, (size) => {this._on_size_computed(size, index, item)});
-
+                        pngdby.get_new_img_obj(base64, (size) => {this._on_size_computed(size, index, item)});
                     }
                 });
             }
@@ -46,7 +45,7 @@ class ImageMeasurer extends React.Component {
 
     _on_size_computed = (size, index, item) => {
 
-        let {itemsWithSizes} = this.state;
+        let {itemsWithSizes, itemsWithSizesComputed} = this.state;
 
         size = {...size};
         item = {...item};
@@ -57,12 +56,8 @@ class ImageMeasurer extends React.Component {
             item: Object.freeze(item)
         });
 
-        this.setState({itemsWithSizes, sizes: itemsWithSizes.map((iws) => {
-                return {
-                    width: iws.size.width,
-                    height: iws.size.height
-                };
-            })}, () => {
+        itemsWithSizesComputed[index] = Object.freeze(true);
+        this.setState({itemsWithSizesComputed, itemsWithSizes}, () => {
 
             this.maybe_render();
         });
@@ -74,8 +69,8 @@ class ImageMeasurer extends React.Component {
 
     maybe_render = () => {
 
-        const {itemsWithSizes, items} = this.state;
-        if(items.length === itemsWithSizes.length) {
+        const {items, itemsWithSizesComputed} = this.state;
+        if(itemsWithSizesComputed.length === items.length) {
 
             this.forceUpdate();
         }
@@ -84,11 +79,11 @@ class ImageMeasurer extends React.Component {
 
     render() {
 
-        const {itemsWithSizes, sizes, children, className} = this.state;
+        const {itemsWithSizes, children, className} = this.state;
 
         return (
             <div className={className}>
-                {children({itemsWithSizes, sizes})}
+                {children({itemsWithSizes})}
             </div>
         );
 

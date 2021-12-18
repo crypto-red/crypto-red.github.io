@@ -2,6 +2,8 @@ import React from "react";
 import { withStyles } from "@material-ui/core/styles";
 
 import CanvasPixels from "../components/CanvasPixels";
+import pngdb from "../utils/png-db";
+const pngdby = pngdb();
 
 import Typography from "@material-ui/core/Typography";
 import Backdrop from "@material-ui/core/Backdrop";
@@ -495,7 +497,7 @@ class Pixel extends React.Component {
     _update_settings() {
 
         // Call the api to get results of current settings and send it to a callback function
-        api.get_settings(this._process_settings_query_result, true);
+        api.get_settings(this._process_settings_query_result);
     }
 
     _handle_view_name_change = (view_name_index, previous_name_index = null) => {
@@ -1139,8 +1141,10 @@ class Pixel extends React.Component {
         const { _canvas } = this.state;
         _canvas.get_base64_png_data_url(1, (base64_url) => {
 
-            this.setState({_base64_url: base64_url});
-            this.setState({_is_pixel_dialog_post_edit_open: true, _is_edit_drawer_open: false});
+            pngdby.get_new_img_obj(base64_url, (imgobj) => {
+
+                this.setState({_base64_url: base64_url, _is_pixel_dialog_post_edit_open: true, _is_edit_drawer_open: false, _post_img: imgobj});
+            });
         });
     };
 
@@ -1275,6 +1279,7 @@ class Pixel extends React.Component {
             _dialog_hive_key_open,
             _pixel_dialog_create_open,
             _pixel_arts,
+            _post_img
         } = this.state;
 
         let { _logged_account } = this.state;
@@ -1734,6 +1739,7 @@ class Pixel extends React.Component {
                         image: _base64_url,
                         author: _logged_account.hive_username || "undefined",
                     }}
+                    post_img={_post_img}
                     keepMounted={false}
                     open={_is_pixel_dialog_post_edit_open}
                     onClose={this._handle_pixel_dialog_post_edit_close}

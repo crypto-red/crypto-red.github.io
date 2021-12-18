@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v59";
+var CACHE = "network-or-cache-v60";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -12,7 +12,7 @@ self.addEventListener("install", function(evt) {
       "/index.html",
       "/404.html",
       "/client.min.js",
-      "/client.min.js?v=59",
+      "/client.min.js?v=60",
       "/src/fonts/NotoSans-Regular.ttf",
       "/src/fonts/SpecialElite-Regular.ttf",
       "/src/fonts/NotoSansMono-Regular.ttf",
@@ -99,7 +99,7 @@ self.addEventListener("fetch", function(event) {
   }else if(url.includes("client.min.js") && event.request.mode === "same-origin") {
 
     // Return the same index.html page for all navigation query
-    event.respondWith( caches.match("/client.min.js?v=59").then(function (response) {
+    event.respondWith( caches.match("/client.min.js").then(function (response) {
       return (
           response || fetch(event.request).then(function (response){return response})
       );

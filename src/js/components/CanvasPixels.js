@@ -376,9 +376,10 @@ class CanvasPixels extends React.Component {
             `.Canvas-Wrapper-Overflow.Shown {
                 animation-name: canvanimation;
                 animation-fill-mode: both;
-                animation-duration: 60ms;
+                animation-duration: 240ms;
                 animation-delay: 0ms;
                 animation-timing-function: linear;
+                opacity: 1 !important,
             }
             .Canvas-Wrapper-Overflow {
                 opacity: 0 !important,
@@ -1964,19 +1965,15 @@ class CanvasPixels extends React.Component {
 
     };
 
-    set_canvas_from_image = (image_obj, loading_base64_img = "", img_d = {}) => {
+    set_canvas_from_image = (image_obj = null, loading_base64_img = "", img_d = {}) => {
 
         if(this.props.onLoad) {this.props.onLoad("image_load");}
 
         if(img_d.id) {
 
-            const { new_pxl_colors, new_pxls } = this._get_pixels_palette_and_list_from_image_data(img_d.image_data, true, 0);
-
             const _layer_index = 0;
-            let ns_pxl_colors = [];
-            ns_pxl_colors[_layer_index] = new_pxl_colors;
-            let ns_pxls = [];
-            ns_pxls[_layer_index] = new_pxls;
+            const ns_pxl_colors = [img_d.pxl_colors];
+            const ns_pxls = [img_d.pxls];
 
             this.setState({
                 _id: Date.now(),
@@ -1984,14 +1981,14 @@ class CanvasPixels extends React.Component {
                 pxl_height: img_d.height,
                 _pxl_indexes_of_selection: new Set(),
                 _base64_original_images: [],
-                _layers: [{id: Date.now(), name: "Layer 0", hidden: false, opacity: 1, data: {}}],
                 _s_pxl_colors: ns_pxl_colors,
                 _s_pxls: ns_pxls,
+                _layers: [{id: Date.now(), name: "Layer 0", hidden: false, opacity: 1, data: {}}],
                 _layer_index,
                 _old_pxls_hovered: -1,
                 _pxls_hovered: -1,
                 _old_pxl_colors: [],
-                _old_pxls: new Array(new_pxls.length).fill(-1),
+                _old_pxls: new Array(img_d.pxls.length).fill(-1),
                 _is_there_new_dimension: true,
                 has_shown_canvas_once: false,
                 _original_image_index: -1,
@@ -1999,346 +1996,314 @@ class CanvasPixels extends React.Component {
             }, () => {
 
                 this._notify_size_change();
-                this._notify_layers_change();
                 this._update_screen_zoom_ratio(true);
                 this._notify_image_load_complete();
             });
 
-            return;
-        }
-
-        if(loading_base64_img.length) {
-
-            this.setState({_hidden: true, _loading_base64_img_changed: true}, () => {
-
-                setTimeout(() => {
-
-                    this.setState({_loading_base64_img: loading_base64_img}, () => {
-
-                        this._request_force_update(false, () => {
-
-                            setTimeout(() => {
-
-                                this.setState({_loading_base64_img_changed: false}, () => {
-
-                                    this._request_force_update(false);
-
-                                });
-                            }, this.state.animation_duration / 2);
-
-                        });
-                    });
-                }, this.state.animation_duration / 2);
-            });
         }else {
 
-            this.setState({_hidden: true}, () => {
+            setTimeout( async() => {
 
-                this._request_force_update(false);
+                const { default_size, max_size, ideal_size, _base64_original_images, dont_change_img_size_onload, dont_compute_base64_original_image } = this.state;
 
-            });
-        }
+                // Draw the original image in an invisible canvas
+                let width = image_obj.width;
+                let height = image_obj.height;
 
-        setTimeout( async() => {
+                let [canvas_ctx, canvas] = this._get_new_ctx_from_canvas(width, height, false);
+                canvas_ctx.drawImage(image_obj, 0, 0, width, height);
+                const image_data = canvas_ctx.getImageData(0, 0, width, height);
+                const base64_original_image = dont_compute_base64_original_image ? "": canvas.toDataURL("image/jpeg");
+                canvas = null;
 
-            const { default_size, max_size, ideal_size, _base64_original_images, dont_change_img_size_onload, dont_compute_base64_original_image } = this.state;
+                const merge_color_threshold = 4/16;
+                let is_crop_necessary = false;
+                let a_better_scale = 1;
 
-            // Draw the original image in an invisible canvas
-            let width = image_obj.width;
-            let height = image_obj.height;
+                if(dont_change_img_size_onload === false) {
 
-            let [canvas_ctx, canvas] = this._get_new_ctx_from_canvas(width, height, false);
-            canvas_ctx.drawImage(image_obj, 0, 0, width, height);
-            const image_data = canvas_ctx.getImageData(0, 0, width, height);
-            const base64_original_image = dont_compute_base64_original_image ? "": canvas.toDataURL("image/jpeg");
-            canvas = null;
+                    // From the result in colors and pixels color index find if the image is resized bigger but from a pixelart image
+                    let { new_pxl_colors, new_pxls, ratio_pixel_per_color, too_much_pixel_cpu_would_go_brrrrr } = this._get_pixels_palette_and_list_from_image_data(image_data, false, (256 - 256 / (merge_color_threshold * 256)) / 256);
+                    [ new_pxls, new_pxl_colors ] = await this._remove_close_pxl_colors(new_pxls, new_pxl_colors, 4/16, null, 0);
+                    ratio_pixel_per_color = new_pxls.length / new_pxl_colors.length;
 
-            const merge_color_threshold = 4/16;
-            let is_crop_necessary = false;
-            let a_better_scale = 1;
+                    let enough_sure = max_size * max_size > height * width;
 
-            if(dont_change_img_size_onload === false) {
+                    if(!enough_sure) {
 
-                // From the result in colors and pixels color index find if the image is resized bigger but from a pixelart image
-                let { new_pxl_colors, new_pxls, ratio_pixel_per_color, too_much_pixel_cpu_would_go_brrrrr } = this._get_pixels_palette_and_list_from_image_data(image_data, false, (256 - 256 / (merge_color_threshold * 256)) / 256);
-                [ new_pxls, new_pxl_colors ] = await this._remove_close_pxl_colors(new_pxls, new_pxl_colors, 4/16, null, 0);
-                ratio_pixel_per_color = new_pxls.length / new_pxl_colors.length;
+                        let best_min_occ = 1/0;
+                        let occ_list = [];
+                        let occ = 0;
+                        let last_occ = -1;
 
-                let enough_sure = max_size * max_size > height * width;
+                        occ_list[1] = 0;
+                        new_pxls.forEach((value, index) => {
 
-                if(!enough_sure) {
+                            // If like the last occurrence increment the min occurrence variable
+                            if(last_occ === value || index === 0) {
 
-                    let best_min_occ = 1/0;
-                    let occ_list = [];
-                    let occ = 0;
-                    let last_occ = -1;
-
-                    occ_list[1] = 0;
-                    new_pxls.forEach((value, index) => {
-
-                        // If like the last occurrence increment the min occurrence variable
-                        if(last_occ === value || index === 0) {
-
-                            occ++;
-                        }else {
-
-                            // If we found a smaller occurrence pattern that finished, the best one is this one
-                            if(occ < best_min_occ) {
-
-                                best_min_occ = occ;
-                            }
-
-                            // Reset occurrence to zero since there is a new pattern
-                            occ_list[occ] = typeof occ_list[occ] !== "undefined" ? occ_list[occ] + 1 : 1;
-
-                            occ = 1;
-                        }
-
-                        // Set the last occurrence the new one
-                        last_occ = value;
-                    });
-
-                    let most_frequent_following_repetition_number_in_px = 1;
-                    let most_frequent_following_repetition_number_in_px_with_bonus = 1;
-                    let most_frequent_following_occurrence = 1;
-                    let most_frequent_following_repetition_number = 1;
-                    const ideal_size_percent_of_than_real_size = Math.sqrt((width * height) / (ideal_size * ideal_size));
-                    const occurrence_is_probably_lower_than = 32;
-
-                    Object.entries(occ_list).forEach((value, index) => {
-
-                        let [occurrence, repetition_number] = value;
-                        occurrence = parseInt(occurrence);
-
-                        if(occurrence > occurrence_is_probably_lower_than) { return; }
-                        // The bonus is computed so it prefer larger occurrence (up to 128px following themselves) because we could have a table with small lines, faded angle or even noise above square representing pixel
-                        // The bigger the image is based on one dimension, the bigger the bonus will be since it best encourage big occurrences in big images
-                        const occurrence_position_evaluation_on_max_occurrence = occurrence > occurrence_is_probably_lower_than ? 1: (occurrence_is_probably_lower_than+10) / (occurrence+10);
-                        const occurrence_position_on_ideal_size_times_smaller = occurrence > occurrence_is_probably_lower_than ? 1: occurrence_position_evaluation_on_max_occurrence * ideal_size_percent_of_than_real_size;
-                        const bonus_for_longer_occurrence_in_px = occurrence > occurrence_is_probably_lower_than ? 0: occurrence_position_on_ideal_size_times_smaller * Math.pow(occurrence, 1 + (1 - 1 / occurrence_position_evaluation_on_max_occurrence));
-
-                        const is_better_repetition_number_in_px = most_frequent_following_repetition_number_in_px_with_bonus < (repetition_number * occurrence + bonus_for_longer_occurrence_in_px);
-
-                        if(occurrence !== 1 && is_better_repetition_number_in_px) {
-
-                            most_frequent_following_occurrence = occurrence;
-                            most_frequent_following_repetition_number = repetition_number;
-                            most_frequent_following_repetition_number_in_px = repetition_number * occurrence;
-                            most_frequent_following_repetition_number_in_px_with_bonus = repetition_number * occurrence + bonus_for_longer_occurrence_in_px;
-
-                        }
-
-                    });
-
-                    // We can check if the occurrence of only 1px is less than the most frequent following occurrence in total pixel size.
-                    // Yet the problem we face is that the X occurrence of Y pixel might be way smaller in a big image if there is 1px size line or annoying circle shape
-                    // So the solution is to multiply the total amount of pixel repeated in the best occurrence by the decrease of size ideally
-
-                    const most_frequent_following_occurrence_intelligent = most_frequent_following_repetition_number_in_px * ideal_size_percent_of_than_real_size * 4 > occ_list[1] ?
-                        most_frequent_following_occurrence: 1;
-
-                    // Find if there is a gape: occurrence nearly not existing from the occurrence 1 to the occurrence X of which X is greater than length of occurrence 1
-                    let a_better_frequent_following_occurrence_intelligent = most_frequent_following_occurrence_intelligent;
-
-                    // If there is less times occurrence of one pixel than the biggest occurrence
-                    // We can deduce the gap if surpassing the number of 1px occurrence, the scale is so
-                    if(occ_list[1] < occ_list.length) {
-
-                        let counter = 0;
-                        while(true) {
-
-                            if (typeof occ_list[counter] === "undefined" || occ_list[counter] === 0) {
-
-                                counter++;
+                                occ++;
                             }else {
 
-                                if(counter > occ_list[1]) {
+                                // If we found a smaller occurrence pattern that finished, the best one is this one
+                                if(occ < best_min_occ) {
 
-                                    a_better_frequent_following_occurrence_intelligent = counter;
-                                    enough_sure = true;
+                                    best_min_occ = occ;
                                 }
 
-                                break;
+                                // Reset occurrence to zero since there is a new pattern
+                                occ_list[occ] = typeof occ_list[occ] !== "undefined" ? occ_list[occ] + 1 : 1;
+
+                                occ = 1;
                             }
+
+                            // Set the last occurrence the new one
+                            last_occ = value;
+                        });
+
+                        let most_frequent_following_repetition_number_in_px = 1;
+                        let most_frequent_following_repetition_number_in_px_with_bonus = 1;
+                        let most_frequent_following_occurrence = 1;
+                        let most_frequent_following_repetition_number = 1;
+                        const ideal_size_percent_of_than_real_size = Math.sqrt((width * height) / (ideal_size * ideal_size));
+                        const occurrence_is_probably_lower_than = 32;
+
+                        Object.entries(occ_list).forEach((value, index) => {
+
+                            let [occurrence, repetition_number] = value;
+                            occurrence = parseInt(occurrence);
+
+                            if(occurrence > occurrence_is_probably_lower_than) { return; }
+                            // The bonus is computed so it prefer larger occurrence (up to 128px following themselves) because we could have a table with small lines, faded angle or even noise above square representing pixel
+                            // The bigger the image is based on one dimension, the bigger the bonus will be since it best encourage big occurrences in big images
+                            const occurrence_position_evaluation_on_max_occurrence = occurrence > occurrence_is_probably_lower_than ? 1: (occurrence_is_probably_lower_than+10) / (occurrence+10);
+                            const occurrence_position_on_ideal_size_times_smaller = occurrence > occurrence_is_probably_lower_than ? 1: occurrence_position_evaluation_on_max_occurrence * ideal_size_percent_of_than_real_size;
+                            const bonus_for_longer_occurrence_in_px = occurrence > occurrence_is_probably_lower_than ? 0: occurrence_position_on_ideal_size_times_smaller * Math.pow(occurrence, 1 + (1 - 1 / occurrence_position_evaluation_on_max_occurrence));
+
+                            const is_better_repetition_number_in_px = most_frequent_following_repetition_number_in_px_with_bonus < (repetition_number * occurrence + bonus_for_longer_occurrence_in_px);
+
+                            if(occurrence !== 1 && is_better_repetition_number_in_px) {
+
+                                most_frequent_following_occurrence = occurrence;
+                                most_frequent_following_repetition_number = repetition_number;
+                                most_frequent_following_repetition_number_in_px = repetition_number * occurrence;
+                                most_frequent_following_repetition_number_in_px_with_bonus = repetition_number * occurrence + bonus_for_longer_occurrence_in_px;
+
+                            }
+
+                        });
+
+                        // We can check if the occurrence of only 1px is less than the most frequent following occurrence in total pixel size.
+                        // Yet the problem we face is that the X occurrence of Y pixel might be way smaller in a big image if there is 1px size line or annoying circle shape
+                        // So the solution is to multiply the total amount of pixel repeated in the best occurrence by the decrease of size ideally
+
+                        const most_frequent_following_occurrence_intelligent = most_frequent_following_repetition_number_in_px * ideal_size_percent_of_than_real_size * 4 > occ_list[1] ?
+                            most_frequent_following_occurrence: 1;
+
+                        // Find if there is a gape: occurrence nearly not existing from the occurrence 1 to the occurrence X of which X is greater than length of occurrence 1
+                        let a_better_frequent_following_occurrence_intelligent = most_frequent_following_occurrence_intelligent;
+
+                        // If there is less times occurrence of one pixel than the biggest occurrence
+                        // We can deduce the gap if surpassing the number of 1px occurrence, the scale is so
+                        if(occ_list[1] < occ_list.length) {
+
+                            let counter = 0;
+                            while(true) {
+
+                                if (typeof occ_list[counter] === "undefined" || occ_list[counter] === 0) {
+
+                                    counter++;
+                                }else {
+
+                                    if(counter > occ_list[1]) {
+
+                                        a_better_frequent_following_occurrence_intelligent = counter;
+                                        enough_sure = true;
+                                    }
+
+                                    break;
+                                }
+                            }
+                        }
+
+                        // We have cheated the selection of occurrence with a bonus, now we check if there isn't an occurrence smaller which correlate
+                        let adjusted_following_occurrence = a_better_frequent_following_occurrence_intelligent;
+
+
+                        Object.entries(occ_list).forEach((entry, index) => {
+
+                            let [key, value] = entry; // Key is the occurrence series and value the number of occurrence
+                            key = parseInt(key);
+
+                            if(index > 1 && value > occ_list[adjusted_following_occurrence] && key < a_better_frequent_following_occurrence_intelligent) {
+
+                                adjusted_following_occurrence = key;
+                            }
+                        });
+
+                        // We'll check if there is a near occurrence that match image width
+                        if(image_obj.width % adjusted_following_occurrence !== 0) {
+
+                            let difference = 1;
+                            while(
+                                image_obj.width % (adjusted_following_occurrence + difference) !== 0 && image_obj.width % (adjusted_following_occurrence - difference) !== 0 &&
+                                image_obj.height % (adjusted_following_occurrence + difference) !== 0 && image_obj.height % (adjusted_following_occurrence - difference) !== 0 &&
+                                difference < 16
+                                ) {
+
+                                if(
+                                    image_obj.width % (adjusted_following_occurrence - difference) === 0 &&
+                                    image_obj.height % (adjusted_following_occurrence - difference) === 0) {
+
+                                    adjusted_following_occurrence -= difference;
+                                }else if(
+                                    image_obj.width % (adjusted_following_occurrence + difference) === 0 &&
+                                    image_obj.height % (adjusted_following_occurrence + difference) === 0
+                                ) {
+
+                                    adjusted_following_occurrence += difference;
+                                }
+
+                                difference++;
+
+                            }
+                        }
+
+                        a_better_scale =  1 / adjusted_following_occurrence;
+                    }
+
+                    const a_better_scale_size = (height * a_better_scale) * (width * a_better_scale);
+                    const is_low_color_number_xor_small_enough = // Can be either 3 times less color and 3 times bigger or 2 times less color and 2 time bigger
+                        (ratio_pixel_per_color > 4 * 4 * Math.sqrt(a_better_scale_size) && a_better_scale_size <= (default_size * default_size) * 4) ||
+                        (ratio_pixel_per_color > 3 * 3 * Math.sqrt(a_better_scale_size) && a_better_scale_size <= (default_size * default_size) * 3) ||
+                        (ratio_pixel_per_color > 2 * 2 * Math.sqrt(a_better_scale_size) && a_better_scale_size <= (default_size * default_size) * 2) ||
+                        (ratio_pixel_per_color > 1 * 1 * Math.sqrt(a_better_scale_size) && a_better_scale_size <= (default_size * default_size) * 1);
+                    const is_less_color_enough = a_better_scale_size > new_pxl_colors.length;
+                    const is_small_enough = a_better_scale_size < max_size * max_size;
+
+                    if(!is_low_color_number_xor_small_enough && !enough_sure || (!is_small_enough || !is_less_color_enough)) { // The image must be lowered
+
+                        let scale = 1;
+
+                        while (Math.round(width * scale) * Math.round(height * scale) > (default_size * default_size)) { // Decrement the scale until it fits the maximum size (limit)
+
+                            scale -= 0.01;
+                        }
+
+
+                        width = width * scale;
+                        height = height * scale;
+                    }else {
+
+                        if(height * width > default_size * default_size) {
+
+                            width *= a_better_scale;
+                            height *= a_better_scale;
+                            is_crop_necessary = true;
                         }
                     }
 
-                    // We have cheated the selection of occurrence with a bonus, now we check if there isn't an occurrence smaller which correlate
-                    let adjusted_following_occurrence = a_better_frequent_following_occurrence_intelligent;
-
-
-                    Object.entries(occ_list).forEach((entry, index) => {
-
-                        let [key, value] = entry; // Key is the occurrence series and value the number of occurrence
-                        key = parseInt(key);
-
-                        if(index > 1 && value > occ_list[adjusted_following_occurrence] && key < a_better_frequent_following_occurrence_intelligent) {
-
-                            adjusted_following_occurrence = key;
-                        }
-                    });
-
-                    // We'll check if there is a near occurrence that match image width
-                    if(image_obj.width % adjusted_following_occurrence !== 0) {
-
-                        let difference = 1;
-                        while(
-                            image_obj.width % (adjusted_following_occurrence + difference) !== 0 && image_obj.width % (adjusted_following_occurrence - difference) !== 0 &&
-                            image_obj.height % (adjusted_following_occurrence + difference) !== 0 && image_obj.height % (adjusted_following_occurrence - difference) !== 0 &&
-                            difference < 16
-                            ) {
-
-                            if(
-                                image_obj.width % (adjusted_following_occurrence - difference) === 0 &&
-                                image_obj.height % (adjusted_following_occurrence - difference) === 0) {
-
-                                adjusted_following_occurrence -= difference;
-                            }else if(
-                                image_obj.width % (adjusted_following_occurrence + difference) === 0 &&
-                                image_obj.height % (adjusted_following_occurrence + difference) === 0
-                            ) {
-
-                                adjusted_following_occurrence += difference;
-                            }
-
-                            difference++;
-
-                        }
-                    }
-
-                    a_better_scale =  1 / adjusted_following_occurrence;
                 }
 
-                const a_better_scale_size = (height * a_better_scale) * (width * a_better_scale);
-                const is_low_color_number_xor_small_enough = // Can be either 3 times less color and 3 times bigger or 2 times less color and 2 time bigger
-                    (ratio_pixel_per_color > 4 * 4 * Math.sqrt(a_better_scale_size) && a_better_scale_size <= (default_size * default_size) * 4) ||
-                    (ratio_pixel_per_color > 3 * 3 * Math.sqrt(a_better_scale_size) && a_better_scale_size <= (default_size * default_size) * 3) ||
-                    (ratio_pixel_per_color > 2 * 2 * Math.sqrt(a_better_scale_size) && a_better_scale_size <= (default_size * default_size) * 2) ||
-                    (ratio_pixel_per_color > 1 * 1 * Math.sqrt(a_better_scale_size) && a_better_scale_size <= (default_size * default_size) * 1);
-                const is_less_color_enough = a_better_scale_size > new_pxl_colors.length;
-                const is_small_enough = a_better_scale_size < max_size * max_size;
+                let canvas_resized_ctx;
+                let canvas_resized_image_data = null;
 
-                if(!is_low_color_number_xor_small_enough && !enough_sure || (!is_small_enough || !is_less_color_enough)) { // The image must be lowered
+                if(is_crop_necessary && dont_change_img_size_onload === false) {
 
-                    let scale = 1;
+                    let adjusted_following_occurrence = 1 / a_better_scale;
 
-                    while (Math.round(width * scale) * Math.round(height * scale) > (default_size * default_size)) { // Decrement the scale until it fits the maximum size (limit)
+                    const initial_width = width / a_better_scale;
+                    const initial_height = height / a_better_scale;
 
-                        scale -= 0.01;
-                    }
+                    const initial_width_cropped = initial_width - initial_width % adjusted_following_occurrence;
+                    const initial_height_cropped = initial_height - initial_height % adjusted_following_occurrence;
 
+                    const cropped_width = Math.floor(initial_width_cropped / adjusted_following_occurrence);
+                    const cropped_height = Math.floor(initial_height_cropped / adjusted_following_occurrence);
 
-                    width = width * scale;
-                    height = height * scale;
+                    const sw = initial_width_cropped;
+                    const sh = initial_height_cropped;
+                    const sx = Math.floor((initial_width - initial_width_cropped) / 2);
+                    const sy = Math.floor((initial_height - initial_height_cropped) / 2);
+
+                    width = Math.floor(cropped_width);
+                    height = Math.floor(cropped_height);
+
+                    [canvas_resized_ctx] = this._get_new_ctx_from_canvas(width, height, true);
+                    canvas_resized_ctx.drawImage(image_obj, sx, sy, sw, sh, 0, 0, width, height);
+                    canvas_resized_image_data = canvas_resized_ctx.getImageData(0, 0, width, height);
+
+                }else if(dont_change_img_size_onload === false) {
+
+                    width = Math.floor(width);
+                    height = Math.floor(height);
+
+                    [canvas_resized_ctx] = this._get_new_ctx_from_canvas(width, height, true);
+                    canvas_resized_ctx.drawImage(image_obj, 0, 0, width, height);
+                    canvas_resized_image_data = canvas_resized_ctx.getImageData(0, 0, width, height);
+
                 }else {
 
-                    if(height * width > default_size * default_size) {
-
-                        width *= a_better_scale;
-                        height *= a_better_scale;
-                        is_crop_necessary = true;
-                    }
+                    canvas_resized_image_data = image_data;
                 }
 
-            }
+                const new_pxl_data = this._get_pixels_palette_and_list_from_image_data(canvas_resized_image_data, true, 0);
 
-            let canvas_resized_ctx;
-            let canvas_resized_image_data = null;
+                let full_new_pxl_colors = new_pxl_data.new_pxl_colors;
 
-            if(is_crop_necessary && dont_change_img_size_onload === false) {
+                let full_new_pxls = new_pxl_data.new_pxls;
 
-                let adjusted_following_occurrence = 1 / a_better_scale;
+                let new_base64_original_images = _base64_original_images;
 
-                const initial_width = width / a_better_scale;
-                const initial_height = height / a_better_scale;
+                if(!new_base64_original_images.includes(base64_original_image)) {
 
-                const initial_width_cropped = initial_width - initial_width % adjusted_following_occurrence;
-                const initial_height_cropped = initial_height - initial_height % adjusted_following_occurrence;
+                    new_base64_original_images.push(base64_original_image);
+                }
 
-                const cropped_width = Math.floor(initial_width_cropped / adjusted_following_occurrence);
-                const cropped_height = Math.floor(initial_height_cropped / adjusted_following_occurrence);
+                const _layer_index = 0;
+                let ns_pxl_colors = [];
+                ns_pxl_colors[_layer_index] = full_new_pxl_colors;
+                let ns_pxls = [];
+                ns_pxls[_layer_index] = full_new_pxls;
 
-                const sw = initial_width_cropped;
-                const sh = initial_height_cropped;
-                const sx = Math.floor((initial_width - initial_width_cropped) / 2);
-                const sy = Math.floor((initial_height - initial_height_cropped) / 2);
+                this.setState({
+                    _id: Date.now(),
+                    pxl_width: width,
+                    pxl_height: height,
+                    _pxl_indexes_of_selection: new Set(),
+                    _base64_original_images: dont_compute_base64_original_image ? []: new_base64_original_images,
+                    _layers: [{id: Date.now(), name: "Layer 0", hidden: false, opacity: 1, data: {}}],
+                    _s_pxl_colors: ns_pxl_colors,
+                    _s_pxls: ns_pxls,
+                    _layer_index,
+                    _old_pxls_hovered: -1,
+                    _pxls_hovered: -1,
+                    _old_pxl_colors: [],
+                    _old_pxls: new Array(full_new_pxls.length).fill(-1),
+                    _is_there_new_dimension: true,
+                    has_shown_canvas_once: false,
+                    _original_image_index: new_base64_original_images.indexOf(base64_original_image),
+                    _last_action_timestamp: Date.now(),
+                }, () => {
 
-                width = Math.floor(cropped_width);
-                height = Math.floor(cropped_height);
+                    this._notify_size_change();
+                    this._notify_layers_change();
+                    this._update_screen_zoom_ratio(true);
 
-                [canvas_resized_ctx] = this._get_new_ctx_from_canvas(width, height, true);
-                canvas_resized_ctx.drawImage(image_obj, sx, sy, sw, sh, 0, 0, width, height);
-                canvas_resized_image_data = canvas_resized_ctx.getImageData(0, 0, width, height);
+                    if(full_new_pxl_colors.length >= 512){
+                        this._to_less_color(1/32, () => {
 
-            }else if(dont_change_img_size_onload === false) {
-
-                width = Math.floor(width);
-                height = Math.floor(height);
-
-                [canvas_resized_ctx] = this._get_new_ctx_from_canvas(width, height, true);
-                canvas_resized_ctx.drawImage(image_obj, 0, 0, width, height);
-                canvas_resized_image_data = canvas_resized_ctx.getImageData(0, 0, width, height);
-
-            }else {
-
-                canvas_resized_image_data = image_data;
-            }
-
-            const new_pxl_data = this._get_pixels_palette_and_list_from_image_data(canvas_resized_image_data, true, 0);
-
-            let full_new_pxl_colors = new_pxl_data.new_pxl_colors;
-
-            let full_new_pxls = new_pxl_data.new_pxls;
-
-            let new_base64_original_images = _base64_original_images;
-
-            if(!new_base64_original_images.includes(base64_original_image)) {
-
-                new_base64_original_images.push(base64_original_image);
-            }
-
-            const _layer_index = 0;
-            let ns_pxl_colors = [];
-            ns_pxl_colors[_layer_index] = full_new_pxl_colors;
-            let ns_pxls = [];
-            ns_pxls[_layer_index] = full_new_pxls;
-
-            this.setState({
-                _id: Date.now(),
-                pxl_width: width,
-                pxl_height: height,
-                _pxl_indexes_of_selection: new Set(),
-                _base64_original_images: dont_compute_base64_original_image ? []: new_base64_original_images,
-                _layers: [{id: Date.now(), name: "Layer 0", hidden: false, opacity: 1, data: {}}],
-                _s_pxl_colors: ns_pxl_colors,
-                _s_pxls: ns_pxls,
-                _layer_index,
-                _old_pxls_hovered: -1,
-                _pxls_hovered: -1,
-                _old_pxl_colors: [],
-                _old_pxls: new Array(full_new_pxls.length).fill(-1),
-                _is_there_new_dimension: true,
-                has_shown_canvas_once: false,
-                _original_image_index: new_base64_original_images.indexOf(base64_original_image),
-                _last_action_timestamp: Date.now(),
-            }, () => {
-
-                this._notify_size_change();
-                this._notify_layers_change();
-                this._update_screen_zoom_ratio(true);
-
-                if(full_new_pxl_colors.length >= 512){
-                    this._to_less_color(1/32, () => {
+                            this._notify_image_load_complete();
+                        });
+                    }else {
 
                         this._notify_image_load_complete();
-                    });
-                }else {
+                    }
+                });
 
-                    this._notify_image_load_complete();
-                }
-            });
+            }, 50);
 
-        }, 50);
+        }
     };
 
     _set_canvas_ref = (element) => {
@@ -4814,7 +4779,7 @@ class CanvasPixels extends React.Component {
         }
 
         let pixel_updated = 0;
-        const is_there_new_dimension = _is_there_new_dimension || _old_pxl_width !== pxl_width || _old_pxl_height !== pxl_height;
+        const is_there_new_dimension = _old_pxl_width !== pxl_width || _old_pxl_height !== pxl_height;
         const has_new_pixel_hovered = _old_pxls_hovered !== _pxls_hovered;
         const has_new_mine_player_index = _previous_mine_player_index !== _mine_player_index;
 
@@ -4935,7 +4900,7 @@ class CanvasPixels extends React.Component {
                 const was_in_pencil_mirror_axes_hover_indexes = _previous_pencil_mirror_axes_hover_indexes.has(index);
                 const is_in_pencil_mirror_axes_indexes = pencil_mirror_axes_indexes.has(index);
                 const is_an_old_pencil_mirror_axes_pixel_to_paint = _previous_pencil_mirror_axes_indexes.has(index) && _previous_pencil_mirror_axes_indexes !== pencil_mirror_axes_indexes;
-                const is_a_new_pixel_to_paint = (was_in_pencil_mirror_axes_hover_indexes && !is_in_pencil_mirror_axes_hover_indexes) || is_an_old_pencil_mirror_axes_pixel_to_paint || was_in_explosion !== is_in_explosion || is_in_explosion || was_in_image_imported || is_in_image_imported || (was_in_image_imported_resizer && !is_in_image_imported_resizer) || is_there_new_dimension || (_was_canvas_content_hidden && !hide_canvas_content) || has_layers_visibility_or_opacity_changed || pxl !== _old_pxls[index] || _old_pxl_colors[pxl] !== _s_pxl_colors[_layer_index][pxl];
+                const is_a_new_pixel_to_paint = (was_in_pencil_mirror_axes_hover_indexes && !is_in_pencil_mirror_axes_hover_indexes) || is_an_old_pencil_mirror_axes_pixel_to_paint || was_in_explosion !== is_in_explosion || is_in_explosion || was_in_image_imported || is_in_image_imported || (was_in_image_imported_resizer && !is_in_image_imported_resizer) || is_there_new_dimension || has_canvas_been_hidden || has_layers_visibility_or_opacity_changed || pxl !== _old_pxls[index] || _old_pxl_colors[pxl] !== _s_pxl_colors[_layer_index][pxl];
                 const pixel_hover_exception = tool === "ELLIPSE" && pxl_indexes_of_current_shape.size > 0;
 
                 if (
@@ -5000,7 +4965,6 @@ class CanvasPixels extends React.Component {
                     }
 
                     let color =
-                        (is_there_new_dimension || !has_shown_canvas_once) || has_canvas_been_hidden ||
                         is_in_pencil_mirror_axes_hover_indexes ||
                         is_in_pencil_mirror_axes_indexes ||
                         (is_pixel_hovered || is_mine_player_index) ||
@@ -8398,7 +8362,7 @@ class CanvasPixels extends React.Component {
         const rotate_y = Math.round((perspective_coordinate[0] * p / scale) * 1000) / 1000;
 
         return (
-            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{zIndex: 1, contain: "contents", boxSizing: "border-box", position: "relative", overflow: "hidden", touchAction: "none", userSelect: "none"}} className={className}>
+            <div ref={this._set_canvas_container_ref} draggable={"false"} style={{zIndex: 1, contain: "contents", boxSizing: "border-box", position: "relative", overflow: "visible", touchAction: "none", userSelect: "none"}} className={className}>
                 <div ref={this._set_canvas_wrapper_overflow_ref}
                      className={"Canvas-Wrapper-Overflow" + (has_shown_canvas_once && !_hidden ? " Shown ": " Not-Shown ")}
                      draggable={"false"}
