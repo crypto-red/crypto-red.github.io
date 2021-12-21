@@ -1,6 +1,5 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Route, Router } from "react-router-dom";
 import { HISTORY } from "./utils/constants";
 
 import TimeAgo from "javascript-time-ago";
@@ -38,15 +37,16 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { lightTheme } from "./theme/index";
 
+let element = document.createElement('div');
+element.setAttribute("id", "app");
+document.body.appendChild(element);
 const app = document.getElementById('app');
 
 if(app) {
     ReactDOM.render(
         <ThemeProvider theme={lightTheme}>
             <CssBaseline>
-                <Router history={HISTORY}>
-                    <Route component={Index}/>
-                </Router>
+                <Index history={HISTORY}/>
             </CssBaseline>
         </ThemeProvider>,
         app);

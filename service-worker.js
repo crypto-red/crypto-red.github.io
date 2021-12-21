@@ -8,16 +8,6 @@ self.addEventListener("install", function(evt) {
   // returning promise resolves.
   evt.waitUntil(caches.open(CACHE).then(function (cache) {
     cache.addAll([
-      "/",
-      "/index.html",
-      "/404.html",
-      "/client.min.js",
-      "/client.min.js?v=62",
-      "/src/fonts/NotoSans-Regular.woff2",
-      "/src/fonts/SpecialElite-Regular.woff2",
-      "/src/fonts/NotoSansMono-Regular.woff2",
-      "/src/fonts/ShareTechMono-Regular.woff2",
-      "/src/fonts/Saira-Regular.woff2",
       "/src/sounds/sfx/md/alert_error-01.mp3",
       "/src/sounds/sfx/md/navigation_transition-left.mp3",
       "/src/sounds/sfx/md/alert_high-intensity.mp3",
@@ -66,6 +56,18 @@ self.addEventListener("install", function(evt) {
       "/src/images/investment-data.svg",
       "/src/images/open.svg",
       "/src/images/trade.svg",
+    ]);
+
+    return cache.addAll([
+      "/",
+      "/index.html",
+      "/404.html",
+      "/client.min.js",
+      "/src/fonts/NotoSans-Regular.woff2",
+      "/src/fonts/SpecialElite-Regular.woff2",
+      "/src/fonts/NotoSansMono-Regular.woff2",
+      "/src/fonts/ShareTechMono-Regular.woff2",
+      "/src/fonts/Saira-Regular.woff2",
     ]);
   }));
 });

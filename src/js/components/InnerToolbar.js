@@ -1,5 +1,4 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
 import { t } from "../utils/t";
@@ -182,7 +181,10 @@ class InnerToolbar extends React.Component {
 
     componentWillUnmount() {
 
-        this.state._search_input_ref.removeEventListener("keydown", this._handle_search_input_keydown)
+        if(this.state._search_input_ref) {
+
+            this.state._search_input_ref.removeEventListener("keydown", this._handle_search_input_keydown)
+        }
     }
 
     _handle_search_input_keydown = (event) => {
@@ -273,7 +275,7 @@ class InnerToolbar extends React.Component {
             }
             
             
-            return element === "" ? null: <Fade in={know_if_logged}  key={index}><Link key={index} to={link_to} className={classes.link} >&nbsp;›&nbsp;{element}</Link></Fade>;
+            return element === "" ? null: <Fade in={know_if_logged}  key={index}><a key={index} href={link_to} className={classes.link} >&nbsp;›&nbsp;{element}</a></Fade>;
         });
         
         return (
@@ -313,7 +315,7 @@ class InnerToolbar extends React.Component {
                                         value={_search_bar_value}
                                     />:
                                     <span className={classes.innerToolbarText} style={pathname.includes("gallery") ? {width: "calc(100% - 36px)", overflow: "overlay"}: {}}>
-                                        <Fade in={know_if_logged}><Link className={classes.link} to={logged_account ? "/": "/"}>{know_if_logged ? logged_account ? logged_account.name: t( "components.inner_toolbar.guest"): ""} </Link></Fade>
+                                        <Fade in={know_if_logged}><a className={classes.link} to={logged_account ? "/": "/"}>{know_if_logged ? logged_account ? logged_account.name: t( "components.inner_toolbar.guest"): ""} </a></Fade>
                                         {pathame_items}
                                     </span>
                             }

@@ -1,7 +1,8 @@
 var webpack = require('webpack');
 var path = require('path');
-var UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-var HtmlWebpackPlugin = require("html-webpack-plugin")
+var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+var HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
     devtool: false,
@@ -13,6 +14,8 @@ module.exports = {
             new UglifyJsPlugin({
                 uglifyOptions: {
                     mangle: {
+                        toplevel: true,
+                        eval: true,
                         reserved: [
                             'Buffer',
                             'BigInteger',
@@ -24,7 +27,10 @@ module.exports = {
                             'ECPair',
                             'HDNode'
                         ]
-                    }
+                    },
+                    compress: {
+                        drop_console: true,
+                    },
                 }
             })
         ]
@@ -41,8 +47,7 @@ module.exports = {
                     {
                         loader: 'babel-loader',
                         query: {
-                            presets: ['react', 'env', 'stage-0'],
-                            plugins: ['react-html-attrs', 'transform-class-properties', 'transform-decorators-legacy']
+                            presets: ['react', 'env', 'stage-0']
                         }
                     }
                 ]
@@ -54,24 +59,19 @@ module.exports = {
                     'css-loader'
                 ],
             },
-            {
-                test: /\.(woff2|png|svg|jpg|gif)$/,
-                use: [
-                    'file-loader',
-                ],
-            },
         ]
     },
     output: {
         path: path.join(__dirname),
         filename: "client.min.js"
     },
-    plugins: [
+    plugins: process.env.NODE_ENV === "development" ? [
         new HtmlWebpackPlugin({
             template: "./index.html",
             filename: "index.html"
-        })
-    ],
+        }),
+        new BundleAnalyzerPlugin()
+    ]: [],
     devServer: {
         static: {
             directory: path.join(__dirname, '/'),

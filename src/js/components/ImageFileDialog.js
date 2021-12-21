@@ -93,7 +93,7 @@ class ImageFileDialog extends React.Component {
                     keepMounted={keepMounted}>
                 <DialogContent>
                    <Breadcrumbs style={{paddingBottom: 16}}>
-                       <Link variant={"outlined"} onClick={() => {this._handle_path_open_index(0)}}>ROOT</Link>
+                       <a variant={"outlined"} onClick={() => {this._handle_path_open_index(0)}}>ROOT</a>
                        {
                            paths.map((p, i) => {
 

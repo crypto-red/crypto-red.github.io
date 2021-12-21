@@ -1,5 +1,4 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
 import { t } from "../utils/t";
@@ -398,7 +397,7 @@ class DrawerContent extends React.Component {
                                     <DialogTitle id="help-dialog-title">{_help_dialogs_data[_current_help_dialog_id].title}</DialogTitle>
                                     <DialogContent>
                                         <DialogContentText id="help-dialog-description">
-                                            <span>{_help_dialogs_data[_current_help_dialog_id].body} <NavLink onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true)}} to={_help_dialogs_data[_current_help_dialog_id].help_link}>{_help_dialogs_data[_current_help_dialog_id].help_link_content}</NavLink></span>
+                                            <span>{_help_dialogs_data[_current_help_dialog_id].body} <a onClick={(event) => {this._on_close_help_dialog(event, _current_help_dialog_id, _current_help_dialog_checkbox, true)}} to={_help_dialogs_data[_current_help_dialog_id].help_link}>{_help_dialogs_data[_current_help_dialog_id].help_link_content}</a></span>
                                         </DialogContentText>
                                         <FormControlLabel
                                             control={<Checkbox checked={_current_help_dialog_checkbox} onChange={this._handle_current_help_dialog_checkbox_change} name="persistent" />}

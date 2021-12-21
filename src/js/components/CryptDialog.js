@@ -1,5 +1,4 @@
 import React from "react";
-import {Link} from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
 import { t } from "../utils/t";
@@ -345,7 +344,7 @@ class CryptDialog extends React.Component {
                         </Tabs>
                         <DialogContent className={classes.dialogBody} >
                             <DialogContentText id="crypto-text-dialog-description">
-                                {t( "components.crypt_dialog.body")} <Link to={"/about/wiki/crypt"} onClick={(event) => {this._on_close(event)}}>{t( "components.crypt_dialog.why_link_text")}</Link>
+                                {t( "components.crypt_dialog.body")} <a href={"/about/wiki/crypt"} onClick={(event) => {this._on_close(event)}}>{t( "components.crypt_dialog.why_link_text")}</a>
                             </DialogContentText>
                             <form noValidate autoComplete="off">
                                 <TextField

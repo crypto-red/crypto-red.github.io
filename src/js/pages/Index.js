@@ -127,10 +127,10 @@ class Index extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            pathname: props.location.pathname,
+            _history: props.history,
+            pathname: props.history.location.pathname,
             _intervals: [],
             _jamy_state_of_mind: "shocked",
-            _history: HISTORY,
             _unlisten: null,
             _language: null,
             _logged_account: null,
@@ -158,7 +158,7 @@ class Index extends React.Component {
     
     componentWillReceiveProps(new_props) {
 
-        const new_pathname = new_props.location.pathname;
+        const new_pathname = new_props.history.location.pathname;
         const old_pathname = this.state.pathname;
 
         if(old_pathname !== new_pathname) {
@@ -181,11 +181,13 @@ class Index extends React.Component {
 
     componentDidMount() {
 
-        this._set_new_pathname_or_redirect(this.state.pathname);
+        this.state._history.listen((location, action) => {
+            // location is an object like window.location
+            this._set_new_pathname_or_redirect(location.location.pathname);
+        });
         this._update_settings();
         this._update_login();
         dispatcher.register(this._handle_events.bind(this));
-
         window.addEventListener("resize", this._update_dimensions);
         this._update_dimensions();
 
@@ -335,7 +337,7 @@ class Index extends React.Component {
 
     _set_new_pathname_or_redirect = (new_pathname) => {
         
-        const { pathname, _history, _logged_account } = this.state;
+        const { _history } = this.state;
 
         if(new_pathname === "/index.html") {
 
@@ -428,6 +430,11 @@ class Index extends React.Component {
 
         this.setState({_onboarding_autoplay_enabled: false});
     };
+
+    shouldComponentUpdate() {
+
+        return true;
+    }
 
     render() {
 

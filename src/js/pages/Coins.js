@@ -1,6 +1,5 @@
 import React from "react";
 import { withStyles } from "@material-ui/core/styles";
-import { Link } from "react-router-dom";
 
 import { t } from "../utils/t";
 
@@ -320,7 +319,7 @@ class Coins extends React.Component {
                                                 <TableRow key={row.name} className={classes.row}>
                                                     <TableCell component="th" scope="row" className={classes.firstCellInARow} onClick={(event) => this._go_to_link(event, `/coins/${row.id}/charts`)}>
                                                         <Avatar className={classes.avatar} src={row.image}></Avatar>
-                                                        <Link>{row.name}</Link>
+                                                        <a>{row.name}</a>
                                                     </TableCell>
                                                     <TableCell align="right">
                                                         {this._price_formatter(row.current_price, _selected_currency, _selected_locales_code, false)}
