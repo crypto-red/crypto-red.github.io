@@ -139,8 +139,7 @@ const styles = theme => ({
             scrollBehavior: "smooth",
             overscrollBehavior: "none",
             touchAction: "pan-y",
-            willChange: "scroll-position !important",
-            transform: "translateZ(0px)",
+            willChange: "scroll-position, transform !important",
             overflow: "overlay",
             padding: "88px 12px 32px 16px",
             contain: "style layout size paint",
@@ -492,39 +491,37 @@ class Gallery extends React.Component {
             actions.trigger_loading_update(0);
             this.setState({_loading_posts: true}, () => {
 
-                this.forceUpdate(() => {
 
-                    cached_get_hive_posts({
-                        limit: 20,
-                        tag: "pixel-art",
-                        sorting: _sorting_modes[_sorting_tab_index] || _sorting_modes[0],
-                        start_author: _start_author,
-                        start_permlink: _start_permlink,
-                        cached_query: true,
-                        force_then: true,
-                    }, (err, data) => {
+                cached_get_hive_posts({
+                    limit: 20,
+                    tag: "pixel-art",
+                    sorting: _sorting_modes[_sorting_tab_index] || _sorting_modes[0],
+                    start_author: _start_author,
+                    start_permlink: _start_permlink,
+                    cached_query: true,
+                    force_then: true,
+                }, (err, data) => {
 
-                        if (!err && ((data || {}).posts || []).length >= 1) {
+                    if (!err && ((data || {}).posts || []).length >= 1) {
 
-                            const end_data = data.end_author && data.end_permlink ? {
-                                _start_author: data.end_author,
-                                _start_permlink: data.end_permlink
-                            } : {_start_author: "", _start_permlink: ""};
+                        const end_data = data.end_author && data.end_permlink ? {
+                            _start_author: data.end_author,
+                            _start_permlink: data.end_permlink
+                        } : {_start_author: "", _start_permlink: ""};
 
 
-                            const _posts_ids = _posts.map(p => p.id);
-                            const posts = _posts.concat(data.posts.filter(p => Boolean(!_posts_ids.includes(p.id))));
-                            this.setState({...end_data, _loading_posts: false, _posts: posts.map((p) => {p.fetched = p.fetched || Date.now(); return p;}).sort((a, b) => a.fetched < b.fetched)}, () => {
+                        const _posts_ids = _posts.map(p => p.id);
+                        const posts = _posts.concat(data.posts.filter(p => !Boolean(_posts_ids.includes(p.id))));
+                        this.setState({...end_data, _loading_posts: false, _posts: posts.map((p) => {p.fetched = p.fetched || Date.now(); return p;}).sort((a, b) => a.fetched < b.fetched)}, () => {
 
-                                this.forceUpdate();
-                                actions.trigger_loading_update(100);
-                            });
-                        }else {
 
                             actions.trigger_loading_update(100);
-                            this.setState({_loading_posts: false});
-                        }
-                    });
+                        });
+                    }else {
+
+                        actions.trigger_loading_update(100);
+                        this.setState({_loading_posts: false});
+                    }
                 });
             });
         }

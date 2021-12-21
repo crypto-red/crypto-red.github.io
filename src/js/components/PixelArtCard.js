@@ -224,6 +224,7 @@ const styles = theme => ({
         }
     },
     cardAfterElement: {
+        pointerEvents: "all",
         content: "''",
         width: 32,
         height: 32,
@@ -436,8 +437,8 @@ class PixelArtCard extends React.Component {
                 <CardActions className={classes.cardActions} style={selected ? {color: "#fafafa", backgroundPosition: `${post.timestamp / 1000 % 100}% 100%`, backgroundImage: `url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaQAAAACCAYAAAAXfqhyAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAB3RJTUUH5QsZFCkTC0vcDAAAAmBJREFUSMeVVltuBCEMs5kepwfuZRf3IwQcYFR1pdEQ4jiPgWT5/fNRE8APQAHssW597ZX1hxPDPnTdcP4IaB8AF91VVrX1NwQ0hQz3Z/LEa3FCaw8C2AnixJ8441KN42ZTZNi6b7IASBPXHG84oL5TN3Gu3+T85T423JtuMw+Z8YgAmq8jELXxPKFPOXSae0XXQqcG4KkcwaOFTf2jhUmOZ/h4lu2KReiP4wbH45xvHIbbbNf+igdXfpWY8AD6ksmaecwYn1UTPLU+86A8APNAcHxHCqSdg/JWkTnk1LWCD10zu9Mm5LbxH9hxoBq1zjX/5vcYzhhTt3JqR36DI32r5nb4tLjybr1yZhyKerd55164t7pGDQZGWSeVe1ztL3GEb614775xlSsWpQbWa7Z6XOIg3rj2/rLjZGfVfKX8tTf+OYyuA4JV3pt135p5f2/06Jdm3q2pug4Ls/PdcDc5cCyNPTuwYMPuMmQcS9WiH/IWe5FRh1HJdRtG2IaMVH0dQ+Yfwyi33VemWAbTMNIYPBzDSFzDKJsppm4NIx9ABe8DqDRkG1SJmXYMHffhxuKr2rivNQwqvyquveD2gUrzxW2fIy6e8S4ci2943scfgLjEOejB1UBiHV9N23cOmZA1FNkXTt36Q+I8S4diEzhdOAp2nFXJmGX8vPNnBn0OIsZaw0aacZLGz3FHZusVujiHy8p7AN2nxeg1ot+r4Ttzhjz6Sx0Ty1oDv1yCzLd/J9cBjZh8ACGJJEEKUljiErs8txlHxhQ+p50sf/E4KVW2nLO/eH22bwFstZKxqlb9F43IO/OS+g6dAAAAAElFTkSuQmCC")`}: {}}>
                     <span className={classes.postValue}>
                         <span>{price_formatter(balance_fiat, selected_currency, selected_locales_code)}</span> /
-                        <span style={{cursor: "pointer"}} onClick={(event) => {this.props.on_votes_click(event, post.active_votes)}}> {vote_number} Votes</span> /
-                        <span style={{cursor: "pointer"}} onClick={() => {this.props.on_author_click(post.author)}}> @{post.author}</span>
+                        <span style={{pointerEvents: "all", cursor: "pointer"}} onClick={(event) => {this.props.on_votes_click(event, post.active_votes)}}> {vote_number} Votes</span> /
+                        <span style={{pointerEvents: "all", cursor: "pointer"}} onClick={() => {this.props.on_author_click(post.author)}}> @{post.author}</span>
                     </span>
                 </CardActions>
                 <span onClick={(event) => {this.props.on_reaction_click(event, post)}} className={classes.cardAfterElement}></span>

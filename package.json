@@ -73,7 +73,8 @@
     "nwjs-builder-phoenix": "^1.15.0",
     "svgo": "^2.7.0",
     "uglify-js": "^3.14.5",
-    "webpack": "~3.5.5",
+    "webpack": "~2.7.0",
+    "webpack-bundle-analyzer": "2.9.2",
     "webpack-dev-server": "^2.6.1"
   },
   "build": {
@@ -139,7 +140,7 @@
   },
   "scripts": {
     "dev": "webpack-dev-server --content-base --inline --hot",
-    "build": "webpack --env.prod && uglifyjs ./client.min.js -o ./client.min.js -c -m",
+    "build": "webpack && uglifyjs ./client.min.js -o ./client.min.js -c -m",
     "dist": "build --tasks win-x86,win-x64,linux-x86,linux-x64,mac-x64 --mirror https://dl.nwjs.io/ .",
     "optimize-svg": "svgo  -f ./src/js/twemoji/original",
     "convert-svg": "svgr ./src/js/twemoji/original -d ./src/js/twemoji/react"

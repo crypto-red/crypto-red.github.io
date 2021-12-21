@@ -128,7 +128,7 @@ function _get_currency_by_locales(locales) {
 
 function reset_all_databases(callback_function) {
 
-    window._settings = null;
+    delete window._wcr_settings;
     logged_account = null;
 
     Promise.all([
@@ -147,9 +147,10 @@ function reset_all_databases(callback_function) {
 
 function get_settings(callback_function) {
 
-    if(window._settings) {
+    if(typeof window._wcr_settings !== "undefined") {
 
-        callback_function(null, window._settings);
+        callback_function(null, window._wcr_settings);
+        return;
     }
 
     settings_db.allDocs({
@@ -159,8 +160,6 @@ function get_settings(callback_function) {
         let settings_docs_undefined = false;
 
         if(!error) {
-
-            console.log(response);
 
             // Get settings docs
             const settings_docs = response.rows.map(function (row) {
@@ -173,9 +172,9 @@ function get_settings(callback_function) {
 
                 if(settings_docs[0].data !== "undefined") {
 
-                    window._settings = JSON.parse(settings_docs[0].data);
+                    window._wcr_settings = JSON.parse(settings_docs[0].data);
 
-                    callback_function(null, window._settings);
+                    callback_function(null, window._wcr_settings);
                 }
 
                 if(settings_docs.length > 1) {
@@ -192,13 +191,13 @@ function get_settings(callback_function) {
 
         if(settings_docs_undefined || error){
 
-            window._settings = _get_default_settings();
+            window._wcr_settings = _get_default_settings();
 
             settings_db.post({
-                data: JSON.stringify(window._settings)
+                data: JSON.stringify(window._wcr_settings)
             });
 
-            callback_function(null, window._settings);
+            callback_function(null, window._wcr_settings);
         }
     });
 }
@@ -222,18 +221,18 @@ function set_settings(settings, callback_function) {
 
                 if(settings_docs[0].data !== "undefined") {
 
-                    window._settings = _merge_object(
+                    window._wcr_settings = _merge_object(
                         JSON.parse(clean_json_text(settings_docs[0].data)),
-                        window._settings);
+                        settings);
 
                     settings_db.put({
                         _id: settings_docs[0]._id,
                         _rev: settings_docs[0]._rev,
                         timestamp: Date.now(),
-                        data: JSON.stringify(window._settings)
+                        data: JSON.stringify(window._wcr_settings)
                     }, {force: true});
 
-                    callback_function(null, window._settings);
+                    callback_function(null, window._wcr_settings);
                 }
 
                 // Delete all others
@@ -251,14 +250,14 @@ function set_settings(settings, callback_function) {
 
             const default_all_settings = _get_default_settings();
 
-            window._settings = _merge_object(default_all_settings, window._settings);
+            window._wcr_settings = _merge_object(default_all_settings, window._wcr_settings);
 
             settings_db.post({
-                data: JSON.stringify(window._settings)
+                data: JSON.stringify(window._wcr_settings)
             });
 
 
-            callback_function(null, window._settings);
+            callback_function(null, window._wcr_settings);
         }
     }
 

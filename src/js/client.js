@@ -34,7 +34,6 @@ import Index from "./pages/Index";
 
 // Theme
 import { ThemeProvider } from "@material-ui/core"
-import { createMuiTheme } from "@material-ui/core/styles";
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { lightTheme } from "./theme/index";
