@@ -248,7 +248,6 @@ class Index extends React.Component {
 
             clearInterval(itrvl);
         });
-        this.state._unlisten();
         window.removeEventListener("resize", this._update_dimensions);
     }
 

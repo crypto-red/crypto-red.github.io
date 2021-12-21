@@ -40,12 +40,14 @@ import { lightTheme } from "./theme/index";
 
 const app = document.getElementById('app');
 
-ReactDOM.render(
-    <ThemeProvider theme={lightTheme}>
-        <CssBaseline>
-            <Router history={HISTORY}>
-                <Route component={Index}/>
-            </Router>
-        </CssBaseline>
-    </ThemeProvider>,
-app);
+if(app) {
+    ReactDOM.render(
+        <ThemeProvider theme={lightTheme}>
+            <CssBaseline>
+                <Router history={HISTORY}>
+                    <Route component={Index}/>
+                </Router>
+            </CssBaseline>
+        </ThemeProvider>,
+        app);
+}

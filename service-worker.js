@@ -6,18 +6,18 @@ self.addEventListener("install", function(evt) {
   // Open a cache and use `addAll()` with an array of assets to add all of them
   // to the cache. Ask the service worker to keep installing until the
   // returning promise resolves.
-  return evt.waitUntil(caches.open(CACHE).then(function (cache) {
+  evt.waitUntil(caches.open(CACHE).then(function (cache) {
     cache.addAll([
       "/",
       "/index.html",
       "/404.html",
       "/client.min.js",
-      "/client.min.js?v=61",
-      "/src/fonts/NotoSans-Regular.ttf",
-      "/src/fonts/SpecialElite-Regular.ttf",
-      "/src/fonts/NotoSansMono-Regular.ttf",
-      "/src/fonts/ShareTechMono-Regular.ttf",
-      "/src/fonts/Saira-Regular.ttf",
+      "/client.min.js?v=62",
+      "/src/fonts/NotoSans-Regular.woff2",
+      "/src/fonts/SpecialElite-Regular.woff2",
+      "/src/fonts/NotoSansMono-Regular.woff2",
+      "/src/fonts/ShareTechMono-Regular.woff2",
+      "/src/fonts/Saira-Regular.woff2",
       "/src/sounds/sfx/md/alert_error-01.mp3",
       "/src/sounds/sfx/md/navigation_transition-left.mp3",
       "/src/sounds/sfx/md/alert_high-intensity.mp3",

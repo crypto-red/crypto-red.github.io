@@ -514,7 +514,10 @@ class Gallery extends React.Component {
                         const posts = _posts.concat(data.posts.filter(p => !Boolean(_posts_ids.includes(p.id))));
                         this.setState({...end_data, _loading_posts: false, _posts: posts.map((p) => {p.fetched = p.fetched || Date.now(); return p;}).sort((a, b) => a.fetched < b.fetched)}, () => {
 
+                            if(_posts_ids.length !== posts.length) {
 
+                                this._recompute_cell_measurements();
+                            }
                             actions.trigger_loading_update(100);
                         });
                     }else {

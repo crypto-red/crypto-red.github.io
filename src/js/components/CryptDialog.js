@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "react-router-dom/Link";
+import {Link} from "react-router-dom";
 import { withStyles } from "@material-ui/core/styles";
 
 import { t } from "../utils/t";

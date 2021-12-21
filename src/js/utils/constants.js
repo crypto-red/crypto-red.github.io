@@ -1,5 +1,5 @@
-import createHistory from "history/createBrowserHistory";
-const HISTORY = createHistory();
+import {createBrowserHistory} from "history";
+const HISTORY = createBrowserHistory();
 
 import en_locale from "date-fns/locale/en-US";
 import fr_locale from "date-fns/locale/fr";
