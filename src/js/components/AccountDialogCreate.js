@@ -28,7 +28,9 @@ import ChipInput from "material-ui-chip-input"
 
 import { LOCALES } from "../utils/constants";
 import * as bip39 from "bip39"
-import zxcvbn from "zxcvbn";
+import("zxcvbn").then(zxcvbn => {
+    window.zxcvbn = zxcvbn;
+});
 import api from "../utils/api";
 
 import CheckIcon from "@material-ui/icons/Check";
@@ -243,7 +245,7 @@ class AccountDialogCreate extends React.Component {
 
         const { _account_password_input } = this.state;
 
-        const _password_evaluation = zxcvbn(_account_password_input);
+        const _password_evaluation = window.zxcvbn(_account_password_input);
 
         if(_password_evaluation.feedback.warning || _password_evaluation.feedback.suggestions.length) {
 

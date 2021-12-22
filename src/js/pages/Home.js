@@ -66,41 +66,8 @@ const styles = theme => ({
     },
     fab: {
         position: "fixed",
-        opacity: 1,
-        transform: "scale(1)",
         backgroundColor: theme.palette.primary.action,
         color: theme.palette.primary.contrastText,
-        transition: "background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, opacity 204ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 136ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important",
-        "@global": {
-            "@keyframes pulse": {
-                "0%": {
-                    opacity: 1,
-                    transform: "scale(1)",
-                },
-                "50%": {
-                    opacity: 0,
-                    transform: "scale(1.6)",
-                },
-                "100%": {
-                    opacity: 0,
-                    transform: "scale(1.6)",
-                }
-            }
-        },
-        "&::before": {
-            content: "''",
-            display: "block",
-            position: "absolute",
-            width: "100%",
-            height: "100%",
-            top: 0,
-            left: 0,
-            backgroundColor: "inherit",
-            borderRadius: "inherit",
-            transition: "opacity .3s, transform .3s",
-            animation: "$pulse 1.6s cubic-bezier(0.4, 0, 0.2, 1) infinite 4s",
-            zIndex: -1,
-        },
         "&:hover": {
             backgroundColor: theme.palette.primary.actionLighter,
         },

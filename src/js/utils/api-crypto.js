@@ -1,5 +1,7 @@
 import base58 from "bs58";
-import nacl_factory from "js-nacl";
+import("js-nacl").then(nacl_factory => {
+    window.nacl_factory = nacl_factory;
+});
 import { sha512_256 } from "js-sha512";
 import triplesec from "triplesec";
 
@@ -18,7 +20,7 @@ function _str2ab(str) {
 
 function nacl_encrypt(message, public_key, callback_function) {
 
-    nacl_factory.instantiate(function (nacl) {
+    window.nacl_factory.instantiate(function (nacl) {
 
         let result = null;
         let error = null;
@@ -39,7 +41,7 @@ function nacl_encrypt(message, public_key, callback_function) {
 
 function nacl_decrypt(encrypted_message, public_key, private_key, callback_function) {
 
-    nacl_factory.instantiate(function (nacl) {
+    window.nacl_factory.instantiate(function (nacl) {
 
         let result = null;
         let error = null;

@@ -84,6 +84,8 @@
     "files": [
       "/index.html",
       "/client.min.js",
+      "/1.client.min.js",
+      "/2.client.min.js",
       "/LINUX_README_TO_INSTALL.txt",
       "/wallet.crypto.red.txt",
       "/src/fonts/NotoSans-Regular.ttf",
@@ -138,7 +140,7 @@
   },
   "scripts": {
     "dev": "NODE_ENV=development webpack-dev-server",
-    "build": "NODE_ENV=production webpack --node-env \"production\" --no-devtool",
+    "build": "NODE_ENV=production webpack --node-env \"production\"",
     "dist": "build --tasks win-x86,win-x64,linux-x86,linux-x64,mac-x64 --mirror https://dl.nwjs.io/ .",
     "optimize-svg": "svgo  -f ./src/js/twemoji/original",
     "convert-svg": "svgr ./src/js/twemoji/original -d ./src/js/twemoji/react"
