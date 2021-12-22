@@ -173,7 +173,6 @@ class InnerToolbar extends React.Component {
 
         if(element) {
 
-            console.log(element);
             element.addEventListener("keydown", this._handle_search_input_keydown)
             this.setState({_search_input_ref: element});
         }

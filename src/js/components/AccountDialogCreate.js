@@ -28,9 +28,6 @@ import ChipInput from "material-ui-chip-input"
 
 import { LOCALES } from "../utils/constants";
 import * as bip39 from "bip39"
-import("zxcvbn").then(zxcvbn => {
-    window.zxcvbn = zxcvbn;
-});
 import api from "../utils/api";
 
 import CheckIcon from "@material-ui/icons/Check";
@@ -45,7 +42,7 @@ import DialogCloseButton from "../components/DialogCloseButton";
 const styles = theme => ({
     backdrop: {
         color: "#fff",
-        zIndex: "1400"
+        zIndex: "1400 !important"
     },
     dialog: {
         [theme.breakpoints.down("xs")]: {
@@ -245,31 +242,34 @@ class AccountDialogCreate extends React.Component {
 
         const { _account_password_input } = this.state;
 
-        const _password_evaluation = window.zxcvbn(_account_password_input);
+        import(/* webpackChunkName: "zxcvbn" */"zxcvbn").then((module) => {
 
-        if(_password_evaluation.feedback.warning || _password_evaluation.feedback.suggestions.length) {
+            const _password_evaluation = module.default(_account_password_input);
 
-            let suggestions_and_warning = "";
+            if(_password_evaluation.feedback.warning || _password_evaluation.feedback.suggestions.length) {
 
-            suggestions_and_warning += _password_evaluation.feedback.warning ? t("sentences." + _password_evaluation.feedback.warning.replaceAll(".", ""), {FAW: true}): "";
+                let suggestions_and_warning = "";
 
-            if(_password_evaluation.feedback.suggestions.length) {
+                suggestions_and_warning += _password_evaluation.feedback.warning ? t("sentences." + _password_evaluation.feedback.warning.replaceAll(".", ""), {FAW: true}): "";
 
-                _password_evaluation.feedback.suggestions.forEach((suggestion) => {
+                if(_password_evaluation.feedback.suggestions.length) {
 
-                    suggestions_and_warning += "\n" + t("sentences." + suggestion.replaceAll(".", ""), {FAW: true});
-                });
+                    _password_evaluation.feedback.suggestions.forEach((suggestion) => {
+
+                        suggestions_and_warning += "\n" + t("sentences." + suggestion.replaceAll(".", ""), {FAW: true});
+                    });
+                }
+
+                actions.jamy_update("angry", 3000);
+                actions.trigger_snackbar(suggestions_and_warning, 10000);
+            }else if(_account_password_input.length && _password_evaluation.score >= 4){
+
+                actions.jamy_update("happy", 3000);
+                actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_good"), 5000);
             }
+            this.setState({_password_evaluation});
 
-            actions.jamy_update("angry", 3000);
-            actions.trigger_snackbar(suggestions_and_warning, 10000);
-        }else if(_account_password_input.length && _password_evaluation.score >= 4){
-
-            actions.jamy_update("happy", 3000);
-            actions.trigger_snackbar(t( "components.account_dialog_create.password_evaluation_good"), 5000);
-        }
-        this.setState({_password_evaluation});
-
+        });
     };
 
     _handle_account_password_input_change = (event) => {
@@ -643,11 +643,8 @@ class AccountDialogCreate extends React.Component {
                 <Backdrop className={classes.backdrop} open={_is_account_seed_trying_to_be_decrypted}>
                     <CircularProgress color="inherit" />
                 </Backdrop>
-                <QRCodeScanDialog
-                    open={_is_qr_dialog_open}
-                    onClose={this._handle_qr_dialog_close}
-                    on_scan={(text) => this._handle_qr_scan(text)}/>
                 <Dialog
+                    disablePortal
                     className={classes.dialog}
                     open={open}
                     scroll={"paper"}
@@ -655,6 +652,11 @@ class AccountDialogCreate extends React.Component {
                     aria-labelledby="create-account-dialog-title"
                     aria-describedby="create-account-dialog-description"
                 >
+                    <QRCodeScanDialog
+                        disablePortal
+                        open={_is_qr_dialog_open}
+                        onClose={this._handle_qr_dialog_close}
+                        on_scan={(text) => this._handle_qr_scan(text)}/>
                     <DialogTitle id="create-account-dialog-title">
                         {t( "sentences.create a new account")}
                         <DialogCloseButton onClick={(event) => {this._on_close(event)}} />

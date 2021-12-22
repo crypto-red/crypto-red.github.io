@@ -9,68 +9,10 @@ import {postJSON} from "./load-json";
 import {clean_json_text} from "./json";
 
 import { IMAGE_PROXY_URL } from "../utils/constants";
-let clean_new_db_array = [];
 
-function clean_new_DB(name, opts) {
-
-    if(typeof clean_new_db_array[name] !== "undefined"){
-
-        return clean_new_db_array[name];
-    }
-
-
-    let maindb = new PouchDB(name, opts)
-
-    const dbName = maindb.name;
-    const tmpDBName = "tmp_"+maindb.name;
-    const deleteFilter = (doc, req) => !doc._deleted;
-
-    //  CLEANUP
-    //  delete a database with tmpdb name
-    return new PouchDB(tmpDBName).destroy()
-        //  create a database with tmpdb name
-        .then(() => Promise.resolve(new PouchDB(tmpDBName)))
-        //  replicate original database to tmpdb with filter
-        .then((tmpDB) => new Promise((resolve, reject) => {
-            maindb.replicate.to(tmpDB, { filter: deleteFilter })
-                .on('complete', () => { resolve(tmpDB) })
-                .on('denied', reject)
-                .on('error', reject)
-        }))
-        //  destroy the original db
-        .then((tmpDB) => {
-
-            delete clean_new_db_array[name];
-            return maindb.destroy().then(() => Promise.resolve(tmpDB))
-        })
-        //  create the original db
-        .then((tmpDB) => new Promise((resolve, reject) => {
-
-            try {
-                resolve({ db: new PouchDB(dbName, opts), tmpDB: tmpDB })
-            } catch (e) {
-                reject(e)
-            }
-        }))
-        //  replicate the tmpdb to original db
-        .then(({db, tmpDB}) => {
-            return tmpDB.replicate.to(db).then(() => Promise.resolve({db: db, tmpDB: tmpDB}))
-        })
-        //  destroy the tmpdb
-        .then(({db, tmpDB}) => {
-            return tmpDB.destroy().then(() => {
-
-                clean_new_db_array[name] = db;
-                return clean_new_db_array[name];
-            });
-        })
-        .catch((err) => { console.log(err) });
-
-}
-
-const hive_posts_db = new PouchDB("hive_posts_db", {deterministic_revs: true, revs_limit: 0, auto_compaction: false});
-const hive_accounts_db = new PouchDB("hive_accounts_db", {deterministic_revs: true, revs_limit: 0, auto_compaction: false});
-const hive_queries_db = new PouchDB("hive_queries_db", {deterministic_revs: true, revs_limit: 0, auto_compaction: false});
+window.hive_posts_db = new PouchDB("hive_posts_db", {deterministic_revs: true, revs_limit: 0, auto_compaction: false});
+window.hive_accounts_db = new PouchDB("hive_accounts_db", {deterministic_revs: true, revs_limit: 0, auto_compaction: false});
+window.hive_queries_db = new PouchDB("hive_queries_db", {deterministic_revs: true, revs_limit: 0, auto_compaction: false});
 
 import React from "react";
 import AngryEmojiSvg from "../twemoji/react/1F624";
@@ -370,7 +312,7 @@ function cached_lookup_hive_accounts(input, limit, callback_function) {
     limit = Math.max(Math.min(25, limit), 0);
 
     _cache_data(
-        hive_queries_db,
+        window.hive_queries_db,
         60 * 1000,
         "lookup_hive_accounts-input-"+input+"-limit-"+limit,
         lookup_hive_accounts,
@@ -390,7 +332,7 @@ function cached_lookup_hive_accounts_name(name, callback_function) {
     name = name.replace("@", "");
 
     _cache_data(
-        hive_accounts_db,
+        window.hive_accounts_db,
         60 * 1000,
         "hive_account-name-@"+name,
         lookup_hive_accounts_name,
@@ -427,7 +369,7 @@ function cached_lookup_hive_account_reputation_by_name(name, callback_function) 
     name = name.replace("@", "");
 
     _cache_data(
-        hive_accounts_db,
+        window.hive_accounts_db,
         5 * 60 * 1000,
         "hive_account-reputation-@"+name,
         lookup_hive_account_reputation_by_name,
@@ -458,7 +400,7 @@ function cached_lookup_hive_account_follow_count_by_name(name, callback_function
     name = name.replace("@", "");
 
     _cache_data(
-        hive_accounts_db,
+        window.hive_accounts_db,
         5 * 60 * 1000,
         "hive_account-follow_count-@"+name,
         lookup_hive_account_follow_count_by_name,
@@ -542,7 +484,6 @@ function get_hive_account_keys(username = "", master_key = "", callback_function
 
             let account = result;
             const keys = _get_hive_account_keys(username, master_key);
-            console.log(keys);
 
             // Verify private and public key match (password)
             if(keys.memo_public_key === account.memo_key) {
@@ -694,7 +635,7 @@ function cached_get_hive_post(parameters, callback_function) {
     author = author.replace("@", "");
 
     _cache_data(
-        hive_posts_db,
+        window.hive_posts_db,
         cached_query ? 7 * 24 * 60 * 60 * 1000: force_query ? 0: 1 * 60 * 1000,
         "author-@"+author+"_permlink-"+permlink,
         get_hive_post,
@@ -705,7 +646,7 @@ function cached_get_hive_post(parameters, callback_function) {
     if(force_then) {
 
         _cache_data(
-            hive_posts_db,
+            window.hive_posts_db,
             0,
             "author-@"+author+"_permlink-"+permlink,
             get_hive_post,
@@ -781,7 +722,7 @@ function cached_get_hive_posts(parameters, callback_function) {
     let { limit, tag, sorting, start_author, start_permlink } = parameters;
 
     _cache_data(
-        hive_queries_db,
+        window.hive_queries_db,
         12 * 1000,
         "get_hive_posts-tag"+tag+"-sorting-"+sorting+"-author"+start_author+"permlink-"+start_permlink+"-limit"+limit,
         get_hive_posts,
@@ -824,7 +765,7 @@ function get_hive_posts(parameters, callback_function) {
                 if(pn) {
 
                     _cache_data(
-                        hive_posts_db,
+                        window.hive_posts_db,
                         1 * 60 * 1000,
                         "author-@"+pn.author+"_permlink-"+pn.permlink,
                         function (post) {
@@ -1031,7 +972,7 @@ function cached_search_on_hive(terms = "", authors = [], tags = ["pixel-art"], s
     }
 
     _cache_data(
-        hive_queries_db,
+        window.hive_queries_db,
         1 * 60 * 1000,
         encodeURIComponent("search_on_hive-terms"+terms+"-author-"+authors.join(",")+"-tags-"+tags.join(",")+"-sorting-"+sorting+"-page-"+page),
         search_on_hive,
@@ -1129,7 +1070,4 @@ module.exports = {
     search_on_hive: search_on_hive,
     cached_search_on_hive: cached_search_on_hive,
     postprocess_text: postprocess_text,
-    hive_posts_db: hive_posts_db,
-    hive_accounts_db: hive_accounts_db,
-    hive_queries_db: hive_queries_db,
 };

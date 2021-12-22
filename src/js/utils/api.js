@@ -51,14 +51,11 @@ import {
     post_hive_pixel_art,
     vote_on_hive_post,
     search_on_hive,
-    hive_posts_db,
-    hive_accounts_db,
-    hive_queries_db,
 } from "./api-hive";
 
-const query_db = new PouchDB("query_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
-const settings_db = new PouchDB("settings_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
-const accounts_db = new PouchDB("accounts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
+window.query_db = new PouchDB("query_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
+window.settings_db = new PouchDB("settings_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
+window.accounts_db = new PouchDB("accounts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
 const logged_accounts_db = new PouchDB("logged_accounts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
 
 let logged_account = null;
@@ -132,9 +129,9 @@ function reset_all_databases(callback_function) {
     logged_account = null;
 
     Promise.all([
-        query_db.destroy(),
-        settings_db.destroy(),
-        accounts_db.destroy(),
+        window.query_db.destroy(),
+        window.settings_db.destroy(),
+        window.accounts_db.destroy(),
         logged_accounts_db.destroy(),
         hive_posts_db.destroy(),
         hive_accounts_db.destroy(),
@@ -153,7 +150,7 @@ function get_settings(callback_function) {
         return;
     }
 
-    settings_db.allDocs({
+    window.settings_db.allDocs({
         include_docs: true
     }, function(error, response) {
 
@@ -181,7 +178,7 @@ function get_settings(callback_function) {
 
                     // Delete all others
                     settings_docs.splice(0, 1);
-                    settings_db.bulkDocs(settings_docs.map((sd) => {delete sd.data; return {_id: sd._id, _rev: sd._rev, _deleted: true, timestamp: 0, data: null}}), {force: true});
+                    window.settings_db.bulkDocs(settings_docs.map((sd) => {delete sd.data; return {_id: sd._id, _rev: sd._rev, _deleted: true, timestamp: 0, data: null}}), {force: true});
                 }
 
             }else {
@@ -193,7 +190,7 @@ function get_settings(callback_function) {
 
             window._wcr_settings = _get_default_settings();
 
-            settings_db.post({
+            window.settings_db.post({
                 data: JSON.stringify(window._wcr_settings)
             });
 
@@ -225,7 +222,7 @@ function set_settings(settings, callback_function) {
                         JSON.parse(clean_json_text(settings_docs[0].data)),
                         settings);
 
-                    settings_db.put({
+                    window.settings_db.put({
                         _id: settings_docs[0]._id,
                         _rev: settings_docs[0]._rev,
                         timestamp: Date.now(),
@@ -237,7 +234,7 @@ function set_settings(settings, callback_function) {
 
                 // Delete all others
                 settings_docs.splice(0, 1);
-                settings_db.bulkDocs(settings_docs.filter((sd) => sd._deleted).map((sd) => {return {_id: sd._id, _rev: sd._rev, _deleted: true, timestamp: 0, data: null}}), {force: true});
+                window.settings_db.bulkDocs(settings_docs.filter((sd) => sd._deleted).map((sd) => {return {_id: sd._id, _rev: sd._rev, _deleted: true, timestamp: 0, data: null}}), {force: true});
 
             }else {
 
@@ -252,7 +249,7 @@ function set_settings(settings, callback_function) {
 
             window._wcr_settings = _merge_object(default_all_settings, window._wcr_settings);
 
-            settings_db.post({
+            window.settings_db.post({
                 data: JSON.stringify(window._wcr_settings)
             });
 
@@ -261,7 +258,7 @@ function set_settings(settings, callback_function) {
         }
     }
 
-    settings_db.allDocs({
+    window.settings_db.allDocs({
         include_docs: true
     }, cache_callback_function);
 }
@@ -278,7 +275,7 @@ function get_coins_markets(coins_id, vs_currency, callback_function) {
     const url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=" + vs_currency + "&ids=" + coins_id_string + "&order=id_asc&per_page=250&page=1&sparkline=false&price_change_percentage=24h,7d,30d,1y";
 
     _cache_data(
-        query_db,
+        window.query_db,
         30 * 60 * 1000,
         "get_coins_markets__" + coins_id_string + "__" + vs_currency,
         get_coins_markets_query,
@@ -299,7 +296,7 @@ function get_coin_data(coin_id, callback_function) {
     const url = "https://api.coingecko.com/api/v3/coins/" + coin_id + "?localization=true&tickers=true&market_data=true&community_data=true&developer_data=true&sparkline=true";
 
     _cache_data(
-        query_db,
+        window.query_db,
         30 * 60 * 1000,
         "get_coin_data__" + coin_id,
         get_coin_data_query,
@@ -319,7 +316,7 @@ function get_coin_chart_data(coin_id, vs_currency, days, callback_function) {
     const url = "https://api.coingecko.com/api/v3/coins/" + coin_id + "/market_chart?vs_currency=" + vs_currency + "&days=" + days;
 
     _cache_data(
-        query_db,
+        window.query_db,
         30 * 60 * 1000,
         "get_coin_chart_data__" + coin_id + "__" + vs_currency + "__" + days,
         get_coin_chart_data_query,
@@ -348,7 +345,7 @@ function get_coin_chart_data(coin_id, vs_currency, days, callback_function) {
 
 function create_account(name, password, seed, callback_function) {
 
-    accounts_db.get(name, function(error_db_get, document) {
+    window.accounts_db.get(name, function(error_db_get, document) {
 
         if(typeof document === "undefined") {
 
@@ -367,7 +364,7 @@ function create_account(name, password, seed, callback_function) {
                     }
 
 
-                    accounts_db.put({
+                    window.accounts_db.put({
                         _id: name,
                         data: JSON.stringify(account)
                     }, {force: true}, function(error_db_add, response) {
@@ -421,7 +418,7 @@ function get_accounts(callback_function) {
 
     }
 
-    accounts_db.allDocs({
+    window.accounts_db.allDocs({
         include_docs: true
     }, get_all_accounts_callback);
 }
@@ -446,11 +443,11 @@ function delete_account_by_name(name, callback_function){
             callback_function("Cannot find the right account with this name", false);
         }else {
 
-            accounts_db.remove(document._id, document._rev, delete_account_callback);
+            window.accounts_db.remove(document._id, document._rev, delete_account_callback);
         }
     }
 
-    accounts_db.get(name, get_account_callback);
+    window.accounts_db.get(name, get_account_callback);
 }
 
 
@@ -564,7 +561,7 @@ function login(name, password, persistent = true, callback_function) {
         }, decrypt_callback);
     }
 
-    accounts_db.get(name, get_account_callback);
+    window.accounts_db.get(name, get_account_callback);
 
 }
 
@@ -577,7 +574,7 @@ function add_hive_master_key(username, master_key, callback_function) {
             callback_function(error, null);
         }else {
 
-            accounts_db.get(logged_account.name, {include_docs: true}, function(error_db_get, document) {
+            window.accounts_db.get(logged_account.name, {include_docs: true}, function(error_db_get, document) {
 
                 if(typeof document !== "undefined") {
 
@@ -628,7 +625,7 @@ function add_hive_master_key(username, master_key, callback_function) {
                                     }
 
 
-                                    accounts_db.put({
+                                    window.accounts_db.put({
                                         _id: document._id,
                                         _rev: document._rev,
                                         data: JSON.stringify(account_with_hive_login)
@@ -882,7 +879,7 @@ function get_balance_by_seed(coin_id, seed, callback_function, hive_username = "
         case "v-systems":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 3000,
                 "v-systems_get_balance__" + seed_hash,
                 get_vsys_account_balance_by_seed,
@@ -893,7 +890,7 @@ function get_balance_by_seed(coin_id, seed, callback_function, hive_username = "
         case "bitcoin":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 16 * 1000,
                 "bitcoin_get_balance__" + seed_hash,
                 get_btc_dash_doge_ltc_account_balance_by_seed,
@@ -904,7 +901,7 @@ function get_balance_by_seed(coin_id, seed, callback_function, hive_username = "
         case "litecoin":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 16 * 1000,
                 "litecoin_get_balance__" + seed_hash,
                 get_btc_dash_doge_ltc_account_balance_by_seed,
@@ -915,7 +912,7 @@ function get_balance_by_seed(coin_id, seed, callback_function, hive_username = "
         case "dogecoin":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 16 * 1000,
                 "dogecoin_get_balance__" + seed_hash,
                 get_btc_dash_doge_ltc_account_balance_by_seed,
@@ -926,7 +923,7 @@ function get_balance_by_seed(coin_id, seed, callback_function, hive_username = "
         case "dash":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 16 * 1000,
                 "dash_get_balance__" + seed_hash,
                 get_btc_dash_doge_ltc_account_balance_by_seed,
@@ -936,7 +933,7 @@ function get_balance_by_seed(coin_id, seed, callback_function, hive_username = "
             break;
         case "hive":
             _cache_data(
-                query_db,
+                window.query_db,
                 16 * 1000,
                 "hive_get_balance__" + hive_username,
                 get_hive_account_balance_by_username,
@@ -946,7 +943,7 @@ function get_balance_by_seed(coin_id, seed, callback_function, hive_username = "
             break;
         case "hive_dollar":
             _cache_data(
-                query_db,
+                window.query_db,
                 16 * 1000,
                 "hive_dollar_get_balance__" + hive_username,
                 get_hive_account_balance_by_username,
@@ -1056,7 +1053,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "v-systems":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 4 * 1000,
                 "v-systems_get_transaction_from__" + all_transactions.length.toString() + "__" + after_transaction_id,
                 get_vsys_account_transactions_by_seed,
@@ -1067,7 +1064,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "bitcoin":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 4 * 1000,
                 "bitcoin_get_transaction_from__" + after_transaction_id,
                 get_btc_dash_doge_ltc_account_transactions_by_seed,
@@ -1078,7 +1075,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "litecoin":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 4 * 1000,
                 "bitcoin_get_transaction_from__" + after_transaction_id,
                 get_btc_dash_doge_ltc_account_transactions_by_seed,
@@ -1089,7 +1086,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "dogecoin":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 4 * 1000,
                 "dogecoin_get_transaction_from__" + after_transaction_id,
                 get_btc_dash_doge_ltc_account_transactions_by_seed,
@@ -1100,7 +1097,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "dash":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 4 * 1000,
                 "dash_get_transaction_from__" + after_transaction_id,
                 get_btc_dash_doge_ltc_account_transactions_by_seed,
@@ -1111,7 +1108,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "hive":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 3 * 1000,
                 "hive_get_transaction_from__" + after_transaction_number,
                 get_hive_account_transactions_by_username,
@@ -1122,7 +1119,7 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
         case "hive_dollar":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 3 * 1000,
                 "hive_dollar_get_transaction_from__" + after_transaction_number,
                 get_hive_account_transactions_by_username,
@@ -1144,7 +1141,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "bitcoin":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 60 * 1000,
                 "bitcoin-get-transaction_from-id-"+id,
                 get_btc_dash_doge_ltc_transaction_by_id,
@@ -1156,7 +1153,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "litecoin":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 60 * 1000,
                 "litecoin-get-transaction_from-id-"+id,
                 get_btc_dash_doge_ltc_transaction_by_id,
@@ -1167,7 +1164,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "dogecoin":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 60 * 1000,
                 "dogecoin-get-transaction_from-id-"+id,
                 get_btc_dash_doge_ltc_transaction_by_id,
@@ -1178,7 +1175,7 @@ function get_transactions_by_id(coin_id, id, seed, callback_function){
         case "dash":
 
             _cache_data(
-                query_db,
+                window.query_db,
                 60 * 1000,
                 "dash-get-transaction_from-id-"+id,
                 get_btc_dash_doge_ltc_transaction_by_id,

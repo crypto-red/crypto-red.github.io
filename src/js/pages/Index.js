@@ -69,7 +69,6 @@ import { PAGE_ROUTES, HISTORY } from "../utils/constants";
 const styles = theme => ({
     root: {
         transform: "translateZ(0)",
-        contain: "strict",
         overflow: "overlay",
         height: "100vh",
         width: "100vw",
@@ -82,7 +81,6 @@ const styles = theme => ({
         overflow: "overlay",
         width: "calc(100vw - 256px)",
         height: "100vh",
-        contain: "strict",
         marginLeft: 256,
         [theme.breakpoints.down("sm")]: {
             width: "100vw",
@@ -91,7 +89,8 @@ const styles = theme => ({
     },
     snackbar: {
         "& .MuiSnackbarContent-root	": {
-            backgroundColor: theme.palette.primary.actionDarker
+            backgroundColor: theme.palette.primary.actionDarker,
+            zIndex: "2000 important"
         }
     },
     snackbarSuccess: {

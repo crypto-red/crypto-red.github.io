@@ -74,10 +74,13 @@ module.exports = {
     ]: [new BundleAnalyzerPlugin()],
     devServer: {
         static: {
-            directory: path.join(__dirname, '/'),
+            directory: path.join(__dirname, "/"),
         },
-        historyApiFallback: true,
-        open: true,
+        client: {
+            reconnect: false,
+        },
+        hot: false,
+        liveReload: false,
     },
 
 };

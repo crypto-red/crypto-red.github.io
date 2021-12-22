@@ -53,13 +53,13 @@ const T = (name) => {
 
 let t = (path = "", variables = {}, parameters = {}) => {
 
-    let LANG = "en"
-    let LANG_DIR = T(LANG);
+    window.LANG = "en";
+    window.LANG_DIR = T(LANG);
 
-    if(LANG !== document.documentElement.lang) {
+    if(window.LANG !== document.documentElement.lang) {
 
-        LANG = document.documentElement.lang;
-        LANG_DIR = T(LANG) || T("en");
+        window.LANG = document.documentElement.lang;
+        window.LANG_DIR = T(LANG) || T("en");
     }
 
     const t_prime = (path = "", variables = {}, parameters = {}, LANG, LANG_DIR) => {
@@ -81,7 +81,7 @@ let t = (path = "", variables = {}, parameters = {}) => {
         const paths_array = path.split(".");
 
         // Goes to the first dir, (it is the language)
-        let dir = LANG_DIR;
+        let dir = window.LANG_DIR;
 
         // Goes to all other dir except pre-first (lang) and last (value :Object or :String)
         for(let i = 0; i < paths_array.length-1; i++) {

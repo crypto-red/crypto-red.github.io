@@ -25,7 +25,7 @@ import actions from "../actions/utils";
 const styles = theme => ({
     backdrop: {
         color: "#fff",
-        zIndex: "1400"
+        zIndex: "1400 !important"
     },
 });
 
@@ -133,10 +133,12 @@ class AccountDialogOpen extends React.Component {
                     <CircularProgress color="inherit" />
                 </Backdrop>
                 <QRCodeScanDialog
+                    disablePortal
                     open={_is_qr_dialog_open}
                     onClose={this._handle_qr_dialog_close}
                     on_scan={(password) => this._set_password(password)}/>
                 <Dialog
+                    disablePortal
                     open={open}
                     onClose={(event) => {this.props.onClose(event, account)}}
                     aria-labelledby="open-account-dialog-title"

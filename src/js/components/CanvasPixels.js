@@ -144,7 +144,7 @@ const loop = (render, do_not_cancel_animation, force_update) => {
             //caf(caf_id);
         }
     }catch(e){
-        console.log(e)
+        //console.log(e)
     }
 }
 
@@ -1996,6 +1996,7 @@ class CanvasPixels extends React.Component {
             }, () => {
 
                 this._notify_size_change();
+                this._notify_layers_change();
                 this._update_screen_zoom_ratio(true);
                 this._notify_image_load_complete();
             });

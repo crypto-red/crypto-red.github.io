@@ -27,13 +27,12 @@ const random_quote_index = Math.floor(Math.random() * quotes.length);
 const styles = theme => ({
     root: {
         position: "relative",
-        height: "100%",
     },
     backgroundImage: {
         width: "100%",
         overflow: "hidden",
         minHeight: "calc(100vh - 160px)",
-        backgroundImage: "radial-gradient(ellipse farthest-corner, #2e51ff85, #ffffff00 66%), url(/src/images/world_blue.jpg)",
+        backgroundImage: "radial-gradient(ellipse farthest-corner, #7b8bf7ab, #ffffff00 66%), url(/src/images/world_blue.jpg)",
         position: "absolute",
         backgroundSize: "125%",
         backgroundPosition: "-100% 0%",
@@ -103,7 +102,9 @@ const styles = theme => ({
         },
     },
     blue: {
-        color: theme.palette.primary.actionLighter,
+        //color: theme.palette.primary.actionLighter,
+        color: "#0f177f",
+        fontWeight: 600,
     },
 });
 

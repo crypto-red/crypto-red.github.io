@@ -147,7 +147,6 @@ class FastNavScroller extends React.Component {
 
         if(Math.abs(new_step_more) >= 1) {
 
-            console.log("STEP: "+new_step_more);
             if(this.props.onStepChange) {
 
                 this.props.onStepChange(new_step_more);

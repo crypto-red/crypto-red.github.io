@@ -1,7 +1,4 @@
 import base58 from "bs58";
-import("js-nacl").then(nacl_factory => {
-    window.nacl_factory = nacl_factory;
-});
 import { sha512_256 } from "js-sha512";
 import triplesec from "triplesec";
 
@@ -20,45 +17,51 @@ function _str2ab(str) {
 
 function nacl_encrypt(message, public_key, callback_function) {
 
-    window.nacl_factory.instantiate(function (nacl) {
+    import(/* webpackChunkName: "nacl" */"js-nacl").then(module => {
 
-        let result = null;
-        let error = null;
+        module.default.instantiate(function (nacl) {
 
-        try {
+            let result = null;
+            let error = null;
 
-            message = nacl.encode_utf8(message);
-            public_key = base58.decode(public_key);
-            result = base58.encode(nacl.crypto_box_seal(message, public_key));
-        }catch (e) {
+            try {
 
-            error = "Cannot encrypt theses data";
-        }
+                message = nacl.encode_utf8(message);
+                public_key = base58.decode(public_key);
+                result = base58.encode(nacl.crypto_box_seal(message, public_key));
+            }catch (e) {
 
-        callback_function(error, result);
+                error = "Cannot encrypt theses data";
+            }
+
+            callback_function(error, result);
+        });
     });
 }
 
 function nacl_decrypt(encrypted_message, public_key, private_key, callback_function) {
 
-    window.nacl_factory.instantiate(function (nacl) {
+    import(/* webpackChunkName: "nacl" */"js-nacl").then(module => {
 
-        let result = null;
-        let error = null;
+        module.default.instantiate(function (nacl) {
 
-        try {
+            let result = null;
+            let error = null;
 
-            encrypted_message = base58.decode(encrypted_message);
-            public_key = base58.decode(public_key);
-            private_key = base58.decode(private_key);
-            result = nacl.decode_utf8(nacl.crypto_box_seal_open(encrypted_message, public_key, private_key));
+            try {
 
-        }catch (e) {
+                encrypted_message = base58.decode(encrypted_message);
+                public_key = base58.decode(public_key);
+                private_key = base58.decode(private_key);
+                result = nacl.decode_utf8(nacl.crypto_box_seal_open(encrypted_message, public_key, private_key));
 
-            error = "Cannot decrypt theses data";
-        }
+            }catch (e) {
 
-        callback_function(error, result);
+                error = "Cannot decrypt theses data";
+            }
+
+            callback_function(error, result);
+        });
     });
 }
 

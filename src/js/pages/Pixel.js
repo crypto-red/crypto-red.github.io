@@ -754,11 +754,10 @@ class Pixel extends React.Component {
 
         let input = document.createElement("input");
         input.setAttribute("style", "pointer-events: none; touch-actions: none; position: absolute; opacity: 0;");
-        document.body.appendChild(input);
-        input.addEventListener("change", (event) => {this._handle_file_upload(event)});
         input.setAttribute("type", "file");
+        document.body.appendChild(input);
+        input.addEventListener("change", (event) => {this._handle_file_upload(event, input)});
         input.click();
-        document.body.removeChild(input);
     };
 
     _upload_image_library = () => {
@@ -795,13 +794,13 @@ class Pixel extends React.Component {
     get_base64 = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
+            reader.addEventListener("load", () => resolve(reader.result));
+            reader.addEventListener("error", () => reject(error));
             reader.readAsDataURL(file);
         });
     };
 
-    _handle_file_upload = (event) => {
+    _handle_file_upload = (event, input) => {
 
         const { _canvas } = this.state;
         let img = new Image;
@@ -809,11 +808,17 @@ class Pixel extends React.Component {
 
         this.get_base64(file).then((data) => {
 
-            img.onload = () => {
+            img.addEventListener("load", () => {
 
                 _canvas.set_canvas_from_image(img);
+                document.body.removeChild(input);
                 this._handle_menu_close();
-            };
+            });
+            img.addEventListener("error", () => {
+
+                document.body.removeChild(input);
+                this._handle_menu_close();
+            });
             img.src = data;
         });
     };

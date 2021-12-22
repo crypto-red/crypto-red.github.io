@@ -129,7 +129,7 @@ const loop = (render, do_not_cancel_animation, force_update) => {
             caf(caf_id);
         }
     }catch(e){
-        console.log(e)
+        //console.log(e)
     }
 }
 

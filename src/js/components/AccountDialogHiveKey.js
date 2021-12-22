@@ -55,7 +55,7 @@ const styles = theme => ({
     },
     backdrop: {
         color: "#fff",
-        zIndex: "1400"
+        zIndex: "1400 !important"
     },
 });
 
@@ -210,6 +210,7 @@ class AccountDialogHiveKey extends React.Component {
                     <CircularProgress color="inherit" />
                 </Backdrop>
                 <Dialog
+                    disablePortal
                     open={open}
                     className={classes.dialog}
                     onClose={(event) => {this.props.onClose(event)}}
