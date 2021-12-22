@@ -242,7 +242,7 @@ class AccountDialogCreate extends React.Component {
 
         const { _account_password_input } = this.state;
 
-        import(/* webpackChunkName: "zxcvbn" */"zxcvbn").then((module) => {
+        import("zxcvbn").then((module) => {
 
             const _password_evaluation = module.default(_account_password_input);
 

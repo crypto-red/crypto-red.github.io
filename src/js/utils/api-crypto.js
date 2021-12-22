@@ -17,7 +17,7 @@ function _str2ab(str) {
 
 function nacl_encrypt(message, public_key, callback_function) {
 
-    import(/* webpackChunkName: "nacl" */"js-nacl").then(module => {
+    import("js-nacl").then(module => {
 
         module.default.instantiate(function (nacl) {
 
@@ -41,7 +41,7 @@ function nacl_encrypt(message, public_key, callback_function) {
 
 function nacl_decrypt(encrypted_message, public_key, private_key, callback_function) {
 
-    import(/* webpackChunkName: "nacl" */"js-nacl").then(module => {
+    import("js-nacl").then(module => {
 
         module.default.instantiate(function (nacl) {
 

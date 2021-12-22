@@ -13,6 +13,8 @@ module.exports = {
         minimizer: [
             new UglifyJsPlugin({
                 uglifyOptions: {
+                    toplevel: true,
+                    extractComments: false,
                     mangle: {
                         toplevel: true,
                         eval: true,
@@ -30,6 +32,11 @@ module.exports = {
                     },
                     compress: {
                         drop_console: true,
+                        passes: 2,
+                    },
+                    output: {
+                        comments: false,
+                        beautify: false,
                     },
                 }
             })
@@ -65,6 +72,11 @@ module.exports = {
         path: path.join(__dirname),
         filename: "client.min.js"
     },
+    resolve: {
+        alias: {
+            'bn.js': path.join(__dirname, 'node_modules/bn.js/lib/bn.js'),
+        }
+    },
     plugins: process.env.NODE_ENV === "development" ? [
         new HtmlWebpackPlugin({
             template: "./index.html",
@@ -82,5 +94,4 @@ module.exports = {
         hot: false,
         liveReload: false,
     },
-
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { withStyles } from "@material-ui/core/styles";
 
 import { t } from "../utils/t";
@@ -6,7 +6,7 @@ import { t } from "../utils/t";
 import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 
-import QrReader from "react-qr-reader"
+const QrReader = React.lazy(() => import("react-qr-reader"));
 import actions from "../actions/utils";
 import {DialogTitle} from "@material-ui/core";
 
@@ -80,12 +80,14 @@ class QRCodeScanDialog extends React.Component {
             >
                 <DialogTitle>{t("components.qr_code_scan_dialog.title")}</DialogTitle>
                 <DialogContent className={classes.dialogContent}>
-                    <QrReader
-                        delay={300}
-                        onError={this._handle_on_scanner_error}
-                        onScan={this._handle_on_scanner_scan}
-                        style={{ width: "100%" }}
-                    />
+                    <Suspense fallback={<div />}>
+                        <QrReader
+                            delay={300}
+                            onError={this._handle_on_scanner_error}
+                            onScan={this._handle_on_scanner_scan}
+                            style={{ width: "100%" }}
+                        />
+                    </Suspense>
                 </DialogContent>
             </Dialog>
         );

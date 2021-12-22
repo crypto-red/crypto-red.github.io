@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { withStyles } from "@material-ui/core/styles";
 
 import { t } from "../utils/t";
@@ -20,7 +20,7 @@ import Backdrop from "@material-ui/core/Backdrop";
 
 import QrCodeScanIcon from "../icons/QrCodeScan";
 
-import QrReader from "react-qr-reader"
+const QrReader = React.lazy(() => import("react-qr-reader"));
 import CoinSendDialog from "./CoinSendDialog";
 import { HISTORY } from "../utils/constants";
 import actions from "../actions/utils";
@@ -396,12 +396,14 @@ class CoinSend extends React.Component {
                 >
                     <DialogTitle id="qr-code-scanner-dialog-title">{t( "sentences.scan an address")}</DialogTitle>
                     <DialogContent className={classes.dialogContent}>
-                        <QrReader
-                            delay={300}
-                            onError={this._handle_on_scanner_error}
-                            onScan={this._handle_on_scanner_scan}
-                            style={{ width: "100%" }}
-                        />
+                        <Suspense fallback={<div />}>
+                            <QrReader
+                                delay={300}
+                                onError={this._handle_on_scanner_error}
+                                onScan={this._handle_on_scanner_scan}
+                                style={{ width: "100%" }}
+                            />
+                        </Suspense>
                     </DialogContent>
                 </Dialog>
                 {we_know_if_logged ?

@@ -1,7 +1,7 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { withStyles } from "@material-ui/core/styles";
 
-import CanvasPixels from "../components/CanvasPixels";
+const CanvasPixels = React.lazy(() => import("../components/CanvasPixels"));
 import pngdb from "../utils/png-db";
 const pngdby = pngdb();
 
@@ -65,7 +65,6 @@ import { post_hive_pixel_art, unlogged_post_hive_pixel_art } from "../utils/api-
 import ShufflingSpanText from "../components/ShufflingSpanText";
 import ImageFileDialog from "../components/ImageFileDialog";
 
-import DATA_IMG from "../utils/ressource-pixel";
 import AccountDialogHiveKey from "../components/AccountDialogHiveKey";
 import PixelDialogCreate from "../components/PixelDialogCreate";
 
@@ -282,7 +281,7 @@ class Pixel extends React.Component {
             classes: props.classes,
             _history: HISTORY,
             _library_dialog_open: false,
-            _library: DATA_IMG,
+            _library: {},
             _library_type: "open",
             _view_name_index: 1,
             _previous_view_name_index: 1,
@@ -359,6 +358,10 @@ class Pixel extends React.Component {
 
             this._maybe_save_unsaved_pixel_art();
         }, 10 * 1000);
+
+        import("../utils/ressource-pixel").then((module) => {
+            this.setState({_library: module.default});
+        });
     }
 
     _maybe_save_unsaved_pixel_art = () => {
@@ -1508,50 +1511,52 @@ class Pixel extends React.Component {
                     <div className={classes.content}>
                         <div className={classes.contentInner} style={{background: `linear-gradient(90deg, rgb(${rgb}, ${rgb}, ${rgb}) 30px, transparent 1%) center, linear-gradient(rgb(${rgb}, ${rgb}, ${rgb}) 30px, transparent 1%) center, rgb(${rgb-70}, ${rgb-70}, ${rgb-70})`}}>
                             <div className={classes.contentCanvas}>
-                                <CanvasPixels
-                                    onContextMenu={(e) => {e.preventDefault()}}
-                                    key={"canvas"}
-                                    className={classes.contentCanvas}
-                                    ref={this._set_canvas_ref}
-                                    no_actions={_is_pixel_dialog_post_edit_open}
-                                    dont_show_canvas_until_img_set={_is_pixel_dialog_post_edit_open}
-                                    dont_show_canvas={_is_pixel_dialog_post_edit_open}
-                                    tool={_tool}
-                                    canvas_wrapper_padding={32}
-                                    hide_canvas_content={_hide_canvas_content}
-                                    show_original_image_in_background={_show_original_image_in_background}
-                                    show_transparent_image_in_background={_show_transparent_image_in_background}
-                                    select_mode={_select_mode}
-                                    pencil_mirror_mode={_pencil_mirror_mode}
-                                    hue={_hue}
-                                    bucket_threshold={_slider_value}
-                                    color_loss={_slider_value}
-                                    pxl_current_opacity={1}
-                                    onLoadComplete={this._handle_load_complete}
-                                    onLoad={this._handle_load}
-                                    onCanUndoRedoChange={this._handle_can_undo_redo_change}
-                                    onSizeChange={this._handle_size_change}
-                                    onCurrentColorChange={this._handle_current_color_change}
-                                    onSomethingSelectedChange={this._handle_something_selected_change}
-                                    onImageImportModeChange={this._handle_image_import_mode_change}
-                                    on_kb_change={this._handle_kb_change}
-                                    on_fps_change={this._handle_fps_change}
-                                    on_elevation_change={this._handle_elevation_change}
-                                    onPositionChange={this._handle_position_change}
-                                    onLayersChange={this._handle_layers_change}
-                                    onGameEnd={this._handle_game_end}
-                                    onRelevantActionEvent={this._handle_relevant_action_event}
-                                    onRightClick={this._handle_right_click}
-                                    mine_player_direction={_mine_player_direction}
-                                    pxl_width={_width}
-                                    pxl_height={_height}
-                                    pxl_current_color={_current_color}
-                                    convert_scale={1}
-                                    default_size={_import_size}
-                                    ideal_size={_import_size}
-                                    max_size={_import_size*1.25}
-                                    fast_drawing={true}
-                                    px_per_px={1}/>
+                                <Suspense fallback={<div />}>
+                                    <CanvasPixels
+                                        onContextMenu={(e) => {e.preventDefault()}}
+                                        key={"canvas"}
+                                        className={classes.contentCanvas}
+                                        ref={this._set_canvas_ref}
+                                        no_actions={_is_pixel_dialog_post_edit_open}
+                                        dont_show_canvas_until_img_set={_is_pixel_dialog_post_edit_open}
+                                        dont_show_canvas={_is_pixel_dialog_post_edit_open}
+                                        tool={_tool}
+                                        canvas_wrapper_padding={32}
+                                        hide_canvas_content={_hide_canvas_content}
+                                        show_original_image_in_background={_show_original_image_in_background}
+                                        show_transparent_image_in_background={_show_transparent_image_in_background}
+                                        select_mode={_select_mode}
+                                        pencil_mirror_mode={_pencil_mirror_mode}
+                                        hue={_hue}
+                                        bucket_threshold={_slider_value}
+                                        color_loss={_slider_value}
+                                        pxl_current_opacity={1}
+                                        onLoadComplete={this._handle_load_complete}
+                                        onLoad={this._handle_load}
+                                        onCanUndoRedoChange={this._handle_can_undo_redo_change}
+                                        onSizeChange={this._handle_size_change}
+                                        onCurrentColorChange={this._handle_current_color_change}
+                                        onSomethingSelectedChange={this._handle_something_selected_change}
+                                        onImageImportModeChange={this._handle_image_import_mode_change}
+                                        on_kb_change={this._handle_kb_change}
+                                        on_fps_change={this._handle_fps_change}
+                                        on_elevation_change={this._handle_elevation_change}
+                                        onPositionChange={this._handle_position_change}
+                                        onLayersChange={this._handle_layers_change}
+                                        onGameEnd={this._handle_game_end}
+                                        onRelevantActionEvent={this._handle_relevant_action_event}
+                                        onRightClick={this._handle_right_click}
+                                        mine_player_direction={_mine_player_direction}
+                                        pxl_width={_width}
+                                        pxl_height={_height}
+                                        pxl_current_color={_current_color}
+                                        convert_scale={1}
+                                        default_size={_import_size}
+                                        ideal_size={_import_size}
+                                        max_size={_import_size*1.25}
+                                        fast_drawing={true}
+                                        px_per_px={1}/>
+                                </Suspense>
                                 <TouchRipple
                                     className={classes.ripple}
                                     ref={this._set_ripple_ref}

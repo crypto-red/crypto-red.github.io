@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import { withStyles } from "@material-ui/core/styles"
 
 import Dialog from "@material-ui/core/Dialog";
@@ -12,7 +12,7 @@ import Typography from "@material-ui/core/Typography";
 import Avatar from "@material-ui/core/Avatar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import CanvasPixels from "./CanvasPixels";
+const CanvasPixels = React.lazy(() => import("../components/CanvasPixels"));
 import Tooltip from "@material-ui/core/Tooltip";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -1213,35 +1213,37 @@ class PixelDialogPost extends React.Component {
                         <div className={classes.contentInner}>
                             <div style={{contentVisibility: "visible", contain: "layout paint size style"}} className={classes.contentImage} dataid={post.id}>
                                 <div className={classes.contentCanvasLight}>
-                                    <CanvasPixels
-                                        canvas_wrapper_border_radius={0}
-                                        canvas_wrapper_border_width={0}
-                                        shadow_size={9}
-                                        canvas_wrapper_padding={24}
-                                        canvas_wrapper_background_color={post_img.theme ? post_img.theme.brightest_hsla_color: "#00000000"}
-                                        pxl_width={post_img.width || 32}
-                                        pxl_height={post_img.height || 32}
-                                        key={"canvas-post-edit"}
-                                        default_size={1000}
-                                        default_scale={0.7}
-                                        no_actions={true}
-                                        show_original_image_in_background={false}
-                                        dont_show_canvas_until_img_set={false}
-                                        dont_show_canvas={_dont_show_canvas}
-                                        but_show_canvas_once={true}
-                                        dont_change_img_size_onload={true}
-                                        dont_compute_base64_original_image={true}
-                                        move_using_full_container={true}
-                                        className={classes.contentCanvas}
-                                        tool={"MOVE"}
-                                        show_transparent_image_in_background={false}
-                                        onContextMenu={(e) => {e.preventDefault()}}
-                                        onSizeChange={this._handle_size_change}
-                                        onPerspectiveCoordinateChanges={this._handle_perspective}
-                                        perspective={enable_3d ? _perspective_depth: 0}
-                                        light={7}
-                                        ref={this._set_canvas_ref}
-                                    />
+                                    <Suspense fallback={<div />}>
+                                        <CanvasPixels
+                                            canvas_wrapper_border_radius={0}
+                                            canvas_wrapper_border_width={0}
+                                            shadow_size={9}
+                                            canvas_wrapper_padding={24}
+                                            canvas_wrapper_background_color={post_img.theme ? post_img.theme.brightest_hsla_color: "#00000000"}
+                                            pxl_width={post_img.width || 32}
+                                            pxl_height={post_img.height || 32}
+                                            key={"canvas-post-edit"}
+                                            default_size={1000}
+                                            default_scale={0.7}
+                                            no_actions={true}
+                                            show_original_image_in_background={false}
+                                            dont_show_canvas_until_img_set={false}
+                                            dont_show_canvas={_dont_show_canvas}
+                                            but_show_canvas_once={true}
+                                            dont_change_img_size_onload={true}
+                                            dont_compute_base64_original_image={true}
+                                            move_using_full_container={true}
+                                            className={classes.contentCanvas}
+                                            tool={"MOVE"}
+                                            show_transparent_image_in_background={false}
+                                            onContextMenu={(e) => {e.preventDefault()}}
+                                            onSizeChange={this._handle_size_change}
+                                            onPerspectiveCoordinateChanges={this._handle_perspective}
+                                            perspective={enable_3d ? _perspective_depth: 0}
+                                            light={7}
+                                            ref={this._set_canvas_ref}
+                                        />
+                                    </Suspense>
                                 </div>
                                 <div className={classes.topRightFabButtons}>
                                     <IconButton onClick={this._toggle_perspective} className={classes.perspectiveButtonIcon}>

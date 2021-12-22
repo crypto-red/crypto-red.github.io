@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v63";
+var CACHE = "network-or-cache-v64";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -8,8 +8,12 @@ self.addEventListener("install", function(evt) {
   // returning promise resolves.
   evt.waitUntil(caches.open(CACHE).then(function (cache) {
     cache.addAll([
+      "/0.client.min.js",
       "/1.client.min.js",
       "/2.client.min.js",
+      "/3.client.min.js",
+      "/4.client.min.js",
+      "/5.client.min.js",
       "/src/sounds/sfx/md/alert_error-01.mp3",
       "/src/sounds/sfx/md/navigation_transition-left.mp3",
       "/src/sounds/sfx/md/alert_high-intensity.mp3",
@@ -100,6 +104,15 @@ self.addEventListener("fetch", function(event) {
     );
 
 
+  }else if(url.includes("0.client.min.js") && event.request.mode === "same-origin") {
+
+    // Return the same index.html page for all navigation query
+    event.respondWith( caches.match("/0.client.min.js").then(function (response) {
+      return (
+          response || fetch(event.request).then(function (response){return response})
+      );
+    }));
+
   }else if(url.includes("1.client.min.js") && event.request.mode === "same-origin") {
 
     // Return the same index.html page for all navigation query
@@ -113,6 +126,33 @@ self.addEventListener("fetch", function(event) {
 
     // Return the same index.html page for all navigation query
     event.respondWith( caches.match("/2.client.min.js").then(function (response) {
+      return (
+          response || fetch(event.request).then(function (response){return response})
+      );
+    }));
+
+  }else if(url.includes("3.client.min.js") && event.request.mode === "same-origin") {
+
+    // Return the same index.html page for all navigation query
+    event.respondWith( caches.match("/3.client.min.js").then(function (response) {
+      return (
+          response || fetch(event.request).then(function (response){return response})
+      );
+    }));
+
+  }else if(url.includes("4.client.min.js") && event.request.mode === "same-origin") {
+
+    // Return the same index.html page for all navigation query
+    event.respondWith( caches.match("/4.client.min.js").then(function (response) {
+      return (
+          response || fetch(event.request).then(function (response){return response})
+      );
+    }));
+
+  }else if(url.includes("5.client.min.js") && event.request.mode === "same-origin") {
+
+    // Return the same index.html page for all navigation query
+    event.respondWith( caches.match("/5.client.min.js").then(function (response) {
       return (
           response || fetch(event.request).then(function (response){return response})
       );
