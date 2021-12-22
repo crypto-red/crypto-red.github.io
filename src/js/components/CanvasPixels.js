@@ -324,6 +324,7 @@ class CanvasPixels extends React.Component {
             _hidden: true,
             _intervals: [],
             _kb: 0,
+            _device_motion: false,
         };
     };
 
@@ -332,7 +333,10 @@ class CanvasPixels extends React.Component {
         let _intervals = [];
 
         _intervals[0] = setInterval(() => {
-            this._maybe_save_state();
+            if(!Boolean(this.state.dont_show_canvas && this.state.but_show_canvas_once)) {
+
+                this._maybe_save_state();
+            }
             this._update_canvas(true, true);
         }, 250);
 
@@ -434,12 +438,12 @@ class CanvasPixels extends React.Component {
         const canvas_style = document.createElement("style");
         canvas_style.innerHTML = body_css + pixelated_css + canvas_wrapper_css;
         document.head.appendChild(canvas_style);
+        this._updated_dimensions();
+        this.setState({_intervals});
         this._notify_layers_and_compute_thumbnails_change();
 
         window.addEventListener("resize", this._updated_dimensions);
         window.addEventListener("devicemotion", this._handle_motion_changes);
-        this._updated_dimensions();
-        this.setState({_intervals});
     }
 
     _updated_dimensions = () => {
@@ -630,7 +634,7 @@ class CanvasPixels extends React.Component {
 
         if(is_mobile_or_tablet && this.state.perspective && this.state.has_shown_canvas_once) {
 
-            this.setState({perspective_coordinate: [x, y], perspective_coordinate_last_change: Date.now()}, () => {
+            this.setState({_device_motion: true, perspective_coordinate: [x, y], perspective_coordinate_last_change: Date.now()}, () => {
 
                 if(this.state._moves_speed_average_now <= -24) {
 
@@ -645,13 +649,16 @@ class CanvasPixels extends React.Component {
 
     set_perspective_coordinate = (array) => {
 
-        if(!is_mobile_or_tablet && this.state.perspective && this.state.has_shown_canvas_once) {
+        if((!is_mobile_or_tablet || !this.state._device_motion) && this.state.perspective && this.state.has_shown_canvas_once) {
 
             this.setState({perspective_coordinate: array, perspective_coordinate_last_change: Date.now()}, () => {
 
                 this._request_force_update(true, false, () => {
 
-                    this._notify_perspective_coordinate_changes(array.concat([this.state.scale]));
+                    if(!is_mobile_or_tablet) {
+
+                        this._notify_perspective_coordinate_changes(array.concat([this.state.scale]));
+                    }
                 });
             });
         }
@@ -999,8 +1006,8 @@ class CanvasPixels extends React.Component {
                 layer.colors = _s_pxl_colors[index].slice(0, 128);
                 return layer;
             })));
-            this._notify_estimate_size();
         }
+        this._notify_estimate_size();
     };
 
     _notify_layers_and_compute_thumbnails_change = () => {
@@ -3653,9 +3660,9 @@ class CanvasPixels extends React.Component {
 
     _handle_position_change = (event, x, y) => {
 
-        const { perspective } = this.state;
+        const { perspective, _device_motion } = this.state;
 
-        if(perspective > 0 && !is_mobile_or_tablet) {
+        if(perspective > 0 && (!is_mobile_or_tablet || !_device_motion)) {
 
             const pos = this._get_canvas_pos();
             const pos_x_in_canvas_container = ((event.pageX || x) - pos.canvas_container.left);

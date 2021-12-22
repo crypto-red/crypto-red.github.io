@@ -226,10 +226,10 @@ const styles = theme => ({
     cardAfterElement: {
         pointerEvents: "all",
         content: "''",
-        width: 32,
-        height: 32,
+        width: 56,
+        height: 48,
         position: "absolute",
-        right: 12,
+        right: 6,
         cursor: "pointer",
         bottom: -8,
         zIndex: 2,

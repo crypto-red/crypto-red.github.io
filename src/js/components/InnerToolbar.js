@@ -258,6 +258,12 @@ class InnerToolbar extends React.Component {
         _history.replace("/gallery/" + search_sorting_mode + "/search/" + encodeURIComponent(value).slice(0, 64), _history.location.state);
     }
 
+    _go_to = (url) => {
+
+        const { _history } = this.state;
+        _history.push(url);
+    };
+
     render() {
 
         const { classes, pathname, logged_account, know_if_logged, loaded_progress_percent, _search_bar_value, _is_search_bar_active } = this.state;
@@ -274,7 +280,7 @@ class InnerToolbar extends React.Component {
             }
             
             
-            return element === "" ? null: <Fade in={know_if_logged}  key={index}><a key={index} href={link_to} className={classes.link} >&nbsp;›&nbsp;{element}</a></Fade>;
+            return element === "" ? null: <Fade in={know_if_logged}  key={index}><a key={index} onClick={() => {this._go_to(link_to)}} className={classes.link} >&nbsp;›&nbsp;{element}</a></Fade>;
         });
         
         return (
@@ -314,7 +320,7 @@ class InnerToolbar extends React.Component {
                                         value={_search_bar_value}
                                     />:
                                     <span className={classes.innerToolbarText} style={pathname.includes("gallery") ? {width: "calc(100% - 36px)", overflow: "overlay"}: {}}>
-                                        <Fade in={know_if_logged}><a className={classes.link} to={logged_account ? "/": "/"}>{know_if_logged ? logged_account ? logged_account.name: t( "components.inner_toolbar.guest"): ""} </a></Fade>
+                                        <Fade in={know_if_logged}><a className={classes.link} onClick={() => {this._go_to(logged_account ? "/": "/")}}>{know_if_logged ? logged_account ? logged_account.name: t( "components.inner_toolbar.guest"): ""} </a></Fade>
                                         {pathame_items}
                                     </span>
                             }

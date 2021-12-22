@@ -1,4 +1,4 @@
-var CACHE = "network-or-cache-v64";
+var CACHE = "network-or-cache-v65";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -7,7 +7,17 @@ self.addEventListener("install", function(evt) {
   // to the cache. Ask the service worker to keep installing until the
   // returning promise resolves.
   evt.waitUntil(caches.open(CACHE).then(function (cache) {
-    cache.addAll([
+
+    return cache.addAll([
+      "/",
+      "/index.html",
+      "/404.html",
+      "/client.min.js",
+      "/src/fonts/NotoSans-Regular.woff2",
+      "/src/fonts/SpecialElite-Regular.woff2",
+      "/src/fonts/NotoSansMono-Regular.woff2",
+      "/src/fonts/ShareTechMono-Regular.woff2",
+      "/src/fonts/Saira-Regular.woff2",
       "/0.client.min.js",
       "/1.client.min.js",
       "/2.client.min.js",
@@ -62,18 +72,6 @@ self.addEventListener("install", function(evt) {
       "/src/images/investment-data.svg",
       "/src/images/open.svg",
       "/src/images/trade.svg",
-    ]);
-
-    return cache.addAll([
-      "/",
-      "/index.html",
-      "/404.html",
-      "/client.min.js",
-      "/src/fonts/NotoSans-Regular.woff2",
-      "/src/fonts/SpecialElite-Regular.woff2",
-      "/src/fonts/NotoSansMono-Regular.woff2",
-      "/src/fonts/ShareTechMono-Regular.woff2",
-      "/src/fonts/Saira-Regular.woff2",
     ]);
   }));
 });

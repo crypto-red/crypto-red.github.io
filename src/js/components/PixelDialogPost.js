@@ -341,7 +341,9 @@ const styles = theme => ({
         bottom: theme.spacing(2),
         right: theme.spacing(2),
         zIndex: 1199,
-        gap: 16,
+        "& > *:not(:last-child)": {
+            marginRight: 16,
+        },
         height: 48,
         [theme.breakpoints.up("lg")]: {
             display: "none",

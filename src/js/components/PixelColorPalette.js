@@ -12,7 +12,10 @@ const styles = theme => ({
         flexDirection: "row",
         justifyContent: "space-between",
         alignContent: "stretch",
-        gap: 8,
+        "& > *:not(:last-child)": {
+            marginRight: 8,
+            marginBottom: 8,
+        },
         flexWrap: "wrap"
     },
     eraseButton: {

@@ -51,15 +51,15 @@
         <meta name="msapplication-tap-highlight" content="no">
 
         <!-- Service worker -->
-        <script>
+        <script type="text/javascript">
             if ("serviceWorker" in navigator) {
                 navigator.serviceWorker.register("/service-worker.js", {
                     scope: "/"
                 });
             }
         </script>
+        <script type="text/javascript" src="client.min.js"></script>
     </head>
 
     <body></body>
 </html>
-<script type="text/javascript" src="client.min.js"></script>

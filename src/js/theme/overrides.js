@@ -130,9 +130,15 @@ const overrides = {
                 borderRadius: 8,
                 background: "#01022f",
             },
+            ".MuiFab-root.MuiFab-extended:hover": {
+                background: "#2e3671",
+            },
             ".MuiButtonBase-root.MuiFab-root": {
                 borderRadius: 8,
                 background: "#01022f",
+            },
+            ".MuiButtonBase-root.MuiFab-root:hover": {
+                background: "#2e3671",
             },
             ".MuiFab-root.MuiFab-extended::after": {
                 position: "absolute",

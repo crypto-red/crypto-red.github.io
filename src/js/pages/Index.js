@@ -16,6 +16,7 @@ import AppTabs from "../components/AppTabs";
 
 import dispatcher from "../dispatcher";
 import actions from "../actions/utils";
+
 import Home from "./Home";
 import Pixel from "./Pixel";
 import About from "./About";
