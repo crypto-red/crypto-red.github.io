@@ -1,6 +1,6 @@
-var REQUIRED_CACHE = "network-or-cache-v3-r";
-var USEFUL_CACHE = "network-or-cache-v3-u";
-var STATIC_CACHE = "network-or-cache-v3-s";
+var REQUIRED_CACHE = "network-or-cache-v4-r";
+var USEFUL_CACHE = "network-or-cache-v4-u";
+var STATIC_CACHE = "network-or-cache-v4-s";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -8,28 +8,27 @@ self.addEventListener("install", function(evt) {
   // Open a cache and use `addAll()` with an array of assets to add all of them
   // to the cache. Ask the service worker to keep installing until the
   // returning promise resolves.
-  evt.waitUntil(caches.open(REQUIRED_CACHE).then(function (cache) {
-
-    return cache.addAll([
-      "/",
-      "/index.html",
-      "/404.html",
-      "/client.min.js",
-      "/src/fonts/NotoSans-Regular.woff2",
-      "/src/fonts/SpecialElite-Regular.woff2",
-      "/src/fonts/NotoSansMono-Regular.woff2",
-      "/src/fonts/ShareTechMono-Regular.woff2",
-      "/src/fonts/Saira-Regular.woff2",
-    ]);
-  }));
-
-  evt.waitUntil(caches.open(USEFUL_CACHE).then(function (cache) {
-    return cache.addAll([]);
-  }));
-
-  evt.waitUntil(caches.open(STATIC_CACHE).then(function (cache) {
-    return cache.addAll([]);
-  }));
+  evt.waitUntil(Promise.all([
+      caches.open(REQUIRED_CACHE).then(function (cache) {
+            return cache.addAll([
+                "/",
+                "/index.html",
+                "/404.html",
+                "/client.min.js",
+                "/src/fonts/NotoSans-Regular.woff2",
+                "/src/fonts/SpecialElite-Regular.woff2",
+                "/src/fonts/NotoSansMono-Regular.woff2",
+                "/src/fonts/ShareTechMono-Regular.woff2",
+                "/src/fonts/Saira-Regular.woff2",
+            ]);
+      }),
+      caches.open(USEFUL_CACHE).then(function (cache) {
+          return cache.addAll([]);
+      }),
+      caches.open(STATIC_CACHE).then(function (cache) {
+          return cache.addAll([]);
+      })
+  ]));
 });
 
 self.addEventListener("fetch", function(event) {
@@ -182,32 +181,31 @@ self.addEventListener("fetch", function(event) {
     });
   }else {
 
-    caches.open(REQUIRED_CACHE).then(function (cache) {
-      return cache.match(event.request).then(function (response) {
-        if(response) { return response }
-      });
-    });
+      Promise.race(
+          caches.open(REQUIRED_CACHE).then(function (cache) {
+              return cache.match(event.request).then(function (response) {
+                  if(response) { return response }
+              });
+          }),
+          caches.open(USEFUL_CACHE).then(function (cache) {
+              return cache.match(event.request).then(function (response) {
+                  if(response) { return response }
+              });
+          }),
+          caches.open(STATIC_CACHE).then(function (cache) {
+              return cache.match(event.request).then(function (response) {
 
-    caches.open(USEFUL_CACHE).then(function (cache) {
-      return cache.match(event.request).then(function (response) {
-        if(response) { return response }
-      });
-    });
+                  return (
+                      response ||
+                      fetch(event.request).then(function (response) { // Fetch, clone, and serve
+                          cache.put(event.request, response.clone());
+                          return response;
+                      })
+                  );
 
-    caches.open(STATIC_CACHE).then(function (cache) {
-      return cache.match(event.request).then(function (response) {
-
-        return (
-            response ||
-            fetch(event.request).then(function (response) { // Fetch, clone, and serve
-              cache.put(event.request, response.clone());
-              return response;
-            })
-        );
-
-      });
-    });
-
+              })
+          })
+      ).then(function(response){return response})
   }
 });
 
@@ -286,7 +284,7 @@ self.addEventListener("activate", function(event) {
                   return caches.delete(cache_name);
                 })
             );
-          })
+          }).then(function(response) {return response})
         ])
-    );
+    ).then(function(response){return response});
 });
