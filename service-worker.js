@@ -165,7 +165,7 @@ self.addEventListener("fetch", function(event) {
         })
     );
 
-  }else if(event.request.mode === "navigate" && event.request.mode === "same-origin") {
+  }else if(event.request.mode === "navigate") {
 
       // Return the same index.html page for all navigation query
       event.respondWith( caches.match("/").then(function (response) {
