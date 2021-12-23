@@ -1,6 +1,6 @@
-var REQUIRED_CACHE = "network-or-cache-v2-r";
-var USEFUL_CACHE = "network-or-cache-v2-u";
-var STATIC_CACHE = "network-or-cache-v2-s";
+var REQUIRED_CACHE = "network-or-cache-v3-r";
+var USEFUL_CACHE = "network-or-cache-v3-u";
+var STATIC_CACHE = "network-or-cache-v3-s";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -35,10 +35,6 @@ self.addEventListener("install", function(evt) {
 self.addEventListener("fetch", function(event) {
 
   const url = event.request.url;
-
-  if (url.includes("upload")) {
-    return;
-  }
 
   if((url.includes(".png") || url.includes(".jpg") || url.includes(".jpeg") || url.includes(".gif")) && event.request.mode !== "same-origin") {
 
@@ -217,8 +213,7 @@ self.addEventListener("fetch", function(event) {
 
 self.addEventListener("activate", function(event) {
 
-  event.waitUntil(function() {
-        return Promise.all([
+  event.waitUntil(Promise.all([
           caches.open(USEFUL_CACHE).then(function (cache) {
             return cache.addAll([
               "/0.client.min.js",
@@ -285,7 +280,7 @@ self.addEventListener("activate", function(event) {
             return Promise.all(
                 cache_names.filter(function (cache_name) {
 
-                  return Boolean(cache_name !== REQUIRED_CACHE && cache_name !== USEFUL_CACHE && cache_name !== STATIC_CACHE);
+                  return Boolean(cache_name !== REQUIRED_CACHE || cache_name !== USEFUL_CACHE || cache_name !== STATIC_CACHE);
                 }).map(function (cache_name) {
 
                   return caches.delete(cache_name);
@@ -293,6 +288,5 @@ self.addEventListener("activate", function(event) {
             );
           })
         ])
-      }
-  );
+    );
 });
