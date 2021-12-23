@@ -217,81 +217,82 @@ self.addEventListener("fetch", function(event) {
 
 self.addEventListener("activate", function(event) {
 
-  event.waitUntil(
-      Promise.all([
+  event.waitUntil(function() {
+        return Promise.all([
           caches.open(USEFUL_CACHE).then(function (cache) {
-              return cache.addAll([
-                  "/0.client.min.js",
-                  "/1.client.min.js",
-                  "/2.client.min.js",
-                  "/3.client.min.js",
-                  "/4.client.min.js",
-                  "/5.client.min.js",
-                  "/src/images/404-dark-2.svg",
-                  "/src/images/analytics.svg",
-                  "/src/images/account.svg",
-                  "/src/images/account-add.svg",
-                  "/src/images/hacker.svg",
-                  "/src/images/wallet-green.svg",
-                  "/src/images/world_blue.jpg",
-                  "/src/images/404-dark.svg",
-                  "/src/images/segment.svg",
-                  "/src/images/security.svg",
-                  "/src/images/share.svg",
-                  "/src/images/transfer.svg",
-                  "/src/images/wallet.svg",
-                  "/src/images/data.svg",
-                  "/src/images/dust_overlay.png",
-                  "/src/images/logo-transparent.png",
-                  "/src/images/personal-finance.svg",
-                  "/src/images/statistics.svg",
-                  "/src/images/card.svg",
-                  "/src/images/favicon.ico",
-                  "/src/images/pig-coins.svg",
-                  "/src/images/pixelart_card.png",
-                  "/src/images/swap.svg",
-                  "/src/images/invest.svg",
-                  "/src/images/investment-data.svg",
-                  "/src/images/open.svg",
-                  "/src/images/trade.svg",
-              ]);
+            return cache.addAll([
+              "/0.client.min.js",
+              "/1.client.min.js",
+              "/2.client.min.js",
+              "/3.client.min.js",
+              "/4.client.min.js",
+              "/5.client.min.js",
+              "/src/images/404-dark-2.svg",
+              "/src/images/analytics.svg",
+              "/src/images/account.svg",
+              "/src/images/account-add.svg",
+              "/src/images/hacker.svg",
+              "/src/images/wallet-green.svg",
+              "/src/images/world_blue.jpg",
+              "/src/images/404-dark.svg",
+              "/src/images/segment.svg",
+              "/src/images/security.svg",
+              "/src/images/share.svg",
+              "/src/images/transfer.svg",
+              "/src/images/wallet.svg",
+              "/src/images/data.svg",
+              "/src/images/dust_overlay.png",
+              "/src/images/logo-transparent.png",
+              "/src/images/personal-finance.svg",
+              "/src/images/statistics.svg",
+              "/src/images/card.svg",
+              "/src/images/favicon.ico",
+              "/src/images/pig-coins.svg",
+              "/src/images/pixelart_card.png",
+              "/src/images/swap.svg",
+              "/src/images/invest.svg",
+              "/src/images/investment-data.svg",
+              "/src/images/open.svg",
+              "/src/images/trade.svg",
+            ]);
           }),
           caches.open(STATIC_CACHE).then(function (cache) {
-              return cache.addAll([
-                  "/src/sounds/sfx/md/alert_error-01.mp3",
-                  "/src/sounds/sfx/md/navigation_transition-left.mp3",
-                  "/src/sounds/sfx/md/alert_high-intensity.mp3",
-                  "/src/sounds/sfx/md/FullHorizonThrow.mp3",
-                  "/src/sounds/sfx/md/navigation_transition-right.mp3",
-                  "/src/sounds/sfx/md/PrometheusVertical2.mp3",
-                  "/src/sounds/sfx/md/hero_decorative-celebration-01.mp3",
-                  "/src/sounds/sfx/md/state-change_confirm-down.mp3",
-                  "/src/sounds/sfx/md/hero_decorative-celebration-02.mp3",
-                  "/src/sounds/sfx/md/state-change_confirm-up.mp3",
-                  "/src/sounds/sfx/md/hero_decorative-celebration-03.mp3",
-                  "/src/sounds/sfx/md/MazeImpact5.mp3",
-                  "/src/sounds/sfx/md/ui_camera-shutter.mp3",
-                  "/src/sounds/sfx/md/navigation_backward-selection-minimal.mp3",
-                  "/src/sounds/sfx/md/ui_loading.mp3",
-                  "/src/sounds/sfx/md/navigation_backward-selection.mp3",
-                  "/src/sounds/sfx/md/ui_lock.mp3",
-                  "/src/sounds/sfx/md/navigation_forward-selection.mp3",
-                  "/src/sounds/sfx/md/ui_tap-variant-01.mp3",
-                  "/src/sounds/sfx/md/navigation_selection-complete-celebration.mp3",
-                  "/src/sounds/sfx/md/ui_unlock.mp3",
-              ]);
+            return cache.addAll([
+              "/src/sounds/sfx/md/alert_error-01.mp3",
+              "/src/sounds/sfx/md/navigation_transition-left.mp3",
+              "/src/sounds/sfx/md/alert_high-intensity.mp3",
+              "/src/sounds/sfx/md/FullHorizonThrow.mp3",
+              "/src/sounds/sfx/md/navigation_transition-right.mp3",
+              "/src/sounds/sfx/md/PrometheusVertical2.mp3",
+              "/src/sounds/sfx/md/hero_decorative-celebration-01.mp3",
+              "/src/sounds/sfx/md/state-change_confirm-down.mp3",
+              "/src/sounds/sfx/md/hero_decorative-celebration-02.mp3",
+              "/src/sounds/sfx/md/state-change_confirm-up.mp3",
+              "/src/sounds/sfx/md/hero_decorative-celebration-03.mp3",
+              "/src/sounds/sfx/md/MazeImpact5.mp3",
+              "/src/sounds/sfx/md/ui_camera-shutter.mp3",
+              "/src/sounds/sfx/md/navigation_backward-selection-minimal.mp3",
+              "/src/sounds/sfx/md/ui_loading.mp3",
+              "/src/sounds/sfx/md/navigation_backward-selection.mp3",
+              "/src/sounds/sfx/md/ui_lock.mp3",
+              "/src/sounds/sfx/md/navigation_forward-selection.mp3",
+              "/src/sounds/sfx/md/ui_tap-variant-01.mp3",
+              "/src/sounds/sfx/md/navigation_selection-complete-celebration.mp3",
+              "/src/sounds/sfx/md/ui_unlock.mp3",
+            ]);
           }),
-          caches.keys().then(function(cache_names) {
-              return Promise.all(
-                  cache_names.filter(function(cache_name) {
+          caches.keys().then(function (cache_names) {
+            return Promise.all(
+                cache_names.filter(function (cache_name) {
 
-                      return Boolean(cache_name !== REQUIRED_CACHE && cache_name !== USEFUL_CACHE && cache_name !== STATIC_CACHE);
-                  }).map(function(cache_name) {
+                  return Boolean(cache_name !== REQUIRED_CACHE && cache_name !== USEFUL_CACHE && cache_name !== STATIC_CACHE);
+                }).map(function (cache_name) {
 
-                      return caches.delete(cache_name);
-                  })
-              );
+                  return caches.delete(cache_name);
+                })
+            );
           })
-      ])
+        ])
+      }
   );
 });
