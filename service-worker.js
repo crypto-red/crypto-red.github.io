@@ -211,7 +211,7 @@ self.addEventListener("activate", function(event) {
               "/0.client.min.js",
               "/1.client.min.js",
               "/2.client.min.js",
-              "/3.client.min.js",
+              //"/3.client.min.js",
               "/4.client.min.js",
               "/5.client.min.js",
               "/src/images/404-dark-2.svg",
