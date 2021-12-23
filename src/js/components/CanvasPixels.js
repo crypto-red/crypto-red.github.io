@@ -3826,7 +3826,7 @@ class CanvasPixels extends React.Component {
             }
         }
 
-        _pointer_events = [];
+        let pointer_down_again = false;
 
         if (_pointer_events.length < 2) {
 
@@ -3836,12 +3836,12 @@ class CanvasPixels extends React.Component {
 
             if(_pointer_events.length === 1) {
 
-
-                _latest_pointers_client_x_center = _pointer_events[0].clientX;
-                _latest_pointers_client_y_center = _pointer_events[0].clientY;
-                _previous_initial_scale_move = [_latest_pointers_client_x_center, _latest_pointers_client_y_center];
+                _pointer_events = [];
+                pointer_down_again = true;
             }
         }
+
+
 
         this.setState({
             _mouse_down: _pointer_events.length > 0,
@@ -3852,7 +3852,11 @@ class CanvasPixels extends React.Component {
             _previous_initial_scale_move,
         }, () => {
 
-            if(event.pointerType === "mouse") {
+            if(pointer_down_again){
+
+                this._handle_canvas_wrapper_overflow_pointer_down(event);
+
+            }else if(event.pointerType === "mouse") {
 
                 if(canvas_event_target === "CANVAS") {
 

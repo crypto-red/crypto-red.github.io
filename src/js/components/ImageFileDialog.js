@@ -76,13 +76,15 @@ class ImageFileDialog extends React.Component {
         } = this.state;
 
         let paths = _path.split("/");
-        let current_object = object;
+        let current_object = object || {};
 
         paths.forEach((p) => {
 
             if(p !== "") {
 
-                current_object = current_object[p];
+                try {
+                    current_object = current_object[p];
+                } catch(e){}
             }
         });
 
