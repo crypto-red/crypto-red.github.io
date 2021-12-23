@@ -1,6 +1,6 @@
-var REQUIRED_CACHE = "network-or-cache-v4-r";
-var USEFUL_CACHE = "network-or-cache-v4-u";
-var STATIC_CACHE = "network-or-cache-v4-s";
+var REQUIRED_CACHE = "network-or-cache-v5-required";
+var USEFUL_CACHE = "network-or-cache-v5-useful";
+var STATIC_CACHE = "network-or-cache-v5-static";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -8,7 +8,7 @@ self.addEventListener("install", function(evt) {
   // Open a cache and use `addAll()` with an array of assets to add all of them
   // to the cache. Ask the service worker to keep installing until the
   // returning promise resolves.
-  evt.waitUntil(Promise.all([
+  evt.waitUntil(Promise.allSettled([
       caches.open(REQUIRED_CACHE).then(function (cache) {
             return cache.addAll([
                 "/",
@@ -211,7 +211,7 @@ self.addEventListener("fetch", function(event) {
 
 self.addEventListener("activate", function(event) {
 
-  event.waitUntil(Promise.all([
+  event.waitUntil(Promise.allSettled([
           caches.open(USEFUL_CACHE).then(function (cache) {
             return cache.addAll([
               "/0.client.min.js",
@@ -274,17 +274,13 @@ self.addEventListener("activate", function(event) {
               "/src/sounds/sfx/md/ui_unlock.mp3",
             ]);
           }),
-          caches.keys().then(function (cache_names) {
-            return Promise.all(
-                cache_names.filter(function (cache_name) {
-
-                  return Boolean(cache_name !== REQUIRED_CACHE || cache_name !== USEFUL_CACHE || cache_name !== STATIC_CACHE);
-                }).map(function (cache_name) {
-
-                  return caches.delete(cache_name);
-                })
-            );
-          }).then(function(response) {return response})
+          caches.keys().then(keys => Promise.allSettled(
+              keys.map(key => {
+                  if (key !== REQUIRED_CACHE && key !== STATIC_CACHE && key !== USEFUL_CACHE) {
+                      return caches.delete(key);
+                  }
+              })
+          ))
         ])
     ).then(function(response){return response});
 });
