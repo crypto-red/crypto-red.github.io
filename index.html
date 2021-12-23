@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en" translate="no">
-
     <head>
         <meta name="google" content="notranslate" />
         <meta charset="utf-8">
@@ -11,6 +10,15 @@
         <title id="meta-title">WALLET.CRYPTO.RED - Free, ultra-secure, and open-source.</title>
         <meta name="description" content="Invest in various cryptocurrencies anonymously now. Access blockchain technology from a ultra-secure wallet made for free, for everyone, forever.">
         <meta name="keywords" content="Cryptocurrencies, Anonymous, Wallet, Blockchain, Crypto, Red, Free, Secure">
+
+        <!-- Service worker -->
+        <script type="text/javascript">
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker.register("/service-worker.js", {
+                    scope: "/"
+                });
+            }
+        </script>
 
         <!-- Open graph metadata -->
         <meta property="og:title" content="WALLET.CRYPTO.RED - Free, ultra-secure, and open-source."/>
@@ -49,18 +57,11 @@
         <meta name="msapplication-TileImage" content="/src/images/manifest/icon-white.png">
         <meta name="msapplication-TileColor" content="#ffffff">
         <meta name="msapplication-tap-highlight" content="no">
-
     </head>
 
     <body>
-        <!-- Service worker -->
-        <script type="text/javascript">
-            if ("serviceWorker" in navigator) {
-                navigator.serviceWorker.register("/service-worker.js", {
-                    scope: "/"
-                });
-            }
-        </script>
-        <script type="text/javascript" src="client.min.js"></script>
     </body>
+    <footer>
+        <script type="text/javascript" src="client.min.js"></script>
+    </footer>
 </html>
