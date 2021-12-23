@@ -165,22 +165,16 @@ self.addEventListener("fetch", function(event) {
         })
     );
 
-  }else if(event.request.mode === "navigate") {
+  }else if(event.request.mode === "navigate" && event.request.mode === "same-origin") {
 
-    // Return the same index.html page for all navigation query
-    caches.open(REQUIRED_CACHE).then(function (cache) {
-      return cache.match("/index.html").then(function (response) {
-        return (
-            response ||
-            fetch(event.request).then(function (response) { // Fetch, clone, and serve
-              cache.put(event.request, response.clone());
-              return response;
-            })
-        );
-      });
-    });
+      // Return the same index.html page for all navigation query
+      event.respondWith( caches.match("/").then(function (response) {
+          return (
+              response || fetch(event.request).then(function (response) {return response})
+          );
+      }));
+
   }else {
-
       Promise.race(
           caches.open(REQUIRED_CACHE).then(function (cache) {
               return cache.match(event.request).then(function (response) {
