@@ -210,7 +210,6 @@ class AccountDialogHiveKey extends React.Component {
                     <CircularProgress color="inherit" />
                 </Backdrop>
                 <Dialog
-                    disablePortal
                     open={open}
                     className={classes.dialog}
                     onClose={(event) => {this.props.onClose(event)}}

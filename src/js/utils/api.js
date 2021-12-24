@@ -247,7 +247,7 @@ function set_settings(settings, callback_function) {
 
             const default_all_settings = _get_default_settings();
 
-            window._wcr_settings = _merge_object(default_all_settings, window._wcr_settings);
+            window._wcr_settings = _merge_object(default_all_settings, settings);
 
             window.settings_db.post({
                 data: JSON.stringify(window._wcr_settings)

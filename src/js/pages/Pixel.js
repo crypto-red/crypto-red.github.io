@@ -76,8 +76,8 @@ const styles = theme => ({
         color: red[500],
     },
     root: {
-        minHeight: "100%",
-        minWidth: "100%",
+        height: "100%",
+        width: "100%",
         position: "relative",
     },
     content: {

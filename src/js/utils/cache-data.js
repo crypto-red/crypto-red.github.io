@@ -60,8 +60,9 @@ function _cache_data(database, cache_time_ms, query_id, api_function, api_parame
                 return false;
             }).map((ri) => ri.rev);
 
-            if(rev_ids.length > 0) {
+            if(rev_ids.length > 1) {
 
+                rev_ids.splice(0, 1);
                 database.bulkDocs(rev_ids.map((ri) => {return {_id: query_id, _rev: ri, _deleted: true, timestamp: 0, data: null}}), {force: true});
             }
 

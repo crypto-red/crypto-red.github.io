@@ -64,18 +64,12 @@ class MasonryExtended extends Masonry {
 
 const styles = theme => ({
     root: {
-        width: "100%",
-        height: "calc(100vh - 56px)",
-        [theme.breakpoints.up("md")]: {
-            height: "calc(100vh - 64px)",
-        },
         display: "flex",
         position: "relative",
-        overflow: "overlay",
         backgroundColor: theme.palette.primary.darker,
     },
     AppBar: {
-        position: "relative",
+        position: "absolute",
         marginTop: -1,
         [theme.breakpoints.up("md")]: {
             borderRadius: 4
@@ -152,9 +146,9 @@ const styles = theme => ({
         }
     },
     noPosts: {
-        width: "100%",
         position: "absolute",
         display: "flex",
+        width: "100%",
         padding: "88px 16px 32px 16px",
         justifyContent: "center",
         flexDirection: "column",
