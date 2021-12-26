@@ -64,6 +64,7 @@ class MasonryExtended extends Masonry {
 
 const styles = theme => ({
     root: {
+        maxHeight: "100%",
         display: "flex",
         position: "relative",
         backgroundColor: theme.palette.primary.darker,

@@ -37,7 +37,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { lightTheme } from "./theme/index";
 
-let element = document.createElement('div');
+let element = document.getElementById("app") || document.createElement('div');
 element.setAttribute("id", "app");
 document.body.appendChild(element);
 const app = document.getElementById('app');

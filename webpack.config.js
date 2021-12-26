@@ -5,7 +5,7 @@ var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlug
 var HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-    devtool: false,
+    devtool: process.env.NODE_ENV === 'production' ? "inline-source-map": false,
     entry: path.join(__dirname, "src/js/client.js"),
     mode: process.env.NODE_ENV,
     optimization: process.env.NODE_ENV === 'production' ? {

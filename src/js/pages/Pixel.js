@@ -91,6 +91,7 @@ const styles = theme => ({
         left: 0,
     },
     contentInner: {
+        height: "100%",
         display: "flex",
         flexGrow: 1,
         position: "relative",
@@ -98,12 +99,9 @@ const styles = theme => ({
     },
     contentCanvas: {
         width: "100%",
-        height: "calc(100vh - 64px)",
+        height: "100%",
         display: "flex",
         overflow: "hidden",
-        [theme.breakpoints.down("sm")]: {
-            height: "calc(100vh - 56px)",
-        },
     },
     contentDrawer: {
         overscrollBehavior: "none",
@@ -1506,7 +1504,7 @@ class Pixel extends React.Component {
 
 
         return (
-            <div>
+            <div style={{height: "100%"}}>
                 <div className={classes.root}>
                     <div className={classes.content}>
                         <div className={classes.contentInner} style={{background: `linear-gradient(90deg, rgb(${rgb}, ${rgb}, ${rgb}) 30px, transparent 1%) center, linear-gradient(rgb(${rgb}, ${rgb}, ${rgb}) 30px, transparent 1%) center, rgb(${rgb-70}, ${rgb-70}, ${rgb-70})`}}>

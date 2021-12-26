@@ -69,9 +69,8 @@ import { PAGE_ROUTES, HISTORY } from "../utils/constants";
 
 const styles = theme => ({
     root: {
-        transform: "translateZ(0)",
         overflow: "overlay",
-        height: "100vh",
+        height: "100%",
         width: "100vw",
     },
     carouselImage: {
@@ -81,7 +80,7 @@ const styles = theme => ({
     content: {
         overflow: "overlay",
         width: "calc(100vw - 256px)",
-        height: "100vh",
+        height: "100%",
         marginLeft: 256,
         [theme.breakpoints.down("sm")]: {
             width: "100vw",
@@ -541,7 +540,7 @@ class Index extends React.Component {
                         panic_mode={_panic_mode}
                         jamy_enabled={_jamy_enabled}
                         jamy_state_of_mind={_jamy_state_of_mind}/>
-                        <div style={{display: "inline"}}>
+                        <div style={{display: "inline", height: "100%"}}>
                             <AppDrawer
                                 pathname={pathname}
                                 logged_account={_logged_account}/>

@@ -6,14 +6,20 @@ const overrides = {
                 overscrollBehavior: "none",
                 textRendering: "optimizespeed",
                 touchAction: "none",
-                fontFamily: `"Noto Sans"`
+                fontFamily: `"Noto Sans"`,
+                height: "100%",
             },
             body: {
                 backgroundColor: "#FAFAFA",
-                width: "100vw",
-                height: "100vh",
+                height: "100%",
                 overflow: "overlay",
                 overscrollBehavior: "none",
+            },
+            "body > #app": {
+                height: "100%",
+            },
+            "body > #app > div": {
+                height: "100%",
             },
             blockquote: {
                 color: "#666"
