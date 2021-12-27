@@ -356,7 +356,9 @@ const styles = theme => ({
         bottom: theme.spacing(2),
         right: theme.spacing(2),
         zIndex: 1199,
-        gap: 16,
+        "& > *:not(:last-child)": {
+            marginRight: 16,
+        },
         height: 48,
         justifyContent: "space-between",
         "& > button": {
@@ -372,7 +374,9 @@ const styles = theme => ({
         position: "fixed",
         bottom: theme.spacing(2),
         left: theme.spacing(62),
-        gap: 16,
+        "& > *:not(:last-child)": {
+            marginRight: 16,
+        },
         height: 48,
         [theme.breakpoints.up("lg")]: {
             display: "flex",
@@ -1555,10 +1559,11 @@ class PixelDialogPost extends React.Component {
                         <CardContent className={classes.scrollOverflowMaxWidthMobile} style={{margin: "0 16 24 16", padding: "0"}}>
                             <ButtonGroup style={{margin: "12px 16px"}}>
                                 <Button onClick={() => {this._download_image(1)}}>1px</Button>
+                                <Button onClick={() => {this._download_image(8)}}>8px</Button>
                                 <Button onClick={() => {this._download_image(16)}}>16px</Button>
                                 <Button onClick={() => {this._download_image(32)}}>32px</Button>
                                 <Button onClick={() => {this._download_image(64)}}>64px</Button>
-                                <Button onClick={() => {this._download_image(128)}}>128px</Button>
+                                <Button onClick={() => {this._download_image(96)}}>96px</Button>
                             </ButtonGroup>
                         </CardContent>
                         <CardContent>
