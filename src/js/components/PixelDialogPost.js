@@ -1153,9 +1153,9 @@ class PixelDialogPost extends React.Component {
 
         const post_img = this.state.post_img ? this.state.post_img: {theme: {}, colors: []};
         const color_box_shadows = post_img.theme.primary_hsla_color ? {
-            backgroundColor: `hsl(${post_img.theme.primary_hsla_color[0]}deg 60% 30% / 60%)`,
+            backgroundColor: `hsl(${post_img.theme.primary_hsla_color[0]}deg 80% 40% / 20%)`,
             backgroundImage:
-            `linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`,
+            `linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 100%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 100%) 150%)`,
         }: {
             backgroundColor: "transparent",
             backgroundImage: `linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`

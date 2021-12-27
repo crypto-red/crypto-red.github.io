@@ -281,10 +281,14 @@ class PixelDialogPostBelowContent extends React.Component {
                             <img src={sc_svg} style={{transition: is_mobile_or_tablet ? "none": "transform .1s linear 0s", filter: "opacity(0.5)",  zIndex: is_mobile_or_tablet ? 1: 14, position: "absolute", bottom: "50%", right: "50%", width: "100%", height: "100%", transform: `translate(calc(50% + ${(px*20-100)*pz}px), calc(50% + ${(py*20-100)*pz}px))`}}/>
                         </div>
                         <span style={{filter: "opacity(0.1)", position: "absolute", bottom: "50%", right: 32, width: "66%", color, fontFamily: `"Special Elite"`}}>
+                            <span>NSA-RDP96X00790R000100010061-0 - Investigator Records Brain Waves Five Meter distant from the subject: Dr. G. A. Sergeyev claims subject located at a remarkable distance from the recording equipment. His result presented at the ... of Parapsychology ... It has been noted that Pavel Gulyayev, bio-cybernetics laboratory at Leningrad University, 1967 he predicted that brain wave recording without ... electrode contact with the head ... (20 January 1982)</span>
+                            <br />
+                            <br />
                             <span>CIA-RDP84B00049R001102660009-2 - The soviets have a far-flung effort, far beyond ours, to perfect missile defense, develop laser and directed energy weapons, anti-satellite weapons, permanent space stations and anti-missile defense. They have well over a hundred new systems in development, much of it based on our technology. (20 January 1982)</span>
                             <br />
                             <br />
                             <span>Loch K. Johnson* - Paramilitary operations – “PM ops” in American spytalk – may be defined as secret war-like activities. They are a part of a broader set ofendeavors undertaken by intelligence agencies to manipulate events abroad, when so ordered by authorities in the executive branch. These activities are known collectively as “covert action” (CA) or, alternatively, “special activities,” “the quiet option,” or “the third option” (between diplomacy and overt military intervention). In addition to PM ops, CA includes secret political and economic operations, as well as the use of propaganda.</span>
+                            <br />
                             <br />
                             <span>The ascension group - Our far efforts have been to not withdraw from our positions at the near cost of life sometimes, the black ops "operation" (decentralize everything) from around 2014 seduced our hacker mindset, letting us empower our love for truly awesome systems hacking and development empowering: autonomous, self-good-willing "secret community agents" in order to negate the opportunity for "them, who stands against us" to act.</span>
                         </span>

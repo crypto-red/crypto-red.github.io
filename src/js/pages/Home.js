@@ -26,20 +26,21 @@ const random_quote_index = Math.floor(Math.random() * quotes.length);
 
 const styles = theme => ({
     root: {
-        height: "100%",
         maxHeight: "100%",
         overflow: "hidden",
+        position: "relative",
     },
     backgroundImage: {
         width: "100%",
         height: "100%",
         overflow: "hidden",
         backgroundImage: "radial-gradient(ellipse farthest-corner, #c3585b99, #ffffff00 66%), url(/src/images/world_blue.jpg)",
-        position: "absolute",
+        position: "fixed",
         backgroundSize: "125%",
-        backgroundPosition: "0% 0%",
+        backgroundPosition: "-75% 0%",
         backgroundRepeat: "no-repeat",
         backgroundOrigin: "border-box",
+        boxSizing: "border-box",
         padding: theme.spacing(8),
         [theme.breakpoints.down("sm")]: {
             padding: theme.spacing(4)
