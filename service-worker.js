@@ -1,6 +1,6 @@
-var REQUIRED_CACHE = "network-or-cache-v7-required";
-var USEFUL_CACHE = "network-or-cache-v7-useful";
-var STATIC_CACHE = "network-or-cache-v7-static";
+var REQUIRED_CACHE = "network-or-cache-v8-required";
+var USEFUL_CACHE = "network-or-cache-v8-useful";
+var STATIC_CACHE = "network-or-cache-v8-static";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {
@@ -149,6 +149,22 @@ self.addEventListener("fetch", function(event) {
         })
     );
 
+  }else if(url.includes("6.client.min.js") && event.request.mode === "same-origin") {
+
+    event.respondWith(
+        caches.open(USEFUL_CACHE).then(function (cache) {
+          return cache.match("/6.client.min.js").then(function (response) {
+            return (
+                response ||
+                fetch(event.request).then(function (response) { // Fetch, clone, and serve
+                  cache.put(event.request, response.clone());
+                  return response;
+                })
+            );
+          });
+        })
+    );
+
   }else if(url.includes("client.min.js") && event.request.mode === "same-origin") {
 
     event.respondWith(
@@ -214,6 +230,7 @@ self.addEventListener("activate", function(event) {
               //"/3.client.min.js",
               "/4.client.min.js",
               "/5.client.min.js",
+              "/6.client.min.js",
               "/src/images/404-dark-2.svg",
               "/src/images/analytics.svg",
               "/src/images/account.svg",

@@ -10,6 +10,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "~4.0.0-alpha.57",
     "@material-ui/pickers": "^3.3.10",
+    "@tensorflow-models/toxicity": "^1.2.2",
     "@virtualeconomy/js-v-sdk": "^2.0.6",
     "bip32": "~2.0.6",
     "bip39": "~3.0.4",

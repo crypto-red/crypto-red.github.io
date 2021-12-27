@@ -20,6 +20,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import TouchRipple from "@material-ui/core/ButtonBase/TouchRipple";
 
 import { HISTORY } from "../utils/constants";
+import RESSOURCE_PIXELS from "../utils/ressource-pixel";
 
 import actions from "../actions/utils";
 
@@ -279,7 +280,7 @@ class Pixel extends React.Component {
             classes: props.classes,
             _history: HISTORY,
             _library_dialog_open: false,
-            _library: {},
+            _library: RESSOURCE_PIXELS,
             _library_type: "open",
             _view_name_index: 1,
             _previous_view_name_index: 1,
@@ -356,10 +357,6 @@ class Pixel extends React.Component {
 
             this._maybe_save_unsaved_pixel_art();
         }, 10 * 1000);
-
-        import("../utils/ressource-pixel").then((module) => {
-            this.setState({_library: module.default});
-        });
     }
 
     _maybe_save_unsaved_pixel_art = () => {
