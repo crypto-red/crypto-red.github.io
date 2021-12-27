@@ -26,16 +26,18 @@ const random_quote_index = Math.floor(Math.random() * quotes.length);
 
 const styles = theme => ({
     root: {
-        position: "relative",
+        height: "100%",
+        maxHeight: "100%",
+        overflow: "hidden",
     },
     backgroundImage: {
         width: "100%",
+        height: "100%",
         overflow: "hidden",
-        minHeight: "calc(100vh - 160px)",
         backgroundImage: "radial-gradient(ellipse farthest-corner, #c3585b99, #ffffff00 66%), url(/src/images/world_blue.jpg)",
         position: "absolute",
         backgroundSize: "125%",
-        backgroundPosition: "-100% 0%",
+        backgroundPosition: "0% 0%",
         backgroundRepeat: "no-repeat",
         backgroundOrigin: "border-box",
         padding: theme.spacing(8),
@@ -201,7 +203,7 @@ class Home extends React.Component {
                             Made with <img className={"emoji pulse"} src={get_svg_in_b64(<HearthEmojiSvg />)}/>, <br />
                             your <span className={classes.blue}>keys matters</span> <img src={get_svg_in_b64(<EarthEmojiSvg />)} className={"emoji"}/>.
                         </h2>
-                        <img onClick={(e) => {this._go_to_url(e, "/gallery")}} style={{clipPath: "polygon(0% 0%, 0% 100%, calc(100% - 56%) 100%, 100% calc(100% - 56%), 100% calc(100% - 42%), calc(100% - 42%) 100%, 100% 100%, 100% 0%)", cursor: "pointer", width: "min(75vw, 75vh)"}} src={"/src/images/pixelart_card.png"}/>
+                        <img onClick={(e) => {this._go_to_url(e, "/gallery")}} style={{cursor: "pointer", width: "min(75vw, 75vh)"}} src={"/src/images/pixelart_card.png"}/>
                     </div>
                     <div className={classes.quoteContainer}>
                         <blockquote>

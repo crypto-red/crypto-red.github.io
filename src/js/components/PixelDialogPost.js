@@ -831,23 +831,13 @@ class PixelDialogPost extends React.Component {
 
     _set_selection_by_colors = (color) => {
 
-        const { _canvas, _color_palette } = this.state;
+        const { _canvas } = this.state;
         if(_canvas === null) {return}
 
         this.setState({_dont_show_canvas: false}, () => {
 
             this.forceUpdate();
-            let threshold = 0;
-
-            _color_palette.colors_with_threshold.forEach((color_data, index) => {
-
-                if(color_data.color === color) {
-
-                    threshold = color_data.threshold;
-                }
-            });
-
-            _canvas.set_selection_by_colors(color, threshold);
+            _canvas.set_selection_by_colors(color, 0);
         });
     }
 
