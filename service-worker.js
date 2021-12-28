@@ -33,6 +33,7 @@ self.addEventListener("install", function(evt) {
 
 self.addEventListener("fetch", function(event) {
 
+    console.log(event);
   const url = event.request.url;
 
   if((url.includes(".png") || url.includes(".jpg") || url.includes(".jpeg") || url.includes(".gif")) && event.request.mode !== "same-origin") {
@@ -53,7 +54,7 @@ self.addEventListener("fetch", function(event) {
     );
 
 
-  }else if(url.includes("0.client.min.js") && event.request.mode === "same-origin") {
+  }else if(url.includes("0.client.min.js")) {
 
     event.respondWith(
         caches.open(USEFUL_CACHE).then(function (cache) {
@@ -69,7 +70,7 @@ self.addEventListener("fetch", function(event) {
         })
     );
 
-  }else if(url.includes("1.client.min.js") && event.request.mode === "same-origin") {
+  }else if(url.includes("1.client.min.js")) {
 
     event.respondWith(
         caches.open(USEFUL_CACHE).then(function (cache) {
@@ -85,7 +86,7 @@ self.addEventListener("fetch", function(event) {
         })
     );
 
-  }else if(url.includes("2.client.min.js") && event.request.mode === "same-origin") {
+  }else if(url.includes("2.client.min.js")) {
 
     event.respondWith(
         caches.open(USEFUL_CACHE).then(function (cache) {
@@ -101,7 +102,7 @@ self.addEventListener("fetch", function(event) {
         })
     );
 
-  }else if(url.includes("3.client.min.js") && event.request.mode === "same-origin") {
+  }else if(url.includes("3.client.min.js")) {
 
     event.respondWith(
         caches.open(USEFUL_CACHE).then(function (cache) {
@@ -117,7 +118,7 @@ self.addEventListener("fetch", function(event) {
         })
     );
 
-  }else if(url.includes("4.client.min.js") && event.request.mode === "same-origin") {
+  }else if(url.includes("4.client.min.js")) {
 
     event.respondWith(
         caches.open(USEFUL_CACHE).then(function (cache) {
@@ -133,7 +134,7 @@ self.addEventListener("fetch", function(event) {
         })
     );
 
-  }else if(url.includes("5.client.min.js") && event.request.mode === "same-origin") {
+  }else if(url.includes("5.client.min.js")) {
 
     event.respondWith(
         caches.open(USEFUL_CACHE).then(function (cache) {
@@ -149,7 +150,7 @@ self.addEventListener("fetch", function(event) {
         })
     );
 
-  }else if(url.includes("6.client.min.js") && event.request.mode === "same-origin") {
+  }else if(url.includes("6.client.min.js")) {
 
     event.respondWith(
         caches.open(USEFUL_CACHE).then(function (cache) {
