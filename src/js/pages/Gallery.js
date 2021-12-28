@@ -430,7 +430,7 @@ class Gallery extends React.Component {
 
         if(_post_author && _post_permlink) {
 
-            const itemsWithSizes = _masonry ? _masonry.props.itemsWithSizes || []: [];
+            const itemsWithSizes = _masonry ? (_masonry.props || {}).itemsWithSizes || []: [];
             const index_we_have = itemsWithSizes.map((p) => `${p.item.author}/${p.item.permlink}`).indexOf(`${_post_author}/${_post_permlink}`);
 
             if(index_we_have >= 0) {
