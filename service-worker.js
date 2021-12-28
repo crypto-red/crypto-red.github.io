@@ -192,7 +192,7 @@ self.addEventListener("fetch", function(event) {
       }));
 
   }else {
-      Promise.race(
+      Promise.race([
           caches.open(REQUIRED_CACHE).then(function (cache) {
               return cache.match(event.request).then(function (response) {
                   if(response) { return response }
@@ -208,15 +208,14 @@ self.addEventListener("fetch", function(event) {
 
                   return (
                       response ||
-                      fetch(event.request).then(function (response) { // Fetch, clone, and serve
-                          cache.put(event.request, response.clone());
+                      fetch(event.request).then(function (response) { // Fetch and serve
                           return response;
                       })
                   );
 
               })
           })
-      ).then(function(response){return response})
+      ]).then(function(response){return response})
   }
 });
 

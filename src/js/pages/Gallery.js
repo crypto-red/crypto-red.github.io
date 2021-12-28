@@ -296,7 +296,7 @@ class Gallery extends React.Component {
         const search_sorting_changed = this.state._search_sorting_tab_index !== state._search_sorting_tab_index;
         const search_mode_query_changed = this.state._search_mode_query !== state._search_mode_query;
 
-        let get_post = Boolean(state._post_author && state._post_permlink && (state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink));
+        let get_post = Boolean(state._post_author && state._post_permlink && (state._post_author !== this.state._post_author || state._post_permlink !== this.state._post_permlink || this.state._previous_pathname === ""));
         let closed_search = Boolean(
             (!state._is_search_mode && this.state._is_search_mode && this.state._search_mode_query !== "") ||
             (state._search_mode_query === "" && this.state._search_mode_query !== "")
@@ -430,10 +430,10 @@ class Gallery extends React.Component {
 
         if(_post_author && _post_permlink) {
 
-            const itemsWithSizes = _masonry ? (_masonry.props || {}).itemsWithSizes || []: [];
+            const itemsWithSizes = _masonry ? ((_masonry.props || {}).itemsWithSizes || []): [];
             const index_we_have = itemsWithSizes.map((p) => `${p.item.author}/${p.item.permlink}`).indexOf(`${_post_author}/${_post_permlink}`);
 
-            if(index_we_have >= 0) {
+            if(index_we_have !== -1) {
 
                 this.setState({_post: {...itemsWithSizes[index_we_have].item}, _post_img: {...itemsWithSizes[index_we_have].size}}, () => {
 
@@ -445,7 +445,7 @@ class Gallery extends React.Component {
 
                 cached_get_hive_post({author: _post_author, permlink: _post_permlink, cached_query: true, force_then: true}, (err, data) => {
 
-                    if(data) {
+                    if(!err && data) {
 
                         data.fetched = Date.now();
                         pngdby.get_new_img_obj(data.image, (imgobj) => {
@@ -1119,6 +1119,7 @@ class Gallery extends React.Component {
     _update_selected_post_index = (index, do_not_scroll = false) => {
 
         const { _post, _posts, _masonry } = this.state;
+        if(!_masonry) {return}
         const itemsWithSizes = _masonry.props.itemsWithSizes;
         const _selected_post_index = typeof index !== "undefined" ? index : (_post) ? _posts.map(p => (p || {}).id).indexOf(_post.id): this.state._selected_post_index;
         this.setState({_selected_post_index, _post: _posts[_selected_post_index], _post_img: (itemsWithSizes[_selected_post_index] || {}).size}, () => {
