@@ -59,6 +59,8 @@ import PencilPerfectIcon from "../icons/PencilPerfect";
 import ChangeHistoryIcon from "@material-ui/icons/ChangeHistory";
 import SelectColorIcon from "../icons/SelectColor";
 import SelectRemoveDifferenceIcon from "../icons/SelectRemoveDifference";
+import UFOTwemoji from "../twemoji/react/1F6F8";
+import LABTwemoji from "../twemoji/react/1F9Ea";
 
 import PixelDialogPost from "../components/PixelDialogPost";
 
@@ -1731,11 +1733,14 @@ class Pixel extends React.Component {
                     </div>
                 </Grow>
                 <Backdrop className={classes.backdrop} open={_loading} keepMounted={false}>
-                    <div className={classes.backdropTextContent}>
-                        {_loading && <h1><ShufflingSpanText style={{fontFamily: `"Share Tech Mono"`}} text={"Please wait..."} animation_delay_ms={0} animation_duration_ms={250}/></h1>}
-                        {_loading && _loading_process === "image_load" && <h4><ShufflingSpanText text={"Computing your image's initial dimensions."} animation_delay_ms={300} animation_duration_ms={500}/></h4>}
-                        {_loading && _loading_process === "less_color" && <h4><ShufflingSpanText text={"Computing your image's colors to be fewer than before."} animation_delay_ms={300} animation_duration_ms={500}/></h4>}
-                        {_loading && _loading_process === "less_color_auto" && <h4><ShufflingSpanText text={"Computing your image's colors to be quite a lot fewer than before."} animation_delay_ms={500} animation_duration_ms={500}/></h4>}
+                    <div className={classes.backdropTextContent} style={{fontFamily: `"Share Tech Mono"`}}>
+                        {_loading && <h1><ShufflingSpanText text={"Laboratory processing..."} animation_delay_ms={0} animation_duration_ms={250}/></h1>}
+                        {_loading && _loading_process === "image_load" && <h4><ShufflingSpanText text={"Abducting your image..."} animation_delay_ms={300} animation_duration_ms={500}/></h4>}
+                        {_loading && _loading_process === "image_load" && <div><UFOTwemoji style={{width: 72}}/></div>}
+                        {_loading && _loading_process === "less_color" && <h4><ShufflingSpanText text={"Coupling few color matrices..."} animation_delay_ms={300} animation_duration_ms={500}/></h4>}
+                        {_loading && _loading_process === "less_color" && <div><LABTwemoji style={{width: 72}}/></div>}
+                        {_loading && _loading_process === "less_color_auto" && <h4><ShufflingSpanText text={"Coupling many color matrices..."} animation_delay_ms={500} animation_duration_ms={500}/></h4>}
+                        {_loading && _loading_process === "less_color_auto" && <div><LABTwemoji style={{width: 72}}/></div>}
                         {_loading && <h5><ShufflingSpanText text={"It can take a while, please wait ~15sec."} animation_delay_ms={5000} animation_duration_ms={500}/></h5>}
                     </div>
                 </Backdrop>

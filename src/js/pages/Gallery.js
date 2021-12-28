@@ -1120,7 +1120,7 @@ class Gallery extends React.Component {
         const { _post, _posts, _masonry } = this.state;
         const itemsWithSizes = _masonry.props.itemsWithSizes;
         const _selected_post_index = typeof index !== "undefined" ? index : (_post) ? _posts.map(p => (p || {}).id).indexOf(_post.id): this.state._selected_post_index;
-        this.setState({_selected_post_index, _post: _posts[_selected_post_index], _post_img: itemsWithSizes[_selected_post_index].size}, () => {
+        this.setState({_selected_post_index, _post: _posts[_selected_post_index], _post_img: (itemsWithSizes[_selected_post_index] || {}).size}, () => {
 
             if(!do_not_scroll) {
 
