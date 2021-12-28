@@ -154,7 +154,8 @@ const styles = theme => ({
         justifyContent: "center",
         flexDirection: "column",
         textAlign: "center",
-        color: "#d7dbffbb"
+        color: "#d7dbffbb",
+        backgroundColor: theme.palette.primary.darker,
     },
     reactionMenu: {
         "& .MuiList-root": {
@@ -429,7 +430,7 @@ class Gallery extends React.Component {
 
         if(_post_author && _post_permlink) {
 
-            const itemsWithSizes = _masonry.props.itemsWithSizes;
+            const itemsWithSizes = _masonry ? _masonry.props.itemsWithSizes || []: [];
             const index_we_have = itemsWithSizes.map((p) => `${p.item.author}/${p.item.permlink}`).indexOf(`${_post_author}/${_post_permlink}`);
 
             if(index_we_have >= 0) {
@@ -449,7 +450,7 @@ class Gallery extends React.Component {
                         data.fetched = Date.now();
                         pngdby.get_new_img_obj(data.image, (imgobj) => {
 
-                            this.setState({_post: {...data}, _post_img: imgobj}, () => {
+                            this.setState({_post: {...data}, _post_img: {...imgobj}}, () => {
 
                                 this.forceUpdate();
                             });
