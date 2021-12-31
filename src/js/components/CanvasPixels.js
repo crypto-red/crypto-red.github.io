@@ -8396,6 +8396,7 @@ class CanvasPixels extends React.Component {
                     <div className={"Canvas-Wrapper " + (_mouse_inside ? " Canvas-Focused ": " " + (tool))}
                          draggable={"false"}
                          style={{
+                             display: "flex",
                              willChange: (_moves_speed_average_now !== -24|| (perspective && (perspective_coordinate_last_change + 500 > Date.now()))) ? "transform": "",
                              mixBlendMode: "hard-light",
                              borderWidth: canvas_wrapper_border_width,

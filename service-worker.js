@@ -1,6 +1,6 @@
-var REQUIRED_CACHE = "network-or-cache-v11-required";
-var USEFUL_CACHE = "network-or-cache-v11-useful";
-var STATIC_CACHE = "network-or-cache-v11-static";
+var REQUIRED_CACHE = "network-or-cache-v12-required";
+var USEFUL_CACHE = "network-or-cache-v12-useful";
+var STATIC_CACHE = "network-or-cache-v12-static";
 
 // On install, cache some resource.
 self.addEventListener("install", function(evt) {

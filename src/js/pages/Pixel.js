@@ -343,6 +343,7 @@ class Pixel extends React.Component {
     componentDidMount() {
 
         this._update_settings();
+        actions.trigger_snackbar(`Artistic Simulations Ecstatic "LABORATORY"! Abducting realities and having fun!`, 5000);
         window.addEventListener("resize", this._updated_dimensions);
         this._updated_dimensions();
         document.addEventListener("keydown", this._handle_keydown);

@@ -305,46 +305,46 @@ class Gallery extends React.Component {
 
         this.setState(state, () => {
 
-            this.forceUpdate(() => {
+            if(get_post) {
 
-                if(get_post) {
+                this._get_post();
+            }else if(closed_post) {
 
-                    this._get_post();
-                }else if(closed_post) {
+                this.forceUpdate(() => {
 
                     this._handle_pixel_dialog_post_closed();
-                }
+                });
+            }
 
-                if(closed_search || (sorting_changed && !state._is_search_mode)) {
+            if(closed_search || (sorting_changed && !state._is_search_mode)) {
 
-                    this._scroll_to(0);
-                    this.setState({_posts: [], _start_author: "", _start_permlink: ""}, () => {
-                        this.forceUpdate(() => {
-                            this._recompute_cell_measurements(() => {
+                this._scroll_to(0);
+                this.setState({_posts: [], _start_author: "", _start_permlink: ""}, () => {
+                    this.forceUpdate(() => {
+                        this._recompute_cell_measurements(() => {
 
-                                this._load_more_posts();
-                            });
+                            this._load_more_posts();
                         });
                     });
-                }else if(search_sorting_changed && state._is_search_mode) {
+                });
+            }else if(search_sorting_changed && state._is_search_mode) {
 
-                    this._scroll_to(0);
-                    this.setState({_posts: [], _start_author: "", _start_permlink: "", _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
-                        this.forceUpdate(() => {
-                            this._recompute_cell_measurements(() => {
+                this._scroll_to(0);
+                this.setState({_posts: [], _start_author: "", _start_permlink: "", _search_mode_query_page: 0, _search_mode_query_pages: 1}, () => {
+                    this.forceUpdate(() => {
+                        this._recompute_cell_measurements(() => {
 
-                                this._search_more_posts();
-                            });
+                            this._search_more_posts();
                         });
                     });
-                }else if(search_mode_query_changed && state._is_search_mode) {
+                });
+            }else if(search_mode_query_changed && state._is_search_mode) {
 
-                    setTimeout(() => {
+                setTimeout(() => {
 
-                        this._is_not_new_query_maybe_search_post(state._search_mode_query);
-                    }, 1000);
-                }
-            });
+                    this._is_not_new_query_maybe_search_post(state._search_mode_query);
+                }, 1000);
+            }
         });
     }
 
@@ -355,7 +355,7 @@ class Gallery extends React.Component {
 
     componentDidMount() {
 
-        actions.trigger_snackbar(`Inside W.C.R's Artistic Situations "Museum"! Not less than just having fun!`, 5000);
+        actions.trigger_snackbar(`Inside W.C.R's Artistic Simulations Ecstatic "MUSEUM"! Abducting realities and having fun!`, 5000);
         window.addEventListener("resize", this._update_dimensions_handler);
         ReactDOM.findDOMNode(this).addEventListener("keydown", this._handle_keydown);
 

@@ -107,9 +107,9 @@ const styles = theme => ({
             left: "10%",
             top: "5px",
             fontFamily: `"Share Tech Mono"`,
-            content: `"...ARTISTIC SITUATION N°"attr(dataid)"..."`,
+            content: `"...ARTISTIC SIMULATION N°"attr(dataid)"..."`,
             [theme.breakpoints.down("sm")]: {
-                content: `"ARTC. SITN. N°"attr(dataid)`,
+                content: `"ARTC. SIM. N°"attr(dataid)`,
             },
             textAlign: "center",
             color: "rgb(255 255 255 / 100%)",
