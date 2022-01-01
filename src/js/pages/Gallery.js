@@ -728,7 +728,7 @@ class Gallery extends React.Component {
             `/gallery/${_search_sorting_modes[_search_sorting_tab_index]}/search/${encodeURIComponent(_search_mode_query)}/@${author}`:
             `/gallery/${_sorting_modes[_sorting_tab_index] || _sorting_modes[0]}/@${author}`;
         _history.push(new_pathname);
-        actions.trigger_sfx("MazeImpact5");
+        actions.trigger_sfx("ETesla");
     };
 
     _init_cell_measurements = (callback_function = () => {}) => {
@@ -871,7 +871,7 @@ class Gallery extends React.Component {
 
         if(!this.state._post_author && !this.state._post_permlink) {
 
-            actions.trigger_sfx("MazeImpact5");
+            actions.trigger_sfx("ETesla");
         }else {
 
             actions.trigger_sfx("navigation_transition-left");

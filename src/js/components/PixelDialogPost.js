@@ -1287,12 +1287,11 @@ class PixelDialogPost extends React.Component {
 
         const post_img = this.state.post_img ? this.state.post_img: {theme: {}, colors: []};
         const color_box_shadows = post_img.theme.primary_hsla_color ? {
-            backgroundColor: `hsl(${post_img.theme.primary_hsla_color[0]}deg 80% 40% / 20%)`,
-            backgroundImage:
-            `linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 100%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 100%) 150%)`,
+            backgroundColor: `hsl(${post_img.theme.primary_hsla_color[0]}deg 80% 40% / 75%)`,
+            backgroundImage: `linear-gradient(rgb(255 255 255 / 14%), rgb(0 0 0 / 75%) 33%)`,
         }: {
             backgroundColor: "transparent",
-            backgroundImage: `linear-gradient(rgb(255 255 255 / 35%), rgb(0 0 0 / 70%)), radial-gradient(circle at center -50%, rgb(255 255 255 / 35%) 50%, rgb(0 0 0 / 50%) 150%)`
+            backgroundImage: `linear-gradient(rgb(255 255 255 / 14%), rgb(0 0 0 / 75%) 33%)`
         };
 
         const hbd_price = hbd_market ? hbd_market.current_price || 0: 0;

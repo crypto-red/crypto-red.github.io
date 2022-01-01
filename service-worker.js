@@ -273,7 +273,7 @@ self.addEventListener("activate", function(event) {
               "/src/sounds/sfx/md/hero_decorative-celebration-02.mp3",
               "/src/sounds/sfx/md/state-change_confirm-up.mp3",
               "/src/sounds/sfx/md/hero_decorative-celebration-03.mp3",
-              "/src/sounds/sfx/md/MazeImpact5.mp3",
+              "/src/sounds/sfx/md/ETesla.mp3",
               "/src/sounds/sfx/md/ui_camera-shutter.mp3",
               "/src/sounds/sfx/md/navigation_backward-selection-minimal.mp3",
               "/src/sounds/sfx/md/ui_loading.mp3",
