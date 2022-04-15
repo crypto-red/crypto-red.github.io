@@ -32,7 +32,7 @@ module.exports = {
                     },
                     compress: {
                         drop_console: true,
-                        passes: 2,
+                        passes: 3,
                     },
                     output: {
                         comments: false,
@@ -40,7 +40,30 @@ module.exports = {
                     },
                 }
             })
-        ]
+        ],
+        chunkIds: 'named',
+        splitChunks: {
+            chunks: 'async',
+            minSize: 192 * 1024,
+            maxSize: 320 * 1024,
+            minChunks: 6,
+            maxAsyncRequests: 16,
+            maxInitialRequests: 16,
+            automaticNameDelimiter: '~',
+            automaticNameMaxLength: 30,
+            name: true,
+            cacheGroups: {
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: -10
+                },
+                default: {
+                    minChunks: 6,
+                    priority: -20,
+                    reuseExistingChunk: true
+                }
+            }
+        }
     }: {minimize: false, minimizer: []},
     node: {
         fs: 'empty'
@@ -70,7 +93,8 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname),
-        filename: "client.min.js"
+        filename: "father-chunk.norris.min.js",
+        chunkFilename: "child-chunk.[id].min.js",
     },
     resolve: {
         alias: {

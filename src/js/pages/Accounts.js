@@ -17,7 +17,6 @@ import AccountDialogOpen from "../components/AccountDialogOpen";
 import AccountDialogDelete from "../components/AccountDialogDelete";
 import AccountDialogCreate from "../components/AccountDialogCreate";
 import AccountDialogBackup from "../components/AccountDialogBackup";
-import AccountDialogHive from "../components/AccountDialogHive";
 
 import { COINS } from "../utils/constants";
 

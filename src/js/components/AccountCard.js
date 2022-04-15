@@ -18,7 +18,6 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import DeleteIcon from "@material-ui/icons/Delete";
-import AccountPlus from "../icons/AccountPlus";
 import BackupIcon from "@material-ui/icons/Backup";
 import LockIcon from "@material-ui/icons/Lock";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
@@ -314,15 +313,6 @@ class AccountCard extends React.Component {
                                                     <BackupIcon fontSize="small" />
                                                 </ListItemIcon>
                                                 <ListItemText primary={t("words.backup", {FLC: true})}/>
-                                            </MenuItem>: null
-                                    }
-                                    {
-                                        current ?
-                                            <MenuItem onClick={!account.hive_username ? (event) => {this.props.hive(event, account)}: null}>
-                                                <ListItemIcon>
-                                                    <AccountPlus fontSize="small" />
-                                                </ListItemIcon>
-                                                <ListItemText primary={account.hive_username ? t("components.account_card.connected_to_hive"): t("components.account_card.connect_to_hive")}/>
                                             </MenuItem>: null
                                     }
                                     {

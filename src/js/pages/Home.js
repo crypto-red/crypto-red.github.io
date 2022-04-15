@@ -204,7 +204,6 @@ class Home extends React.Component {
                             Made with <img className={"emoji pulse"} src={get_svg_in_b64(<HearthEmojiSvg />)}/>, <br />
                             your <span className={classes.blue}>keys matters</span> <img src={get_svg_in_b64(<EarthEmojiSvg />)} className={"emoji"}/>.
                         </h2>
-                        <img onClick={(e) => {this._go_to_url(e, "/gallery")}} style={{cursor: "pointer", width: "min(75vw, 75vh)"}} src={"/src/images/pixelart_card.png"}/>
                     </div>
                     <div className={classes.quoteContainer}>
                         <blockquote>

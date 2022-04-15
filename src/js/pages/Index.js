@@ -18,14 +18,12 @@ import dispatcher from "../dispatcher";
 import actions from "../actions/utils";
 
 import Home from "./Home";
-import Pixel from "./Pixel";
 import About from "./About";
 import Dashboard from "./Dashboard";
 import Settings from "./Settings";
 import Accounts from "./Accounts";
 import Coins from "./Coins";
 import Coin from "./Coin";
-import Gallery from "./Gallery";
 import Unknown from "./Unknown";
 
 const PAGE_COMPONENTS = (name, pathname) => {

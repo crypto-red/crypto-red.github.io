@@ -239,14 +239,6 @@ class DrawerContent extends React.Component {
         this.props.onClose();
     };
 
-    _open_gallery_page = () => {
-
-        const { _history } = this.state;
-
-        _history.push("/gallery");
-        this.props.onClose();
-    };
-
     _open_about_page = (sub_path) => {
 
         const { _history } = this.state;
@@ -417,9 +409,6 @@ class DrawerContent extends React.Component {
                 <Fade in timeout={500}>
                     <div>
                         <List>
-                            <ListItem button onClick={this._open_gallery_page}>
-                                <ListItemText primary={"PixelArtOVerse"} secondary={<span style={{color:"#bbb"}}>Featuring Artistic Simulations</span>} />
-                            </ListItem>
                             <ListItem button onClick={this._open_dashboard_page}>
                                 <ListItemText primary={t( "components.drawer_content.menu.dashboard")} />
                             </ListItem>

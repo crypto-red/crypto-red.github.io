@@ -51,16 +51,6 @@ const PAGE_ROUTES = [
         tabs: ""
     },
     {
-        page_regex: /\/(pixel)$/,
-        page_name: "pixel",
-        tabs: ""
-    },
-    {
-        page_regex: /\/(gallery)(\/created|\/active|\/hot|\/trending)?(\/\@[a-z0-9\-\.]+)?(\/[a-zA-Z0-9\-]+)?(\/search\/.{0,64})?$/,
-        page_name: "gallery",
-        tabs: ""
-    },
-    {
         page_regex: /\/(accounts)$/,
         page_name: "accounts",
         tabs: ""
@@ -127,25 +117,7 @@ const COINS = [
         name: "Vsystems",
         short_name: "VSYS",
         image_url: COINS_IMAGES["v-systems"],
-    },
-    {
-        id: "hive",
-        name: "Hive",
-        short_name: "HIVE",
-        image_url: COINS_IMAGES["hive"],
-    },
-    {
-        id: "hive_dollar",
-        name: "Hive HBD",
-        short_name: "HBD",
-        image_url: COINS_IMAGES["hive_dollar"],
-    },/*
-    {
-        id: "zcash",
-        name: "Zcash",
-        short_name: "ZEC",
-        image_url: COINS_IMAGES["zcash"],
-    }*/
+    }
 ];
 
 import React from 'react';
