@@ -109,9 +109,9 @@ class AddressDialog extends React.Component {
 
         if(coin_id && logged_account) {
 
-            const _address = api.get_address_by_seed(coin_id, logged_account.seed, logged_account.hive_username);
-            const _public_key = api.get_public_key_by_seed(coin_id, logged_account.seed, logged_account.hive_username, logged_account.hive_password);
-            const _private_key = api.get_private_key_by_seed(coin_id, logged_account.seed, logged_account.hive_username, logged_account.hive_password);
+            const _address = api.get_address_by_seed(coin_id, logged_account.seed);
+            const _public_key = api.get_public_key_by_seed(coin_id, logged_account.seed);
+            const _private_key = api.get_private_key_by_seed(coin_id, logged_account.seed);
 
             this.setState({_address, _public_key, _private_key});
         }

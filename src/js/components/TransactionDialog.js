@@ -108,7 +108,7 @@ class TransactionDialog extends React.Component {
 
         if(logged_account && transaction) {
 
-            const address = api.get_address_by_seed(transaction.crypto_id, logged_account.seed, logged_account.hive_username);
+            const address = api.get_address_by_seed(transaction.crypto_id, logged_account.seed);
             this.setState({_address: address, _nacl_decrypted_memo: null}, () => {
 
                 this._try_decrypt_memo_with_nacl();

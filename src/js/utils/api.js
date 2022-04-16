@@ -32,27 +32,6 @@ import {
     get_btc_dash_doge_ltc_private_key_by_seed
 } from "./api-btc-dash-doge-ltc";
 
-import {
-    get_hive_account_keys,
-    get_hive_send_transaction_info,
-    get_hive_address_by_username,
-    get_hive_account_balance_by_username,
-    get_hive_account_transactions_by_username,
-    send_hive_transaction,
-    estimate_hive_transaction_fee,
-    get_hive_private_key,
-    get_hive_public_key,
-    lookup_hive_accounts,
-    lookup_hive_accounts_name,
-    lookup_hive_accounts_with_details,
-    get_hive_posts,
-    get_hive_post,
-    post_hive_post,
-    post_hive_pixel_art,
-    vote_on_hive_post,
-    search_on_hive,
-} from "./api-hive";
-
 window.query_db = new PouchDB("query_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
 window.settings_db = new PouchDB("settings_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
 window.accounts_db = new PouchDB("accounts_db", {deterministic_revs: false, revs_limit: 0, auto_compaction: false});
@@ -133,9 +112,6 @@ function reset_all_databases(callback_function) {
         window.settings_db.destroy(),
         window.accounts_db.destroy(),
         logged_accounts_db.destroy(),
-        hive_posts_db.destroy(),
-        hive_accounts_db.destroy(),
-        hive_queries_db.destroy(),
     ]).then(function (){
 
         callback_function();
@@ -474,36 +450,7 @@ function login(name, password, persistent = true, callback_function) {
                     timestamp: Date.now(),
                 };
 
-                if(typeof unlogged_account.hive_username !== "undefined" && typeof unlogged_account.hive_encrypted_password !== "undefined") {
-
-                    const is_hex = unlogged_account.hive_encrypted_password.match(/^[0-9a-f]+$/g);
-                    const format = is_hex ? "hex": "base64";
-
-                    triplesec.decrypt({
-                        data: triplesec.Buffer.from(unlogged_account.hive_encrypted_password, format),
-                        key: triplesec.Buffer.from(password)
-                    }, decrypt_hive_callback);
-                }else {
-
-                    save_logged_account_callback();
-                }
-
-                function decrypt_hive_callback(error_hive, buffer_hive) {
-
-                    if(error_hive) {
-
-                        logged_account = null;
-                        callback_function("Wrong password", logged_account);
-                    }else {
-
-                        logged_account.hive_encrypted_password = unlogged_account.hive_encrypted_password;
-                        logged_account.hive_password = buffer_hive.toString();
-                        logged_account.hive_username = unlogged_account.hive_username;
-
-                        save_logged_account_callback();
-                    }
-
-                }
+                save_logged_account_callback();
 
                 function save_logged_account_callback(error) {
 
@@ -563,138 +510,6 @@ function login(name, password, persistent = true, callback_function) {
 
     window.accounts_db.get(name, get_account_callback);
 
-}
-
-function add_hive_master_key(username, master_key, callback_function) {
-
-    get_hive_account_keys(username, master_key, (error, result) => {
-
-        if(error || logged_account === null) {
-
-            callback_function(error, null);
-        }else {
-
-            window.accounts_db.get(logged_account.name, {include_docs: true}, function(error_db_get, document) {
-
-                if(typeof document !== "undefined") {
-
-                    triplesec.encrypt({
-                        data: triplesec.Buffer.from(logged_account.seed),
-                        key: triplesec.Buffer.from(logged_account.password),
-
-                    }, function(error_encryption, buffer) {
-
-                        if (!error_encryption) {
-
-                            const account = {
-                                name: logged_account.name,
-                                encrypted_seed: buffer.toString("base64"),
-                                timestamp: Date.now(),
-                            };
-
-                            triplesec.encrypt({
-                                data: triplesec.Buffer.from(master_key),
-                                key: triplesec.Buffer.from(logged_account.password),
-
-                            }, function(error_encryption_hive, buffer_hive) {
-
-                                if (!error_encryption_hive) {
-
-                                    logged_account.hive_username = username;
-                                    logged_account.hive_password = master_key;
-                                    logged_account.hive_encrypted_password = buffer_hive.toString("base64");
-
-                                    const account_with_hive_login = {
-                                        name: account.name,
-                                        encrypted_seed: account.encrypted_seed,
-                                        hive_username: username,
-                                        hive_encrypted_password: buffer_hive.toString("base64"),
-                                        timestamp: account.timestamp,
-                                    };
-
-                                    function log_account_in_callback(error, response) {
-
-                                        if(error) {
-
-                                            logged_account = null;
-                                            callback_function("Cannot put account in db of logged account", logged_account)
-                                        }else {
-
-                                            callback_function(null, logged_account);
-                                        }
-                                    }
-
-
-                                    window.accounts_db.put({
-                                        _id: document._id,
-                                        _rev: document._rev,
-                                        data: JSON.stringify(account_with_hive_login)
-                                    }, {force: true}, function(error_db_add, response) {
-
-                                        if (error_db_add) {
-
-                                            callback_function("Impossible to add this account to the local database", null);
-                                        }else {
-
-                                            let persistent = false;
-
-                                            logged_accounts_db.allDocs({
-                                                include_docs: true
-                                            }).then(function (result) {
-                                                // Promise isn't supported by all browsers; you may want to use bluebird
-                                                return Promise.all(result.rows.map(function (row) {
-
-                                                    if(row.id === account.name) {
-
-                                                        persistent = true;
-                                                    }
-
-                                                    return logged_accounts_db.remove(row.id, row.value.rev);
-                                                }));
-                                            }).then(function () {
-
-                                                if(persistent) {
-
-                                                    const logged_accounts_db_document = {
-                                                        _id: logged_account.name,
-                                                        data: JSON.stringify(logged_account)
-                                                    };
-
-                                                    logged_accounts_db.put(logged_accounts_db_document, {force: true}, log_account_in_callback);
-                                                }else {
-
-                                                    callback_function(null, logged_account);
-                                                }
-
-                                            }).catch(function (err) {
-
-                                                logged_account = null;
-                                                callback_function("error db deletion", logged_account);
-                                            });
-                                        }
-                                    })
-
-                                }else {
-
-                                    callback_function("Impossible to encrypt this account", null);
-                                }
-                            });
-
-                        }else {
-
-                            callback_function("Impossible to encrypt this account", null);
-                        }
-                    });
-
-                }else {
-
-                    callback_function("Account with this name isn't already existing", null);
-                }
-
-            });
-
-        }
-    });
 }
 
 function logout(callback_function) {
@@ -769,7 +584,7 @@ function is_logged(callback_function) {
     }
 }
 
-function get_address_by_seed(coin_id, seed, hive_username = "") {
+function get_address_by_seed(coin_id, seed) {
 
     switch (coin_id) {
 
@@ -783,16 +598,12 @@ function get_address_by_seed(coin_id, seed, hive_username = "") {
             return get_btc_dash_doge_ltc_address_by_seed(coin_id, seed);
         case "dash":
             return get_btc_dash_doge_ltc_address_by_seed(coin_id, seed);
-        case "hive":
-            return get_hive_address_by_username(hive_username);
-        case "hive_dollar":
-            return get_hive_address_by_username(hive_username);
         default:
             return "Hello crypto";
     }
 }
 
-function get_public_key_by_seed(coin_id, seed, hive_username = "", hive_password = "") {
+function get_public_key_by_seed(coin_id, seed) {
 
     switch (coin_id) {
 
@@ -806,16 +617,12 @@ function get_public_key_by_seed(coin_id, seed, hive_username = "", hive_password
             return get_btc_dash_doge_ltc_public_key_by_seed(coin_id, seed);
         case "dash":
             return get_btc_dash_doge_ltc_public_key_by_seed(coin_id, seed);
-        case "hive":
-            return get_hive_public_key(hive_username, hive_password);
-        case "hive_dollar":
-            return get_hive_public_key(hive_username, hive_password);
         default:
             return "Hello crypto";
     }
 }
 
-function get_private_key_by_seed(coin_id, seed, hive_username = "", hive_password = "") {
+function get_private_key_by_seed(coin_id, seed) {
 
     switch (coin_id) {
 
@@ -829,10 +636,6 @@ function get_private_key_by_seed(coin_id, seed, hive_username = "", hive_passwor
             return get_btc_dash_doge_ltc_private_key_by_seed(coin_id, seed);
         case "dash":
             return get_btc_dash_doge_ltc_private_key_by_seed(coin_id, seed);
-        case "hive":
-            return get_hive_private_key(hive_username, hive_password);
-        case "hive_dollar":
-            return get_hive_private_key(hive_username, hive_password);
         default:
             return "Hello crypto";
     }
@@ -852,10 +655,6 @@ function get_send_transaction_info(coin_id) {
             return get_btc_dash_doge_ltc_send_transaction_info(coin_id);
         case "dash":
             return get_btc_dash_doge_ltc_send_transaction_info(coin_id);
-        case "hive":
-            return get_hive_send_transaction_info();
-        case "hive_dollar":
-            return get_hive_send_transaction_info();
         default:
             return {
                 max_message_length: 0,
@@ -864,7 +663,7 @@ function get_send_transaction_info(coin_id) {
     }
 }
 
-function get_balance_by_seed(coin_id, seed, callback_function, hive_username = ""){
+function get_balance_by_seed(coin_id, seed, callback_function){
 
     if(!seed) {
 
@@ -931,33 +730,13 @@ function get_balance_by_seed(coin_id, seed, callback_function, hive_username = "
                 callback_function
             );
             break;
-        case "hive":
-            _cache_data(
-                window.query_db,
-                16 * 1000,
-                "hive_get_balance__" + hive_username,
-                get_hive_account_balance_by_username,
-                {hive_username, coin_id},
-                callback_function
-            );
-            break;
-        case "hive_dollar":
-            _cache_data(
-                window.query_db,
-                16 * 1000,
-                "hive_dollar_get_balance__" + hive_username,
-                get_hive_account_balance_by_username,
-                {hive_username, coin_id},
-                callback_function
-            );
-            break;
         default:
             callback_function(null, 0);
             break;
     }
 }
 
-function send_transaction(coin_id, seed, address, amount, memo, fees, callback_function, hive_username = "", hive_password = "") {
+function send_transaction(coin_id, seed, address, amount, memo, fees, callback_function) {
 
 
     switch (coin_id) {
@@ -982,20 +761,12 @@ function send_transaction(coin_id, seed, address, amount, memo, fees, callback_f
 
             send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, fees, callback_function);
             break;
-        case "hive":
-
-            send_hive_transaction(hive_username, hive_password, address, amount, coin_id, memo, callback_function);
-            break;
-        case "hive_dollar":
-
-            send_hive_transaction(hive_username, hive_password, address, amount, coin_id, memo, callback_function);
-            break;
         default:
             callback_function(null, true);
             break;
     }
 }
-function estimate_transaction_fee(coin_id, seed, address, amount, memo, fees, callback_function, hive_username = "", hive_password = "") {
+function estimate_transaction_fee(coin_id, seed, address, amount, memo, fees, callback_function) {
 
     const return_fee_instead_of_send = true;
 
@@ -1021,21 +792,13 @@ function estimate_transaction_fee(coin_id, seed, address, amount, memo, fees, ca
 
             send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo, fees, callback_function, return_fee_instead_of_send);
             break;
-        case "hive":
-
-            estimate_hive_transaction_fee(hive_username, hive_password, address, amount, coin_id, memo, callback_function);
-            break;
-        case "hive_dollar":
-
-            estimate_hive_transaction_fee(hive_username, hive_password, address, amount, coin_id, memo, callback_function);
-            break;
         default:
             callback_function(null, 0);
             break;
     }
 }
 
-function get_transactions_by_seed(coin_id, seed, all_transactions, callback_function, hive_username = ""){
+function get_transactions_by_seed(coin_id, seed, all_transactions, callback_function){
 
     const after_transaction_id = (all_transactions.length) ? all_transactions[all_transactions.length-1].id: "";
     let after_transaction_number = -1;
@@ -1102,28 +865,6 @@ function get_transactions_by_seed(coin_id, seed, all_transactions, callback_func
                 "dash_get_transaction_from__" + after_transaction_id,
                 get_btc_dash_doge_ltc_account_transactions_by_seed,
                 {seed, after_transaction_id, coin_id},
-                callback_function
-            );
-            break;
-        case "hive":
-
-            _cache_data(
-                window.query_db,
-                3 * 1000,
-                "hive_get_transaction_from__" + after_transaction_number,
-                get_hive_account_transactions_by_username,
-                {username: hive_username, after_transaction_number, coin_id},
-                callback_function
-            );
-            break;
-        case "hive_dollar":
-
-            _cache_data(
-                window.query_db,
-                3 * 1000,
-                "hive_dollar_get_transaction_from__" + after_transaction_number,
-                get_hive_account_transactions_by_username,
-                {username: hive_username, after_transaction_number, coin_id},
                 callback_function
             );
             break;
@@ -1199,7 +940,6 @@ module.exports = {
     get_accounts: get_accounts,
     delete_account_by_name: delete_account_by_name,
     login: login,
-    add_hive_master_key: add_hive_master_key,
     logout: logout,
     is_logged: is_logged,
     send_transaction: send_transaction,
@@ -1211,13 +951,4 @@ module.exports = {
     get_transactions_by_seed: get_transactions_by_seed,
     get_transactions_by_id: get_transactions_by_id,
     get_send_transaction_info: get_send_transaction_info,
-    lookup_hive_accounts,
-    lookup_hive_accounts_name,
-    lookup_hive_accounts_with_details,
-    get_hive_posts,
-    get_hive_post,
-    post_hive_post,
-    post_hive_pixel_art,
-    vote_on_hive_post,
-    search_on_hive,
 }

@@ -99,10 +99,8 @@ class CoinReceive extends React.Component {
 
         if(logged_account) {
 
-            const hive_username = logged_account.hive_username || "";
-
             actions.trigger_loading_update(0);
-            const address = api.get_address_by_seed(coin_id, logged_account.seed, hive_username);
+            const address = api.get_address_by_seed(coin_id, logged_account.seed);
             this.setState({_address: address}, () => {
 
                 actions.trigger_loading_update(100);

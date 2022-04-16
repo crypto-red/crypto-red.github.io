@@ -158,7 +158,7 @@ class Dashboard extends React.Component {
 
                 _coins.forEach(coin => {
 
-                    api.get_balance_by_seed(coin.id, _logged_account.seed, (error, result) => {this._refresh_balance_result(error, result, coin.id)}, _logged_account.hive_username);
+                    api.get_balance_by_seed(coin.id, _logged_account.seed, (error, result) => {this._refresh_balance_result(error, result, coin.id)});
 
                 });
             }

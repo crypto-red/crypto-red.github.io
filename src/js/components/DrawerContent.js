@@ -231,14 +231,6 @@ class DrawerContent extends React.Component {
         this.props.onClose();
     };
 
-    _open_pixel_page = () => {
-
-        const { _history } = this.state;
-
-        _history.push("/pixel");
-        this.props.onClose();
-    };
-
     _open_about_page = (sub_path) => {
 
         const { _history } = this.state;
@@ -353,10 +345,8 @@ class DrawerContent extends React.Component {
         
         const coinListItem = COINS.map((coin) => {
 
-            const disabled = Boolean(coin.id.includes("hive") && !(logged_account || {}).hive_username);
-
             return (
-                <ListItem button disabled={disabled} className={classes.nested} key={coin.id} onClick={!disabled ? () => {this._open_coin_id(coin.id)}: null}>
+                <ListItem button className={classes.nested} key={coin.id} onClick={() => {this._open_coin_id(coin.id)}}>
                     <ListItemAvatar>
                         <Avatar className={classes.coinAvatar} alt={coin.name} src={coin.image_url} variant="square" />
                         </ListItemAvatar>
