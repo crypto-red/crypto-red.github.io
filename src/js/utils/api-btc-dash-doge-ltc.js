@@ -73,6 +73,81 @@ function _get_network_name_by_coin_id(coin_id) {
     }
 }
 
+// SoChain's API v3 serves Bitcoin, Dogecoin and Litecoin; Dash goes to Blockchair.
+// Neither SoChain nor this file needs an API key for these lookups.
+const SOCHAIN_API_URL = "https://sochain.com/api/v3";
+const BLOCKCHAIR_API_URL = "https://api.blockchair.com";
+
+function _is_on_sochain(coin_id) {
+
+    return coin_id !== "dash";
+}
+
+// SoChain gives amounts as decimal strings ("0.00012345"): convert them to satoshis without float rounding.
+function _decimal_to_satoshis(value) {
+
+    const [whole, fraction = ""] = String(value).replace("-", "").split(".");
+    const satoshis = parseInt(whole || "0", 10) * 100000000 + parseInt((fraction + "00000000").slice(0, 8), 10);
+    return String(value).startsWith("-") ? -satoshis: satoshis;
+}
+
+function _blockchair_time_to_ms(time) {
+
+    return Date.parse(time.replace(" ", "T") + "Z");
+}
+
+// Unspent outputs as [{txid, output_no, satoshis}], ten per page on SoChain.
+function _get_unspent_outputs(coin_id, address, callback_function) {
+
+    if(!_is_on_sochain(coin_id)) {
+
+        loadJSON(BLOCKCHAIR_API_URL + "/" + coin_id + "/dashboards/address/" + address + "?limit=0", (error, response) => {
+
+            if(!error && response.data && response.data[address]) {
+
+                callback_function(null, response.data[address].utxo.map((uo) => {
+
+                    return {txid: uo.transaction_hash, output_no: uo.index, satoshis: uo.value};
+                }));
+            }else {
+
+                callback_function(error || response, null);
+            }
+        });
+        return;
+    }
+
+    let unspent_outputs = [];
+
+    function load_page(page) {
+
+        loadJSON(SOCHAIN_API_URL + "/unspent_outputs/" + _get_network_name_by_coin_id(coin_id) + "/" + address + "/" + page, (error, response) => {
+
+            if(!error && response.status === "success") {
+
+                const outputs = response.data.outputs;
+                unspent_outputs = unspent_outputs.concat(outputs.map((uo) => {
+
+                    return {txid: uo.hash, output_no: uo.index, satoshis: _decimal_to_satoshis(uo.value)};
+                }));
+
+                if(outputs.length === 10) {
+
+                    load_page(page + 1);
+                }else {
+
+                    callback_function(null, unspent_outputs);
+                }
+            }else {
+
+                callback_function(error || response, null);
+            }
+        });
+    }
+
+    load_page(1);
+}
+
 function _get_btc_dash_doge_ltc_account_by_seed(coin_id, seed) {
 
     const seeed = bip39.mnemonicToSeedSync(seed);
@@ -156,13 +231,13 @@ function send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo
 
                     const fee_per_byte = fees_response;
 
-                    if(response.data) {
-                        if(response.data.txs) {
+                    if(response) {
+                        if(Array.isArray(response)) {
 
-                            response.data.txs.forEach(function(uo, uo_index) {
+                            response.forEach(function(uo, uo_index) {
 
-                                tx.addInput(uo.txid, uo.output_no, uo_index, uo.script);
-                                balance += Math.floor(uo.value * 100000000);
+                                tx.addInput(uo.txid, uo.output_no, uo_index);
+                                balance += uo.satoshis;
                                 input_count++;
 
                             });
@@ -202,7 +277,8 @@ function send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo
                                             callback_function(error, response);
                                         }
 
-                                        postDATA("https://chain.so/api/v2/send_tx/" + _get_network_name_by_coin_id(coin_id), "tx_hex=" + tx_hex, send_transaction_callback);
+                                        // SoChain's API has no broadcasting: send through Blockchair for every coin.
+                                        postDATA(BLOCKCHAIR_API_URL + "/" + coin_id + "/push/transaction", "data=" + tx_hex, send_transaction_callback);
 
                                     }catch (e) {
 
@@ -240,7 +316,7 @@ function send_btc_dash_doge_ltc_transaction(coin_id, seed, address, amount, memo
 
     }
 
-    loadJSON("https://chain.so/api/v2/get_tx_unspent/" + _get_network_name_by_coin_id(coin_id) + "/" + my_address, add_unspent_output);
+    _get_unspent_outputs(coin_id, my_address, add_unspent_output);
 }
 
 function get_btc_dash_doge_ltc_account_balance_by_seed(parameters, callback_function) {
@@ -252,9 +328,12 @@ function get_btc_dash_doge_ltc_account_balance_by_seed(parameters, callback_func
 
         if(!error) {
 
-            if(response.status !== "fail") {
+            if(_is_on_sochain(coin_id) && response.status === "success") {
 
-                callback_function(null, _format_btc_dash_doge_ltc_amount(coin_id, response.data.confirmed_balance));
+                callback_function(null, _format_btc_dash_doge_ltc_amount(coin_id, response.data.confirmed));
+            }else if(!_is_on_sochain(coin_id) && response.data && response.data[my_address]) {
+
+                callback_function(null, _format_btc_dash_doge_ltc_amount(coin_id, response.data[my_address].address.balance / 100000000));
             }else {
 
                 callback_function(response, null);
@@ -266,7 +345,13 @@ function get_btc_dash_doge_ltc_account_balance_by_seed(parameters, callback_func
         }
     }
 
-    loadJSON("https://chain.so/api/v2/get_address_balance/" + _get_network_name_by_coin_id(coin_id) + "/" + my_address + "/1", get_btc_dash_doge_ltc_balance_callback)
+    if(_is_on_sochain(coin_id)) {
+
+        loadJSON(SOCHAIN_API_URL + "/balance/" + _get_network_name_by_coin_id(coin_id) + "/" + my_address, get_btc_dash_doge_ltc_balance_callback);
+    }else {
+
+        loadJSON(BLOCKCHAIR_API_URL + "/" + coin_id + "/dashboards/address/" + my_address + "?limit=0", get_btc_dash_doge_ltc_balance_callback);
+    }
 
 }
 
@@ -276,78 +361,77 @@ function get_btc_dash_doge_ltc_account_transactions_by_seed(parameters, callback
 
     const my_address = get_btc_dash_doge_ltc_address_by_seed(coin_id, seed);
 
-    let formatted_transactions_object = {
-        received: {
-            transactions: [],
-            query: false
-        },
-        sent: {
-            transactions: [],
-            query: false
-        },
-    };
-    let formatted_error = null;
+    // Newest first: return up to 100 transactions after (older than) after_transaction_id.
+    const max_transactions = 100;
+    const max_pages = 10;
+    let formatted_transactions = [];
+    let found = !after_transaction_id;
 
-    function format_get_btc_dash_doge_ltc_transaction_response(error, response, direction) {
+    function add_rows(rows) {
 
-        formatted_transactions_object[direction].query = true;
+        rows.forEach((row) => {
 
-        if(!error) {
+            if(found && formatted_transactions.length < max_transactions) {
 
-            if(response.status !== "fail") {
+                formatted_transactions.push(row);
+            }else if(row.id === after_transaction_id) {
 
-                const unformatted_transaction = response.data.txs;
-                const formatted_transactions = unformatted_transaction.map((transaction) => {
-
-                    return {
-                        id: transaction.txid,
-                        timestamp: transaction.time * 1000,
-                        crypto_id: coin_id
-                    };
-                })
-
-                formatted_transactions_object[direction].transactions = formatted_transactions;
-
-            }else {
-
-                formatted_error = response;
+                found = true;
             }
-        }else {
-
-            formatted_error = error;
-        }
-
-        let all_received = false;
-        let all_current_transactions = [];
-
-        if(formatted_transactions_object["received"].query && formatted_transactions_object["sent"].query) {
-
-            all_current_transactions = all_current_transactions.concat(formatted_transactions_object["received"].transactions);
-            all_current_transactions = all_current_transactions.concat(formatted_transactions_object["sent"].transactions);
-            all_received = true;
-        }
-
-        function remove_duplicate_object_from_array(array, key) {
-            let check = new Set();
-            return array.filter(obj => !check.has(obj[key]) && check.add(obj[key]));
-        }
-
-        all_current_transactions = remove_duplicate_object_from_array(all_current_transactions, "id");
-
-        if(all_received) {
-
-            if(!formatted_error){
-
-                callback_function(null, all_current_transactions);
-            }else {
-
-                callback_function(formatted_error, null);
-            }
-        }
+        });
     }
 
-    loadJSON("https://chain.so/api/v2/get_tx_received/" + _get_network_name_by_coin_id(coin_id) + "/" + my_address + "/" + after_transaction_id, (error, response) => {format_get_btc_dash_doge_ltc_transaction_response(error, response, "received")});
-    loadJSON("https://chain.so/api/v2/get_tx_spent/" + _get_network_name_by_coin_id(coin_id) + "/" + my_address + "/" + after_transaction_id, (error, response) => {format_get_btc_dash_doge_ltc_transaction_response(error, response, "sent")});
+    function load_page(page_number, next) {
+
+        let url;
+        if(_is_on_sochain(coin_id)) {
+
+            url = SOCHAIN_API_URL + "/transactions/" + _get_network_name_by_coin_id(coin_id) + "/" + my_address + (next ? "?cursor=" + encodeURIComponent(next) : "?page_size=100");
+        }else {
+
+            url = BLOCKCHAIR_API_URL + "/" + coin_id + "/dashboards/address/" + my_address + "?transaction_details=true&limit=100&offset=" + (page_number * 100);
+        }
+
+        loadJSON(url, (error, response) => {
+
+            let rows = null;
+            let next_page = null;
+
+            if(!error && _is_on_sochain(coin_id) && response.status === "success") {
+
+                rows = response.data.transactions.map((transaction) => {
+
+                    return {id: transaction.hash, timestamp: transaction.time * 1000, crypto_id: coin_id};
+                });
+                next_page = response.data.next_cursor;
+            }else if(!error && !_is_on_sochain(coin_id) && response.data && response.data[my_address]) {
+
+                rows = response.data[my_address].transactions.map((transaction) => {
+
+                    return {id: transaction.hash, timestamp: _blockchair_time_to_ms(transaction.time), crypto_id: coin_id};
+                });
+                next_page = rows.length === 100 ? true: null;
+            }
+
+            if(rows === null) {
+
+                callback_function(error || response, null);
+                return;
+            }
+
+            add_rows(rows);
+
+            if(next_page && formatted_transactions.length < max_transactions && page_number + 1 < max_pages) {
+
+                load_page(page_number + 1, next_page);
+            }else {
+
+                callback_function(null, formatted_transactions);
+            }
+        });
+    }
+
+    load_page(0, null);
 }
 
 function get_btc_dash_doge_ltc_transaction_by_id(parameters, callback_function) {
@@ -355,53 +439,92 @@ function get_btc_dash_doge_ltc_transaction_by_id(parameters, callback_function) 
     const { id, seed, coin_id } = parameters;
     const address = get_btc_dash_doge_ltc_address_by_seed(coin_id, seed);
 
+    // The transaction as {id, confirmations, time (s), inputs, outputs}, with [{address, value (coins)}] rows.
+    function normalize_transaction(response) {
+
+        if(_is_on_sochain(coin_id)) {
+
+            if(response.status !== "success") {
+
+                return null;
+            }
+
+            const data = response.data;
+            return {
+                id: data.hash,
+                confirmations: data.confirmations,
+                time: data.time,
+                inputs: data.inputs.map((input) => {return {address: input.address, value: input.value};}),
+                outputs: data.outputs.map((output) => {return {address: output.address, value: output.value};})
+            };
+        }
+
+        if(!response.data || !response.data[id]) {
+
+            return null;
+        }
+
+        const data = response.data[id];
+        return {
+            id: data.transaction.hash,
+            confirmations: data.transaction.block_id > 0 ? response.context.state - data.transaction.block_id + 1: 0,
+            time: _blockchair_time_to_ms(data.transaction.time) / 1000,
+            inputs: data.inputs.map((input) => {return {address: input.recipient, value: input.value / 100000000};}),
+            outputs: data.outputs.map((output) => {return {address: output.recipient, value: output.value / 100000000};})
+        };
+    }
+
     function format_get_each_btc_dash_doge_ltc_transaction_response(error, response){
 
         if(!error) {
 
-            if(response.status !== "fail") {
+            const transaction = normalize_transaction(response);
 
+            if(!transaction) {
+
+                callback_function(response, null);
+                return;
             }
 
             let input_value = 0;
             let output_value = 0;
 
-            let first_input_address = response.data.inputs[0].address;
-            let recipient_output_address = response.data.outputs[response.data.outputs.length-1].address;
-            let recipient_output_value = response.data.outputs[response.data.outputs.length-1].value;
+            let first_input_address = transaction.inputs[0].address;
+            let recipient_output_address = transaction.outputs[transaction.outputs.length-1].address;
+            let recipient_output_value = transaction.outputs[transaction.outputs.length-1].value;
 
-            for(let ini = 0; ini < response.data.inputs.length; ini++) {
+            for(let ini = 0; ini < transaction.inputs.length; ini++) {
 
-                input_value += parseFloat(response.data.inputs[ini].value);
+                input_value += parseFloat(transaction.inputs[ini].value);
             }
 
-            for(let oti = 0; oti < response.data.outputs.length; oti++) {
+            for(let oti = 0; oti < transaction.outputs.length; oti++) {
 
-                output_value += parseFloat(response.data.outputs[oti].value);
-                if(address === response.data.outputs[oti].address) {
+                output_value += parseFloat(transaction.outputs[oti].value);
+                if(address === transaction.outputs[oti].address) {
 
-                    recipient_output_address = response.data.outputs[oti].address;
-                    recipient_output_value = response.data.outputs[oti].value;
+                    recipient_output_address = transaction.outputs[oti].address;
+                    recipient_output_value = transaction.outputs[oti].value;
                 }
             }
 
             if(first_input_address === recipient_output_address) {
 
-                for(let oti = 0; oti < response.data.outputs.length; oti++) {
+                for(let oti = 0; oti < transaction.outputs.length; oti++) {
 
-                    if(first_input_address !== response.data.outputs[oti].address) {
+                    if(first_input_address !== transaction.outputs[oti].address) {
 
-                        recipient_output_address = response.data.outputs[oti].address;
-                        recipient_output_value = response.data.outputs[oti].value;
+                        recipient_output_address = transaction.outputs[oti].address;
+                        recipient_output_value = transaction.outputs[oti].value;
                     }
                 }
             }
 
             const formatted_transaction = {
-                id: response.data.txid,
-                confirmations: response.data.confirmations,
+                id: transaction.id,
+                confirmations: transaction.confirmations,
                 fee: input_value - output_value,
-                timestamp: response.data.time * 1000,
+                timestamp: transaction.time * 1000,
                 send_from: first_input_address,
                 send_to: recipient_output_address,
                 amount_crypto: recipient_output_value,
@@ -416,7 +539,13 @@ function get_btc_dash_doge_ltc_transaction_by_id(parameters, callback_function) 
         }
     }
 
-    loadJSON("https://chain.so/api/v2/get_tx/" + _get_network_name_by_coin_id(coin_id) + "/" + id, format_get_each_btc_dash_doge_ltc_transaction_response);
+    if(_is_on_sochain(coin_id)) {
+
+        loadJSON(SOCHAIN_API_URL + "/transaction/" + _get_network_name_by_coin_id(coin_id) + "/" + id, format_get_each_btc_dash_doge_ltc_transaction_response);
+    }else {
+
+        loadJSON(BLOCKCHAIR_API_URL + "/" + coin_id + "/dashboards/transaction/" + id, format_get_each_btc_dash_doge_ltc_transaction_response);
+    }
 
 }
 
